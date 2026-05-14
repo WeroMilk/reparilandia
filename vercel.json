@@ -2,5 +2,5 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "installCommand": "(test -d repariland-next && npm ci --prefix repariland-next && npm ci) || npm ci",
-  "buildCommand": "([ ! -d repariland-next ] && npm run build) || (npm run build --prefix repariland-next && ln -sfn repariland-next/.next .next)"
+  "buildCommand": "([ ! -d repariland-next ] && npm run build) || (npm run build --prefix repariland-next && { ln -sfn repariland-next/.next .next || cp -a repariland-next/.next .next; })"
 }

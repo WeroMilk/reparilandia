@@ -63,7 +63,7 @@ En **Project → Settings → Build & Deployment**:
 4. **Output Directory** → vacío (sin `dist`).
 5. **Node.js** → **20.x** recomendado.
 
-El **`vercel.json` raíz** tras el build crea un **enlace simbólico** `.next` → `repariland-next/.next` cuando despliegas desde la raíz del repo (Linux en Vercel); así el runtime encuentra la salida donde Next la generó sin usar `distDir` fuera del proyecto (eso rompía el build aquí).
+Tras el build desde la raíz del repo, **`vercel.json`** enlaza **`.next`** → **`repariland-next/.next`**; si **`ln`** falla en el runner, hace **`cp -a`** para copiar la carpeta (misma intención: que exista **`path0/.next`**).
 
 Opción más limpia en el panel: **Root Directory** = **`repariland-next`** y sin overrides de build; entonces no hace falta el `ln`.
 
