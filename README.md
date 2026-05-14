@@ -60,7 +60,7 @@ El repo tiene Next.js dentro de **`repariland-next/`**. Si el proyecto en Vercel
 2. **Framework Preset** → **Next.js** (no Vite).
 3. Borra cualquier **Override** de Install / Build / Output (deben quedar los valores por defecto de Next + pnpm).
 
-En la raíz del repo hay un **`vercel.json`** que fuerza install/build dentro de `repariland-next` por si el proyecto sigue apuntando al directorio raíz del monorepo; con Root Directory bien puesto, Vercel usará Next normalmente.
+Si el deploy falla por lockfile en CI, el `vercel.json` usa `pnpm install --no-frozen-lockfile` para que el build no dependa de detectar el formato del lock entre versiones de pnpm; sigue existiendo `pnpm-lock.yaml` para desarrollo local reproducible.
 
 Variables: las de `.env` / `.env.example` en el panel de Vercel.
 
