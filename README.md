@@ -52,13 +52,17 @@ pnpm build
 pnpm start
 ```
 
-## Deploy (Vercel u otro)
+## Deploy (Vercel)
 
-- Directorio raíz del proyecto: **`repariland-next`**
-- Install: **`pnpm install`**
-- Build: **`pnpm build`**
+El repo tiene Next.js dentro de **`repariland-next/`**. Si el proyecto en Vercel quedó del stack Vite antiguo (error `vite: command not found` / `vite build`), haz esto en **Project → Settings → General**:
 
-Configura en el panel del proveedor las variables que definas en `.env` / `.env.example`.
+1. **Root Directory** → `repariland-next` (Edit → Save).
+2. **Framework Preset** → **Next.js** (no Vite).
+3. Borra cualquier **Override** de Install / Build / Output (deben quedar los valores por defecto de Next + pnpm).
+
+En la raíz del repo hay un **`vercel.json`** que fuerza install/build dentro de `repariland-next` por si el proyecto sigue apuntando al directorio raíz del monorepo; con Root Directory bien puesto, Vercel usará Next normalmente.
+
+Variables: las de `.env` / `.env.example` en el panel de Vercel.
 
 ## Estructura relevante
 
