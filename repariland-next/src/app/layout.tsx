@@ -21,9 +21,9 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
-  title: 'Reparilandia — Taller de Reparaciones & Museo de Coleccionismo',
+  title: 'Reparilandia — Taller de reparaciones y museo de coleccionismo',
   description:
-    '40 años reparando lo que otros desechan. Taller de reparaciones y museo de coleccionismo en Hermosillo, México.',
+    'Desde 1985 reparando lo que otros dan por perdido. Taller y museo de coleccionismo en Hermosillo, Sonora, México.',
 };
 
 export const viewport: Viewport = {

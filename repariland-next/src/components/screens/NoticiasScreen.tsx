@@ -8,10 +8,18 @@ const newsItems = [
   {
     id: '1',
     title: 'Horario ampliado en verano',
-    body: 'Ajustamos turnos para atender más reparaciones urgentes en consolas y laptops.',
+    body: 'Ajustamos turnos para dar cabida a más reparaciones urgentes en consolas y laptops.',
   },
-  { id: '2', title: 'Taller + museo', body: 'Visita guiada los sábados: conoce piezas icónicas y el proceso de restauración.' },
-  { id: '3', title: 'Carritos montables', body: 'Seguimos reparando carritos y juguetes electrónicos con el mismo cariño de siempre.' },
+  {
+    id: '2',
+    title: 'Taller + museo',
+    body: 'Visita guiada los sábados: piezas icónicas y cómo restauramos cada proyecto.',
+  },
+  {
+    id: '3',
+    title: 'Carritos montables',
+    body: 'Seguimos con carritos y juguetes electrónicos con el mismo cuidado de siempre.',
+  },
 ];
 
 const MONITO_NOTICIAS = '/assets/monito-noticias.png';
@@ -46,7 +54,7 @@ export default function NoticiasScreen() {
         NOTICIAS
       </h2>
       <p className="mx-auto mt-1 max-w-md shrink-0 px-2 text-center font-space text-[10px] text-white/55 sm:text-[11px]">
-        Desliza sobre la pantalla del equipo o usa las flechas para cambiar de noticia.
+        Desliza en la pantalla del equipo o usa las flechas para cambiar de noticia.
       </p>
 
       <div className="mt-2 flex min-h-0 flex-1 flex-col-reverse items-center justify-center gap-4 px-2 pb-2 sm:mt-3 sm:gap-5 lg:flex-row lg:items-end lg:gap-10 lg:px-6 lg:pb-3">

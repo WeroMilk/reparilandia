@@ -6,7 +6,8 @@ import { assetUrl } from '@/lib/assetUrl';
 export default function ContactoScreen() {
   const handleWhatsApp = () => {
     const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '520000000000';
-    const message = 'Hola Reparilandia! Me gustaría obtener más información sobre sus servicios.';
+    const message =
+      '¡Hola, Reparilandia! Me gustaría recibir más información sobre sus servicios.';
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
@@ -36,7 +37,7 @@ export default function ContactoScreen() {
           Contacto
         </h2>
         <p className="mt-1 font-space text-[10px] text-white/60 sm:text-[11px]">
-          Los monitos sostienen la info — escríbenos cuando quieras.
+          Aquí tienes los datos del taller — escríbenos cuando quieras.
         </p>
       </motion.div>
 

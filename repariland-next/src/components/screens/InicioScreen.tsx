@@ -88,7 +88,7 @@ export default function InicioScreen({ onNavigate }: InicioScreenProps) {
             />
           </div>
           <p className="mt-0.5 max-w-md font-space text-xs font-medium leading-snug tracking-[0.14em] text-white/80 sm:mt-1 sm:text-sm md:text-base">
-            &ldquo;La capital de la reparación&rdquo;
+            «La capital de la reparación»
           </p>
         </header>
 
@@ -96,7 +96,7 @@ export default function InicioScreen({ onNavigate }: InicioScreenProps) {
           <HomeActionBox
             variant="a"
             index={0}
-            title="Reparamos Carritos Montables"
+            title="Reparamos carritos montables"
             onClick={() => onNavigate('servicios')}
           >
             <div className="relative z-10 flex min-h-[10rem] flex-1 items-center justify-center overflow-visible px-1 py-3 sm:min-h-[11rem] md:min-h-[12.5rem]">
@@ -112,7 +112,7 @@ export default function InicioScreen({ onNavigate }: InicioScreenProps) {
           <HomeActionBox
             variant="b"
             index={1}
-            title="Servicio y Mantenimiento personalizado"
+            title="Servicio y mantenimiento a tu medida"
             onClick={() => onNavigate('servicios')}
           >
             <div className="relative z-10 flex min-h-[10rem] flex-1 items-center justify-center overflow-visible px-2 py-3 sm:min-h-[11rem] md:min-h-[12.5rem]">
@@ -128,7 +128,7 @@ export default function InicioScreen({ onNavigate }: InicioScreenProps) {
           <HomeActionBox
             variant="c"
             index={2}
-            title="Esperen novedades, próximamente…"
+            title="Novedades — muy pronto"
             onClick={() => onNavigate('noticias')}
           >
             <div className="relative z-10 flex min-h-[10rem] w-full flex-1 items-center justify-center overflow-visible px-2 py-3 sm:min-h-[11rem] md:min-h-[12.5rem]">
@@ -143,7 +143,7 @@ export default function InicioScreen({ onNavigate }: InicioScreenProps) {
         </div>
       </div>
 
-      <h1 className="sr-only">Reparilandia — &ldquo;La capital de la reparación&rdquo;</h1>
+      <h1 className="sr-only">Reparilandia — «La capital de la reparación»</h1>
     </div>
   );
 }

@@ -23,7 +23,7 @@ const services: Service[] = [
     id: 'consolas',
     icon: 'gamepad',
     title: 'CONSOLAS',
-    description: 'Atari a PS5: discos, HDMI, overheating, brick.',
+    description: 'De Atari a PS5: lector óptico, HDMI, sobrecalentamiento y consolas con fallo de sistema.',
   },
   {
     id: 'juguetes',
@@ -116,7 +116,7 @@ function ServiciosHeroBanner() {
       </div>
       <div className="relative z-[2] border-t border-cyan-400/15 bg-gradient-to-t from-black/70 via-black/40 to-transparent px-3 py-2.5 text-center sm:py-3.5">
         <p className="font-orbitron text-xs font-bold uppercase tracking-[0.2em] text-cyan-50 drop-shadow-[0_2px_16px_rgba(0,0,0,0.9)] sm:text-sm md:text-[0.9375rem]">
-          Reparamos Carritos Montables
+          Reparamos carritos montables
         </p>
         {process.env.NODE_ENV === 'development' && heroFailed && (
           <p className="mt-1.5 font-space text-[9px] text-amber-200/85 sm:text-[10px]">
@@ -139,7 +139,7 @@ export default function ServiciosScreen() {
           SERVICIOS
         </h2>
         <p className="mx-auto mt-1 max-w-lg px-2 font-space text-[10px] text-white/72 sm:text-[11px]">
-          Toca un servicio para cotizar. Cita o tour con el botón dorado.
+          Toca un servicio para pedir cotización. Reserva cita o tour con el botón dorado.
         </p>
       </motion.div>
 
