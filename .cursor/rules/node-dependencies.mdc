@@ -1,0 +1,10 @@
+---
+description: Dependencias Node solo desde registry.npmjs.org; en Vercel se usa npm ci (lockfile).
+alwaysApply: true
+---
+
+# Dependencias (Node)
+
+- Registry oficial: **`https://registry.npmjs.org/`** (fijado en `repariland-next/.npmrc`). No añadir registros alternativos ni scripts de postinstall sospechosos sin revisión explícita del usuario.
+- En **Vercel**, el install es **`npm ci`** contra **`package-lock.json`** (versiones e integridades fijadas). No usar Corepack/pnpm en el comando de deploy salvo que el usuario lo pida de nuevo.
+- En local: **`npm install`** / **`npm ci`** dentro de **`repariland-next/`** (Node **20.x** recomendado; ver `.nvmrc` / `engines`).

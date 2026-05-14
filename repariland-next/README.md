@@ -1,17 +1,16 @@
 # Reparilandia (Next.js)
 
-Sitio de Reparilandia con [Next.js](https://nextjs.org). Este proyecto usa **pnpm** como gestor de paquetes (`packageManager` en `package.json`).
+Sitio con [Next.js](https://nextjs.org). Dependencias con **npm**; el archivo **`package-lock.json`** fija versiones e integridades para installs reproducibles.
 
 ## Requisitos
 
-- Node.js 20+
-- [pnpm](https://pnpm.io/installation) (recomendado: `corepack enable` y usar la versión fijada en el campo `packageManager`)
+- Node.js **20.x** (recomendado; coincide con Vercel)
 
 ## Desarrollo
 
 ```bash
-pnpm install
-pnpm dev
+npm install
+npm run dev
 ```
 
 Abre [http://localhost:3000](http://localhost:3000).
@@ -19,16 +18,16 @@ Abre [http://localhost:3000](http://localhost:3000).
 ## Producción
 
 ```bash
-pnpm build
-pnpm start
+npm run build
+npm run start
 ```
 
 ## Lint
 
 ```bash
-pnpm lint
+npm run lint
 ```
 
-## Despliegue
+## Despliegue (Vercel)
 
-En Vercel u otro proveedor, configura el comando de instalación como `pnpm install` y el de build como `pnpm build` (directorio raíz del proyecto: `repariland-next` si el repo incluye más carpetas).
+El `vercel.json` en la raíz ejecuta **`npm ci --prefix repariland-next`** y **`npm run build --prefix repariland-next`** (instala solo lo del lockfile).

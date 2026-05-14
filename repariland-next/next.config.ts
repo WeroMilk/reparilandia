@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next';
 import path from 'path';
 
-/** Evita que Next tome el lockfile del repo padre al haber varios package-lock. */
+/** Raíz de tracing para el árbol de archivos del paquete (monorepo / carpeta anidada). */
 const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(process.cwd()),
 };

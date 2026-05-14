@@ -19,14 +19,13 @@ Landing futurista para Reparilandia (Hermosillo, Sonora, México). El código de
 - Framer Motion
 - Lucide React
 
-**Gestor de paquetes:** [pnpm](https://pnpm.io) (fijado en `repariland-next/package.json` → `packageManager`).
+**Gestor de paquetes:** **npm** con **`package-lock.json`** en `repariland-next/` (install reproducible con `npm ci`). El registry oficial está fijado en `repariland-next/.npmrc`.
 
 ## Configuración local
 
 ```bash
 cd repariland-next
-corepack enable
-pnpm install
+npm install
 ```
 
 Copia variables de entorno si las usas:
@@ -40,7 +39,7 @@ copy .env.example .env
 ### Desarrollo
 
 ```bash
-pnpm dev
+npm run dev
 ```
 
 Abre [http://localhost:3000](http://localhost:3000).
@@ -48,22 +47,18 @@ Abre [http://localhost:3000](http://localhost:3000).
 ### Producción
 
 ```bash
-pnpm build
-pnpm start
+npm run build
+npm run start
 ```
 
 ## Deploy (Vercel)
 
 En **Project → Settings → General**:
 
-1. **Node.js Version** → **20.x** (evita `ERR_INVALID_THIS` del registry con Node 22 + pnpm en algunos builds).
-2. **Root Directory** → `repariland-next`.
+1. **Node.js Version** → **20.x** (alineado con `engines` del repo).
+2. **Root Directory** → déjalo en la **raíz del repo** (`./`). Si lo cambias a solo `repariland-next`, borra en el panel los overrides de Install/Build y usa los comandos por defecto (`npm ci` / `npm run build` desde esa carpeta).
 3. **Framework Preset** → **Next.js** (no Vite).
-4. Quita overrides de Install / Build si los tienes a mano; el repo incluye `vercel.json` en la raíz.
-
-Variables de entorno opcionales si Corepack fallara: **`ENABLE_EXPERIMENTAL_COREPACK`** = `1` (Preview + Production).
-
-El `vercel.json` activa Corepack con **pnpm 10.33.4** y ejecuta `pnpm install` en `repariland-next`.
+4. Sin overrides de Install / Build en el panel: el **`vercel.json`** en la raíz usa **`npm ci`** y **`npm run build`** (solo dependencias del lockfile; registry `registry.npmjs.org`).
 
 Variables de app: las de `.env` / `.env.example` en el panel de Vercel.
 

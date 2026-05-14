@@ -1,4 +1,4 @@
 * text=auto
 .gitattributes text eol=lf
-pnpm-lock.yaml text eol=lf
-**/pnpm-lock.yaml text eol=lf
+package-lock.json text eol=lf
+**/package-lock.json text eol=lf
