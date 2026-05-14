@@ -63,7 +63,7 @@ En **Project → Settings → Build & Deployment**:
 4. **Output Directory** → vacío (sin `dist`).
 5. **Node.js** → **20.x** recomendado.
 
-El **`package.json` en la raíz** declara **`next`** solo para que Vercel detecte Next cuando la app vive en **`repariland-next/`**; el lock real del sitio es **`repariland-next/package-lock.json`**.
+El **`package.json` en la raíz** declara **`next`** para el detector de Vercel; **`npm ci`** también debe ejecutarse **en la raíz** (hay **`package-lock.json`** ahí) después de **`npm ci`** en **`repariland-next/`**, cosa que hace el **`installCommand`** de **`vercel.json`**.
 
 Variables de app: `.env` / `.env.example` en el panel de Vercel.
 
