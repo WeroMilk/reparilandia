@@ -1,0 +1,10 @@
+{
+  "name": "reparilandia-repo",
+  "private": true,
+  "engines": {
+    "node": "20.x"
+  },
+  "dependencies": {
+    "next": "15.5.18"
+  }
+}

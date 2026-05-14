@@ -53,16 +53,19 @@ npm run start
 
 ## Deploy (Vercel)
 
-**Imprescindible:** en **Project → Settings → General → Root Directory** pon **`repariland-next`** y guarda. Si sigues en la raíz del repo (`./`), Vercel no verá `next` en el `package.json` y fallará la detección.
+El **`vercel.json` en la raíz del repo** fuerza **Next.js** y **`npm run build`** (y **`npm ci`** en `repariland-next` cuando el proyecto usa la raíz del monorepo). Los comandos también valen si **Root Directory** es **`repariland-next`**.
 
-En **Build & Deployment**:
+En **Project → Settings → Build & Deployment**:
 
-1. **Framework Preset** → **Next.js**.
-2. **Node.js Version** → **20.x** (coherente con `engines` y `.nvmrc` dentro de `repariland-next/`).
-3. **Output Directory** → vacío (no uses `dist` de Vite).
-4. Quita overrides de **Install Command** y **Build Command** si siguen apuntando a la raíz del monorepo; **`repariland-next/vercel.json`** define **`npm ci`**, **`npm run build`** y **`framework": "nextjs"`**.
+1. **Framework Preset** → **Next.js** (no Vite).
+2. **Build Command** → **vacío / por defecto**. Si aparece **`vite build`**, **elimínalo**: es un override viejo del panel y provoca el error 127.
+3. **Install Command** → vacío por defecto salvo override manual; `vercel.json` ya define el install.
+4. **Output Directory** → vacío (sin `dist`).
+5. **Node.js** → **20.x** recomendado.
 
-Variables de app: las de `.env` / `.env.example` en el panel de Vercel.
+El **`package.json` en la raíz** declara **`next`** solo para que Vercel detecte Next cuando la app vive en **`repariland-next/`**; el lock real del sitio es **`repariland-next/package-lock.json`**.
+
+Variables de app: `.env` / `.env.example` en el panel de Vercel.
 
 ## Estructura relevante
 

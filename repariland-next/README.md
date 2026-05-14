@@ -30,4 +30,4 @@ npm run lint
 
 ## Despliegue (Vercel)
 
-En el dashboard del proyecto: **Root Directory = `repariland-next`**. Archivo **`vercel.json`** en esa carpeta con `"framework": "nextjs"`. Install/build por defecto: **`npm ci`** + **`npm run build`**. Registry: `repariland-next/.npmrc`.
+En la **raíz del repositorio** está **`vercel.json`** (Next + `npm ci` / `npm run build` en este paquete o con `--prefix repariland-next` según cómo esté configurado el proyecto). En el panel de Vercel, **no dejes** **Build Command** en `vite build`. Registry: `repariland-next/.npmrc`.
