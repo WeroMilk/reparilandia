@@ -6,5 +6,5 @@ alwaysApply: true
 # Dependencias (Node)
 
 - Registry oficial: **`https://registry.npmjs.org/`** (fijado en `repariland-next/.npmrc`). No añadir registros alternativos ni scripts de postinstall sospechosos sin revisión explícita del usuario.
-- En **Vercel**, el archivo **`vercel.json` en la raíz del repo** define install/build y **`framework: nextjs`**. Hay un **`package.json` raíz** mínimo con **`next`** solo para detección; el lock real está en **`repariland-next/package-lock.json`**. **No** debe quedar override **`vite build`** en el panel (borrar Build Command personalizado).
+- En **Vercel**, **`vercel.json` raíz** define install (**`npm ci`** en **`repariland-next`** y luego **`npm ci`** en la raíz), build y **`framework: nextjs`**. La raíz tiene **`package.json`** + **`package-lock.json`** con **`next`** para que exista **`node_modules/next`** donde lo revisa el detector. El lock completo del sitio sigue en **`repariland-next/`**. **No** debe quedar override **`vite build`** en el panel.
 - En local: **`npm install`** / **`npm ci`** dentro de **`repariland-next/`** (Node **20.x**; ver **`repariland-next/.nvmrc`** / **`engines`**).
