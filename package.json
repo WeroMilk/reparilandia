@@ -1,0 +1,8 @@
+{
+  "name": "reparilandia-repo",
+  "private": true,
+  "engines": {
+    "node": "20.x"
+  },
+  "packageManager": "pnpm@10.33.4"
+}

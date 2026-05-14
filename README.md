@@ -54,15 +54,18 @@ pnpm start
 
 ## Deploy (Vercel)
 
-El repo tiene Next.js dentro de **`repariland-next/`**. Si el proyecto en Vercel quedó del stack Vite antiguo (error `vite: command not found` / `vite build`), haz esto en **Project → Settings → General**:
+En **Project → Settings → General**:
 
-1. **Root Directory** → `repariland-next` (Edit → Save).
-2. **Framework Preset** → **Next.js** (no Vite).
-3. Borra cualquier **Override** de Install / Build / Output (deben quedar los valores por defecto de Next + pnpm).
+1. **Node.js Version** → **20.x** (evita `ERR_INVALID_THIS` del registry con Node 22 + pnpm en algunos builds).
+2. **Root Directory** → `repariland-next`.
+3. **Framework Preset** → **Next.js** (no Vite).
+4. Quita overrides de Install / Build si los tienes a mano; el repo incluye `vercel.json` en la raíz.
 
-Si el deploy falla por lockfile en CI, el `vercel.json` usa `pnpm install --no-frozen-lockfile` para que el build no dependa de detectar el formato del lock entre versiones de pnpm; sigue existiendo `pnpm-lock.yaml` para desarrollo local reproducible.
+Variables de entorno opcionales si Corepack fallara: **`ENABLE_EXPERIMENTAL_COREPACK`** = `1` (Preview + Production).
 
-Variables: las de `.env` / `.env.example` en el panel de Vercel.
+El `vercel.json` activa Corepack con **pnpm 10.33.4** y ejecuta `pnpm install` en `repariland-next`.
+
+Variables de app: las de `.env` / `.env.example` en el panel de Vercel.
 
 ## Estructura relevante
 

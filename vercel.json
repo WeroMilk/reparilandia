@@ -1,5 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd repariland-next && corepack enable && corepack prepare pnpm@10.18.3 --activate && pnpm install --no-frozen-lockfile",
-  "buildCommand": "cd repariland-next && pnpm run build"
+  "installCommand": "cd repariland-next && export ENABLE_EXPERIMENTAL_COREPACK=1 && corepack enable && corepack prepare pnpm@10.33.4 --activate && pnpm install",
+  "buildCommand": "cd repariland-next && corepack prepare pnpm@10.33.4 --activate && pnpm run build"
 }
