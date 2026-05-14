@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useScreenManager } from './hooks/useScreenManager';
 import ScreenManager from './components/ScreenManager';
@@ -10,9 +10,19 @@ import GlobalBackgroundParticles from './components/GlobalBackgroundParticles';
 import SystemBootLoader from './components/SystemBootLoader';
 import LaserPortal from './components/LaserPortal';
 
+/** Arranque del loader (~1200 ms) + salida (~300 ms); si `onExitComplete` falla, evita UI invisible para siempre. */
+const BOOT_UI_FALLBACK_MS = 2000;
+
 export default function App() {
   const { currentScreen, direction, navigateTo, goNext, goPrev } = useScreenManager();
   const [bootDone, setBootDone] = useState(false);
+
+  const finishBoot = useCallback(() => setBootDone(true), []);
+
+  useEffect(() => {
+    const id = window.setTimeout(finishBoot, BOOT_UI_FALLBACK_MS);
+    return () => window.clearTimeout(id);
+  }, [finishBoot]);
 
   return (
     <div className="relative flex h-[100dvh] max-h-[100dvh] min-h-[100dvh] w-full max-w-[100vw] flex-col overflow-hidden bg-[#050508]">
@@ -54,7 +64,7 @@ export default function App() {
       </motion.div>
 
       <LaserPortal screenKey={currentScreen} contentReady={bootDone} />
-      {!bootDone && <SystemBootLoader onExitComplete={() => setBootDone(true)} />}
+      {!bootDone && <SystemBootLoader onExitComplete={finishBoot} />}
     </div>
   );
 }
