@@ -30,4 +30,4 @@ npm run lint
 
 ## Despliegue (Vercel)
 
-El `vercel.json` en la raíz ejecuta **`npm ci --prefix repariland-next`** y **`npm run build --prefix repariland-next`** (instala solo lo del lockfile).
+En el dashboard del proyecto: **Root Directory = `repariland-next`**. Archivo **`vercel.json`** en esa carpeta con `"framework": "nextjs"`. Install/build por defecto: **`npm ci`** + **`npm run build`**. Registry: `repariland-next/.npmrc`.

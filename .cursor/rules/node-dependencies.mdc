@@ -6,5 +6,5 @@ alwaysApply: true
 # Dependencias (Node)
 
 - Registry oficial: **`https://registry.npmjs.org/`** (fijado en `repariland-next/.npmrc`). No añadir registros alternativos ni scripts de postinstall sospechosos sin revisión explícita del usuario.
-- En **Vercel**, el install es **`npm ci`** contra **`package-lock.json`** (versiones e integridades fijadas). No usar Corepack/pnpm en el comando de deploy salvo que el usuario lo pida de nuevo.
-- En local: **`npm install`** / **`npm ci`** dentro de **`repariland-next/`** (Node **20.x** recomendado; ver `.nvmrc` / `engines`).
+- En **Vercel**, el proyecto debe tener **Root Directory = `repariland-next`** para que exista **`next`** en el `package.json` que analiza el build. Ahí se usa **`npm ci`** contra **`package-lock.json`** por defecto. Sin Corepack/pnpm salvo que el usuario lo pida.
+- En local: **`npm install`** / **`npm ci`** dentro de **`repariland-next/`** (Node **20.x**; ver **`repariland-next/.nvmrc`** / **`engines`**).

@@ -53,13 +53,14 @@ npm run start
 
 ## Deploy (Vercel)
 
-En **Project → Settings → General**:
+**Imprescindible:** en **Project → Settings → General → Root Directory** pon **`repariland-next`** y guarda. Si sigues en la raíz del repo (`./`), Vercel no verá `next` en el `package.json` y fallará la detección.
 
-1. **Node.js Version** → **20.x** (alineado con `engines` del repo).
-2. **Root Directory** → déjalo en la **raíz del repo** (`./`). Si lo cambias a solo `repariland-next`, borra en el panel los overrides de Install/Build y usa los comandos por defecto (`npm ci` / `npm run build` desde esa carpeta).
-3. **Framework Preset** → **Next.js** (no Vite).
-4. Sin overrides de Install / Build en el panel: el **`vercel.json`** en la raíz usa **`npm ci`** y **`npm run build`** (solo dependencias del lockfile; registry `registry.npmjs.org`).
-5. **Salida del build:** debe estar el preset **Next.js**. Si ves el error de carpeta **`dist`**, en **Settings → Build & Deployment → Output Directory** deja el campo **vacío** (Next no usa `dist` como Vite; el error viene de un override antiguo).
+En **Build & Deployment**:
+
+1. **Framework Preset** → **Next.js**.
+2. **Node.js Version** → **20.x** (coherente con `engines` y `.nvmrc` dentro de `repariland-next/`).
+3. **Output Directory** → vacío (no uses `dist` de Vite).
+4. Quita overrides de **Install Command** y **Build Command** si siguen apuntando a la raíz del monorepo; **`repariland-next/vercel.json`** define **`npm ci`**, **`npm run build`** y **`framework": "nextjs"`**.
 
 Variables de app: las de `.env` / `.env.example` en el panel de Vercel.
 
