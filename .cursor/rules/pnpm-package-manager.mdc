@@ -1,0 +1,10 @@
+---
+description: Usar pnpm como único gestor de paquetes en este repo (no npm/yarn para dependencias).
+alwaysApply: true
+---
+
+# Gestor de paquetes
+
+- Instalar dependencias y ejecutar scripts de Node solo con **pnpm** (directorio `repariland-next/`).
+- No generar ni commitear `package-lock.json` ni `yarn.lock`; el lock oficial es `pnpm-lock.yaml`.
+- Si sugieres comandos al usuario o CI, usa `pnpm install`, `pnpm run …`, etc.
