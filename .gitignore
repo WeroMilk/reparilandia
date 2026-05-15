@@ -1,2 +1,5 @@
 node_modules/
 .next/
+
+# Cursor debug (sesiones locales, no van al deploy)
+.cursor/debug-*.log
