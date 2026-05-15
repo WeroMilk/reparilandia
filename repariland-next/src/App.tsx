@@ -10,6 +10,7 @@ import GlobalBackgroundParticles from './components/GlobalBackgroundParticles';
 import SystemBootLoader from './components/SystemBootLoader';
 import LaserPortal from './components/LaserPortal';
 import { useDockGeometricCapture } from './hooks/useDockGeometricCapture';
+import { usePreloadScreenAssets } from './hooks/usePreloadScreenAssets';
 
 /** Arranque del loader (~1200 ms) + salida (~300 ms); si `onExitComplete` falla, evita UI invisible para siempre. */
 const BOOT_UI_FALLBACK_MS = 2000;
@@ -22,6 +23,7 @@ export default function App() {
   const finishBoot = useCallback(() => setBootDone(true), []);
 
   useDockGeometricCapture(bootDone && dockReady, { navigateTo, goNext, goPrev });
+  usePreloadScreenAssets(bootDone);
 
   useEffect(() => {
     setDockReady(true);

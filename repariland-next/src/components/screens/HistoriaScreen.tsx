@@ -78,7 +78,7 @@ function CutoutCharacter({
         alt={alt}
         className={`pointer-events-none h-auto w-auto max-w-full select-none object-contain [image-rendering:auto] ${imgTreat} ${imgClassName}`}
         draggable={false}
-        loading="lazy"
+        loading="eager"
         decoding="async"
       />
     </div>
@@ -143,7 +143,7 @@ export default function HistoriaScreen() {
                   alt="E.T. con playera Reparilandia"
                   className="relative z-[9] pointer-events-none h-auto w-full max-w-full select-none object-contain object-bottom mix-blend-screen brightness-[1.14] contrast-[1.08] saturate-[1.05] [image-rendering:auto] max-h-[min(100%,18rem)] sm:max-h-[min(100%,19rem)] lg:max-h-[162%] lg:max-w-[min(148%,32rem)] xl:max-h-[174%] xl:max-w-[min(155%,34rem)]"
                   draggable={false}
-                  loading="lazy"
+                  loading="eager"
                   decoding="async"
                 />
               </div>

@@ -108,6 +108,8 @@ export default function NoticiasScreen() {
               alt="Leyendo las noticias de Reparilandia"
               className="h-auto w-full max-h-[min(58vh,30rem)] object-contain object-bottom drop-shadow-[0_24px_48px_rgba(0,0,0,0.52)] [image-rendering:auto] sm:max-h-[min(62vh,33rem)] md:max-h-[min(64vh,36rem)] lg:max-h-[min(68vh,40rem)] xl:max-h-[min(74vh,44rem)]"
               draggable={false}
+              loading="eager"
+              decoding="async"
             />
           </motion.div>
 

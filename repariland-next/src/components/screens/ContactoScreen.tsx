@@ -63,6 +63,8 @@ export default function ContactoScreen() {
               alt=""
               className="pointer-events-none absolute -left-6 top-[-3.35rem] z-[8] h-[clamp(8.75rem,28vw,12.5rem)] w-auto max-w-[min(88vw,12rem)] translate-x-3 select-none object-contain object-left-bottom drop-shadow-[0_14px_28px_rgba(0,0,0,0.5)] sm:-left-7 sm:top-[-3.6rem] sm:h-[clamp(9.25rem,26vw,13rem)] sm:max-w-[min(82vw,12.75rem)] sm:translate-x-4 lg:-left-[2.85rem] lg:top-[-3.85rem] lg:h-[clamp(9.5rem,22vw,13.25rem)] lg:max-w-[13rem] lg:translate-x-5 [image-rendering:auto]"
               draggable={false}
+              loading="eager"
+              decoding="async"
             />
             <motion.div
               className={`relative z-[24] ${panelOpaque} mt-[clamp(3.35rem,11vw,4.75rem)] flex max-h-[min(72vh,44rem)] min-h-0 flex-1 flex-col overflow-hidden p-1.5 sm:p-2 lg:mt-[clamp(3.1rem,7vw,4rem)] lg:max-h-[min(78vh,46rem)] xl:max-h-[min(80vh,48rem)]`}
@@ -173,6 +175,8 @@ export default function ContactoScreen() {
                 alt=""
                 className="pointer-events-none absolute bottom-0 right-0 z-[110] h-auto max-h-[min(46vh,22rem)] w-[min(92%,20rem)] max-w-[calc(100%-0.5rem)] select-none object-contain [object-position:right_bottom] [image-rendering:auto] mix-blend-screen brightness-[1.14] contrast-[1.1] saturate-[1.06] drop-shadow-[0_12px_24px_rgba(0,0,0,0.4)] sm:max-h-[min(48vh,23.5rem)] sm:w-[min(90%,21.5rem)] lg:max-h-[min(50vh,25rem)] lg:w-[min(88%,22.5rem)] xl:max-h-[min(52vh,26.5rem)] xl:w-[min(86%,24rem)]"
                 draggable={false}
+                loading="eager"
+                decoding="async"
               />
 
               <div className="relative z-[20] flex min-h-0 flex-1 flex-col overflow-hidden px-1.5 pb-1.5 pt-1 sm:p-2 sm:pb-2">

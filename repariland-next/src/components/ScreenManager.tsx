@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import InicioScreen from './screens/InicioScreen';
 import HistoriaScreen from './screens/HistoriaScreen';
 import ServiciosScreen from './screens/ServiciosScreen';
 import NoticiasScreen from './screens/NoticiasScreen';
 import ContactoScreen from './screens/ContactoScreen';
+import { SCREEN_ORDER } from '@/hooks/useScreenManager';
 import type { ScreenName } from '@/types';
 
 interface ScreenManagerProps {
@@ -15,25 +16,8 @@ interface ScreenManagerProps {
   onNavigate: (screen: ScreenName) => void;
 }
 
-const projectionEase = [0.22, 1, 0.36, 1] as const;
-const REVEAL_S = 0.34;
-
-const variants = {
-  enter: (dir: number) => ({
-    opacity: 0,
-    y: dir >= 0 ? 12 : -10,
-  }),
-  center: {
-    opacity: 1,
-    y: 0,
-  },
-  exit: (dir: number) => ({
-    opacity: 0,
-    y: dir >= 0 ? -8 : 10,
-    pointerEvents: 'none' as const,
-    transition: { duration: 0.14, ease: 'easeOut' as const },
-  }),
-};
+const crossfadeEase = [0.22, 1, 0.36, 1] as const;
+const CROSSFADE_S = 0.2;
 
 function ScreenBody({
   screen,
@@ -63,44 +47,81 @@ export default function ScreenManager({
   direction,
   onNavigate,
 }: ScreenManagerProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
+  const [mountedScreens, setMountedScreens] = useState<Set<ScreenName>>(
+    () => new Set([currentScreen]),
+  );
 
   useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.scrollTop = 0;
-    el.scrollLeft = 0;
+    setMountedScreens((prev) => {
+      if (prev.has(currentScreen)) return prev;
+      const next = new Set(prev);
+      next.add(currentScreen);
+      return next;
+    });
   }, [currentScreen]);
+
+  useEffect(() => {
+    if (reduceMotion) {
+      setMountedScreens(new Set(SCREEN_ORDER));
+      return;
+    }
+    const mountAll = () => setMountedScreens(new Set(SCREEN_ORDER));
+    if (typeof window.requestIdleCallback === 'function') {
+      const id = window.requestIdleCallback(mountAll, { timeout: 1600 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const t = window.setTimeout(mountAll, 600);
+    return () => window.clearTimeout(t);
+  }, [reduceMotion]);
+
+  const fadeDuration = reduceMotion ? 0 : CROSSFADE_S;
 
   return (
     <motion.div
       className="pointer-events-none relative z-[10] flex h-full min-h-0 w-full flex-1 flex-col"
       layout={false}
     >
-      <AnimatePresence initial={false} custom={direction} mode="wait">
-        <motion.div
-          key={currentScreen}
-          ref={scrollRef}
-          custom={direction}
-          variants={variants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{
-            opacity: { duration: REVEAL_S * 0.85, ease: projectionEase },
-            y: { duration: REVEAL_S, ease: projectionEase },
-          }}
-          style={{ transformOrigin: '50% 0%' }}
-          className="app-content-max pointer-events-none relative flex min-h-0 w-full flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-y-contain pb-2 scrollbar-hide [-webkit-overflow-scrolling:touch]"
-        >
-          <motion.div
-            className="pointer-events-auto relative z-[1] flex min-h-0 w-full flex-1 flex-col overflow-hidden"
-            layout={false}
-          >
-            <ScreenBody screen={currentScreen} onNavigate={onNavigate} />
-          </motion.div>
-        </motion.div>
-      </AnimatePresence>
+      <motion.div
+        className="app-content-max relative flex min-h-0 w-full flex-1 flex-col overflow-hidden"
+        custom={direction}
+        layout={false}
+      >
+        {SCREEN_ORDER.filter((screen) => mountedScreens.has(screen)).map((screen) => {
+          const active = screen === currentScreen;
+          return (
+            <motion.div
+              key={screen}
+              custom={direction}
+              initial={false}
+              animate={{
+                opacity: active ? 1 : 0,
+                y: active ? 0 : reduceMotion ? 0 : direction >= 0 ? 6 : -6,
+              }}
+              transition={{
+                opacity: { duration: fadeDuration, ease: crossfadeEase },
+                y: { duration: fadeDuration * 0.9, ease: crossfadeEase },
+              }}
+              style={{
+                transformOrigin: '50% 0%',
+                pointerEvents: active ? 'auto' : 'none',
+              }}
+              aria-hidden={!active}
+              className={[
+                'absolute inset-0 flex min-h-0 w-full flex-col',
+                active ? 'z-[2]' : 'z-[1]',
+                !active && 'invisible',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+            >
+              <div className="pointer-events-auto relative flex min-h-0 w-full flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-y-contain pb-2 scrollbar-hide [-webkit-overflow-scrolling:touch]">
+                <ScreenBody screen={screen} onNavigate={onNavigate} />
+              </div>
+            </motion.div>
+          );
+        })}
+      </motion.div>
     </motion.div>
   );
 }

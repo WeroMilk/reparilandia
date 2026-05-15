@@ -107,6 +107,9 @@ function ServiciosHeroBanner() {
               alt="Equipo Reparilandia reparando carritos montables"
               className="h-auto w-full max-h-[min(28dvh,11.5rem)] object-contain object-center pb-0.5 [image-rendering:auto] mix-blend-screen brightness-[1.08] contrast-[1.06] drop-shadow-[0_14px_40px_rgba(0,0,0,0.28)] sm:max-h-[min(30dvh,12.5rem)] md:max-h-[min(32dvh,13.5rem)]"
               draggable={false}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
               onError={() => setHeroFailed(true)}
             />
           </div>

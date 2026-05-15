@@ -128,8 +128,9 @@ function HomeSpotlightCard({
         className="relative z-[1] pointer-events-none absolute left-1/2 top-0 block h-[138%] w-auto max-w-[96%] -translate-x-1/2 select-none object-cover object-top"
         style={{ objectPosition: 'center 14%' }}
         draggable={false}
-        loading="lazy"
+        loading="eager"
         decoding="async"
+        fetchPriority="high"
       />
     </motion.div>
   ) : (
@@ -141,8 +142,9 @@ function HomeSpotlightCard({
         alt=""
         className={`relative z-[1] pointer-events-none select-none [image-rendering:auto] ${imgTreat}`}
         draggable={false}
-        loading="lazy"
+        loading="eager"
         decoding="async"
+        fetchPriority="high"
       />
     </motion.div>
   );

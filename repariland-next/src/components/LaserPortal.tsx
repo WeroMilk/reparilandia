@@ -10,8 +10,8 @@ interface LaserPortalProps {
 
 type Phase = 'idle' | 'absorb' | 'project';
 
-const ABSORB_MS = 280;
-const PROJECT_MS = 640;
+const ABSORB_MS = 200;
+const PROJECT_MS = 420;
 
 /**
  * Haz de reflector en capa de fondo (z-[8]): por debajo del stage (z-20), scanlines (z-12) y dock.
