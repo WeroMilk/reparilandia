@@ -11,9 +11,8 @@ export const SCREEN_ASSET_PATHS = [
   '/assets/historia-panel-3.png',
   '/assets/historia-panel-4.png',
   '/assets/hero-reparamos-carritos.png',
-  '/assets/monito-noticias.png',
+  '/assets/noticias-monito-periodico.png',
   '/assets/contacto-monito-izq.png',
-  '/assets/contacto-padre-hijo.png',
 ] as const;
 
 const preloaded = new Set<string>();

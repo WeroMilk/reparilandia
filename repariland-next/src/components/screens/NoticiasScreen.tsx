@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import ScreenPageTitle from '@/components/ScreenPageTitle';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { assetUrl } from '@/lib/assetUrl';
@@ -25,7 +26,7 @@ const newsItems = [
   },
 ];
 
-const MONITO_NOTICIAS = '/assets/monito-noticias.png';
+const MONITO_NOTICIAS = '/assets/noticias-monito-periodico.png';
 
 function NewspaperSlide({ masthead, title, body }: { masthead: string; title: string; body: string }) {
   return (
@@ -42,7 +43,7 @@ function NewspaperSlide({ masthead, title, body }: { masthead: string; title: st
       <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4">
         <h3 className="font-serif text-base font-black uppercase leading-[1.15] text-zinc-950 sm:text-lg">{title}</h3>
         <div className="mt-2 h-px w-full bg-zinc-900/80" aria-hidden />
-        <p className="mt-3 columns-1 gap-x-4 font-serif text-[11px] leading-relaxed text-zinc-800 sm:columns-2 sm:text-[12px] sm:leading-snug">
+        <p className="mt-3 columns-1 font-serif text-[11px] leading-relaxed text-zinc-800 sm:text-[12px] sm:leading-snug">
           {body}
         </p>
       </div>
@@ -78,11 +79,9 @@ export default function NoticiasScreen() {
   }, [emblaApi]);
 
   return (
-    <div className="screen-shell flex min-h-0 flex-1 flex-col !overflow-x-visible overflow-y-hidden !pt-[clamp(2rem,5dvh,3.5rem)] lg:!pt-[clamp(2.25rem,5.5dvh,3.75rem)]">
-      <h2 className="shrink-0 text-center font-orbitron text-lg tracking-[0.32em] text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.1)] sm:text-xl md:text-2xl">
-        NOTICIAS
-      </h2>
-      <p className="mx-auto mt-0.5 max-w-md shrink-0 px-2 text-center font-space text-[10px] text-white/55 sm:text-[11px]">
+    <div className="screen-shell flex min-h-0 flex-1 flex-col !overflow-x-visible overflow-y-hidden">
+      <ScreenPageTitle>NOTICIAS</ScreenPageTitle>
+      <p className="screen-page-lead max-w-md text-white/55">
         Desliza en la pantalla del televisor o usa las flechas para cambiar de noticia.
       </p>
 
@@ -105,7 +104,7 @@ export default function NoticiasScreen() {
           >
             <img
               src={assetUrl(MONITO_NOTICIAS)}
-              alt="Leyendo las noticias de Reparilandia"
+              alt="Personaje leyendo el periódico junto a una nave LEGO espacial"
               className="h-auto w-full max-h-[min(58vh,30rem)] object-contain object-bottom drop-shadow-[0_24px_48px_rgba(0,0,0,0.52)] [image-rendering:auto] sm:max-h-[min(62vh,33rem)] md:max-h-[min(64vh,36rem)] lg:max-h-[min(68vh,40rem)] xl:max-h-[min(74vh,44rem)]"
               draggable={false}
               loading="eager"

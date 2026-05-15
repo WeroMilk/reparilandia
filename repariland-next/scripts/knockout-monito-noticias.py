@@ -1,10 +1,10 @@
-"""Knock outer black to alpha for monito-noticias.png."""
+"""Knock outer black to alpha for noticias-monito-periodico.png."""
 from pathlib import Path
 
 from PIL import Image
 import numpy as np
 
-path = Path(__file__).resolve().parents[1] / "public" / "assets" / "monito-noticias.png"
+path = Path(__file__).resolve().parents[1] / "public" / "assets" / "noticias-monito-periodico.png"
 TOL = 38
 
 im = Image.open(path).convert("RGBA")

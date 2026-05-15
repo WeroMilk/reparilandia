@@ -115,7 +115,14 @@ export default function ScreenManager({
                 .filter(Boolean)
                 .join(' ')}
             >
-              <div className="pointer-events-auto relative flex min-h-0 w-full flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-y-contain pb-2 scrollbar-hide [-webkit-overflow-scrolling:touch]">
+              <div
+                className={[
+                  'pointer-events-auto relative flex min-h-0 w-full flex-1 flex-col overscroll-y-contain pb-2 scrollbar-hide [-webkit-overflow-scrolling:touch]',
+                  screen === 'contacto'
+                    ? 'overflow-x-visible overflow-y-auto sm:overflow-y-hidden'
+                    : 'overflow-x-hidden overflow-y-auto',
+                ].join(' ')}
+              >
                 <ScreenBody screen={screen} onNavigate={onNavigate} />
               </div>
             </motion.div>

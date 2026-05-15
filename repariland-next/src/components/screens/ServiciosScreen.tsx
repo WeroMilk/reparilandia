@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { ElementType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ScreenPageTitle from '@/components/ScreenPageTitle';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight, Laptop, Monitor, Gamepad2, ToyBrick, Stethoscope, MoreHorizontal, Wrench, Calendar } from 'lucide-react';
 import QuoteForm from '@/components/forms/QuoteForm';
@@ -149,15 +150,11 @@ export default function ServiciosScreen() {
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   return (
-    <div className="screen-shell flex min-h-0 flex-1 flex-col overflow-hidden !pt-[clamp(2rem,5dvh,3.5rem)] lg:!pt-[clamp(2.25rem,5.5dvh,3.75rem)]">
-      <motion.div className="shrink-0 text-center" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
-        <h2 className="font-orbitron text-lg tracking-[0.28em] text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.08)] sm:text-xl md:text-2xl">
-          SERVICIOS
-        </h2>
-        <p className="mx-auto mt-0.5 max-w-lg px-2 font-space text-[10px] text-white/72 sm:text-[11px]">
-          Desliza o usa flechas y puntos. Toca un servicio abajo o «Cotizar» en cada slide.
-        </p>
-      </motion.div>
+    <motion.div className="screen-shell flex min-h-0 flex-1 flex-col overflow-hidden">
+      <ScreenPageTitle>SERVICIOS</ScreenPageTitle>
+      <p className="screen-page-lead">
+        Desliza o usa flechas y puntos. Toca un servicio abajo o «Cotizar» en cada slide.
+      </p>
 
       <motion.div
         className="mt-1.5 flex shrink-0 justify-center sm:mt-2"
@@ -292,6 +289,6 @@ export default function ServiciosScreen() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
