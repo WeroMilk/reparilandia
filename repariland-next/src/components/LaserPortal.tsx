@@ -14,8 +14,8 @@ const ABSORB_MS = 280;
 const PROJECT_MS = 640;
 
 /**
- * Capa global fija: haz + destello por encima de contenido, dock, partículas y scanlines.
- * `pointer-events: none` no bloquea clics. Modales / boot usan z superior.
+ * Haz de reflector en capa de fondo (z-[8]): por debajo del stage (z-20), scanlines (z-12) y dock.
+ * Sin mezclarse visualmente con paneles vítreos del contenido (p. ej. Historia sin backdrop-blur fuerte).
  */
 export default function LaserPortal({ screenKey, contentReady = false }: LaserPortalProps) {
   const [phase, setPhase] = useState<Phase>('idle');
@@ -52,28 +52,31 @@ export default function LaserPortal({ screenKey, contentReady = false }: LaserPo
   }, [screenKey]);
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[10040] overflow-hidden" aria-hidden>
+    <div
+      className="pointer-events-none fixed inset-0 z-[8] overflow-hidden [&_*]:pointer-events-none"
+      aria-hidden
+    >
+      {/* Por debajo del scanline (z-12) y del contenido (z-20) */}
       {/* Haz idle */}
-      <div className="absolute inset-0 z-[1] flex justify-center opacity-[0.42] mix-blend-soft-light sm:opacity-[0.38] lg:opacity-[0.32]">
+      <motion.div className="absolute inset-0 z-[1] flex justify-center opacity-[0.48] mix-blend-soft-light sm:opacity-[0.44] lg:opacity-[0.38]">
         <div
           className="mt-0 h-[82%] w-full max-w-[42rem] shrink-0"
           style={{
-            clipPath: 'polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%)',
             background:
-              'linear-gradient(180deg, rgba(240,253,255,0.62) 0%, rgba(45,212,191,0.24) 20%, rgba(34,211,238,0.09) 48%, transparent 100%)',
+              'radial-gradient(ellipse 88% 72% at 50% 0%, rgba(240,253,255,0.5) 0%, rgba(45,212,191,0.18) 28%, rgba(34,211,238,0.06) 52%, transparent 78%)',
           }}
         />
-      </div>
-      <div className="absolute inset-0 z-[1] flex justify-center">
+      </motion.div>
+      <motion.div className="absolute inset-0 z-[1] flex justify-center">
         <div
           className="h-28 w-full max-w-[28rem] shrink-0 rounded-full bg-gradient-to-b from-cyan-100/55 via-teal-200/16 to-transparent blur-xl"
           style={{ marginTop: 0 }}
         />
-      </div>
+      </motion.div>
 
       <div className="relative z-[2] flex w-full justify-center">
         <svg
-          className="mt-[-0.35rem] block h-[min(32dvh,9.5rem)] w-full max-w-xl opacity-[0.30] mix-blend-plus-lighter max-sm:opacity-[0.24]"
+          className="mt-[-0.35rem] block h-[min(32dvh,9.5rem)] w-full max-w-xl opacity-[0.38] mix-blend-plus-lighter max-sm:opacity-[0.30]"
           viewBox="0 0 320 160"
           preserveAspectRatio="xMidYMin meet"
         >

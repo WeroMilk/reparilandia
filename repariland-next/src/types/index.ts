@@ -5,6 +5,10 @@ export interface Service {
   icon: string;
   title: string;
   description: string;
+  /** Primer slide: banner de carritos montables */
+  heroCarritos?: boolean;
+  /** Texto del botón de cotización (por defecto: Cotizar — {title}) */
+  quoteCta?: string;
 }
 
 export interface QuoteFormData {

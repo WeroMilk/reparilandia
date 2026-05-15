@@ -14,10 +14,16 @@ interface SystemBootLoaderProps {
 
 export default function SystemBootLoader({ onExitComplete }: SystemBootLoaderProps) {
   const [visible, setVisible] = useState(true);
+  /** Partículas solo en cliente: evita hydration mismatch (SSR vs navegador redondean estilos distinto). */
+  const [particlesReady, setParticlesReady] = useState(false);
 
   useEffect(() => {
     const id = window.setTimeout(() => setVisible(false), BOOT_MS);
     return () => window.clearTimeout(id);
+  }, []);
+
+  useEffect(() => {
+    setParticlesReady(true);
   }, []);
 
   return (
@@ -25,32 +31,29 @@ export default function SystemBootLoader({ onExitComplete }: SystemBootLoaderPro
       {visible && (
         <motion.div
           key="system-boot"
-          className="fixed inset-0 z-[10100] flex flex-col items-center justify-center bg-hologram-darker safe-pt"
+          className="pointer-events-none fixed inset-0 z-[10100] flex flex-col items-center justify-center bg-hologram-darker safe-pt"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         >
           <div className="absolute inset-0 grid-bg opacity-[0.18] pointer-events-none" />
-          {Array.from({ length: 22 }).map((_, i) => (
-            <span
-              key={i}
-              className="absolute rounded-full pointer-events-none"
-              style={{
-                left: `${5 + seeded(i, 1) * 90}%`,
-                top: `${5 + seeded(i, 2) * 90}%`,
-                width: 2 + seeded(i, 3) * 3,
-                height: 2 + seeded(i, 3) * 3,
-                opacity: 0.25 + seeded(i, 4) * 0.45,
-                background:
-                  seeded(i, 5) < 0.33
-                    ? '#00BFFF'
-                    : seeded(i, 5) < 0.66
-                      ? '#FFD700'
-                      : '#0077FF',
-                boxShadow: '0 0 6px rgba(0,191,255,0.45)',
-              }}
-            />
-          ))}
+          {particlesReady &&
+            Array.from({ length: 22 }).map((_, i) => (
+              <span
+                key={i}
+                className="absolute rounded-full pointer-events-none"
+                style={{
+                  left: `${(5 + seeded(i, 1) * 90).toFixed(4)}%`,
+                  top: `${(5 + seeded(i, 2) * 90).toFixed(4)}%`,
+                  width: `${(2 + seeded(i, 3) * 3).toFixed(2)}px`,
+                  height: `${(2 + seeded(i, 3) * 3).toFixed(2)}px`,
+                  opacity: Number((0.25 + seeded(i, 4) * 0.45).toFixed(6)),
+                  backgroundColor:
+                    seeded(i, 5) < 0.33 ? '#00BFFF' : seeded(i, 5) < 0.66 ? '#FFD700' : '#0077FF',
+                  boxShadow: '0 0 6px rgba(0,191,255,0.45)',
+                }}
+              />
+            ))}
 
           <div className="relative z-10 flex flex-col items-center gap-4 px-6">
             <div className="boot-spinner-ring flex h-16 w-16 items-center justify-center rounded-full border-2 border-hologram-cyan/35 border-t-hologram-cyan">

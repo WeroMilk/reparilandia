@@ -9,11 +9,11 @@ interface QuoteFormProps {
 }
 
 const shell =
-  'w-full max-w-2xl mx-auto rounded-3xl border border-white/10 bg-[rgba(12,12,18,0.94)] backdrop-blur-xl shadow-[0_32px_96px_rgba(0,0,0,0.65)] relative overflow-hidden ring-1 ring-white/[0.07]';
+  'w-full max-w-2xl mx-auto rounded-2xl sm:rounded-3xl border border-white/10 bg-[rgba(12,12,18,0.94)] backdrop-blur-xl shadow-[0_32px_96px_rgba(0,0,0,0.65)] relative overflow-hidden ring-1 ring-white/[0.07] flex flex-col max-h-[min(92dvh,calc(100dvh-1.25rem))] min-h-0';
 
-const labelClass = 'block font-space text-white text-sm font-medium mb-2 tracking-wide';
+const labelClass = 'block font-space text-white text-xs font-medium mb-1 sm:text-sm sm:mb-1.5 tracking-wide';
 const inputClass =
-  'w-full rounded-2xl border border-white/12 bg-black/35 px-4 py-3.5 md:py-4 text-white text-base placeholder:text-white font-space focus:outline-none transition-[border-color,box-shadow] focus:border-hologram-cyan/55 focus:shadow-[0_0_0_3px_rgba(0,191,255,0.12)]';
+  'w-full rounded-xl sm:rounded-2xl border border-white/12 bg-black/35 px-3 py-2.5 text-sm text-white placeholder:text-white font-space focus:outline-none transition-[border-color,box-shadow] focus:border-hologram-cyan/55 focus:shadow-[0_0_0_2px_rgba(0,191,255,0.12)] sm:px-4 sm:py-3';
 
 export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
   const [formData, setFormData] = useState({
@@ -46,7 +46,7 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
   if (submitted) {
     return (
       <motion.div
-        className={`${shell} p-8 md:p-12 text-center`}
+        className={`${shell} p-6 sm:p-8 md:p-10 text-center`}
         initial={{ scale: 0.94, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 320, damping: 28 }}
@@ -88,25 +88,25 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
       <div className="absolute top-0 right-0 w-px h-24 bg-gradient-to-b from-hologram-cyan/50 to-transparent" />
       <div className="absolute top-0 left-0 w-24 h-px bg-gradient-to-r from-hologram-cyan/50 to-transparent" />
 
-      <div className="p-6 sm:p-8 md:p-10 lg:p-12 max-h-[min(88vh,920px)] overflow-y-auto scrollbar-hide">
-        <div className="flex items-start justify-between gap-4 mb-6 md:mb-8">
-          <div className="min-w-0">
-            <p className="font-space text-white text-xs uppercase tracking-[0.2em] mb-1">Cotización</p>
-            <h3 className="font-orbitron text-lg sm:text-xl md:text-2xl text-holographic tracking-wider break-words">
-              {serviceName}
-            </h3>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="shrink-0 w-11 h-11 rounded-full border border-white/15 bg-white/5 flex items-center justify-center text-white hover:bg-white/10 hover:border-white/25 transition-colors"
-            aria-label="Cerrar"
-          >
-            <X className="w-5 h-5" />
-          </button>
+      <div className="flex shrink-0 items-start justify-between gap-3 border-b border-white/[0.06] px-4 pb-3 pt-4 sm:px-5 sm:pb-3.5 sm:pt-5">
+        <div className="min-w-0">
+          <p className="font-space text-white text-[10px] uppercase tracking-[0.2em] mb-0.5 sm:text-xs">Cotización</p>
+          <h3 className="font-orbitron text-base sm:text-lg md:text-xl text-holographic tracking-wider break-words leading-tight">
+            {serviceName}
+          </h3>
         </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="shrink-0 w-10 h-10 rounded-full border border-white/15 bg-white/5 flex items-center justify-center text-white hover:bg-white/10 hover:border-white/25 transition-colors"
+          aria-label="Cerrar"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
+      <div className="native-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3 scrollbar-hide sm:px-5 sm:py-4">
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
           <div>
             <label htmlFor="quote-nombre" className={labelClass}>
               Nombre
@@ -124,7 +124,7 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
               onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
             />
           </div>
-          <div className="grid sm:grid-cols-2 gap-5 md:gap-6">
+          <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label htmlFor="quote-email" className={labelClass}>
                 Correo electrónico
@@ -168,20 +168,20 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
               id="quote-descripcion"
               name="descripcion"
               required
-              rows={5}
+              rows={4}
               autoComplete="off"
               placeholder="Describe el problema o lo que necesitas reparar..."
-              className={`${inputClass} resize-none min-h-[140px] md:min-h-[160px]`}
+              className={`${inputClass} resize-none min-h-[96px] sm:min-h-[112px]`}
               value={formData.descripcion}
               onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
             />
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row gap-2.5 pb-1 pt-1 sm:gap-3 sm:pb-0">
             <motion.button
               type="submit"
               disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 py-3.5 md:py-4 rounded-2xl bg-white text-hologram-darker font-semibold text-sm md:text-base hover:shadow-[0_8px_32px_rgba(0,191,255,0.2)] disabled:opacity-50 disabled:pointer-events-none transition-shadow"
+              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-white text-hologram-darker font-semibold text-sm hover:shadow-[0_8px_32px_rgba(0,191,255,0.2)] disabled:opacity-50 disabled:pointer-events-none transition-shadow sm:rounded-2xl sm:py-3.5"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >
@@ -191,7 +191,7 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
             <motion.button
               type="button"
               onClick={handleWhatsApp}
-              className="flex items-center justify-center gap-2 px-6 py-3.5 md:py-4 rounded-2xl bg-emerald-600/20 border border-emerald-400/35 text-emerald-200 font-semibold text-sm hover:bg-emerald-600/30 transition-colors sm:shrink-0"
+              className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600/20 border border-emerald-400/35 text-emerald-200 font-semibold text-sm hover:bg-emerald-600/30 transition-colors sm:shrink-0 sm:rounded-2xl sm:py-3.5"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >

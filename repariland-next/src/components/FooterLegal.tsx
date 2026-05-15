@@ -23,7 +23,7 @@ export default function FooterLegal() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="legal-modal-title"
-            className="fixed inset-0 z-[10080] flex items-start justify-center overflow-y-auto overflow-x-hidden overscroll-y-contain px-3 py-6 sm:px-4 sm:py-8 md:px-6 safe-pt scrollbar-hide"
+            className="fixed inset-0 z-[13000] flex items-start justify-center overflow-y-auto overflow-x-hidden overscroll-y-contain px-3 py-6 sm:px-4 sm:py-8 md:px-6 safe-pt scrollbar-hide"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -184,18 +184,22 @@ export default function FooterLegal() {
 
   return (
     <>
-      <div className="relative z-30 w-full border-t border-white/[0.06] bg-transparent">
-        <div className="flex flex-col items-center justify-center gap-y-2.5 py-2.5 px-3 min-[400px]:px-4 sm:gap-y-2 lg:flex-row lg:flex-wrap lg:gap-x-4 lg:gap-y-0 lg:py-2">
-          <span className="w-full text-center font-space text-[10px] font-semibold uppercase tracking-[0.18em] text-white/85 min-[400px]:text-xs lg:w-auto lg:tracking-wide">
-            © {year} Reparilandia
+      <div className="dock-footer-rail relative z-30 w-full shrink-0 border-t border-white/[0.06] bg-transparent">
+        <div className="flex h-full flex-nowrap items-center justify-center gap-x-2 gap-y-0 px-3">
+          <span className="shrink-0 font-space text-[10px] font-semibold uppercase tracking-[0.16em] text-white/85">
+            © {year} REPARILANDIA
           </span>
-          <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 sm:gap-x-3">
+          <span className="text-white/35 select-none" aria-hidden>
+            ·
+          </span>
+          <div className="flex shrink-0 items-center justify-center gap-x-2">
             <button
               type="button"
+              data-dock-action="privacy"
               onClick={() => setModal('privacy')}
-              className="text-white/75 min-h-[40px] px-2 text-[10px] font-semibold uppercase tracking-wide transition-colors hover:text-white active:text-hologram-cyan min-[400px]:min-h-0 min-[400px]:text-xs min-[400px]:font-space min-[400px]:font-normal min-[400px]:normal-case min-[400px]:tracking-wide flex items-center justify-center gap-1 touch-manipulation rounded-lg lg:min-h-[44px] lg:min-w-[44px]"
+              className="flex h-8 items-center justify-center gap-1 px-1.5 font-space text-[10px] text-white/75 transition-colors hover:text-white active:text-hologram-cyan touch-manipulation"
             >
-              <Shield className="h-3.5 w-3.5 shrink-0 sm:w-3.5" />
+              <Shield className="h-3.5 w-3.5 shrink-0" />
               Privacidad
             </button>
             <span className="text-white/35 select-none" aria-hidden>
@@ -203,10 +207,11 @@ export default function FooterLegal() {
             </span>
             <button
               type="button"
+              data-dock-action="cookies"
               onClick={() => setModal('cookies')}
-              className="text-white/75 min-h-[40px] px-2 text-[10px] font-semibold uppercase tracking-wide transition-colors hover:text-white active:text-hologram-cyan min-[400px]:min-h-0 min-[400px]:text-xs min-[400px]:font-space min-[400px]:font-normal min-[400px]:normal-case min-[400px]:tracking-wide flex items-center justify-center gap-1 touch-manipulation rounded-lg lg:min-h-[44px] lg:min-w-[44px]"
+              className="flex h-8 items-center justify-center gap-1 px-1.5 font-space text-[10px] text-white/75 transition-colors hover:text-white active:text-hologram-cyan touch-manipulation"
             >
-              <Cookie className="h-3.5 w-3.5 shrink-0 sm:w-3.5" />
+              <Cookie className="h-3.5 w-3.5 shrink-0" />
               Cookies
             </button>
             <span className="text-white/35 select-none" aria-hidden>
@@ -214,11 +219,12 @@ export default function FooterLegal() {
             </span>
             <button
               type="button"
+              data-dock-action="legal"
               onClick={() => setModal('legal')}
-              className="text-white/75 min-h-[40px] px-2 text-[10px] font-semibold uppercase tracking-wide transition-colors hover:text-white active:text-hologram-cyan min-[400px]:min-h-0 min-[400px]:text-xs min-[400px]:font-space min-[400px]:font-normal min-[400px]:normal-case min-[400px]:tracking-wide flex items-center justify-center gap-1 touch-manipulation rounded-lg lg:min-h-[44px] lg:min-w-[44px]"
+              className="flex h-8 items-center justify-center gap-1 px-1.5 font-space text-[10px] text-white/75 transition-colors hover:text-white active:text-hologram-cyan touch-manipulation"
             >
-              <FileText className="h-3.5 w-3.5 shrink-0 sm:w-3.5" />
-              Legal
+              <FileText className="h-3.5 w-3.5 shrink-0" />
+              Términos
             </button>
           </div>
         </div>

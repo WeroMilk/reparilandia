@@ -4,6 +4,14 @@
   "engines": {
     "node": "20.x"
   },
+  "scripts": {
+    "dev": "npm run dev --prefix repariland-next",
+    "dev:clean": "npm run dev:clean --prefix repariland-next",
+    "dev:turbo": "npm run dev:turbo --prefix repariland-next",
+    "build": "npm run build --prefix repariland-next",
+    "start": "npm run start --prefix repariland-next",
+    "lint": "npm run lint --prefix repariland-next"
+  },
   "dependencies": {
     "next": "15.5.18"
   }

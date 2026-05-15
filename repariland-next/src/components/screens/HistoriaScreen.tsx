@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import { Star } from 'lucide-react';
 import { assetUrl } from '@/lib/assetUrl';
 
 const milestones = [
@@ -9,144 +8,198 @@ const milestones = [
   { year: '2026', text: 'Dos generaciones, una pasión por reparar el pasado.' },
 ];
 
-const storyC =
-  'Monito C — el alma del equipo. Le encantan los retos “imposibles” y cargar con los proyectos más pesados. Si algo está chueco, él lo endereza con paciencia y buen humor.';
+const storyPanel2 =
+  'Este es Carlos: la cara creativa del equipo. Llegó para convertir el taller en un lugar donde cada pieza cuenta una historia. Su energía impulsó la parte museística y el cariño por lo retro.';
 
-const storyA =
-  'Monito A — nuestro personaje principal. Conoce cada rincón del taller: desde consolas retro hasta la pieza más rara del museo. Para él, reparar es preservar historias.';
+const storyPanel3 =
+  'El guardián del sombrero representa la paciencia del maestro artesano: detalle fino, pulido y esmero en cada tornillo. Para él, ningún equipo es “solo metal”: todo tiene alma que vale la pena recuperar.';
 
-const storyB =
-  'Monito B — el detalle fino. Entre diagnósticos y mantenimiento personalizado, pone el ojo clínico en cada equipo. Si hay que explicar el “por qué”, él lo cuenta con calma.';
+const storyPanel4 =
+  'Con lentes y una sonrisa tranquila, este personaje encarna el lado técnico-claro: diagnósticos honestos y explicaciones que cualquiera puede entender. Reparar bien también es comunicar bien.';
 
-const storyAccents = {
-  c: 'border-violet-400/25 from-violet-950/25 shadow-[0_0_28px_-12px_rgba(167,139,250,0.2)]',
-  a: 'border-cyan-400/25 from-cyan-950/20 shadow-[0_0_28px_-12px_rgba(34,211,238,0.18)]',
-  b: 'border-amber-300/25 from-amber-950/15 shadow-[0_0_28px_-12px_rgba(251,191,36,0.15)]',
-} as const;
+/** Paneles opacos + borde azul tipo crayola / azure. */
+const historiaPanel =
+  'border border-[#41d9ff]/40 bg-black shadow-[0_0_32px_-16px_rgba(65,217,255,0.14)] ring-1 ring-inset ring-[#41d9ff]/14';
 
-function StoryPanel({
-  monitoSrc,
-  monitoAlt,
-  imgClassName,
-  text,
-  delay,
-  accent,
-}: {
-  monitoSrc: string;
-  monitoAlt: string;
-  imgClassName: string;
-  text: string;
-  delay: number;
-  accent: keyof typeof storyAccents;
-}) {
-  const ac = storyAccents[accent];
+/** Halo minimalista detrás de las caricaturas (azure crayola). */
+function HistoriaCharacterGlow({ className = '' }: { className?: string }) {
   return (
-    <motion.div
-      className={`group relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border bg-gradient-to-b to-black/35 p-3.5 ring-1 ring-inset ring-white/[0.06] backdrop-blur-sm sm:p-4.5 ${ac}`}
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: delay * 0.65, duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-    >
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/[0.07] to-transparent" aria-hidden />
-      <div className="relative z-10 flex shrink-0 justify-center px-0.5 pt-1.5 pb-0 sm:pt-2">
-        <img
-          src={assetUrl(monitoSrc)}
-          alt={monitoAlt}
-          className={`pointer-events-none w-auto object-contain object-top select-none drop-shadow-[0_16px_40px_rgba(0,0,0,0.52)] transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03] [transform:translateZ(0)] ${imgClassName}`}
-          draggable={false}
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
-      <p className="relative z-0 mt-2.5 min-h-0 flex-1 overflow-hidden font-space text-[11px] leading-relaxed text-white/90 sm:mt-3 sm:text-sm md:text-[0.9375rem] md:leading-relaxed">
-        {text}
-      </p>
-    </motion.div>
+    <span
+      aria-hidden
+      className={`pointer-events-none absolute left-1/2 top-[50%] z-0 aspect-[4/5] w-[min(100%,18.5rem)] max-w-[18.5rem] -translate-x-1/2 -translate-y-1/2 rounded-[48%] bg-[#41d9ff]/18 blur-[48px] sm:top-[48%] sm:w-[min(102%,19.5rem)] lg:top-[46%] lg:w-[min(108%,21rem)] lg:max-w-none xl:w-[min(112%,23rem)] ${className}`}
+    />
   );
 }
 
+function CutoutCharacter({
+  src,
+  alt,
+  className = '',
+  imgClassName = '',
+  bare = false,
+  knockOutWhiteBackdrop = false,
+  align = 'center',
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+  imgClassName?: string;
+  /** Sin panel detrás: PNG con transparencia real. */
+  bare?: boolean;
+  /** Fusiona rectángulos blancos del PNG con el fondo oscuro (solo el fondo plano). */
+  knockOutWhiteBackdrop?: boolean;
+  /** Alineación del recorte dentro del contenedor. */
+  align?: 'center' | 'end' | 'start';
+}) {
+  const wrap = bare
+    ? 'bg-transparent'
+    : knockOutWhiteBackdrop
+      ? 'bg-hologram-darker ring-0'
+      : 'bg-white/[0.06] ring-1 ring-inset ring-white/[0.12]';
+
+  const imgTreat =
+    knockOutWhiteBackdrop && !bare
+      ? 'mix-blend-multiply brightness-[1.38] contrast-[1.12] saturate-[1.06]'
+      : bare
+        ? ''
+        : 'brightness-[1.28] contrast-[1.12] saturate-[1.07]';
+
+  const alignCls =
+    align === 'end'
+      ? 'items-end justify-center'
+      : align === 'start'
+        ? 'items-start justify-center'
+        : 'items-center justify-center';
+
+  return (
+    <div className={`relative flex overflow-visible rounded-2xl ${alignCls} ${wrap} ${className}`}>
+      <img
+        src={assetUrl(src)}
+        alt={alt}
+        className={`pointer-events-none h-auto w-auto max-w-full select-none object-contain [image-rendering:auto] ${imgTreat} ${imgClassName}`}
+        draggable={false}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  );
+}
+
+function StoryCard({ src, alt, text }: { src: string; alt: string; text: string }) {
+  const characterStage =
+    'relative z-[1] flex h-[clamp(12.75rem,44vw,16.75rem)] w-full overflow-visible sm:h-[clamp(13.25rem,40vw,17.75rem)] lg:h-[clamp(13.5rem,34vw,18.25rem)] xl:h-[clamp(13.75rem,30vw,18.75rem)]';
+
+  return (
+    <div
+      className={`relative z-[1] flex h-full min-h-0 min-w-0 flex-col rounded-2xl p-3 pb-3 sm:p-4 sm:pb-3.5 ${historiaPanel}`}
+    >
+      <div className="relative z-[1] flex min-w-0 flex-col">
+        <div className={characterStage}>
+          <HistoriaCharacterGlow />
+          <CutoutCharacter
+            src={src}
+            alt={alt}
+            bare
+            align="end"
+            className="absolute inset-0 z-[1] flex items-end justify-center rounded-none bg-transparent py-0"
+            imgClassName="max-h-[148%] max-w-[min(138%,27rem)] object-contain object-bottom sm:max-h-[152%] sm:max-w-[min(142%,29rem)] lg:max-h-[162%] lg:max-w-[min(148%,32rem)] xl:max-h-[174%] xl:max-w-[min(155%,34rem)]"
+          />
+        </div>
+        <p className="relative z-[1] mt-2 shrink-0 font-space text-[11px] leading-snug text-white/90 sm:mt-2.5 sm:text-xs sm:leading-snug md:text-[0.8125rem] md:leading-snug">
+          {text}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+
 export default function HistoriaScreen() {
   return (
-    <div className="screen-shell flex min-h-0 flex-1 flex-col overflow-hidden">
-      <motion.div
-        className="shrink-0 text-center"
-        initial={{ opacity: 0, y: -8 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <h2 className="font-orbitron text-xl tracking-[0.35em] text-white drop-shadow-[0_0_24px_rgba(255,255,255,0.12)] sm:text-2xl md:text-3xl">
+    <div className="screen-shell flex min-h-0 flex-1 flex-col overflow-visible">
+      <motion.div className="shrink-0 text-center" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
+        <h2 className="font-orbitron text-lg tracking-[0.28em] text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.08)] sm:text-xl md:text-2xl">
           HISTORIA
         </h2>
-        <div className="mx-auto mt-1.5 h-px w-24 bg-gradient-to-r from-transparent via-cyan-300/70 to-transparent sm:w-32" />
+        <div className="mx-auto mt-1.5 h-px w-24 bg-gradient-to-r from-transparent via-amber-200/70 to-transparent sm:w-32" />
       </motion.div>
 
-      <div className="mt-2 flex min-h-0 flex-1 flex-col gap-2.5 overflow-hidden pb-1 sm:mt-3 sm:gap-3 lg:mt-4 lg:flex-row lg:items-stretch lg:gap-4">
+      <div className="relative mt-8 flex min-h-0 flex-1 flex-col sm:mt-10 lg:mt-14">
         <motion.div
-          className="relative flex min-h-0 shrink-0 flex-col overflow-hidden rounded-2xl border border-cyan-400/25 bg-gradient-to-br from-cyan-950/50 via-slate-950/40 to-black/50 p-3.5 shadow-[0_0_32px_-14px_rgba(34,211,238,0.2)] ring-1 ring-inset ring-white/[0.05] backdrop-blur-md sm:p-4.5 lg:min-w-0 lg:max-w-[32%] lg:flex-[1.12] xl:flex-[1.02]"
-          initial={{ opacity: 0, x: -14 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+          className="mx-auto grid min-h-0 w-full max-w-[1360px] flex-1 grid-cols-1 items-start gap-3 px-2 sm:gap-4 sm:px-4 lg:items-stretch lg:gap-4 lg:px-6 lg:[grid-template-columns:minmax(0,1.42fr)_minmax(0,0.86fr)_minmax(0,0.86fr)_minmax(0,0.86fr)] xl:gap-5"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="flex items-start gap-3 sm:gap-3.5">
-            <div className="relative shrink-0">
-              <div className="rounded-2xl bg-gradient-to-b from-cyan-400/12 via-white/[0.05] to-transparent p-1.5 ring-1 ring-cyan-300/30 shadow-[0_18px_48px_-12px_rgba(34,211,238,0.4)]">
+          {/* Caja 1: móvil = alien arriba + línea del tiempo abajo; lg = fila más ancha + alien escalado al estilo StoryCard */}
+          <div
+            className={`relative z-[1] flex h-full min-h-0 w-full min-w-0 flex-col gap-3 overflow-visible rounded-2xl p-3 sm:gap-4 sm:p-4 lg:gap-3 ${historiaPanel}`}
+          >
+            <div className="relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-visible lg:flex-row lg:items-stretch lg:gap-3">
+              <div className="relative z-[8] flex h-[min(42vh,21.5rem)] w-full shrink-0 items-end justify-center overflow-visible px-0 pt-0 sm:h-[min(44vh,23rem)] lg:h-[clamp(13.5rem,28vw,18.25rem)] lg:min-h-0 lg:w-[46%] lg:max-w-none lg:shrink-0 lg:flex-none lg:self-stretch lg:py-1 xl:h-[clamp(13.75rem,24vw,18.75rem)]">
+                <HistoriaCharacterGlow className="left-1/2 top-1/2 z-[7] w-[min(95%,18rem)] blur-[42px] sm:w-[min(98%,19rem)] lg:w-[min(112%,24rem)] xl:w-[min(118%,26rem)]" />
                 <img
-                  src={assetUrl('/assets/historia-et.png')}
-                  alt="E.T. — ícono de la historia de Reparilandia"
-                  className="h-[min(42vw,11rem)] w-auto max-w-[8.5rem] object-contain object-bottom [transform:translateZ(0)] sm:h-[min(36vw,12.5rem)] sm:max-w-[9.5rem] md:h-[min(32vw,13.5rem)] md:max-w-[10rem]"
+                  src={assetUrl('/assets/historia-linea-tiempo.png')}
+                  alt="E.T. con playera Reparilandia"
+                  className="relative z-[9] pointer-events-none h-auto w-full max-w-full select-none object-contain object-bottom mix-blend-screen brightness-[1.14] contrast-[1.08] saturate-[1.05] [image-rendering:auto] max-h-[min(100%,18rem)] sm:max-h-[min(100%,19rem)] lg:max-h-[162%] lg:max-w-[min(148%,32rem)] xl:max-h-[174%] xl:max-w-[min(155%,34rem)]"
+                  draggable={false}
                   loading="lazy"
                   decoding="async"
-                  draggable={false}
                 />
               </div>
-            </div>
-            <div className="min-w-0 flex-1">
-              <h3 className="mb-3 flex items-center gap-2 font-orbitron text-xs tracking-[0.18em] text-amber-100/95 sm:text-sm">
-                <Star className="h-4 w-4 shrink-0 text-amber-300/90" />
-                LÍNEA DEL TIEMPO
-              </h3>
-              <div className="flex max-h-[min(42dvh,22rem)] flex-col gap-2.5 overflow-hidden sm:max-h-none lg:max-h-[min(56dvh,32rem)]">
-                {milestones.map((m, i) => (
-                  <div key={i} className="flex items-start gap-2 sm:gap-3">
-                    <span className="w-11 shrink-0 pt-0.5 text-right font-orbitron text-xs font-semibold text-cyan-200 sm:w-12 sm:text-sm">
-                      {m.year}
-                    </span>
-                    <p className="min-w-0 flex-1 border-l border-cyan-400/30 pl-2.5 font-space text-[11px] leading-snug text-white/92 sm:pl-3 sm:text-sm md:text-[0.9375rem] md:leading-snug">
-                      {m.text}
-                    </p>
-                  </div>
-                ))}
+
+              <div className="relative z-[15] flex min-h-0 min-w-0 flex-1 flex-col lg:basis-0 lg:overflow-hidden">
+                <h3 className="mb-2 flex min-w-0 shrink-0 items-center gap-2 font-orbitron text-[10px] tracking-[0.2em] text-amber-100/95 sm:text-xs">
+                  <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.65)]" aria-hidden />
+                  <span className="min-w-0 break-words">LÍNEA DEL TIEMPO</span>
+                </h3>
+                <div className="relative flex min-h-0 min-w-0 flex-1 flex-col gap-2.5 overflow-y-auto overflow-x-hidden overscroll-contain py-0.5 pl-1 pr-0.5 sm:gap-3 scrollbar-hide">
+                  <div
+                    className="absolute bottom-1 left-[0.45rem] top-7 w-0 border-l border-dashed border-cyan-400/45"
+                    aria-hidden
+                  />
+                  {milestones.map((m, i) => (
+                    <div key={i} className="relative flex min-w-0 items-start gap-2 pl-6 sm:gap-3">
+                      <span
+                        className="absolute left-0 top-1.5 z-[1] h-2 w-2 shrink-0 rounded-full border border-cyan-300/70 bg-[#0b1a1f] shadow-[0_0_10px_rgba(34,211,238,0.35)]"
+                        aria-hidden
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="font-orbitron text-[10px] font-semibold tabular-nums tracking-[0.14em] text-cyan-200/95 sm:text-[11px]">
+                          {m.year}
+                        </p>
+                        <p className="mt-0.5 break-words font-space text-[10px] leading-snug text-white/88 sm:text-[11px] sm:leading-snug md:text-xs">
+                          {m.text}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </motion.div>
 
-        <div className="flex min-h-0 flex-1 flex-col gap-2.5 overflow-hidden sm:gap-3 lg:flex-row lg:gap-3.5">
-          <StoryPanel
-            accent="c"
-            monitoSrc="/assets/historia-monito-c.png"
-            monitoAlt="Monito C"
-            imgClassName="max-h-[min(64vw,14.5rem)] max-w-[min(92%,13.5rem)] sm:max-h-[16.75rem] sm:max-w-[14rem] md:max-h-[18rem] md:max-w-[14.5rem]"
-            text={storyC}
-            delay={0.06}
+          <StoryCard
+            src="/assets/historia-panel-2.png"
+            alt="Integrante del equipo Reparilandia, pelo largo en ponytail"
+            text={storyPanel2}
           />
-          <StoryPanel
-            accent="a"
-            monitoSrc="/assets/historia-monito-a.png"
-            monitoAlt="Monito A"
-            imgClassName="max-h-[min(62vw,14rem)] max-w-[min(94%,13.75rem)] sm:max-h-[16.25rem] sm:max-w-[14.25rem] md:max-h-[17.5rem] md:max-w-[14.75rem]"
-            text={storyA}
-            delay={0.1}
+          <StoryCard
+            src="/assets/historia-panel-3.png"
+            alt="Integrante del equipo con sombrero y barba"
+            text={storyPanel3}
           />
-          <StoryPanel
-            accent="b"
-            monitoSrc="/assets/historia-monito-b.png"
-            monitoAlt="Monito B"
-            imgClassName="max-h-[min(64vw,14.5rem)] max-w-[min(90%,13.25rem)] sm:max-h-[16.75rem] sm:max-w-[13.75rem] md:max-h-[18rem] md:max-w-[14.25rem]"
-            text={storyB}
-            delay={0.14}
+          <StoryCard
+            src="/assets/historia-panel-4.png"
+            alt="Integrante del equipo con gafas y playera Reparilandia"
+            text={storyPanel4}
           />
-        </div>
+        </motion.div>
       </div>
+
+      <p className="sr-only">
+        Cuatro paneles: línea del tiempo del taller Reparilandia y retratos del equipo con historias breves.
+      </p>
     </div>
   );
 }

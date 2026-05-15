@@ -21,7 +21,7 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
-  title: 'Reparilandia — Taller de reparaciones y museo de coleccionismo',
+  title: 'Reparilandia | Hmo, Son.',
   description:
     'Desde 1985 reparando lo que otros dan por perdido. Taller y museo de coleccionismo en Hermosillo, Sonora, México.',
 };
@@ -44,6 +44,7 @@ export default function RootLayout({
     <html lang="es">
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} ${orbitron.variable} font-sans antialiased`}
+        style={{ backgroundColor: '#050508', color: '#fafafa' }}
       >
         {children}
       </body>
