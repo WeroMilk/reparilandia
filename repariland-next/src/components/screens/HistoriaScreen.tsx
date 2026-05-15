@@ -118,7 +118,7 @@ export default function HistoriaScreen() {
         >
           {/* Caja 1: móvil = alien arriba + línea del tiempo abajo; lg = fila más ancha + alien escalado al estilo StoryCard */}
           <div
-            className={`relative z-[1] flex h-full min-h-0 w-full min-w-0 flex-col gap-2.5 overflow-visible rounded-2xl p-3 sm:gap-3 sm:p-3.5 lg:gap-2.5 ${historiaPanel}`}
+            className={`relative z-[1] flex h-full min-h-0 w-full min-w-0 flex-col gap-2.5 overflow-hidden rounded-2xl p-3 sm:gap-3 sm:p-3.5 lg:gap-2.5 ${historiaPanel}`}
           >
             <motion.div className="relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col gap-2.5 overflow-visible sm:gap-3 lg:flex-row lg:items-stretch lg:gap-3">
               <motion.div className="historia-spot-glow historia-spot-glow--et relative z-[8] flex h-[min(36vh,19rem)] w-full shrink-0 items-end justify-center overflow-visible px-0 pt-0 sm:h-[min(38vh,20rem)] lg:h-full lg:min-h-[clamp(10.75rem,26vw,14.75rem)] lg:w-[46%] lg:max-w-none lg:flex-none lg:self-stretch xl:min-h-[clamp(11rem,22vw,15.25rem)]">

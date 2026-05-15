@@ -39,6 +39,7 @@ export default function ContactoScreen() {
   const innerSection = 'rounded-lg border border-white/[0.1] bg-[#0f0f16] p-1 sm:p-1';
 
   const MONITO_SOMBRERO = '/assets/contacto-monito-izq.png';
+  const ILUSTRACION_CONTACTO = '/assets/contacto-ilustracion-recuerdos.png';
 
   const socialBtn =
     'flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-white/80 transition-colors hover:border-cyan-400/35 hover:bg-white/[0.1] hover:text-cyan-100 touch-manipulation sm:h-9 sm:w-9';
@@ -51,7 +52,7 @@ export default function ContactoScreen() {
       </p>
 
       <div className="flex min-h-0 flex-1 flex-col justify-center overflow-x-clip overflow-y-visible pb-1 pt-2 sm:overflow-x-visible sm:pb-2 sm:pt-2 lg:pt-3">
-        <div className="mx-auto grid w-full min-w-0 max-w-full shrink-0 grid-cols-1 items-start justify-items-stretch gap-x-2.5 gap-y-2 px-1 sm:grid-cols-2 sm:gap-x-3 sm:gap-y-3 sm:px-0 md:max-w-full lg:gap-x-4 xl:gap-x-5">
+        <div className="mx-auto mt-4 grid w-full min-w-0 max-w-full shrink-0 grid-cols-1 items-start justify-items-stretch gap-x-2.5 gap-y-2 px-1 sm:mt-5 sm:grid-cols-2 sm:gap-x-3 sm:gap-y-3 sm:px-0 md:max-w-full lg:mt-6 lg:gap-x-4 xl:gap-x-5">
           {/* Izquierda: datos de contacto; caricatura detrás del panel, asomada por arriba */}
           <div className="relative flex w-full min-w-0 flex-col overflow-visible sm:max-w-none">
             <img
@@ -169,6 +170,16 @@ export default function ContactoScreen() {
                 <ContactForm embedded />
               </div>
             </motion.div>
+            <div className="relative z-[11] mt-2 w-full shrink-0 sm:mt-3">
+              <img
+                src={assetUrl(ILUSTRACION_CONTACTO)}
+                alt=""
+                className="pointer-events-none block w-full max-w-full select-none object-contain object-center drop-shadow-[0_12px_28px_rgba(0,0,0,0.55)] [image-rendering:auto]"
+                draggable={false}
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
           </div>
         </div>
       </div>

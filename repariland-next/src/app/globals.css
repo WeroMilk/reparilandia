@@ -426,6 +426,30 @@ select:focus-visible {
   top: 56%;
 }
 
+/* Halo detrás de E.T.: visible pero moderado; queda recortado por overflow del panel. */
+.historia-spot-glow--et::before {
+  width: 10.5rem;
+  height: 11.5rem;
+  opacity: 0.48;
+  transform: translate(-50%, -50%) rotate(-2deg) scale(1.06);
+  background:
+    radial-gradient(ellipse 34% 30% at 50% 42%, rgba(255, 252, 232, 0.82) 0%, rgba(255, 236, 145, 0.38) 42%, transparent 72%),
+    radial-gradient(ellipse 42% 44% at 36% 52%, rgba(255, 222, 95, 0.34) 0%, transparent 72%),
+    radial-gradient(ellipse 40% 42% at 66% 48%, rgba(255, 205, 72, 0.28) 0%, transparent 70%),
+    radial-gradient(ellipse 58% 52% at 50% 68%, rgba(255, 188, 55, 0.14) 0%, transparent 78%);
+}
+
+.historia-spot-glow--et::after {
+  width: 14rem;
+  height: 12.5rem;
+  opacity: 0.34;
+  filter: blur(16px) brightness(1.05);
+  transform: translate(-50%, -50%) rotate(1deg) scale(1.05);
+  background:
+    radial-gradient(ellipse 88% 80% at 50% 48%, rgba(255, 228, 105, 0.2) 0%, rgba(255, 192, 60, 0.06) 50%, transparent 78%),
+    radial-gradient(ellipse 42% 38% at 30% 55%, rgba(255, 212, 85, 0.09) 0%, transparent 74%);
+}
+
 @media (min-width: 1024px) {
   .historia-spot-glow--et::before,
   .historia-spot-glow--et::after {
@@ -433,11 +457,17 @@ select:focus-visible {
   }
 
   .historia-spot-glow--et::before {
-    transform: translate(-50%, -50%) rotate(-2deg) scale(1.14);
+    width: 11.75rem;
+    height: 13rem;
+    transform: translate(-50%, -50%) rotate(-2deg) scale(1.12);
   }
 
   .historia-spot-glow--et::after {
-    transform: translate(-50%, -50%) rotate(1deg) scale(1.14);
+    width: 16rem;
+    height: 14rem;
+    opacity: 0.38;
+    filter: blur(18px) brightness(1.06);
+    transform: translate(-50%, -50%) rotate(1deg) scale(1.1);
   }
 }
 

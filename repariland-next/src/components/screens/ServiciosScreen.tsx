@@ -175,7 +175,7 @@ export default function ServiciosScreen() {
 
       <div className="mt-1.5 flex min-h-0 flex-1 flex-col justify-center gap-1.5 overflow-hidden pb-0 sm:mt-2 sm:gap-2">
         <motion.div
-          className="relative mx-auto flex h-[min(46dvh,22.5rem)] w-full max-w-4xl shrink-0 flex-col overflow-hidden rounded-2xl border border-cyan-400/20 bg-hologram-darker shadow-[0_0_40px_-12px_rgba(34,211,238,0.18)] ring-1 ring-inset ring-white/[0.06] sm:h-[min(48dvh,24rem)] lg:h-[min(50dvh,25.5rem)]"
+          className="relative mx-auto flex h-[min(46dvh,22.5rem)] w-full max-w-4xl shrink-0 flex-col overflow-hidden rounded-2xl border border-cyan-400/50 bg-hologram-darker shadow-[0_0_44px_-10px_rgba(34,211,238,0.32)] ring-1 ring-inset ring-cyan-400/22 sm:h-[min(48dvh,24rem)] lg:h-[min(50dvh,25.5rem)]"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.08 }}
