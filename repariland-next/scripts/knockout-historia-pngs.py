@@ -9,9 +9,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 FILES = [
     ROOT / "public" / "assets" / "historia-linea-tiempo.png",
-    ROOT / "public" / "assets" / "historia-panel-2.png",
-    ROOT / "public" / "assets" / "historia-panel-3.png",
-    # panel-4: camiseta negra; el knockout desde esquinas borra parte del torso.
+    # paneles 2–4: playera negra; el knockout borra el torso. Usar mix-blend-lighten en UI.
 ]
 TOL = 38
 

@@ -92,9 +92,7 @@ function StoryCard({
   text: string;
   blendLighten?: boolean;
 }) {
-  const imgClass = blendLighten
-    ? `${storyCardCharacterImg} mix-blend-lighten`
-    : storyCardCharacterImg;
+  const imgClass = `${storyCardCharacterImg}${blendLighten ? ' mix-blend-lighten' : ''}`;
 
   return (
     <div
@@ -183,11 +181,13 @@ export default function HistoriaScreen() {
             src="/assets/historia-panel-2.png"
             alt="Omar Lugo, integrante del equipo Reparilandia, pelo largo en ponytail"
             text={storyPanel2}
+            blendLighten
           />
           <StoryCard
             src="/assets/historia-panel-3.png"
             alt="Carlos Díaz, integrante del equipo con sombrero y barba"
             text={storyPanel3}
+            blendLighten
           />
           <StoryCard
             src="/assets/historia-panel-4.png"
