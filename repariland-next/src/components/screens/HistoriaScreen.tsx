@@ -22,7 +22,7 @@ const storyPanel4 =
 const historiaPanel = 'historia-panel';
 
 const historiaCharacterSpot =
-  'relative z-[1] flex w-full items-end justify-center overflow-visible leading-[0]';
+  'relative z-[1] isolate mx-auto flex w-full max-w-[88%] items-end justify-center overflow-visible leading-[0] pt-1.5 sm:max-w-[90%] sm:pt-2';
 
 function CutoutCharacter({
   src,
@@ -81,10 +81,24 @@ function CutoutCharacter({
 const storyCardCharacterImg =
   '!max-w-none w-auto object-contain object-bottom max-h-[min(10.5rem,40vw)] sm:max-h-[min(11.25rem,36vw)] lg:max-h-[12.25rem] xl:max-h-[12.75rem]';
 
-function StoryCard({ src, alt, text }: { src: string; alt: string; text: string }) {
+function StoryCard({
+  src,
+  alt,
+  text,
+  blendLighten = false,
+}: {
+  src: string;
+  alt: string;
+  text: string;
+  blendLighten?: boolean;
+}) {
+  const imgClass = blendLighten
+    ? `${storyCardCharacterImg} mix-blend-lighten`
+    : storyCardCharacterImg;
+
   return (
     <div
-      className={`relative z-[1] flex h-full min-h-0 min-w-0 flex-col rounded-2xl p-3 pb-2.5 sm:p-3.5 sm:pb-3 ${historiaPanel}`}
+      className={`relative z-[1] flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl px-3 pb-2.5 pt-3.5 sm:px-3.5 sm:pb-3 sm:pt-4 ${historiaPanel}`}
     >
       <div className="relative z-[1] flex min-h-0 min-w-0 flex-col gap-1.5">
         <div className={historiaCharacterSpot}>
@@ -94,7 +108,7 @@ function StoryCard({ src, alt, text }: { src: string; alt: string; text: string 
             bare
             align="end"
             className="flex w-full items-end justify-center rounded-none bg-transparent py-0"
-            imgClassName={storyCardCharacterImg}
+            imgClassName={imgClass}
           />
         </div>
         <p className="relative z-[1] shrink-0 pt-0 font-space text-[11px] leading-snug text-white/90 sm:text-xs sm:leading-snug md:text-[0.8125rem] md:leading-snug">
@@ -120,7 +134,7 @@ export default function HistoriaScreen() {
         >
           {/* Caja 1: móvil = alien arriba + línea del tiempo abajo; lg = fila más ancha + alien escalado al estilo StoryCard */}
           <div
-            className={`relative z-[1] flex h-full min-h-0 w-full min-w-0 flex-col gap-2.5 overflow-hidden rounded-2xl p-3 sm:gap-3 sm:p-3.5 lg:gap-2.5 ${historiaPanel}`}
+            className={`relative z-[1] flex h-full min-h-0 w-full min-w-0 flex-col gap-2.5 overflow-hidden rounded-2xl px-3 pb-3 pt-3.5 sm:gap-3 sm:px-3.5 sm:pb-3.5 sm:pt-4 lg:gap-2.5 lg:pt-3.5 ${historiaPanel}`}
           >
             <motion.div className="relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col gap-2.5 overflow-visible sm:gap-3 lg:flex-row lg:items-stretch lg:gap-3">
               <motion.div className="relative z-[8] flex h-[min(36vh,19rem)] w-full shrink-0 items-end justify-center overflow-visible px-0 pt-0 sm:h-[min(38vh,20rem)] lg:h-full lg:min-h-[clamp(10.75rem,26vw,14.75rem)] lg:w-[46%] lg:max-w-none lg:flex-none lg:self-stretch xl:min-h-[clamp(11rem,22vw,15.25rem)]">
@@ -179,6 +193,7 @@ export default function HistoriaScreen() {
             src="/assets/historia-panel-4.png"
             alt="Francisco Medina, integrante del equipo con gafas y playera Reparilandia"
             text={storyPanel4}
+            blendLighten
           />
         </motion.div>
       </motion.div>

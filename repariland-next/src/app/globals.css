@@ -382,20 +382,16 @@ select:focus-visible {
   border: 1px solid rgba(65, 217, 255, 0.4);
   background: #000;
   box-shadow: 0 0 32px -16px rgba(65, 217, 255, 0.14);
-  outline: 1px solid rgba(65, 217, 255, 0.14);
-  outline-offset: -1px;
   touch-action: manipulation;
   transition:
     border-color 0.28s ease,
-    box-shadow 0.28s ease,
-    outline-color 0.28s ease;
+    box-shadow 0.28s ease;
 }
 
 .historia-panel:hover,
 .historia-panel:active,
 .historia-panel:focus-within {
   border-color: rgba(255, 220, 70, 0.9);
-  outline-color: rgba(255, 210, 50, 0.5);
   box-shadow:
     0 0 40px -10px rgba(255, 200, 50, 0.38),
     0 0 0 1px rgba(255, 215, 0, 0.22);
