@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Send, MessageCircle, CheckCircle } from 'lucide-react';
+import { X, Send, MessageCircle, CheckCircle, ImagePlus } from 'lucide-react';
 import { saveQuote } from '@/lib/formActions';
 
 interface QuoteFormProps {
@@ -23,21 +23,54 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
     servicio_seleccionado: serviceName,
     descripcion: '',
   });
+  const [foto, setFoto] = useState<File | null>(null);
+  const [fotoPreview, setFotoPreview] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const fotoInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setFoto(null);
+      setFotoPreview(null);
+      return;
+    }
+    setFoto(file);
+    setFotoPreview(URL.createObjectURL(file));
+    setSubmitError(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!foto) {
+      setSubmitError('Sube una fotografía del equipo para continuar.');
+      return;
+    }
+
     setLoading(true);
-    const result = await saveQuote(formData);
+    setSubmitError(null);
+
+    const payload = new FormData();
+    payload.append('nombre', formData.nombre);
+    payload.append('email', formData.email);
+    payload.append('telefono', formData.telefono);
+    payload.append('servicio_seleccionado', formData.servicio_seleccionado);
+    payload.append('descripcion', formData.descripcion);
+    payload.append('foto', foto);
+
+    const result = await saveQuote(payload);
     setLoading(false);
     if (result.success) {
       setSubmitted(true);
+    } else {
+      setSubmitError(result.error ?? 'No se pudo enviar la solicitud. Intenta de nuevo.');
     }
   };
 
   const handleWhatsApp = () => {
-    const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '520000000000';
+    const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '526622383656';
     const message = `Hola Reparilandia! Solicito cotización para: ${serviceName}\nNombre: ${formData.nombre}\nTel: ${formData.telefono}\nDescripción: ${formData.descripcion}`;
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
@@ -85,16 +118,16 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
       exit={{ scale: 0.94, y: 16, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 320, damping: 30 }}
     >
-      <div className="absolute top-0 right-0 w-px h-24 bg-gradient-to-b from-hologram-cyan/50 to-transparent" />
-      <div className="absolute top-0 left-0 w-24 h-px bg-gradient-to-r from-hologram-cyan/50 to-transparent" />
+      <motion.div className="absolute top-0 right-0 w-px h-24 bg-gradient-to-b from-hologram-cyan/50 to-transparent" />
+      <motion.div className="absolute top-0 left-0 w-24 h-px bg-gradient-to-r from-hologram-cyan/50 to-transparent" />
 
-      <div className="flex shrink-0 items-start justify-between gap-3 border-b border-white/[0.06] px-4 pb-3 pt-4 sm:px-5 sm:pb-3.5 sm:pt-5">
-        <div className="min-w-0">
+      <motion.div className="flex shrink-0 items-start justify-between gap-3 border-b border-white/[0.06] px-4 pb-3 pt-4 sm:px-5 sm:pb-3.5 sm:pt-5">
+        <motion.div className="min-w-0">
           <p className="font-space text-white text-[10px] uppercase tracking-[0.2em] mb-0.5 sm:text-xs">Cotización</p>
           <h3 className="font-orbitron text-base sm:text-lg md:text-xl text-holographic tracking-wider break-words leading-tight">
             {serviceName}
           </h3>
-        </div>
+        </motion.div>
         <button
           type="button"
           onClick={onClose}
@@ -103,11 +136,11 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
         >
           <X className="w-5 h-5" />
         </button>
-      </div>
+      </motion.div>
 
-      <div className="native-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3 scrollbar-hide sm:px-5 sm:py-4">
+      <motion.div className="native-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3 scrollbar-hide sm:px-5 sm:py-4">
         <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-          <div>
+          <motion.div>
             <label htmlFor="quote-nombre" className={labelClass}>
               Nombre
             </label>
@@ -123,9 +156,9 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
               value={formData.nombre}
               onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
             />
-          </div>
-          <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
-            <div>
+          </motion.div>
+          <motion.div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
+            <motion.div>
               <label htmlFor="quote-email" className={labelClass}>
                 Correo electrónico
               </label>
@@ -141,8 +174,8 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div>
               <label htmlFor="quote-telefono" className={labelClass}>
                 Teléfono
               </label>
@@ -158,9 +191,9 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
                 value={formData.telefono}
                 onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
               />
-            </div>
-          </div>
-          <div>
+            </motion.div>
+          </motion.div>
+          <motion.div>
             <label htmlFor="quote-descripcion" className={labelClass}>
               Descripción del problema
             </label>
@@ -175,9 +208,49 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
               value={formData.descripcion}
               onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
             />
-          </div>
+          </motion.div>
 
-          <div className="flex flex-col sm:flex-row gap-2.5 pb-1 pt-1 sm:gap-3 sm:pb-0">
+          <motion.div>
+            <label htmlFor="quote-foto" className={labelClass}>
+              Fotografía del equipo <span className="text-hologram-cyan/90">(obligatoria)</span>
+            </label>
+            <input
+              ref={fotoInputRef}
+              id="quote-foto"
+              name="foto"
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              required
+              className="sr-only"
+              onChange={handleFotoChange}
+            />
+            <button
+              type="button"
+              onClick={() => fotoInputRef.current?.click()}
+              className={`${inputClass} flex w-full items-center justify-center gap-2 border-dashed py-4 text-white/80 hover:border-hologram-cyan/45 hover:text-white`}
+            >
+              <ImagePlus className="h-5 w-5 shrink-0 text-hologram-cyan/90" />
+              {foto ? foto.name : 'Seleccionar imagen (máx. 5 MB)'}
+            </button>
+            {fotoPreview && (
+              <img
+                src={fotoPreview}
+                alt="Vista previa del equipo"
+                className="mt-2 max-h-36 w-full rounded-xl border border-white/12 object-contain bg-black/40"
+              />
+            )}
+            <p className="mt-1.5 font-space text-[10px] leading-snug text-white/55 sm:text-[11px]">
+              La imagen se enviará junto con tus datos al correo del taller para agilizar la cotización.
+            </p>
+          </motion.div>
+
+          {submitError && (
+            <p className="font-space text-xs text-red-300/95" role="alert">
+              {submitError}
+            </p>
+          )}
+
+          <motion.div className="flex flex-col sm:flex-row gap-2.5 pb-1 pt-1 sm:gap-3 sm:pb-0">
             <motion.button
               type="submit"
               disabled={loading}
@@ -198,9 +271,9 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
               <MessageCircle className="w-5 h-5" />
               WhatsApp
             </motion.button>
-          </div>
+          </motion.div>
         </form>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }

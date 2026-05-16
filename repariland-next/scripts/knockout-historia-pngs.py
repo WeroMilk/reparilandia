@@ -11,7 +11,7 @@ FILES = [
     ROOT / "public" / "assets" / "historia-linea-tiempo.png",
     ROOT / "public" / "assets" / "historia-panel-2.png",
     ROOT / "public" / "assets" / "historia-panel-3.png",
-    ROOT / "public" / "assets" / "historia-panel-4.png",
+    # panel-4: camiseta negra; el knockout desde esquinas borra parte del torso.
 ]
 TOL = 38
 

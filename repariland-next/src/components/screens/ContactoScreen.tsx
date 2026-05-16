@@ -16,16 +16,26 @@ import { assetUrl } from '@/lib/assetUrl';
 
 const DEFAULT_WORKSHOP_ADDRESS = 'Hermosillo, Sonora, México';
 
+const CONTACT = {
+  email: 'reparilandia@hotmail.com',
+  telefonoDisplay: '(662) 355-5470',
+  telefonoTel: '+526623555470',
+  whatsappDisplay: '(662) 238-3656',
+  whatsappWa: '526622383656',
+  facebook: 'https://www.facebook.com/reparilandia/?locale=es_LA',
+  instagram: 'https://www.instagram.com/reparilandia/',
+  youtube: 'https://www.youtube.com/channel/UCmngpD5f7isaY3CqSELmxlg?app=desktop',
+} as const;
+
 export default function ContactoScreen() {
   const handleWhatsApp = () => {
-    const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '520000000000';
+    const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || CONTACT.whatsappWa;
     const message =
       '¡Hola, Reparilandia! Me gustaría recibir más información sobre sus servicios.';
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
-  const email = 'hola@reparilandia.com';
-  const telefono = '+52 (000) 000-0000';
+  const { email, telefonoDisplay, telefonoTel, whatsappDisplay, facebook, instagram, youtube } = CONTACT;
 
   const workshopAddress =
     process.env.NEXT_PUBLIC_WORKSHOP_ADDRESS?.trim() || DEFAULT_WORKSHOP_ADDRESS;
@@ -78,19 +88,37 @@ export default function ContactoScreen() {
                       Síguenos
                     </span>
                     <div className="flex flex-wrap justify-end gap-1 sm:gap-1.5">
-                      <a href="#" aria-label="Facebook" className={socialBtn}>
+                      <a
+                        href={facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Facebook — Reparilandia"
+                        className={socialBtn}
+                      >
                         <Facebook className="h-4 w-4 sm:h-[1.15rem] sm:w-[1.15rem]" />
                       </a>
-                      <a href="#" aria-label="Instagram" className={socialBtn}>
+                      <a
+                        href={instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Instagram — Reparilandia"
+                        className={socialBtn}
+                      >
                         <Instagram className="h-4 w-4 sm:h-[1.15rem] sm:w-[1.15rem]" />
                       </a>
-                      <a href="#" aria-label="YouTube" className={socialBtn}>
+                      <a
+                        href={youtube}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="YouTube — Reparilandia"
+                        className={socialBtn}
+                      >
                         <Youtube className="h-4 w-4 sm:h-[1.15rem] sm:w-[1.15rem]" />
                       </a>
                       <a href={`mailto:${email}`} aria-label="Correo" className={socialBtn}>
                         <Mail className="h-4 w-4 sm:h-[1.15rem] sm:w-[1.15rem]" />
                       </a>
-                      <a href={`tel:${telefono.replace(/[^\d+]/g, '')}`} aria-label="Teléfono" className={socialBtn}>
+                      <a href={`tel:${telefonoTel}`} aria-label="Teléfono" className={socialBtn}>
                         <Phone className="h-4 w-4 sm:h-[1.15rem] sm:w-[1.15rem]" />
                       </a>
                     </div>
@@ -108,10 +136,18 @@ export default function ContactoScreen() {
                   >
                     {email}
                   </a>
-                  <div className="mt-1.5 flex items-center gap-1.5 border-t border-white/[0.08] pt-1.5 font-orbitron text-[9px] tracking-[0.08em] text-white/85 sm:text-[10px] md:text-[11px]">
-                    <Phone className="h-3.5 w-3.5 shrink-0 text-hologram-gold sm:h-4 sm:w-4" />
-                    <span className="font-space tracking-normal">{telefono}</span>
-                  </div>
+                  <motion.div className="mt-1.5 space-y-1 border-t border-white/[0.08] pt-1.5">
+                    <div className="flex items-center gap-1.5 font-orbitron text-[9px] tracking-[0.08em] text-white/85 sm:text-[10px] md:text-[11px]">
+                      <Phone className="h-3.5 w-3.5 shrink-0 text-hologram-gold sm:h-4 sm:w-4" />
+                      <a href={`tel:${telefonoTel}`} className="font-space tracking-normal text-sky-200/95 hover:underline">
+                        {telefonoDisplay}
+                      </a>
+                    </div>
+                    <motion.div className="flex items-center gap-1.5 font-orbitron text-[9px] tracking-[0.08em] text-white/85 sm:text-[10px] md:text-[11px]">
+                      <MessageCircle className="h-3.5 w-3.5 shrink-0 text-emerald-300/90 sm:h-4 sm:w-4" />
+                      <span className="font-space tracking-normal text-white/88">{whatsappDisplay}</span>
+                    </motion.div>
+                  </motion.div>
                 </section>
 
                 <section className={innerSection}>

@@ -10,20 +10,19 @@ const milestones = [
 ];
 
 const storyPanel2 =
-  'Este es Omar Lugo: la cara creativa del equipo. Llegó para convertir el taller en un lugar donde cada pieza cuenta una historia. Su energía impulsó la parte museística y el cariño por lo retro.';
+  'Omar Lugo es el genio técnico del equipo: experto en electrónica, cómputo y mecatrónica, forjado en la experiencia. Ha devuelto la vida a cámaras digitales, tarjetas madre e impresoras 3D; donde otros ven piezas irrecuperables, él ve un reto que merece resolverse.';
 
 const storyPanel3 =
-  'Carlos Díaz, el guardián del sombrero, representa la paciencia del maestro artesano: detalle fino, pulido y esmero en cada tornillo. Para él, ningún equipo es “solo metal”: todo tiene alma que vale la pena recuperar.';
+  'Carlos Díaz, jefe y visionario, encarna la perseverancia de quien no descansa hasta dar con la solución. No se conforma mientras quede una posibilidad por explorar; su saber creció con los años, tejido de la práctica con artículos electrónicos y la tecnología que hoy llega al banco de trabajo.';
 
 const storyPanel4 =
-  'Francisco Medina encarna el lado técnico y claro del taller: con lentes y una sonrisa tranquila, ofrece diagnósticos honestos y explicaciones que cualquiera puede entender. Reparar bien también es comunicar bien.';
+  'Francisco Medina, administrador del taller, teje el día a día: proveedores, clientes, facturación, cotizaciones y la búsqueda incansable de refacciones. No cesa hasta hallar al proveedor ideal que convierta cada diagnóstico en una solución concreta.';
 
-/** Paneles opacos + borde azul tipo crayola / azure. */
-const historiaPanel =
-  'border border-[#41d9ff]/40 bg-black shadow-[0_0_32px_-16px_rgba(65,217,255,0.14)] ring-1 ring-inset ring-[#41d9ff]/14';
+/** Paneles Historia: borde azul; hover/touch → amarillo (ver .historia-panel en globals.css). */
+const historiaPanel = 'historia-panel';
 
-const historiaCharacterStage =
-  'historia-spot-glow relative z-[1] flex h-[clamp(10rem,36vw,13.5rem)] w-full overflow-visible sm:h-[clamp(10.5rem,32vw,14.25rem)] lg:h-[clamp(10.75rem,26vw,14.75rem)] xl:h-[clamp(11rem,22vw,15.25rem)]';
+const historiaCharacterSpot =
+  'relative z-[1] flex w-full items-end justify-center overflow-visible leading-[0]';
 
 function CutoutCharacter({
   src,
@@ -70,7 +69,7 @@ function CutoutCharacter({
       <img
         src={assetUrl(src)}
         alt={alt}
-        className={`pointer-events-none h-auto w-auto max-w-full select-none object-contain [image-rendering:auto] ${imgTreat} ${imgClassName}`}
+        className={`pointer-events-none h-auto w-auto select-none object-contain [image-rendering:auto] ${imgTreat} ${imgClassName || 'max-w-full'}`}
         draggable={false}
         loading="eager"
         decoding="async"
@@ -79,23 +78,26 @@ function CutoutCharacter({
   );
 }
 
+const storyCardCharacterImg =
+  '!max-w-none w-auto object-contain object-bottom max-h-[min(10.5rem,40vw)] sm:max-h-[min(11.25rem,36vw)] lg:max-h-[12.25rem] xl:max-h-[12.75rem]';
+
 function StoryCard({ src, alt, text }: { src: string; alt: string; text: string }) {
   return (
     <div
       className={`relative z-[1] flex h-full min-h-0 min-w-0 flex-col rounded-2xl p-3 pb-2.5 sm:p-3.5 sm:pb-3 ${historiaPanel}`}
     >
-      <div className="relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col">
-        <div className={`${historiaCharacterStage} shrink-0`}>
+      <div className="relative z-[1] flex min-h-0 min-w-0 flex-col gap-1.5">
+        <div className={historiaCharacterSpot}>
           <CutoutCharacter
             src={src}
             alt={alt}
             bare
             align="end"
-            className="absolute inset-0 z-[1] flex items-end justify-center rounded-none bg-transparent py-0"
-            imgClassName="max-h-[148%] max-w-[min(138%,27rem)] object-contain object-bottom sm:max-h-[152%] sm:max-w-[min(142%,29rem)] lg:max-h-[162%] lg:max-w-[min(148%,32rem)] xl:max-h-[174%] xl:max-w-[min(155%,34rem)]"
+            className="flex w-full items-end justify-center rounded-none bg-transparent py-0"
+            imgClassName={storyCardCharacterImg}
           />
         </div>
-        <p className="relative z-[1] mt-auto shrink-0 pt-2 font-space text-[11px] leading-snug text-white/90 sm:text-xs sm:leading-snug md:text-[0.8125rem] md:leading-snug">
+        <p className="relative z-[1] shrink-0 pt-0 font-space text-[11px] leading-snug text-white/90 sm:text-xs sm:leading-snug md:text-[0.8125rem] md:leading-snug">
           {text}
         </p>
       </div>
@@ -121,7 +123,7 @@ export default function HistoriaScreen() {
             className={`relative z-[1] flex h-full min-h-0 w-full min-w-0 flex-col gap-2.5 overflow-hidden rounded-2xl p-3 sm:gap-3 sm:p-3.5 lg:gap-2.5 ${historiaPanel}`}
           >
             <motion.div className="relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col gap-2.5 overflow-visible sm:gap-3 lg:flex-row lg:items-stretch lg:gap-3">
-              <motion.div className="historia-spot-glow historia-spot-glow--et relative z-[8] flex h-[min(36vh,19rem)] w-full shrink-0 items-end justify-center overflow-visible px-0 pt-0 sm:h-[min(38vh,20rem)] lg:h-full lg:min-h-[clamp(10.75rem,26vw,14.75rem)] lg:w-[46%] lg:max-w-none lg:flex-none lg:self-stretch xl:min-h-[clamp(11rem,22vw,15.25rem)]">
+              <motion.div className="relative z-[8] flex h-[min(36vh,19rem)] w-full shrink-0 items-end justify-center overflow-visible px-0 pt-0 sm:h-[min(38vh,20rem)] lg:h-full lg:min-h-[clamp(10.75rem,26vw,14.75rem)] lg:w-[46%] lg:max-w-none lg:flex-none lg:self-stretch xl:min-h-[clamp(11rem,22vw,15.25rem)]">
                 <img
                   src={assetUrl('/assets/historia-linea-tiempo.png')}
                   alt="E.T. con playera Reparilandia"

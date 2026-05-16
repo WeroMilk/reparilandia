@@ -3,7 +3,22 @@ import type { ElementType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ScreenPageTitle from '@/components/ScreenPageTitle';
 import useEmblaCarousel from 'embla-carousel-react';
-import { ChevronLeft, ChevronRight, Laptop, Monitor, Gamepad2, ToyBrick, Stethoscope, MoreHorizontal, Wrench, Calendar } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Laptop,
+  Monitor,
+  Gamepad2,
+  ToyBrick,
+  Stethoscope,
+  MoreHorizontal,
+  Wrench,
+  Calendar,
+  Printer,
+  Camera,
+  Coffee,
+  Wind,
+} from 'lucide-react';
 import QuoteForm from '@/components/forms/QuoteForm';
 import AppointmentForm from '@/components/forms/AppointmentForm';
 import CarouselDots from '@/components/CarouselDots';
@@ -51,10 +66,34 @@ const services: Service[] = [
     description: 'Evaluación profesional y presupuesto sin compromiso.',
   },
   {
+    id: 'impresoras',
+    icon: 'printer',
+    title: 'IMPRESORAS',
+    description: 'Inkjet, láser y multifuncionales: cabezales, alimentación, firmware y mantenimiento.',
+  },
+  {
+    id: 'camaras',
+    icon: 'camera',
+    title: 'CÁMARAS FOTOGRÁFICAS',
+    description: 'Réflex, compactas y digitales: obturador, lente, sensor, flash y conectividad.',
+  },
+  {
+    id: 'cafeteras',
+    icon: 'coffee',
+    title: 'CAFETERAS',
+    description: 'Express, goteo y cápsulas: bombas, resistencias, circuitos y calibración.',
+  },
+  {
+    id: 'aspiradoras',
+    icon: 'vacuum',
+    title: 'ASPIRADORAS',
+    description: 'Domésticas e industriales: motor, succión, cableado y sistemas electrónicos.',
+  },
+  {
     id: 'otros',
     icon: 'more',
     title: 'OTROS',
-    description: 'Cámaras, audio, proyectores y tecnología retro.',
+    description: 'Audio, proyectores, electrodomésticos y tecnología retro con historia.',
   },
 ];
 
@@ -64,6 +103,10 @@ const iconMap: Record<string, ElementType> = {
   gamepad: Gamepad2,
   toy: ToyBrick,
   stethoscope: Stethoscope,
+  printer: Printer,
+  camera: Camera,
+  coffee: Coffee,
+  vacuum: Wind,
   more: MoreHorizontal,
 };
 

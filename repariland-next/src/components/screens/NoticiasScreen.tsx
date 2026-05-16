@@ -9,20 +9,20 @@ const newsItems = [
   {
     id: '1',
     masthead: 'La Gaceta del Taller',
-    title: 'Horario ampliado en verano',
-    body: 'Ajustamos turnos para dar cabida a más reparaciones urgentes en consolas y laptops.',
+    title: 'Héroe intergaláctico restaurado',
+    body: 'Hace cuatro años devolvimos la chispa a un juguete de Buzz Lightyear que parecía condenado al olvido. Cada tornillo, cada circuito y cada gesto del equipo convirtieron un recuerdo de infancia en una pieza viva, lista para volver a soñar en vuelo.',
   },
   {
     id: '2',
     masthead: 'El Monitor Retro',
-    title: 'Taller + museo',
-    body: 'Visita guiada los sábados: piezas icónicas y cómo restauramos cada proyecto.',
+    title: 'Del salón vintage al futuro',
+    body: 'Hace más de cinco años tomamos un televisor Vulvo —pieza de salón con alma retro— y lo elevamos a la era tecnológica. Restauramos su corazón electrónico, refinamos su imagen y le devolvimos un lugar digno en el hogar, con la elegancia de lo clásico y el pulso de lo moderno.',
   },
   {
     id: '3',
     masthead: 'La Voz Reparilandia',
-    title: 'Carritos montables',
-    body: 'Seguimos con carritos y juguetes electrónicos con el mismo cuidado de siempre.',
+    title: 'Cada reparación,\nfilmada de inicio a fin',
+    body: 'Reparilandia es el único negocio que, una vez restaurado tu artefacto, puede entregarte un video completo de todo el proceso: desde el diagnóstico hasta la última prueba. Cada intervención queda documentada en nuestro taller, para que lleves contigo no solo el equipo reparado, sino también la historia fiel de cómo lo devolvimos a la vida.',
   },
 ];
 
@@ -41,7 +41,7 @@ function NewspaperSlide({ masthead, title, body }: { masthead: string; title: st
         </div>
       </header>
       <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4">
-        <h3 className="font-serif text-base font-black uppercase leading-[1.15] text-zinc-950 sm:text-lg">{title}</h3>
+        <h3 className="whitespace-pre-line font-serif text-base font-black uppercase leading-[1.15] text-zinc-950 sm:text-lg">{title}</h3>
         <div className="mt-2 h-px w-full bg-zinc-900/80" aria-hidden />
         <p className="mt-3 columns-1 font-serif text-[11px] leading-relaxed text-zinc-800 sm:text-[12px] sm:leading-snug">
           {body}

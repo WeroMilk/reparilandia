@@ -376,99 +376,29 @@ select:focus-visible {
 }
 
 /*
- * Historia — destello amarillo detrás de caricaturas (misma familia que .home-box-glow--amber, más suave y estático).
+ * Historia — paneles con borde (hover/touch → amarillo).
  */
-.historia-spot-glow {
-  isolation: isolate;
+.historia-panel {
+  border: 1px solid rgba(65, 217, 255, 0.4);
+  background: #000;
+  box-shadow: 0 0 32px -16px rgba(65, 217, 255, 0.14);
+  outline: 1px solid rgba(65, 217, 255, 0.14);
+  outline-offset: -1px;
+  touch-action: manipulation;
+  transition:
+    border-color 0.28s ease,
+    box-shadow 0.28s ease,
+    outline-color 0.28s ease;
 }
 
-.historia-spot-glow::before,
-.historia-spot-glow::after {
-  content: '';
-  position: absolute;
-  z-index: 0;
-  left: 50%;
-  top: 42%;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  contain: paint;
-  mix-blend-mode: screen;
-}
-
-.historia-spot-glow::before {
-  opacity: 0.5;
-  filter: brightness(1);
-  width: 9rem;
-  height: 9.75rem;
-  border-radius: 50% 50% 52% 48% / 44% 56% 46% 54%;
-  transform: translate(-50%, -50%) rotate(-2deg);
-  background:
-    radial-gradient(ellipse 30% 28% at 50% 42%, rgba(255, 252, 230, 0.85) 0%, rgba(255, 235, 140, 0.42) 40%, transparent 70%),
-    radial-gradient(ellipse 38% 42% at 36% 52%, rgba(255, 220, 90, 0.4) 0%, transparent 72%),
-    radial-gradient(ellipse 36% 40% at 66% 48%, rgba(255, 200, 60, 0.32) 0%, transparent 70%),
-    radial-gradient(ellipse 55% 50% at 50% 68%, rgba(255, 180, 50, 0.16) 0%, transparent 76%);
-}
-
-.historia-spot-glow::after {
-  opacity: 0.36;
-  filter: blur(14px) brightness(1.05);
-  width: 12rem;
-  height: 10.75rem;
-  border-radius: 52% 48% 54% 46% / 48% 52% 50% 50%;
-  transform: translate(-50%, -50%) rotate(1deg);
-  background:
-    radial-gradient(ellipse 90% 82% at 50% 48%, rgba(255, 225, 100, 0.22) 0%, rgba(255, 190, 55, 0.06) 48%, transparent 76%),
-    radial-gradient(ellipse 40% 38% at 30% 55%, rgba(255, 210, 80, 0.1) 0%, transparent 74%);
-}
-
-.historia-spot-glow--et::before,
-.historia-spot-glow--et::after {
-  top: 56%;
-}
-
-/* Halo detrás de E.T.: visible pero moderado; queda recortado por overflow del panel. */
-.historia-spot-glow--et::before {
-  width: 10.5rem;
-  height: 11.5rem;
-  opacity: 0.48;
-  transform: translate(-50%, -50%) rotate(-2deg) scale(1.06);
-  background:
-    radial-gradient(ellipse 34% 30% at 50% 42%, rgba(255, 252, 232, 0.82) 0%, rgba(255, 236, 145, 0.38) 42%, transparent 72%),
-    radial-gradient(ellipse 42% 44% at 36% 52%, rgba(255, 222, 95, 0.34) 0%, transparent 72%),
-    radial-gradient(ellipse 40% 42% at 66% 48%, rgba(255, 205, 72, 0.28) 0%, transparent 70%),
-    radial-gradient(ellipse 58% 52% at 50% 68%, rgba(255, 188, 55, 0.14) 0%, transparent 78%);
-}
-
-.historia-spot-glow--et::after {
-  width: 14rem;
-  height: 12.5rem;
-  opacity: 0.34;
-  filter: blur(16px) brightness(1.05);
-  transform: translate(-50%, -50%) rotate(1deg) scale(1.05);
-  background:
-    radial-gradient(ellipse 88% 80% at 50% 48%, rgba(255, 228, 105, 0.2) 0%, rgba(255, 192, 60, 0.06) 50%, transparent 78%),
-    radial-gradient(ellipse 42% 38% at 30% 55%, rgba(255, 212, 85, 0.09) 0%, transparent 74%);
-}
-
-@media (min-width: 1024px) {
-  .historia-spot-glow--et::before,
-  .historia-spot-glow--et::after {
-    top: 58%;
-  }
-
-  .historia-spot-glow--et::before {
-    width: 11.75rem;
-    height: 13rem;
-    transform: translate(-50%, -50%) rotate(-2deg) scale(1.12);
-  }
-
-  .historia-spot-glow--et::after {
-    width: 16rem;
-    height: 14rem;
-    opacity: 0.38;
-    filter: blur(18px) brightness(1.06);
-    transform: translate(-50%, -50%) rotate(1deg) scale(1.1);
-  }
+.historia-panel:hover,
+.historia-panel:active,
+.historia-panel:focus-within {
+  border-color: rgba(255, 220, 70, 0.9);
+  outline-color: rgba(255, 210, 50, 0.5);
+  box-shadow:
+    0 0 40px -10px rgba(255, 200, 50, 0.38),
+    0 0 0 1px rgba(255, 215, 0, 0.22);
 }
 
 /* Aura luminosa (nube + núcleo de luz), recortada al área de imagen */
