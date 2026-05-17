@@ -4,6 +4,12 @@
 
 @layer base {
   :root {
+    /* Diseño de referencia 1920×1080: escala tipografía y rem en cualquier monitor */
+    --design-w: 1920;
+    --design-h: 1080;
+    --ui-scale: min(100vw / var(--design-w), 100dvh / var(--design-h));
+    --ui-scale-clamp: clamp(0.72, var(--ui-scale), 1.35);
+
     --background: 240 20% 3%;
     --foreground: 0 0% 98%;
     --card: 240 15% 5%;
@@ -38,6 +44,8 @@
     -webkit-tap-highlight-color: transparent;
     height: 100%;
     color-scheme: dark;
+    /* 16px en 1920×1080; crece/encoge con ancho y alto del viewport */
+    font-size: clamp(11px, calc(16px * var(--ui-scale-clamp)), 22px);
   }
 
   body {
@@ -173,6 +181,10 @@
     padding-top: env(safe-area-inset-top, 0px);
   }
 
+  .safe-pb {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
   .safe-pbDock {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
@@ -183,6 +195,15 @@
     --dock-footer-height: 2.625rem;
     --dock-chrome-height: calc(var(--dock-nav-height) + var(--dock-footer-height));
     --dock-reserve: var(--dock-chrome-height);
+  }
+
+  @media (max-width: 1023px) {
+    :root {
+      --dock-nav-height: 4rem;
+      --dock-footer-height: 2.125rem;
+      --dock-chrome-height: calc(var(--dock-nav-height) + var(--dock-footer-height));
+      --dock-reserve: var(--dock-chrome-height);
+    }
   }
 
   .pb-dock-reserve {
@@ -227,10 +248,26 @@
     pointer-events: auto !important;
   }
 
+  .app-canvas {
+    @apply mx-auto w-full max-w-[120rem] box-border;
+  }
+
   .screen-shell {
-    @apply w-full max-w-7xl mx-auto box-border px-2 sm:px-4 lg:px-6 xl:px-8 flex flex-col;
+    @apply app-canvas px-2 sm:px-4 lg:px-6 xl:px-8 flex flex-col;
     @apply min-h-0 h-full flex-1 overflow-hidden;
-    @apply pt-[clamp(3rem,8dvh,5.25rem)] lg:pt-[clamp(3.25rem,7.5dvh,5rem)];
+    @apply pt-[clamp(2.35rem,6.5dvh,3.75rem)] sm:pt-[clamp(2.65rem,7dvh,4.25rem)] lg:pt-[clamp(3.25rem,7.5dvh,5rem)];
+  }
+
+  .mobile-tab-hit {
+    @apply touch-manipulation active:scale-95;
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+  }
+
+  .mobile-carousel-arrow {
+    @apply touch-manipulation active:scale-95;
+    min-height: 2.75rem;
+    min-width: 2.75rem;
   }
 
   .page-kicker {
@@ -256,7 +293,7 @@
   }
 
   .screen-page-title {
-    @apply font-orbitron text-lg leading-none tracking-[0.28em] text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.08)] sm:text-xl md:text-2xl;
+    @apply font-orbitron text-[clamp(0.9375rem,3.2vw,1.125rem)] leading-none tracking-[0.22em] text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.08)] sm:text-xl sm:tracking-[0.28em] md:text-2xl;
   }
 
   .screen-page-title-rule {

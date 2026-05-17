@@ -56,7 +56,7 @@ export default function App() {
       <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-[#0a0c12] via-[#050508] to-[#030306]" />
       <div className="pointer-events-none absolute inset-0 z-0 grid-bg opacity-[0.16] lg:opacity-[0.09]" />
 
-      <div className="particle-layer pointer-events-none absolute inset-0 z-0 opacity-[0.92] lg:opacity-[0.88]">
+      <div className="particle-layer pointer-events-none absolute inset-0 z-0 opacity-[0.72] sm:opacity-[0.82] lg:opacity-[0.88]">
         <GlobalBackgroundParticles />
       </div>
 
@@ -68,7 +68,7 @@ export default function App() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
-        <motion.div className="relative mx-auto flex min-h-0 w-full max-w-[1440px] flex-1 flex-col pb-dock-reserve pointer-events-none lg:mx-6 xl:mx-10">
+        <motion.div className="app-canvas relative flex min-h-0 flex-1 flex-col pb-dock-reserve pointer-events-none px-2 lg:px-6 xl:px-10">
           <motion.div className="pointer-events-none relative flex min-h-0 flex-1 flex-col overflow-hidden lg:rounded-t-[1.25rem] lg:border-t lg:border-white/[0.07] lg:bg-transparent lg:shadow-elevateLg">
             <ScreenManager
               currentScreen={currentScreen}

@@ -10,7 +10,7 @@ const IMG_SERVICIO = '/assets/home-box-servicio.png';
 const IMG_NOVEDADES = '/assets/home-box-novedades.png';
 
 const CARD_BOX =
-  'flex h-full min-h-[15rem] w-full flex-col lg:h-[19rem] lg:min-h-[19rem] lg:max-h-[19rem]';
+  'flex h-full min-h-[11.5rem] w-full flex-col sm:min-h-[13rem] lg:h-[19rem] lg:min-h-[19rem] lg:max-h-[19rem]';
 
 interface InicioScreenProps {
   onNavigate: (screen: ScreenName) => void;
@@ -19,12 +19,12 @@ interface InicioScreenProps {
 export default function InicioScreen({ onNavigate }: InicioScreenProps) {
   return (
     <motion.div
-      className="relative flex min-h-0 w-full max-w-7xl flex-1 flex-col overflow-hidden px-2 pb-0 pt-0 sm:px-4 lg:mx-auto lg:px-6 xl:px-8"
+      className="app-canvas relative flex min-h-0 w-full flex-1 flex-col overflow-hidden px-2 pb-0 pt-0 sm:px-4 lg:px-6 xl:px-8"
     >
       <motion.div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
         <header className="relative z-10 flex w-full shrink-0 flex-col items-center px-1 text-center sm:px-2">
           <motion.div
-            className="mt-[clamp(0.5rem,2vh,1.5rem)] flex w-full translate-y-0 flex-col items-center gap-0 bg-transparent leading-none sm:mt-[clamp(0.65rem,2.5vh,1.75rem)] sm:translate-y-1 md:translate-y-2"
+            className="mt-[clamp(0.25rem,1.2vh,0.85rem)] flex w-full translate-y-0 flex-col items-center gap-0 bg-transparent leading-none sm:mt-[clamp(0.5rem,2vh,1.25rem)] sm:translate-y-0.5 md:translate-y-2 lg:translate-y-2"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
@@ -38,40 +38,46 @@ export default function InicioScreen({ onNavigate }: InicioScreenProps) {
               quality={100}
               placeholder="empty"
               sizes="(max-width: 640px) min(94vw, 28rem), (max-width: 1024px) min(90vw, 32rem), min(86vw, 36rem)"
-              className="mx-auto block h-auto w-full max-w-[min(94vw,28rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)] sm:max-w-[min(90vw,32rem)] md:max-w-[min(86vw,36rem)]"
+              className="mx-auto block h-auto w-full max-w-[min(88vw,22rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)] sm:max-w-[min(90vw,28rem)] md:max-w-[min(86vw,36rem)]"
               draggable={false}
             />
-            <p className="-mt-16 max-w-xl px-3 font-orbitron text-sm font-medium leading-none tracking-[0.2em] text-cyan-100/92 drop-shadow-[0_0_20px_rgba(34,211,238,0.22)] sm:-mt-[4.75rem] sm:text-base sm:tracking-[0.24em] md:-mt-24 md:text-lg lg:-mt-28">
+            <p className="-mt-10 max-w-xl px-3 font-orbitron text-[clamp(0.6875rem,2.8vw,0.875rem)] font-medium leading-none tracking-[0.18em] text-cyan-100/92 drop-shadow-[0_0_20px_rgba(34,211,238,0.22)] sm:-mt-14 sm:text-sm sm:tracking-[0.22em] md:-mt-20 md:text-base lg:-mt-28 lg:text-lg lg:tracking-[0.24em]">
               La capital de la reparación
             </p>
           </motion.div>
         </header>
 
         <motion.div
-          className="relative z-[1] mx-auto mt-[clamp(2.35rem,6.2vh,3.5rem)] mb-2 grid w-full max-w-6xl shrink-0 grid-cols-1 gap-3 sm:mt-11 sm:gap-4 md:mt-14 lg:grid-cols-3 lg:items-stretch"
+          className="relative z-[1] mx-auto mb-1 mt-[clamp(1rem,3.5dvh,1.75rem)] flex w-full max-w-[72rem] shrink-0 snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden px-0.5 pb-1 scrollbar-hide [-webkit-overflow-scrolling:touch] sm:mt-8 sm:gap-3.5 md:mt-11 lg:mb-2 lg:mt-14 lg:grid lg:grid-cols-3 lg:items-stretch lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.06, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
         >
-          <HomeSpotlightCard
-            img={IMG_CARRITOS}
-            caption="Reparamos Carritos Montables (niños)"
-            onClick={() => onNavigate('servicios')}
-            accent="green"
-          />
-          <HomeSpotlightCard
-            img={IMG_SERVICIO}
-            caption="Servicio y Mantenimiento 100% Personalizado."
-            onClick={() => onNavigate('servicios')}
-            accent="amber"
-            centerProminent
-          />
-          <HomeSpotlightCard
-            img={IMG_NOVEDADES}
-            caption="Espera novedades. Próximamente…"
-            onClick={() => onNavigate('noticias')}
-            accent="red"
-          />
+          <div className="w-[min(84vw,18.5rem)] shrink-0 snap-center lg:w-full lg:shrink">
+            <HomeSpotlightCard
+              img={IMG_CARRITOS}
+              caption="Reparamos Carritos Montables (niños)"
+              onClick={() => onNavigate('servicios')}
+              accent="green"
+            />
+          </div>
+          <div className="w-[min(84vw,18.5rem)] shrink-0 snap-center lg:w-full lg:shrink">
+            <HomeSpotlightCard
+              img={IMG_SERVICIO}
+              caption="Servicio y Mantenimiento 100% Personalizado."
+              onClick={() => onNavigate('servicios')}
+              accent="amber"
+              centerProminent
+            />
+          </div>
+          <div className="w-[min(84vw,18.5rem)] shrink-0 snap-center lg:w-full lg:shrink">
+            <HomeSpotlightCard
+              img={IMG_NOVEDADES}
+              caption="Espera novedades. Próximamente…"
+              onClick={() => onNavigate('noticias')}
+              accent="red"
+            />
+          </div>
         </motion.div>
 
         <motion.div className="min-h-0 shrink-0 basis-0 pointer-events-none" aria-hidden />
@@ -156,7 +162,7 @@ function HomeSpotlightCard({
       whileHover={{ y: -2 }}
       whileTap={{ scale: 0.992 }}
       transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-      className={`group relative z-[1] ${CARD_BOX} touch-manipulation overflow-hidden rounded-2xl border p-3 outline-none sm:p-4 ${styles.restShadow} ${cardChrome} ${styles.frame}`}
+      className={`group relative z-[1] ${CARD_BOX} touch-manipulation overflow-hidden rounded-2xl border p-2.5 outline-none active:scale-[0.98] sm:p-3 lg:p-4 ${styles.restShadow} ${cardChrome} ${styles.frame}`}
     >
       <span
         aria-hidden
@@ -165,7 +171,7 @@ function HomeSpotlightCard({
       <motion.div className="relative z-[1] flex min-h-0 flex-1 flex-col overflow-hidden px-0.5 pt-0.5">
         {imageArea}
       </motion.div>
-      <p className="relative z-[1] mt-2 shrink-0 min-h-[2.75rem] px-0.5 text-center font-space text-[11px] font-semibold leading-snug tracking-[0.04em] text-white/92 sm:mt-2.5 sm:min-h-[3rem] sm:text-xs md:text-[0.8125rem]">
+      <p className="relative z-[1] mt-1.5 shrink-0 min-h-[2.25rem] px-0.5 text-center font-space text-[clamp(0.6875rem,2.6vw,0.8125rem)] font-semibold leading-snug tracking-[0.04em] text-white/92 sm:mt-2 sm:min-h-[2.75rem] sm:text-xs md:min-h-[3rem] md:text-[0.8125rem]">
         {caption}
       </p>
     </motion.button>

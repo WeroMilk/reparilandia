@@ -52,7 +52,7 @@ export default function ContactoScreen() {
   const ILUSTRACION_CONTACTO = '/assets/contacto-ilustracion-recuerdos.png';
 
   const socialBtn =
-    'flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-white/80 transition-colors hover:border-cyan-400/35 hover:bg-white/[0.1] hover:text-cyan-100 touch-manipulation sm:h-9 sm:w-9';
+    'flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-white/80 transition-colors hover:border-cyan-400/35 hover:bg-white/[0.1] hover:text-cyan-100 touch-manipulation active:scale-95 sm:h-9 sm:w-9';
 
   return (
     <motion.div className="screen-shell flex min-h-0 flex-1 flex-col !overflow-visible">
@@ -61,14 +61,14 @@ export default function ContactoScreen() {
         Correo, WhatsApp o mensaje directo.
       </p>
 
-      <div className="flex min-h-0 flex-1 flex-col justify-center overflow-x-clip overflow-y-visible pb-1 pt-2 sm:overflow-x-visible sm:pb-2 sm:pt-2 lg:pt-3">
-        <div className="mx-auto mt-4 grid w-full min-w-0 max-w-full shrink-0 grid-cols-1 items-start justify-items-stretch gap-x-2.5 gap-y-2 px-1 sm:mt-5 sm:grid-cols-2 sm:gap-x-3 sm:gap-y-3 sm:px-0 md:max-w-full lg:mt-6 lg:gap-x-4 xl:gap-x-5">
+      <div className="flex min-h-0 flex-1 flex-col justify-center overflow-x-clip overflow-y-auto overscroll-y-contain pb-1 pt-1 scrollbar-hide sm:overflow-y-visible sm:pb-2 sm:pt-2 lg:overflow-y-visible lg:pt-3">
+        <div className="mx-auto mt-4 grid w-full min-w-0 max-w-full shrink-0 grid-cols-1 items-start justify-items-stretch gap-x-2.5 gap-y-2.5 px-1 sm:mt-9 sm:grid-cols-2 sm:gap-x-3 sm:gap-y-3 sm:px-0 md:max-w-full lg:mt-11 lg:gap-x-4 xl:mt-12 xl:gap-x-5">
           {/* Izquierda: datos de contacto; caricatura detrás del panel, asomada por arriba */}
           <div className="relative flex w-full min-w-0 flex-col overflow-visible sm:max-w-none">
             <img
               src={assetUrl(MONITO_SOMBRERO)}
               alt=""
-              className="pointer-events-none absolute -left-3 top-[-9.15rem] z-[18] mb-4 h-[clamp(12rem,34vw,17.5rem)] w-auto max-w-[min(92vw,16.25rem)] -translate-x-0.5 select-none object-contain object-left-bottom drop-shadow-[0_14px_28px_rgba(0,0,0,0.5)] sm:-left-5 sm:top-[-9.5rem] sm:mb-5 sm:h-[clamp(13rem,30vw,18.5rem)] sm:max-w-[min(88vw,17rem)] sm:-translate-x-1 lg:top-[-9.75rem] lg:mb-6 lg:h-[clamp(13.5rem,24vw,19rem)] lg:max-w-[17.5rem] lg:-translate-x-1 xl:top-[-9.9rem] xl:mb-7 [image-rendering:auto]"
+              className="pointer-events-none absolute -left-2 top-[-6.5rem] z-[18] mb-4 h-[clamp(9.5rem,28vw,13rem)] w-auto max-w-[min(88vw,13.5rem)] -translate-x-0.5 select-none object-contain object-left-bottom drop-shadow-[0_14px_28px_rgba(0,0,0,0.5)] sm:-left-5 sm:top-[-8.65rem] sm:h-[clamp(13rem,30vw,18.5rem)] sm:max-w-[min(88vw,17rem)] sm:-translate-x-1 lg:top-[-8.85rem] lg:mb-6 lg:h-[clamp(13.5rem,24vw,19rem)] lg:max-w-[17.5rem] lg:-translate-x-1 xl:top-[-9rem] xl:mb-7 [image-rendering:auto]"
               draggable={false}
               loading="eager"
               decoding="async"
@@ -182,7 +182,7 @@ export default function ContactoScreen() {
                 <motion.button
                   type="button"
                   onClick={handleWhatsApp}
-                  className="mt-1 flex min-h-[38px] w-full shrink-0 items-center justify-center gap-1.5 rounded-lg border border-emerald-400/25 bg-gradient-to-r from-emerald-500/25 to-teal-600/20 px-2 py-1.5 text-[11px] font-semibold tracking-wide text-emerald-50 shadow-[0_0_20px_-6px_rgba(52,211,153,0.35)] transition-colors active:from-emerald-500/35 touch-manipulation sm:mt-1.5 sm:min-h-[40px] sm:px-2.5 sm:py-2 sm:text-xs"
+                  className="mt-1 flex min-h-[44px] w-full shrink-0 items-center justify-center gap-1.5 rounded-lg border border-emerald-400/25 bg-gradient-to-r from-emerald-500/25 to-teal-600/20 px-2 py-1.5 text-[clamp(0.6875rem,2.6vw,0.75rem)] font-semibold tracking-wide text-emerald-50 shadow-[0_0_20px_-6px_rgba(52,211,153,0.35)] transition-colors active:scale-95 active:from-emerald-500/35 touch-manipulation sm:mt-1.5 sm:min-h-[40px] sm:px-2.5 sm:py-2 sm:text-xs"
                   whileTap={{ scale: 0.99 }}
                 >
                   <MessageCircle className="h-4 w-4 shrink-0 sm:h-[1.125rem] sm:w-[1.125rem]" />
@@ -195,27 +195,27 @@ export default function ContactoScreen() {
           {/* Derecha: formulario */}
           <div className="relative flex w-full min-w-0 flex-col overflow-visible sm:max-w-none">
             <motion.div
-              className={`relative z-[12] ${panelOpaque} flex w-full flex-col overflow-visible rounded-2xl p-1 sm:p-1.5`}
+              className={`relative z-[12] ${panelOpaque} mt-1.5 flex min-h-[clamp(18.5rem,42dvh,22.5rem)] w-full flex-col overflow-visible rounded-2xl p-1.5 sm:mt-2.5 sm:min-h-[clamp(19rem,44dvh,23.5rem)] sm:p-2 lg:mt-3.5 lg:min-h-[clamp(20rem,46dvh,24.5rem)]`}
               initial={{ opacity: 0, x: 12 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <div className="relative z-[20] flex flex-col overflow-visible px-1 pb-1 pt-0.5 sm:px-1.5 sm:pb-1.5 sm:pt-1">
+              <div className="relative z-[20] flex min-h-0 flex-1 flex-col overflow-visible px-1.5 pb-1.5 pt-1 sm:px-2 sm:pb-2 sm:pt-1.5">
                 <p className="mb-0.5 shrink-0 font-orbitron text-[9px] tracking-[0.12em] text-cyan-100/85 sm:mb-0.5 sm:text-[10px] md:text-[11px]">
                   MENSAJE
                 </p>
                 <ContactForm embedded />
               </div>
             </motion.div>
-            <div className="relative z-[11] mt-2 w-full shrink-0 sm:mt-3">
+            <motion.div className="relative z-[11] mx-auto -mt-1 flex w-full max-w-[min(100%,76%)] shrink-0 justify-center sm:-mt-1.5 sm:max-w-[72%] lg:-mt-2 lg:max-w-[68%]">
               <img
                 src={assetUrl(ILUSTRACION_CONTACTO)}
                 alt=""
-                className="pointer-events-none block w-full max-w-full select-none object-contain object-center drop-shadow-[0_12px_28px_rgba(0,0,0,0.55)] [image-rendering:auto]"
+                className="pointer-events-none block h-auto w-full max-h-[min(21dvh,9.75rem)] max-w-full select-none object-contain object-center mix-blend-screen brightness-[1.06] contrast-[1.05] drop-shadow-[0_12px_28px_rgba(0,0,0,0.55)] sm:max-h-[min(22dvh,10.75rem)] lg:max-h-[min(23dvh,11.5rem)] [image-rendering:auto]"
                 draggable={false}
                 loading="lazy"
                 decoding="async"
               />
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>

@@ -117,10 +117,12 @@ export default function ScreenManager({
             >
               <div
                 className={[
-                  'pointer-events-auto relative flex min-h-0 w-full flex-1 flex-col overscroll-y-contain pb-2 scrollbar-hide [-webkit-overflow-scrolling:touch]',
-                  screen === 'contacto'
-                    ? 'overflow-x-visible overflow-y-auto sm:overflow-y-hidden'
-                    : 'overflow-x-hidden overflow-y-auto',
+                  'pointer-events-auto relative flex min-h-0 w-full flex-1 flex-col overscroll-y-contain pb-1 scrollbar-hide [-webkit-overflow-scrolling:touch]',
+                  screen === 'inicio'
+                    ? 'overflow-hidden'
+                    : screen === 'contacto'
+                      ? 'overflow-x-visible overflow-y-auto lg:overflow-y-hidden'
+                      : 'overflow-x-hidden overflow-y-auto lg:overflow-y-hidden',
                 ].join(' ')}
               >
                 <ScreenBody screen={screen} onNavigate={onNavigate} />

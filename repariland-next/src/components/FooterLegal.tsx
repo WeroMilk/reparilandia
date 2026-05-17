@@ -29,7 +29,10 @@ export default function FooterLegal() {
             exit={{ opacity: 0 }}
             onClick={() => setModal(null)}
           >
-            <div className="absolute inset-0 bg-black/75 backdrop-blur-md" aria-hidden />
+            <motion.div
+              className="absolute inset-0 bg-black/55 backdrop-blur-xl supports-[backdrop-filter]:bg-black/40"
+              aria-hidden
+            />
             <motion.div
               className={`${legalModalShell} relative z-10 my-auto shrink-0`}
               initial={{ scale: 0.94, y: 16, opacity: 0 }}
@@ -185,8 +188,8 @@ export default function FooterLegal() {
   return (
     <>
       <div className="dock-footer-rail relative z-30 w-full shrink-0 border-t border-white/[0.06] bg-transparent">
-        <div className="flex h-full flex-nowrap items-center justify-center gap-x-2 gap-y-0 px-3">
-          <span className="shrink-0 font-space text-[10px] font-semibold uppercase tracking-[0.16em] text-white/85">
+        <div className="flex h-full flex-nowrap items-center justify-center gap-x-1.5 gap-y-0 px-2 sm:gap-x-2 sm:px-3">
+          <span className="shrink-0 font-space text-[9px] font-semibold uppercase tracking-[0.14em] text-white/85 sm:text-[10px] sm:tracking-[0.16em]">
             © {year} REPARILANDIA
           </span>
           <span className="text-white/35 select-none" aria-hidden>
@@ -197,7 +200,7 @@ export default function FooterLegal() {
               type="button"
               data-dock-action="privacy"
               onClick={() => setModal('privacy')}
-              className="flex h-8 items-center justify-center gap-1 px-1.5 font-space text-[10px] text-white/75 transition-colors hover:text-white active:text-hologram-cyan touch-manipulation"
+              className="flex min-h-[44px] items-center justify-center gap-1 px-1.5 font-space text-[9px] text-white/75 transition-colors hover:text-white active:scale-95 active:text-hologram-cyan touch-manipulation sm:min-h-8 sm:text-[10px]"
             >
               <Shield className="h-3.5 w-3.5 shrink-0" />
               Privacidad
@@ -209,7 +212,7 @@ export default function FooterLegal() {
               type="button"
               data-dock-action="cookies"
               onClick={() => setModal('cookies')}
-              className="flex h-8 items-center justify-center gap-1 px-1.5 font-space text-[10px] text-white/75 transition-colors hover:text-white active:text-hologram-cyan touch-manipulation"
+              className="flex min-h-[44px] items-center justify-center gap-1 px-1.5 font-space text-[9px] text-white/75 transition-colors hover:text-white active:scale-95 active:text-hologram-cyan touch-manipulation sm:min-h-8 sm:text-[10px]"
             >
               <Cookie className="h-3.5 w-3.5 shrink-0" />
               Cookies
@@ -221,7 +224,7 @@ export default function FooterLegal() {
               type="button"
               data-dock-action="legal"
               onClick={() => setModal('legal')}
-              className="flex h-8 items-center justify-center gap-1 px-1.5 font-space text-[10px] text-white/75 transition-colors hover:text-white active:text-hologram-cyan touch-manipulation"
+              className="flex min-h-[44px] items-center justify-center gap-1 px-1.5 font-space text-[9px] text-white/75 transition-colors hover:text-white active:scale-95 active:text-hologram-cyan touch-manipulation sm:min-h-8 sm:text-[10px]"
             >
               <FileText className="h-3.5 w-3.5 shrink-0" />
               Términos

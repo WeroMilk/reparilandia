@@ -85,16 +85,16 @@ export default function NoticiasScreen() {
         Desliza en la pantalla del televisor o usa las flechas para cambiar de noticia.
       </p>
 
-      <div className="mt-1 flex min-h-0 flex-1 flex-col items-center justify-center px-3 pb-1 pt-0 sm:mt-2 sm:px-5 lg:px-6">
+      <div className="mt-0 flex min-h-0 flex-1 flex-col items-center justify-center px-2 pb-1 pt-0 sm:mt-2 sm:px-5 lg:px-6">
         {/* CRT centrado en la fila; caricatura más grande; columna del CRT con ml para hueco respecto al monito */}
         <motion.div
-          className="relative w-full max-w-[min(100vw,56rem)] shrink-0 -translate-y-[clamp(0.75rem,3.5vh,2.25rem)] overflow-visible sm:max-w-[58rem] sm:-translate-y-[clamp(1rem,4.5vh,2.75rem)] lg:-translate-y-[clamp(1.25rem,5vh,3.25rem)]"
+          className="relative w-full max-w-[min(100vw,56rem)] shrink-0 -translate-y-[clamp(0.25rem,1.5vh,1rem)] overflow-visible sm:max-w-[58rem] sm:-translate-y-[clamp(1rem,4.5vh,2.75rem)] lg:-translate-y-[clamp(1.25rem,5vh,3.25rem)]"
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
         >
           <motion.div
-            className="pointer-events-none absolute z-[14] w-[min(78vw,24rem)] sm:w-[min(74vw,27rem)] md:w-[min(68vw,30rem)] lg:w-[min(58vw,33rem)] xl:w-[min(52vw,36rem)]"
+            className="pointer-events-none absolute z-[14] hidden w-[min(78vw,24rem)] sm:block sm:w-[min(74vw,27rem)] md:w-[min(68vw,30rem)] lg:w-[min(58vw,33rem)] xl:w-[min(52vw,36rem)]"
             style={{
               left: 'clamp(-10rem, -28vw, -4.75rem)',
               bottom: 'clamp(1.25rem, 9vmin, 3.25rem)',
@@ -114,13 +114,13 @@ export default function NoticiasScreen() {
 
           <div className="relative z-[18] flex w-full min-h-0 flex-col items-center justify-center">
             {/* Flechas alineadas al centro vertical del CRT (sin pedestal ni puntos); todo el bloque con ml para separar la caricatura */}
-            <div className="flex w-full max-w-[38rem] flex-col items-center lg:max-w-[36rem] xl:max-w-[38rem] ml-[clamp(4rem,13vw,7rem)] sm:ml-[clamp(4.75rem,14vw,8.5rem)] md:ml-[clamp(5.25rem,15vw,9.5rem)] lg:ml-[clamp(6rem,16vw,11rem)]">
+            <div className="flex w-full max-w-[38rem] flex-col items-center ml-0 sm:ml-[clamp(4.75rem,14vw,8.5rem)] md:ml-[clamp(5.25rem,15vw,9.5rem)] lg:max-w-[36rem] lg:ml-[clamp(6rem,16vw,11rem)] xl:max-w-[38rem]">
               <div className="flex w-full items-center justify-center gap-2 sm:gap-2.5">
                 <button
                   type="button"
                   aria-label="Noticia anterior"
                   onClick={scrollPrev}
-                  className="z-30 flex h-9 w-9 shrink-0 self-center items-center justify-center rounded-md border-2 border-[#4a433c] bg-[#ebe3d3] text-[#1c1917] shadow-[3px_4px_0_#3f3832] transition-[transform,box-shadow] touch-manipulation hover:bg-[#ddd5c6] active:translate-x-px active:translate-y-px active:shadow-[2px_3px_0_#3f3832] sm:h-10 sm:w-10"
+                  className="mobile-carousel-arrow z-30 flex h-11 w-11 shrink-0 self-center items-center justify-center rounded-md border-2 border-[#4a433c] bg-[#ebe3d3] text-[#1c1917] shadow-[3px_4px_0_#3f3832] transition-[transform,box-shadow] touch-manipulation hover:bg-[#ddd5c6] active:translate-x-px active:translate-y-px active:shadow-[2px_3px_0_#3f3832] sm:h-10 sm:w-10"
                 >
                   <ChevronLeft className="h-5 w-5" strokeWidth={2.25} />
                 </button>
@@ -136,7 +136,7 @@ export default function NoticiasScreen() {
 
               <div className="rounded-[4px] bg-[#141210] p-[7px] shadow-[inset_0_5px_14px_rgba(0,0,0,0.92)] ring-1 ring-black">
                 <div className="relative overflow-hidden rounded-[3px] bg-[#080706] shadow-[inset_0_0_0_4px_rgba(28,25,22,0.96)]">
-                  <div className="relative aspect-[16/10] w-full min-h-[13.5rem] overflow-hidden sm:min-h-[15.5rem] md:min-h-[17rem] lg:min-h-[18rem]">
+                  <div className="relative aspect-[16/10] w-full min-h-[11.5rem] overflow-hidden sm:min-h-[15.5rem] md:min-h-[17rem] lg:min-h-[18rem]">
                     <div className="relative h-full w-full overflow-hidden bg-[#cdbfaa]" ref={emblaRef}>
                       <div className="flex h-full touch-pan-x">
                         {newsItems.map((item) => (
@@ -176,7 +176,7 @@ export default function NoticiasScreen() {
                   type="button"
                   aria-label="Noticia siguiente"
                   onClick={scrollNext}
-                  className="z-30 flex h-9 w-9 shrink-0 self-center items-center justify-center rounded-md border-2 border-[#4a433c] bg-[#ebe3d3] text-[#1c1917] shadow-[3px_4px_0_#3f3832] transition-[transform,box-shadow] touch-manipulation hover:bg-[#ddd5c6] active:translate-x-px active:translate-y-px active:shadow-[2px_3px_0_#3f3832] sm:h-10 sm:w-10"
+                  className="mobile-carousel-arrow z-30 flex h-11 w-11 shrink-0 self-center items-center justify-center rounded-md border-2 border-[#4a433c] bg-[#ebe3d3] text-[#1c1917] shadow-[3px_4px_0_#3f3832] transition-[transform,box-shadow] touch-manipulation hover:bg-[#ddd5c6] active:translate-x-px active:translate-y-px active:shadow-[2px_3px_0_#3f3832] sm:h-10 sm:w-10"
                 >
                   <ChevronRight className="h-5 w-5" strokeWidth={2.25} />
                 </button>
@@ -199,7 +199,7 @@ export default function NoticiasScreen() {
                       aria-label={`Ver noticia: ${newsItems[i]?.title ?? i + 1}`}
                       aria-current={i === slideIndex ? 'true' : undefined}
                       onClick={() => emblaApi?.scrollTo(i)}
-                      className={`h-2 rounded-full transition-all duration-300 touch-manipulation ${
+                      className={`mobile-tab-hit !min-h-0 !min-w-0 h-2.5 rounded-full transition-all duration-300 touch-manipulation active:scale-95 ${
                         i === slideIndex
                           ? 'w-6 bg-amber-400 shadow-[0_0_14px_rgba(251,191,36,0.62)] ring-1 ring-amber-900/35'
                           : 'w-2 bg-[#5c4f3d] ring-1 ring-black/30 hover:bg-[#6d5e49]'

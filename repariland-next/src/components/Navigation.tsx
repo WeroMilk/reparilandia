@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import MobileTabBar from './MobileTabBar';
 import type { ScreenName } from '@/types';
+
 interface NavigationProps {
   currentScreen: ScreenName;
   onNavigate: (screen: ScreenName) => void;
@@ -78,10 +80,15 @@ function ChevronControl({
   );
 }
 
-export default function Navigation({ currentScreen, onNavigate, onPrev, onNext }: NavigationProps) {
+function DesktopDockNav({
+  currentScreen,
+  onNavigate,
+  onPrev,
+  onNext,
+}: NavigationProps) {
   return (
     <nav
-      className="relative z-[20] w-full shrink-0 touch-manipulation pointer-events-auto"
+      className="relative z-[20] hidden w-full shrink-0 touch-manipulation pointer-events-auto lg:block"
       aria-label="Navegación principal"
     >
       <div className="pointer-events-none h-px shrink-0 bg-gradient-to-r from-transparent via-white/18 to-transparent opacity-90" />
@@ -141,5 +148,19 @@ export default function Navigation({ currentScreen, onNavigate, onPrev, onNext }
         </div>
       </div>
     </nav>
+  );
+}
+
+export default function Navigation({ currentScreen, onNavigate, onPrev, onNext }: NavigationProps) {
+  return (
+    <>
+      <MobileTabBar currentScreen={currentScreen} onNavigate={onNavigate} />
+      <DesktopDockNav
+        currentScreen={currentScreen}
+        onNavigate={onNavigate}
+        onPrev={onPrev}
+        onNext={onNext}
+      />
+    </>
   );
 }

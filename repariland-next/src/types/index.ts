@@ -5,8 +5,10 @@ export interface Service {
   icon: string;
   title: string;
   description: string;
-  /** Primer slide: banner de carritos montables */
-  heroCarritos?: boolean;
+  /** Ilustración del slide (PNG sin fondo en /assets) */
+  heroImage?: string;
+  /** Línea bajo la ilustración (por defecto: título del servicio) */
+  heroCaption?: string;
   /** Texto del botón de cotización (por defecto: Cotizar — {title}) */
   quoteCta?: string;
 }
