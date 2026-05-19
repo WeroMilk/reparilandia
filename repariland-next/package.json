@@ -13,6 +13,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test:visual": "playwright test",
+    "test:visual:update": "playwright test --update-snapshots",
+    "test:visual:ci": "playwright test --project=laptop",
+    "test:visual:ui": "playwright test --ui",
     "postinstall": "node scripts/fix-types-node-junction.cjs"
   },
   "dependencies": {
@@ -65,6 +69,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.60.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

@@ -96,14 +96,11 @@ export default function ScreenManager({
               initial={false}
               animate={{
                 opacity: active ? 1 : 0,
-                y: active ? 0 : reduceMotion ? 0 : direction >= 0 ? 6 : -6,
               }}
               transition={{
                 opacity: { duration: fadeDuration, ease: crossfadeEase },
-                y: { duration: fadeDuration * 0.9, ease: crossfadeEase },
               }}
               style={{
-                transformOrigin: '50% 0%',
                 pointerEvents: active ? 'auto' : 'none',
               }}
               aria-hidden={!active}
@@ -115,18 +112,9 @@ export default function ScreenManager({
                 .filter(Boolean)
                 .join(' ')}
             >
-              <div
-                className={[
-                  'pointer-events-auto relative flex min-h-0 w-full flex-1 flex-col overscroll-y-contain pb-1 scrollbar-hide [-webkit-overflow-scrolling:touch]',
-                  screen === 'inicio'
-                    ? 'overflow-hidden'
-                    : screen === 'contacto'
-                      ? 'overflow-x-visible overflow-y-auto lg:overflow-y-hidden'
-                      : 'overflow-x-hidden overflow-y-auto lg:overflow-y-hidden',
-                ].join(' ')}
-              >
+              <motion.div className="pointer-events-auto relative flex min-h-0 w-full flex-1 flex-col overflow-hidden">
                 <ScreenBody screen={screen} onNavigate={onNavigate} />
-              </div>
+              </motion.div>
             </motion.div>
           );
         })}

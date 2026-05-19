@@ -1,5 +1,11 @@
+'use client';
+
+import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import useEmblaCarousel from 'embla-carousel-react';
+import CarouselDots from '@/components/CarouselDots';
+import MobileScreenLayout from '@/components/MobileScreenLayout';
 import type { ScreenName } from '@/types';
 import { assetUrl } from '@/lib/assetUrl';
 
@@ -10,81 +16,129 @@ const IMG_SERVICIO = '/assets/home-box-servicio.png';
 const IMG_NOVEDADES = '/assets/home-box-novedades.png';
 
 const CARD_BOX =
-  'flex h-full min-h-[11.5rem] w-full flex-col sm:min-h-[13rem] lg:h-[19rem] lg:min-h-[19rem] lg:max-h-[19rem]';
+  'flex h-full min-h-0 w-full max-h-full flex-col lg:min-h-0 lg:max-h-[min(36cqh,32dvh)]';
+
+const homeCards = [
+  {
+    img: IMG_CARRITOS,
+    caption: 'Reparamos Carritos Montables (niños)',
+    screen: 'servicios' as ScreenName,
+    accent: 'green' as const,
+  },
+  {
+    img: IMG_SERVICIO,
+    caption: 'Servicio y Mantenimiento 100% Personalizado.',
+    screen: 'servicios' as ScreenName,
+    accent: 'amber' as const,
+    centerProminent: true,
+  },
+  {
+    img: IMG_NOVEDADES,
+    caption: 'Espera novedades. Próximamente…',
+    screen: 'noticias' as ScreenName,
+    accent: 'red' as const,
+  },
+];
 
 interface InicioScreenProps {
   onNavigate: (screen: ScreenName) => void;
 }
 
 export default function InicioScreen({ onNavigate }: InicioScreenProps) {
-  return (
-    <motion.div
-      className="app-canvas relative flex min-h-0 w-full flex-1 flex-col overflow-hidden px-2 pb-0 pt-0 sm:px-4 lg:px-6 xl:px-8"
-    >
-      <motion.div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
-        <header className="relative z-10 flex w-full shrink-0 flex-col items-center px-1 text-center sm:px-2">
-          <motion.div
-            className="mt-[clamp(0.25rem,1.2vh,0.85rem)] flex w-full translate-y-0 flex-col items-center gap-0 bg-transparent leading-none sm:mt-[clamp(0.5rem,2vh,1.25rem)] sm:translate-y-0.5 md:translate-y-2 lg:translate-y-2"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <Image
-              src={assetUrl(LOGO)}
-              alt="Reparilandia"
-              width={1024}
-              height={682}
-              priority
-              quality={100}
-              placeholder="empty"
-              sizes="(max-width: 640px) min(94vw, 28rem), (max-width: 1024px) min(90vw, 32rem), min(86vw, 36rem)"
-              className="mx-auto block h-auto w-full max-w-[min(88vw,22rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)] sm:max-w-[min(90vw,28rem)] md:max-w-[min(86vw,36rem)]"
-              draggable={false}
-            />
-            <p className="-mt-10 max-w-xl px-3 font-orbitron text-[clamp(0.6875rem,2.8vw,0.875rem)] font-medium leading-none tracking-[0.18em] text-cyan-100/92 drop-shadow-[0_0_20px_rgba(34,211,238,0.22)] sm:-mt-14 sm:text-sm sm:tracking-[0.22em] md:-mt-20 md:text-base lg:-mt-28 lg:text-lg lg:tracking-[0.24em]">
-              La capital de la reparación
-            </p>
-          </motion.div>
-        </header>
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, axis: 'x', duration: 22 });
+  const [slideIndex, setSlideIndex] = useState(0);
 
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => setSlideIndex(emblaApi.selectedScrollSnap());
+    onSelect();
+    emblaApi.on('select', onSelect);
+    emblaApi.on('reInit', onSelect);
+    return () => {
+      emblaApi.off('select', onSelect);
+      emblaApi.off('reInit', onSelect);
+    };
+  }, [emblaApi]);
+
+  const scrollTo = useCallback((i: number) => emblaApi?.scrollTo(i), [emblaApi]);
+
+  return (
+    <MobileScreenLayout title="INICIO" className="inicio-screen">
+      <motion.div className="relative flex min-h-0 flex-1 flex-col overflow-hidden max-lg:overflow-hidden lg:overflow-visible lg:justify-start lg:gap-2 lg:pb-12 xl:gap-3 xl:pb-14">
         <motion.div
-          className="relative z-[1] mx-auto mb-1 mt-[clamp(1rem,3.5dvh,1.75rem)] flex w-full max-w-[72rem] shrink-0 snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden px-0.5 pb-1 scrollbar-hide [-webkit-overflow-scrolling:touch] sm:mt-8 sm:gap-3.5 md:mt-11 lg:mb-2 lg:mt-14 lg:grid lg:grid-cols-3 lg:items-stretch lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0"
+          className="relative z-10 flex w-full shrink-0 flex-col items-center gap-0 px-1 text-center max-lg:max-h-[min(20dvh,8.5rem)] sm:px-2 lg:-mt-2 lg:max-h-none lg:pt-0 xl:-mt-3"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <Image
+            src={assetUrl(LOGO)}
+            alt="Reparilandia"
+            width={1024}
+            height={682}
+            priority
+            quality={100}
+            placeholder="empty"
+            sizes="(max-width: 1023px) min(94vw, 32rem), min(88vw, 58rem)"
+            className="mx-auto block h-auto w-full max-h-[min(12.5dvh,6rem)] max-w-[min(84vw,20rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)] sm:max-h-[min(15dvh,7rem)] sm:max-w-[min(90vw,25rem)] md:max-w-[min(88vw,32rem)] lg:max-h-[min(36dvh,21.5rem)] lg:max-w-[min(94vw,52rem)] xl:max-h-[min(38dvh,23.5rem)] xl:max-w-[min(90vw,58rem)]"
+            draggable={false}
+          />
+          <p className="-mt-2 max-w-xl px-3 font-orbitron text-[clamp(0.6875rem,2.8vw,0.875rem)] font-medium leading-none tracking-[0.14em] text-cyan-100/95 drop-shadow-[0_0_20px_rgba(34,211,238,0.22)] max-lg:-mt-3 sm:text-sm sm:tracking-[0.22em] lg:-mt-10 lg:mb-5 lg:text-lg lg:tracking-[0.26em] xl:-mt-12 xl:mb-6 xl:text-xl xl:tracking-[0.28em]">
+            La capital de la reparación
+          </p>
+        </motion.div>
+
+        {/* Móvil: un slide a pantalla completa, sin peek horizontal */}
+        <motion.div
+          className="flex min-h-0 flex-1 flex-col overflow-hidden lg:hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.06, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="w-[min(84vw,18.5rem)] shrink-0 snap-center lg:w-full lg:shrink">
-            <HomeSpotlightCard
-              img={IMG_CARRITOS}
-              caption="Reparamos Carritos Montables (niños)"
-              onClick={() => onNavigate('servicios')}
-              accent="green"
-            />
+          <div ref={emblaRef} className="min-h-0 flex-1 overflow-hidden">
+            <div className="flex h-full touch-pan-x">
+              {homeCards.map((card) => (
+                <div
+                  key={card.img}
+                  className="flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full px-1"
+                >
+                  <HomeSpotlightCard
+                    img={card.img}
+                    caption={card.caption}
+                    onClick={() => onNavigate(card.screen)}
+                    accent={card.accent}
+                    centerProminent={card.centerProminent}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="w-[min(84vw,18.5rem)] shrink-0 snap-center lg:w-full lg:shrink">
-            <HomeSpotlightCard
-              img={IMG_SERVICIO}
-              caption="Servicio y Mantenimiento 100% Personalizado."
-              onClick={() => onNavigate('servicios')}
-              accent="amber"
-              centerProminent
-            />
-          </div>
-          <div className="w-[min(84vw,18.5rem)] shrink-0 snap-center lg:w-full lg:shrink">
-            <HomeSpotlightCard
-              img={IMG_NOVEDADES}
-              caption="Espera novedades. Próximamente…"
-              onClick={() => onNavigate('noticias')}
-              accent="red"
-            />
-          </div>
+          <CarouselDots count={homeCards.length} active={slideIndex} onSelect={scrollTo} className="shrink-0 pt-1.5" />
         </motion.div>
 
-        <motion.div className="min-h-0 shrink-0 basis-0 pointer-events-none" aria-hidden />
+        {/* Escritorio: tres columnas, más arriba y separadas del dock */}
+        <motion.div
+          className="relative z-[1] mx-auto hidden min-h-0 w-full max-w-6xl flex-1 grid-cols-3 items-stretch justify-items-stretch gap-3 overflow-visible px-0 pb-1 pt-2 lg:grid lg:max-h-[min(38cqh,34dvh)] lg:self-start lg:pt-3 xl:max-w-[68rem] xl:gap-4 xl:pt-3.5"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.06, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {homeCards.map((card) => (
+            <motion.div key={card.img} className="flex min-h-0 h-full flex-col pt-1 lg:pt-0.5">
+              <HomeSpotlightCard
+                img={card.img}
+                caption={card.caption}
+                onClick={() => onNavigate(card.screen)}
+                accent={card.accent}
+                centerProminent={card.centerProminent}
+              />
+            </motion.div>
+          ))}
+        </motion.div>
       </motion.div>
 
       <h1 className="sr-only">Reparilandia</h1>
-    </motion.div>
+    </MobileScreenLayout>
   );
 }
 
@@ -110,7 +164,7 @@ function HomeSpotlightCard({
 
   if (centerProminent) {
     imgTreat =
-      'max-h-[106%] max-w-[96%] origin-center scale-[1.14] translate-y-2 object-contain object-center sm:scale-[1.12] sm:translate-y-3 md:scale-[1.1] md:translate-y-3.5';
+      'max-h-[106%] max-w-[96%] origin-center scale-[1.05] translate-y-2 object-contain object-center sm:scale-[1.04] sm:translate-y-2 md:scale-[1.03] md:translate-y-2.5';
   }
 
   const wrapAlign = centerProminent
@@ -159,19 +213,19 @@ function HomeSpotlightCard({
     <motion.button
       type="button"
       onClick={onClick}
-      whileHover={{ y: -2 }}
+      whileHover={{ scale: 1.012 }}
       whileTap={{ scale: 0.992 }}
       transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-      className={`group relative z-[1] ${CARD_BOX} touch-manipulation overflow-hidden rounded-2xl border p-2.5 outline-none active:scale-[0.98] sm:p-3 lg:p-4 ${styles.restShadow} ${cardChrome} ${styles.frame}`}
+      className={`group relative z-[1] ${CARD_BOX} touch-manipulation overflow-hidden rounded-2xl border p-2.5 outline-none active:scale-[0.98] sm:p-3 lg:overflow-visible lg:rounded-xl lg:p-2.5 lg:pt-3 xl:p-3 xl:pt-3.5 ${styles.restShadow} ${cardChrome} ${styles.frame}`}
     >
       <span
         aria-hidden
         className={`pointer-events-none absolute inset-0 z-0 rounded-2xl opacity-[0.52] ${styles.innerSheen}`}
       />
-      <motion.div className="relative z-[1] flex min-h-0 flex-1 flex-col overflow-hidden px-0.5 pt-0.5">
+      <motion.div className="relative z-[1] flex min-h-0 flex-1 flex-col overflow-hidden px-0.5 pt-1 sm:pt-1.5 lg:pt-2">
         {imageArea}
       </motion.div>
-      <p className="relative z-[1] mt-1.5 shrink-0 min-h-[2.25rem] px-0.5 text-center font-space text-[clamp(0.6875rem,2.6vw,0.8125rem)] font-semibold leading-snug tracking-[0.04em] text-white/92 sm:mt-2 sm:min-h-[2.75rem] sm:text-xs md:min-h-[3rem] md:text-[0.8125rem]">
+      <p className="relative z-[1] mt-1.5 shrink-0 px-1.5 text-center font-space text-[clamp(0.6875rem,2.6vw,0.8125rem)] font-semibold leading-snug tracking-[0.03em] text-white/95 sm:mt-2 sm:text-xs md:text-[0.8125rem] lg:mt-1 lg:text-[0.6875rem] lg:leading-tight xl:text-xs">
         {caption}
       </p>
     </motion.button>

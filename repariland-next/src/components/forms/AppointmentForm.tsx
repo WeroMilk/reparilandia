@@ -11,7 +11,7 @@ const shell =
   'w-full max-w-2xl mx-auto rounded-2xl sm:rounded-3xl border border-white/10 bg-[rgba(12,12,18,0.96)] backdrop-blur-xl shadow-[0_32px_96px_rgba(0,0,0,0.65)] relative overflow-hidden ring-1 ring-white/[0.07] flex flex-col max-h-[calc(100dvh-12px)] sm:max-h-[calc(100dvh-24px)]';
 
 const labelClass =
-  'block font-space text-white text-[11px] sm:text-xs font-medium mb-1 tracking-wide';
+  'block font-space text-white text-[14px] sm:text-xs font-medium mb-1 tracking-wide';
 const inputClass =
   'w-full rounded-xl border border-white/12 bg-black/35 px-3 py-2 text-sm text-white placeholder:text-white font-space focus:outline-none transition-[border-color,box-shadow] focus:border-hologram-cyan/55 focus:shadow-[0_0_0_2px_rgba(0,191,255,0.12)]';
 const selectClass = `${inputClass} appearance-none cursor-pointer py-2`;
@@ -79,7 +79,7 @@ export default function AppointmentForm({ onClose }: AppointmentFormProps) {
             <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-hologram-gold" />
           </div>
           <div className="min-w-0">
-            <p className="font-space text-white text-[10px] uppercase tracking-[0.18em] mb-0.5">Agenda</p>
+            <p className="font-space text-white text-[12px] uppercase tracking-[0.18em] mb-0.5">Agenda</p>
             <h3 className="font-orbitron text-sm sm:text-base md:text-lg text-holographic tracking-wide leading-tight">
               Programar cita o tour
             </h3>

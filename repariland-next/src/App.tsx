@@ -12,15 +12,15 @@ import LaserPortal from './components/LaserPortal';
 import { useDockGeometricCapture } from './hooks/useDockGeometricCapture';
 import { usePreloadScreenAssets } from './hooks/usePreloadScreenAssets';
 
-/** Arranque del loader (~1200 ms) + salida (~300 ms); si `onExitComplete` falla, evita UI invisible para siempre. */
-const BOOT_UI_FALLBACK_MS = 2000;
-
 export default function App() {
   const { currentScreen, direction, navigateTo, goNext, goPrev } = useScreenManager();
-  const [bootDone, setBootDone] = useState(false);
+  const [bootScreenVisible, setBootScreenVisible] = useState(true);
   const [dockReady, setDockReady] = useState(false);
+  const bootDone = !bootScreenVisible;
 
-  const finishBoot = useCallback(() => setBootDone(true), []);
+  const hideBootScreen = useCallback(() => {
+    setBootScreenVisible(false);
+  }, []);
 
   useDockGeometricCapture(bootDone && dockReady, { navigateTo, goNext, goPrev });
   usePreloadScreenAssets(bootDone);
@@ -28,11 +28,6 @@ export default function App() {
   useEffect(() => {
     setDockReady(true);
   }, []);
-
-  useEffect(() => {
-    const id = window.setTimeout(finishBoot, BOOT_UI_FALLBACK_MS);
-    return () => window.clearTimeout(id);
-  }, [finishBoot]);
 
   useEffect(() => {
     if (!bootDone) return;
@@ -52,13 +47,16 @@ export default function App() {
   }, [bootDone, goNext, goPrev]);
 
   return (
-    <div className="relative flex h-[100dvh] max-h-[100dvh] min-h-[100dvh] w-full max-w-[100vw] flex-col overflow-hidden bg-[#050508]">
-      <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-[#0a0c12] via-[#050508] to-[#030306]" />
-      <div className="pointer-events-none absolute inset-0 z-0 grid-bg opacity-[0.16] lg:opacity-[0.09]" />
+    <motion.div
+      className="relative flex h-[100dvh] max-h-[100dvh] min-h-[100dvh] w-full max-w-[100vw] flex-col overflow-hidden bg-[#050508]"
+      data-app-ready={bootDone ? 'true' : 'false'}
+    >
+      <motion.div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-[#0a0c12] via-[#050508] to-[#030306]" />
+      <motion.div className="pointer-events-none absolute inset-0 z-0 grid-bg opacity-[0.16] lg:opacity-[0.09]" />
 
-      <div className="particle-layer pointer-events-none absolute inset-0 z-0 opacity-[0.72] sm:opacity-[0.82] lg:opacity-[0.88]">
+      <motion.div className="particle-layer pointer-events-none absolute inset-0 z-0 opacity-[0.72] sm:opacity-[0.82] lg:opacity-[0.88]">
         <GlobalBackgroundParticles />
-      </div>
+      </motion.div>
 
       <div className="scanline-overlay" />
 
@@ -83,7 +81,7 @@ export default function App() {
 
       {dockReady &&
         createPortal(
-          <div
+          <motion.div
             data-app-dock
             className="pointer-events-auto fixed inset-x-0 bottom-0 isolate flex justify-center px-2 lg:px-6 xl:px-10"
           >
@@ -93,10 +91,10 @@ export default function App() {
               onPrev={goPrev}
               onNext={goNext}
             />
-          </div>,
+          </motion.div>,
           document.body,
         )}
-      {!bootDone && <SystemBootLoader onExitComplete={finishBoot} />}
-    </div>
+      {bootScreenVisible ? <SystemBootLoader onExitComplete={hideBootScreen} /> : null}
+    </motion.div>
   );
 }

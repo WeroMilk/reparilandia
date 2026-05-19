@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const BOOT_MS = 1200;
+const EXIT_MS = 320;
 
 function seeded(i: number, salt: number) {
   const x = Math.sin(i * 12.9898 + salt * 78.233) * 43758.5453123;
@@ -13,24 +14,42 @@ interface SystemBootLoaderProps {
 }
 
 export default function SystemBootLoader({ onExitComplete }: SystemBootLoaderProps) {
+  const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(true);
+  const exitNotified = useRef(false);
   /** Partículas solo en cliente: evita hydration mismatch (SSR vs navegador redondean estilos distinto). */
   const [particlesReady, setParticlesReady] = useState(false);
 
-  useEffect(() => {
-    const id = window.setTimeout(() => setVisible(false), BOOT_MS);
-    return () => window.clearTimeout(id);
-  }, []);
+  const notifyExitComplete = useCallback(() => {
+    if (exitNotified.current) return;
+    exitNotified.current = true;
+    onExitComplete();
+  }, [onExitComplete]);
 
   useEffect(() => {
+    setMounted(true);
     setParticlesReady(true);
   }, []);
 
+  useEffect(() => {
+    if (!mounted) return;
+    const hideId = window.setTimeout(() => setVisible(false), BOOT_MS);
+    /** Si AnimatePresence no dispara onExitComplete, avisar tras la salida (sin desmontar desde fuera antes). */
+    const safetyId = window.setTimeout(notifyExitComplete, BOOT_MS + EXIT_MS + 80);
+    return () => {
+      window.clearTimeout(hideId);
+      window.clearTimeout(safetyId);
+    };
+  }, [mounted, notifyExitComplete]);
+
+  if (!mounted) return null;
+
   return (
-    <AnimatePresence onExitComplete={onExitComplete}>
+    <AnimatePresence onExitComplete={notifyExitComplete}>
       {visible && (
         <motion.div
           key="system-boot"
+          id="system-boot-overlay"
           className="pointer-events-none fixed inset-0 z-[10100] flex flex-col items-center justify-center bg-hologram-darker safe-pt"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}

@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Send, MessageCircle, CheckCircle, ImagePlus } from 'lucide-react';
+import { X, Send, CheckCircle, ImagePlus } from 'lucide-react';
 import { saveQuote } from '@/lib/formActions';
 
 interface QuoteFormProps {
@@ -8,12 +8,16 @@ interface QuoteFormProps {
   onClose: () => void;
 }
 
-const shell =
-  'w-full max-w-2xl mx-auto rounded-2xl sm:rounded-3xl border border-white/10 bg-[rgba(12,12,18,0.94)] backdrop-blur-xl shadow-[0_32px_96px_rgba(0,0,0,0.65)] relative overflow-hidden ring-1 ring-white/[0.07] flex flex-col max-h-[min(92dvh,calc(100dvh-1.25rem))] min-h-0';
+const shellBase =
+  'quote-form-shell w-full mx-auto rounded-2xl sm:rounded-3xl border border-white/10 bg-[rgba(12,12,18,0.94)] backdrop-blur-xl shadow-[0_32px_96px_rgba(0,0,0,0.65)] relative overflow-hidden ring-1 ring-white/[0.07] flex flex-col min-h-0 transition-[max-width] duration-300 ease-out';
+
+function quoteShellClass(hasPreview: boolean) {
+  return `${shellBase} ${hasPreview ? 'quote-form-shell--with-preview max-w-[min(96vw,58rem)]' : 'max-w-2xl'}`;
+}
 
 const labelClass = 'block font-space text-white text-xs font-medium mb-1 sm:text-sm sm:mb-1.5 tracking-wide';
 const inputClass =
-  'w-full rounded-xl sm:rounded-2xl border border-white/12 bg-black/35 px-3 py-2.5 text-sm text-white placeholder:text-white font-space focus:outline-none transition-[border-color,box-shadow] focus:border-hologram-cyan/55 focus:shadow-[0_0_0_2px_rgba(0,191,255,0.12)] sm:px-4 sm:py-3';
+  'w-full min-h-[var(--touch-min)] rounded-xl sm:rounded-2xl border border-white/12 bg-black/35 px-3 py-2.5 text-sm text-white placeholder:text-white/50 font-space focus:outline-none transition-[border-color,box-shadow] focus:border-hologram-cyan/55 focus:shadow-[0_0_0_2px_rgba(0,191,255,0.12)] sm:px-4 sm:py-3';
 
 export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
   const [formData, setFormData] = useState({
@@ -30,7 +34,14 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
   const [loading, setLoading] = useState(false);
   const fotoInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    return () => {
+      if (fotoPreview) URL.revokeObjectURL(fotoPreview);
+    };
+  }, [fotoPreview]);
+
   const handleFotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (fotoPreview) URL.revokeObjectURL(fotoPreview);
     const file = e.target.files?.[0];
     if (!file) {
       setFoto(null);
@@ -69,17 +80,10 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
     }
   };
 
-  const handleWhatsApp = () => {
-    const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '526622383656';
-    const message = `Hola Reparilandia! Solicito cotización para: ${serviceName}\nNombre: ${formData.nombre}\nTel: ${formData.telefono}\nDescripción: ${formData.descripcion}`;
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
-  };
-
   if (submitted) {
     return (
       <motion.div
-        className={`${shell} p-6 sm:p-8 md:p-10 text-center`}
+        className={`${quoteShellClass(false)} p-6 sm:p-8 md:p-10 text-center`}
         initial={{ scale: 0.94, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 320, damping: 28 }}
@@ -87,22 +91,12 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
         <CheckCircle className="w-16 h-16 md:w-20 md:h-20 text-hologram-cyan mx-auto mb-5" />
         <h3 className="font-orbitron text-xl md:text-2xl text-holographic mb-3">¡Solicitud enviada!</h3>
         <p className="font-space text-white text-base mb-8 max-w-md mx-auto leading-relaxed">
-          Hemos recibido tu solicitud de cotización. Te contactaremos pronto.
+          Tu cotización y la fotografía del equipo se enviaron al correo de Reparilandia. Te contactaremos pronto.
         </p>
-        <motion.button
-          type="button"
-          onClick={handleWhatsApp}
-          className="flex items-center justify-center gap-2 w-full max-w-sm mx-auto py-3.5 rounded-2xl bg-emerald-600/25 border border-emerald-400/40 text-emerald-200 font-semibold text-sm hover:bg-emerald-600/35 transition-colors"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <MessageCircle className="w-5 h-5" />
-          También por WhatsApp
-        </motion.button>
         <button
           type="button"
           onClick={onClose}
-          className="mt-6 text-white hover:text-hologram-cyan font-space text-sm transition-colors"
+          className="text-white hover:text-hologram-cyan font-space text-sm transition-colors"
         >
           Cerrar
         </button>
@@ -110,9 +104,11 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
     );
   }
 
+  const hasPreview = Boolean(fotoPreview);
+
   return (
     <motion.div
-      className={shell}
+      className={quoteShellClass(hasPreview)}
       initial={{ scale: 0.94, y: 16, opacity: 0 }}
       animate={{ scale: 1, y: 0, opacity: 1 }}
       exit={{ scale: 0.94, y: 16, opacity: 0 }}
@@ -121,9 +117,9 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
       <motion.div className="absolute top-0 right-0 w-px h-24 bg-gradient-to-b from-hologram-cyan/50 to-transparent" />
       <motion.div className="absolute top-0 left-0 w-24 h-px bg-gradient-to-r from-hologram-cyan/50 to-transparent" />
 
-      <motion.div className="flex shrink-0 items-start justify-between gap-3 border-b border-white/[0.06] px-4 pb-3 pt-4 sm:px-5 sm:pb-3.5 sm:pt-5">
+      <motion.div className="flex shrink-0 items-start justify-between gap-3 border-b border-white/[0.06] px-4 pb-2.5 pt-3.5 sm:px-5 sm:pb-3 sm:pt-4">
         <motion.div className="min-w-0">
-          <p className="font-space text-white text-[10px] uppercase tracking-[0.2em] mb-0.5 sm:text-xs">Cotización</p>
+          <p className="font-space text-white text-[12px] uppercase tracking-[0.2em] mb-0.5 sm:text-xs">Cotización</p>
           <h3 className="font-orbitron text-base sm:text-lg md:text-xl text-holographic tracking-wider break-words leading-tight">
             {serviceName}
           </h3>
@@ -138,138 +134,183 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
         </button>
       </motion.div>
 
-      <motion.div className="native-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3 scrollbar-hide sm:px-5 sm:py-4">
-        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-          <motion.div>
-            <label htmlFor="quote-nombre" className={labelClass}>
-              Nombre
-            </label>
-            <input
-              enterKeyHint="next"
-              id="quote-nombre"
-              name="nombre"
-              type="text"
-              required
-              autoComplete="name"
-              placeholder="Tu nombre completo"
-              className={inputClass}
-              value={formData.nombre}
-              onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-            />
-          </motion.div>
-          <motion.div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
-            <motion.div>
-              <label htmlFor="quote-email" className={labelClass}>
-                Correo electrónico
+      <motion.div
+        className={`min-h-0 flex-1 px-4 py-2.5 sm:px-5 sm:py-3 ${
+          hasPreview
+            ? 'overflow-hidden max-lg:native-scroll max-lg:overflow-y-auto max-lg:overscroll-contain max-lg:scrollbar-hide'
+            : 'native-scroll overflow-y-auto overscroll-contain scrollbar-hide'
+        }`}
+      >
+        <form
+          onSubmit={handleSubmit}
+          className={
+            hasPreview
+              ? 'quote-form-with-preview flex min-h-0 flex-1 flex-col gap-2 sm:gap-2.5'
+              : 'space-y-3 sm:space-y-4'
+          }
+        >
+          <motion.div
+            className={
+              hasPreview
+                ? 'flex min-h-0 flex-col gap-2 sm:gap-2.5 lg:grid lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:grid-rows-[minmax(0,1fr)_auto] lg:gap-x-4 lg:gap-y-2'
+                : 'contents'
+            }
+          >
+            <motion.div className={hasPreview ? 'flex min-h-0 flex-col gap-2 sm:gap-2.5 lg:min-h-0 lg:overflow-hidden' : 'contents'}>
+              <motion.div>
+                <label htmlFor="quote-nombre" className={labelClass}>
+                  Nombre
+                </label>
+                <input
+                  enterKeyHint="next"
+                  id="quote-nombre"
+                  name="nombre"
+                  type="text"
+                  required
+                  autoComplete="name"
+                  placeholder="Tu nombre completo"
+                  className={inputClass}
+                  value={formData.nombre}
+                  onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                />
+              </motion.div>
+              <motion.div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2">
+                <motion.div>
+                  <label htmlFor="quote-email" className={labelClass}>
+                    Correo electrónico
+                  </label>
+                  <input
+                    enterKeyHint="next"
+                    id="quote-email"
+                    name="email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    placeholder="tu@email.com"
+                    className={inputClass}
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  />
+                </motion.div>
+                <motion.div>
+                  <label htmlFor="quote-telefono" className={labelClass}>
+                    Teléfono
+                  </label>
+                  <input
+                    enterKeyHint="next"
+                    id="quote-telefono"
+                    name="telefono"
+                    type="tel"
+                    required
+                    autoComplete="tel"
+                    placeholder="+52 (662) 000-0000"
+                    className={inputClass}
+                    value={formData.telefono}
+                    onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+                  />
+                </motion.div>
+              </motion.div>
+              <motion.div className={hasPreview ? 'min-h-0 lg:flex-1 lg:overflow-hidden' : undefined}>
+                <label htmlFor="quote-descripcion" className={labelClass}>
+                  Descripción del problema
+                </label>
+                <textarea
+                  id="quote-descripcion"
+                  name="descripcion"
+                  required
+                  rows={hasPreview ? 2 : 4}
+                  autoComplete="off"
+                  placeholder="Describe el problema o lo que necesitas reparar..."
+                  className={`${inputClass} resize-none ${
+                    hasPreview
+                      ? 'min-h-[4.5rem] max-lg:min-h-[5rem] lg:min-h-0 lg:max-h-[min(14dvh,6.5rem)]'
+                      : 'min-h-[96px] sm:min-h-[112px]'
+                  }`}
+                  value={formData.descripcion}
+                  onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
+                />
+              </motion.div>
+            </motion.div>
+
+            <motion.div
+              className={
+                hasPreview
+                  ? 'flex min-h-0 flex-col gap-1.5 lg:min-h-0 lg:overflow-hidden'
+                  : undefined
+              }
+            >
+              <label htmlFor="quote-foto" className={labelClass}>
+                Fotografía del equipo <span className="text-hologram-cyan/90">(obligatoria)</span>
               </label>
               <input
-                enterKeyHint="next"
-                id="quote-email"
-                name="email"
-                type="email"
+                ref={fotoInputRef}
+                id="quote-foto"
+                name="foto"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
                 required
-                autoComplete="email"
-                placeholder="tu@email.com"
-                className={inputClass}
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="sr-only"
+                onChange={handleFotoChange}
               />
+              <button
+                type="button"
+                onClick={() => fotoInputRef.current?.click()}
+                className={`${inputClass} flex w-full items-center justify-center gap-2 border-dashed text-white/80 hover:border-hologram-cyan/45 hover:text-white ${
+                  hasPreview ? 'py-2.5 text-xs sm:py-3' : 'py-4'
+                }`}
+              >
+                <ImagePlus className="h-5 w-5 shrink-0 text-hologram-cyan/90" />
+                <span className="truncate">{foto ? foto.name : 'Seleccionar imagen (máx. 5 MB)'}</span>
+              </button>
+              {fotoPreview && (
+                <motion.div
+                  className={`flex min-h-0 items-center justify-center overflow-hidden rounded-xl border border-white/12 bg-black/40 ${
+                    hasPreview
+                      ? 'mt-0 min-h-[min(18dvh,7.5rem)] flex-1 p-1.5 sm:p-2 lg:min-h-0 lg:max-h-none'
+                      : 'mt-2 p-2 sm:p-3'
+                  }`}
+                >
+                  <img
+                    src={fotoPreview}
+                    alt="Vista previa del equipo"
+                    className={
+                      hasPreview
+                        ? 'max-h-full max-w-full object-contain'
+                        : 'mx-auto block h-auto max-h-[min(22dvh,8.5rem)] w-auto object-contain'
+                    }
+                  />
+                </motion.div>
+              )}
+              {!hasPreview && (
+                <p className="mt-1.5 font-space text-[12px] leading-snug text-white/55 sm:text-[14px]">
+                  La imagen se enviará junto con tus datos al correo del taller para agilizar la cotización.
+                </p>
+              )}
             </motion.div>
-            <motion.div>
-              <label htmlFor="quote-telefono" className={labelClass}>
-                Teléfono
-              </label>
-              <input
-                enterKeyHint="next"
-                id="quote-telefono"
-                name="telefono"
-                type="tel"
-                required
-                autoComplete="tel"
-                placeholder="+52 (662) 000-0000"
-                className={inputClass}
-                value={formData.telefono}
-                onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-              />
-            </motion.div>
-          </motion.div>
-          <motion.div>
-            <label htmlFor="quote-descripcion" className={labelClass}>
-              Descripción del problema
-            </label>
-            <textarea
-              id="quote-descripcion"
-              name="descripcion"
-              required
-              rows={4}
-              autoComplete="off"
-              placeholder="Describe el problema o lo que necesitas reparar..."
-              className={`${inputClass} resize-none min-h-[96px] sm:min-h-[112px]`}
-              value={formData.descripcion}
-              onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
-            />
           </motion.div>
 
-          <motion.div>
-            <label htmlFor="quote-foto" className={labelClass}>
-              Fotografía del equipo <span className="text-hologram-cyan/90">(obligatoria)</span>
-            </label>
-            <input
-              ref={fotoInputRef}
-              id="quote-foto"
-              name="foto"
-              type="file"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              required
-              className="sr-only"
-              onChange={handleFotoChange}
-            />
-            <button
-              type="button"
-              onClick={() => fotoInputRef.current?.click()}
-              className={`${inputClass} flex w-full items-center justify-center gap-2 border-dashed py-4 text-white/80 hover:border-hologram-cyan/45 hover:text-white`}
-            >
-              <ImagePlus className="h-5 w-5 shrink-0 text-hologram-cyan/90" />
-              {foto ? foto.name : 'Seleccionar imagen (máx. 5 MB)'}
-            </button>
-            {fotoPreview && (
-              <img
-                src={fotoPreview}
-                alt="Vista previa del equipo"
-                className="mt-2 max-h-36 w-full rounded-xl border border-white/12 object-contain bg-black/40"
-              />
-            )}
-            <p className="mt-1.5 font-space text-[10px] leading-snug text-white/55 sm:text-[11px]">
+          {hasPreview && (
+            <p className="shrink-0 font-space text-[12px] leading-snug text-white/55 sm:text-[14px] lg:col-span-2">
               La imagen se enviará junto con tus datos al correo del taller para agilizar la cotización.
             </p>
-          </motion.div>
+          )}
 
           {submitError && (
-            <p className="font-space text-xs text-red-300/95" role="alert">
+            <p className="shrink-0 font-space text-xs text-red-300/95 lg:col-span-2" role="alert">
               {submitError}
             </p>
           )}
 
-          <motion.div className="flex flex-col sm:flex-row gap-2.5 pb-1 pt-1 sm:gap-3 sm:pb-0">
+          <motion.div className={`shrink-0 pb-0.5 pt-0.5 sm:pb-0 ${hasPreview ? 'lg:col-span-2' : ''}`}>
             <motion.button
               type="submit"
               disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-white text-hologram-darker font-semibold text-sm hover:shadow-[0_8px_32px_rgba(0,191,255,0.2)] disabled:opacity-50 disabled:pointer-events-none transition-shadow sm:rounded-2xl sm:py-3.5"
+              className="flex w-full items-center justify-center gap-2 py-3 rounded-xl bg-white text-hologram-darker font-semibold text-sm hover:shadow-[0_8px_32px_rgba(0,191,255,0.2)] disabled:opacity-50 disabled:pointer-events-none transition-shadow sm:rounded-2xl sm:py-3.5"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >
               <Send className="w-5 h-5" />
               {loading ? 'Enviando…' : 'Enviar solicitud'}
-            </motion.button>
-            <motion.button
-              type="button"
-              onClick={handleWhatsApp}
-              className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600/20 border border-emerald-400/35 text-emerald-200 font-semibold text-sm hover:bg-emerald-600/30 transition-colors sm:shrink-0 sm:rounded-2xl sm:py-3.5"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <MessageCircle className="w-5 h-5" />
-              WhatsApp
             </motion.button>
           </motion.div>
         </form>

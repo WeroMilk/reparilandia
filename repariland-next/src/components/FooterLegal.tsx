@@ -23,7 +23,7 @@ export default function FooterLegal() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="legal-modal-title"
-            className="fixed inset-0 z-[13000] flex items-start justify-center overflow-y-auto overflow-x-hidden overscroll-y-contain px-3 py-6 sm:px-4 sm:py-8 md:px-6 safe-pt scrollbar-hide"
+            className="fixed inset-0 z-[13000] flex items-center justify-center overflow-y-auto overflow-x-hidden overscroll-y-contain px-3 pt-4 pb-[calc(var(--dock-chrome-height)+env(safe-area-inset-bottom,0px)+2rem)] sm:px-4 sm:pt-5 sm:pb-[calc(var(--dock-chrome-height)+env(safe-area-inset-bottom,0px)+2.5rem)] md:px-6 safe-pt scrollbar-hide"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -34,10 +34,10 @@ export default function FooterLegal() {
               aria-hidden
             />
             <motion.div
-              className={`${legalModalShell} relative z-10 my-auto shrink-0`}
-              initial={{ scale: 0.94, y: 16, opacity: 0 }}
+              className={`${legalModalShell} relative z-10 max-h-[min(88dvh,calc(100dvh-var(--dock-chrome-height)-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-5.5rem))] shrink-0 -translate-y-[min(3.25rem,7.5dvh)] sm:-translate-y-[min(3.75rem,8dvh)]`}
+              initial={{ scale: 0.94, y: 20, opacity: 0 }}
               animate={{ scale: 1, y: 0, opacity: 1 }}
-              exit={{ scale: 0.94, y: 16, opacity: 0 }}
+              exit={{ scale: 0.94, y: 20, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 320, damping: 30 }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -67,7 +67,7 @@ export default function FooterLegal() {
                   </button>
                 </div>
 
-                <div className="space-y-2.5 font-space text-[13px] leading-snug text-white sm:space-y-3 sm:text-sm sm:leading-relaxed md:text-[0.9375rem]">
+                <div className="space-y-2.5 font-space text-[16px] leading-snug text-white sm:space-y-3 sm:text-sm sm:leading-relaxed md:text-[0.9375rem]">
                   {modal === 'privacy' && (
                     <>
                       <p>
@@ -187,9 +187,9 @@ export default function FooterLegal() {
 
   return (
     <>
-      <div className="dock-footer-rail relative z-30 w-full shrink-0 border-t border-white/[0.06] bg-transparent">
-        <div className="flex h-full flex-nowrap items-center justify-center gap-x-1.5 gap-y-0 px-2 sm:gap-x-2 sm:px-3">
-          <span className="shrink-0 font-space text-[9px] font-semibold uppercase tracking-[0.14em] text-white/85 sm:text-[10px] sm:tracking-[0.16em]">
+      <div className="dock-footer-rail relative z-30 w-full shrink-0 border-t border-white/[0.06] bg-transparent safe-pb">
+        <div className="flex h-full flex-nowrap items-center justify-center gap-x-1 gap-y-0 px-2 sm:gap-x-2 sm:px-3">
+          <span className="shrink-0 font-space text-[11px] font-semibold uppercase tracking-[0.12em] text-white/88 sm:text-[12px] sm:tracking-[0.14em]">
             © {year} REPARILANDIA
           </span>
           <span className="text-white/35 select-none" aria-hidden>
@@ -200,10 +200,11 @@ export default function FooterLegal() {
               type="button"
               data-dock-action="privacy"
               onClick={() => setModal('privacy')}
-              className="flex min-h-[44px] items-center justify-center gap-1 px-1.5 font-space text-[9px] text-white/75 transition-colors hover:text-white active:scale-95 active:text-hologram-cyan touch-manipulation sm:min-h-8 sm:text-[10px]"
+              className="flex min-h-8 items-center justify-center gap-1 px-1 font-space text-[11px] text-white/78 transition-colors hover:text-white active:scale-95 active:text-hologram-cyan touch-manipulation max-lg:min-h-9 sm:min-h-8 sm:px-1.5 sm:text-[12px] lg:min-h-8"
+              aria-label="Privacidad"
             >
               <Shield className="h-3.5 w-3.5 shrink-0" />
-              Privacidad
+              <span className="max-[360px]:sr-only">Privacidad</span>
             </button>
             <span className="text-white/35 select-none" aria-hidden>
               ·
@@ -212,10 +213,11 @@ export default function FooterLegal() {
               type="button"
               data-dock-action="cookies"
               onClick={() => setModal('cookies')}
-              className="flex min-h-[44px] items-center justify-center gap-1 px-1.5 font-space text-[9px] text-white/75 transition-colors hover:text-white active:scale-95 active:text-hologram-cyan touch-manipulation sm:min-h-8 sm:text-[10px]"
+              className="flex min-h-8 items-center justify-center gap-1 px-1 font-space text-[11px] text-white/78 transition-colors hover:text-white active:scale-95 active:text-hologram-cyan touch-manipulation max-lg:min-h-9 sm:min-h-8 sm:px-1.5 sm:text-[12px] lg:min-h-8"
+              aria-label="Cookies"
             >
               <Cookie className="h-3.5 w-3.5 shrink-0" />
-              Cookies
+              <span className="max-[360px]:sr-only">Cookies</span>
             </button>
             <span className="text-white/35 select-none" aria-hidden>
               ·
@@ -224,10 +226,11 @@ export default function FooterLegal() {
               type="button"
               data-dock-action="legal"
               onClick={() => setModal('legal')}
-              className="flex min-h-[44px] items-center justify-center gap-1 px-1.5 font-space text-[9px] text-white/75 transition-colors hover:text-white active:scale-95 active:text-hologram-cyan touch-manipulation sm:min-h-8 sm:text-[10px]"
+              className="flex min-h-8 items-center justify-center gap-1 px-1 font-space text-[11px] text-white/78 transition-colors hover:text-white active:scale-95 active:text-hologram-cyan touch-manipulation max-lg:min-h-9 sm:min-h-8 sm:px-1.5 sm:text-[12px] lg:min-h-8"
+              aria-label="Términos"
             >
               <FileText className="h-3.5 w-3.5 shrink-0" />
-              Términos
+              <span className="max-[360px]:sr-only">Términos</span>
             </button>
           </div>
         </div>

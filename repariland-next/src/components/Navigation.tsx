@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import MobileTabBar from './MobileTabBar';
 import type { ScreenName } from '@/types';
 
 interface NavigationProps {
@@ -80,27 +79,27 @@ function ChevronControl({
   );
 }
 
-function DesktopDockNav({
-  currentScreen,
-  onNavigate,
-  onPrev,
-  onNext,
-}: NavigationProps) {
+function DockNav({ currentScreen, onNavigate, onPrev, onNext }: NavigationProps) {
   return (
     <nav
-      className="relative z-[20] hidden w-full shrink-0 touch-manipulation pointer-events-auto lg:block"
+      className="relative z-[20] w-full shrink-0 touch-manipulation pointer-events-auto"
       aria-label="Navegación principal"
     >
-      <div className="pointer-events-none h-px shrink-0 bg-gradient-to-r from-transparent via-white/18 to-transparent opacity-90" />
+      <motion.div className="pointer-events-none h-px shrink-0 bg-gradient-to-r from-transparent via-white/18 to-transparent opacity-90" />
 
       <div className="dock-nav-rail border-b border-white/[0.06] bg-gradient-to-b from-white/[0.03] to-transparent">
-        <div className="mx-auto flex h-full w-full max-w-[min(100%,28rem)] items-center justify-center gap-1 px-2 sm:max-w-[min(100%,32rem)]">
-          <ChevronControl dir="left" onClick={onPrev} label="Pantalla anterior" />
+        <div className="mx-auto flex h-full w-full max-w-full items-center justify-center gap-0.5 px-1 sm:gap-1 sm:px-2 lg:max-w-[min(100%,40rem)]">
+          <ChevronControl
+            dir="left"
+            onClick={onPrev}
+            label="Pantalla anterior"
+            className="max-lg:hidden"
+          />
 
           <div
             role="tablist"
             aria-label="Secciones"
-            className="grid h-full min-w-0 flex-1 grid-cols-5 items-center gap-0"
+            className="grid h-full min-w-0 flex-1 grid-cols-5 items-center gap-0 overflow-visible"
           >
             {navItems.map((item) => {
               const isActive = currentScreen === item.screen;
@@ -121,10 +120,10 @@ function DesktopDockNav({
                   }}
                   aria-label={item.label}
                   aria-current={isActive ? 'page' : undefined}
-                  className="relative z-[20] flex h-full min-w-0 w-full cursor-pointer flex-col items-center justify-center gap-1 pointer-events-auto [-webkit-tap-highlight-color:transparent] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400/70 active:opacity-90"
+                  className="relative z-[20] flex h-full min-w-0 w-full cursor-pointer flex-col items-center justify-center gap-0.5 overflow-visible pointer-events-auto [-webkit-tap-highlight-color:transparent] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400/70 active:opacity-90 sm:gap-1"
                 >
                   <span
-                    className={`pointer-events-none relative rounded-full bg-gradient-to-br hover:brightness-105 ${item.gradient} ${isActive ? dotActive : dotIdle}`}
+                    className={`pointer-events-none relative rounded-full bg-gradient-to-br transition-transform duration-200 hover:scale-[1.08] hover:brightness-105 ${item.gradient} ${isActive ? `${dotActive} scale-[1.08]` : dotIdle}`}
                   >
                     <span
                       className="pointer-events-none absolute inset-[1.5px] rounded-full bg-black/10 mix-blend-multiply backdrop-blur-[1px]"
@@ -133,7 +132,7 @@ function DesktopDockNav({
                   </span>
 
                   <span
-                    className={`pointer-events-none line-clamp-2 w-full max-w-[3.5rem] text-center font-space text-[9px] font-medium uppercase leading-[1.05] tracking-[0.08em] ${
+                    className={`pointer-events-none max-w-none whitespace-nowrap px-0.5 text-center font-space text-[clamp(8.5px,2.55vw,11px)] font-medium uppercase leading-none tracking-[0.03em] sm:tracking-[0.045em] lg:tracking-[0.05em] ${
                       isActive ? 'text-white' : 'text-white/58'
                     }`}
                   >
@@ -144,23 +143,18 @@ function DesktopDockNav({
             })}
           </div>
 
-          <ChevronControl dir="right" onClick={onNext} label="Pantalla siguiente" />
+          <ChevronControl
+            dir="right"
+            onClick={onNext}
+            label="Pantalla siguiente"
+            className="max-lg:hidden"
+          />
         </div>
       </div>
     </nav>
   );
 }
 
-export default function Navigation({ currentScreen, onNavigate, onPrev, onNext }: NavigationProps) {
-  return (
-    <>
-      <MobileTabBar currentScreen={currentScreen} onNavigate={onNavigate} />
-      <DesktopDockNav
-        currentScreen={currentScreen}
-        onNavigate={onNavigate}
-        onPrev={onPrev}
-        onNext={onNext}
-      />
-    </>
-  );
+export default function Navigation(props: NavigationProps) {
+  return <DockNav {...props} />;
 }

@@ -1,11 +1,10 @@
 /**
- * Quita solo el fondo negro conectado a los bordes (flood fill), sin comer piernas/cables oscuros.
+ * Quita fondo oscuro de borde + tablero gris/blanco (incluso islas entre personajes).
  */
 const path = require('path');
 const fs = require('fs');
 const sharp = require('sharp');
 
-/** Usar el PNG original completo; evitar recorte por luminancia (borra piernas/cables). */
 const SRC =
   process.env.CONTACTO_SRC ||
   path.join(
@@ -14,32 +13,57 @@ const SRC =
     'projects',
     'e-proyectos-listos-reparilandia-listo',
     'assets',
-    'c__Users_alfon_AppData_Roaming_Cursor_User_workspaceStorage_3a4a7ddea0519858bbdace4df32bbcff_images_image-9b0fe7e4-610f-4507-aad6-d87a390bc533.png'
+    'c__Users_alfon_AppData_Roaming_Cursor_User_workspaceStorage_3a4a7ddea0519858bbdace4df32bbcff_images_Dise_o_sin_t_tulo__18_-cc07776d-894c-4cf9-9818-acd2e2c49dcf.png'
   );
 
 const OUT = path.join(__dirname, '..', 'public', 'assets', 'contacto-ilustracion-recuerdos.png');
 
-function isBgPixel(r, g, b, bg, tolerance) {
-  return Math.abs(r - bg[0]) <= tolerance && Math.abs(g - bg[1]) <= tolerance && Math.abs(b - bg[2]) <= tolerance;
+function channelSpread(r, g, b) {
+  return Math.max(Math.abs(r - g), Math.abs(g - b), Math.abs(r - b));
 }
 
-function floodRemoveBackground(data, width, height, channels, tolerance = 28) {
-  const corners = [
+function isNeutral(r, g, b, spread = 14) {
+  return channelSpread(r, g, b) <= spread;
+}
+
+/** Tablero y grises claros de “transparencia falsa”. */
+function isCheckerboardBg(r, g, b) {
+  if (!isNeutral(r, g, b, 12)) return false;
+  const avg = (r + g + b) / 3;
+  return avg >= 178 && avg <= 255;
+}
+
+/** Marco oscuro alrededor del PNG (exports con borde). */
+function isDarkBorderBg(r, g, b) {
+  if (!isNeutral(r, g, b, 18)) return false;
+  return r <= 58 && g <= 58 && b <= 78;
+}
+
+/** Solo negro casi puro del export (nunca la tela de las camisetas). */
+function isExactBlackBg(r, g, b) {
+  return r <= 5 && g <= 5 && b <= 5;
+}
+
+function cornersAreBlackBackdrop(data, width, height, channels) {
+  const pts = [
     [0, 0],
     [width - 1, 0],
     [0, height - 1],
     [width - 1, height - 1],
   ];
-  const bg = corners.map(([x, y]) => {
-    const i = (y * width + x) * channels;
-    return [data[i], data[i + 1], data[i + 2]];
+  return pts.every(([x, y]) => {
+    const p = (y * width + x) * channels;
+    return data[p] <= 8 && data[p + 1] <= 8 && data[p + 2] <= 8;
   });
-  const bgAvg = [
-    Math.round(bg.reduce((s, c) => s + c[0], 0) / 4),
-    Math.round(bg.reduce((s, c) => s + c[1], 0) / 4),
-    Math.round(bg.reduce((s, c) => s + c[2], 0) / 4),
-  ];
+}
 
+function isEdgeRemovable(r, g, b, blackBackdrop) {
+  if (isCheckerboardBg(r, g, b)) return true;
+  if (blackBackdrop) return isExactBlackBg(r, g, b);
+  return isDarkBorderBg(r, g, b) || isExactBlackBg(r, g, b);
+}
+
+function floodFromBorder(data, width, height, channels, isRemovableFn) {
   const visited = new Uint8Array(width * height);
   const queue = [];
 
@@ -48,7 +72,7 @@ function floodRemoveBackground(data, width, height, channels, tolerance = 28) {
     const idx = y * width + x;
     if (visited[idx]) return;
     const p = idx * channels;
-    if (!isBgPixel(data[p], data[p + 1], data[p + 2], bgAvg, tolerance)) return;
+    if (!isRemovableFn(data[p], data[p + 1], data[p + 2])) return;
     visited[idx] = 1;
     queue.push(idx);
   };
@@ -72,11 +96,59 @@ function floodRemoveBackground(data, width, height, channels, tolerance = 28) {
     tryPush(x, y + 1);
   }
 
+  return visited;
+}
+
+function clearVisited(data, width, height, channels, visited) {
   for (let i = 0; i < width * height; i++) {
     if (visited[i]) data[i * channels + 3] = 0;
   }
+}
 
-  return data;
+/** Expande transparencia al tablero atrapado entre personajes. */
+function expandCheckerboardIntoTransparent(data, width, height, channels, passes = 48) {
+  const alphaAt = (idx) => data[idx * channels + 3];
+  const setTransparent = (idx) => {
+    data[idx * channels + 3] = 0;
+  };
+
+  for (let pass = 0; pass < passes; pass++) {
+    let changed = false;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const idx = y * width + x;
+        if (alphaAt(idx) === 0) continue;
+        const p = idx * channels;
+        const r = data[p];
+        const g = data[p + 1];
+        const b = data[p + 2];
+        if (!isCheckerboardBg(r, g, b)) continue;
+
+        const neighbors = [
+          idx - 1,
+          idx + 1,
+          idx - width,
+          idx + width,
+        ];
+        if (neighbors.some((n) => n >= 0 && n < width * height && alphaAt(n) === 0)) {
+          setTransparent(idx);
+          changed = true;
+        }
+      }
+    }
+    if (!changed) break;
+  }
+}
+
+/** Solo tablero en islas internas; nunca negro global (rompe camisetas). */
+function removeRemainingCheckerboardIslands(data, width, height, channels) {
+  for (let i = 0; i < width * height; i++) {
+    if (data[i * channels + 3] === 0) continue;
+    const p = i * channels;
+    if (isCheckerboardBg(data[p], data[p + 1], data[p + 2])) {
+      data[p + 3] = 0;
+    }
+  }
 }
 
 async function main() {
@@ -86,7 +158,16 @@ async function main() {
   }
 
   const { data, info } = await sharp(SRC).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-  const rgba = floodRemoveBackground(Buffer.from(data), info.width, info.height, 4, 32);
+  const rgba = Buffer.from(data);
+
+  const blackBackdrop = cornersAreBlackBackdrop(rgba, info.width, info.height, 4);
+  const removable = (r, g, b) => isEdgeRemovable(r, g, b, blackBackdrop);
+  const borderVisited = floodFromBorder(rgba, info.width, info.height, 4, removable);
+  clearVisited(rgba, info.width, info.height, 4, borderVisited);
+  expandCheckerboardIntoTransparent(rgba, info.width, info.height, 4);
+  if (!blackBackdrop) {
+    removeRemainingCheckerboardIslands(rgba, info.width, info.height, 4);
+  }
 
   await sharp(rgba, { raw: { width: info.width, height: info.height, channels: 4 } })
     .trim({ threshold: 8 })
@@ -94,7 +175,17 @@ async function main() {
     .toFile(OUT);
 
   const meta = await sharp(OUT).metadata();
-  console.log(`OK -> ${OUT} (${meta.width}x${meta.height}, alpha=${meta.hasAlpha})`);
+  const { data: outData, info: outInfo } = await sharp(OUT).raw().toBuffer({ resolveWithObject: true });
+  let leftoverBg = 0;
+  for (let i = 0; i < outInfo.width * outInfo.height; i++) {
+    const r = outData[i * 4];
+    const g = outData[i * 4 + 1];
+    const b = outData[i * 4 + 2];
+    const a = outData[i * 4 + 3];
+    if (a > 20 && isCheckerboardBg(r, g, b)) leftoverBg++;
+  }
+
+  console.log(`OK -> ${OUT} (${meta.width}x${meta.height}, alpha=${meta.hasAlpha}, leftover=${leftoverBg})`);
 }
 
 main().catch((err) => {

@@ -57,26 +57,23 @@ export default function LaserPortal({ screenKey, contentReady = false }: LaserPo
       aria-hidden
     >
       {/* Por debajo del scanline (z-12) y del contenido (z-20) */}
-      {/* Haz idle */}
-      <motion.div className="absolute inset-0 z-[1] flex justify-center opacity-[0.48] mix-blend-soft-light sm:opacity-[0.44] lg:opacity-[0.38]">
+      {/* Haz idle — ancho completo del margen superior */}
+      <motion.div className="absolute inset-x-0 top-0 z-[1] h-[min(36dvh,16rem)] opacity-[0.48] mix-blend-soft-light sm:h-[min(32dvh,14rem)] sm:opacity-[0.44] lg:h-[min(28dvh,12rem)] lg:opacity-[0.38]">
         <div
-          className="mt-0 h-[82%] w-full max-w-[42rem] shrink-0"
+          className="h-full w-full"
           style={{
             background:
-              'radial-gradient(ellipse 88% 72% at 50% 0%, rgba(240,253,255,0.5) 0%, rgba(45,212,191,0.18) 28%, rgba(34,211,238,0.06) 52%, transparent 78%)',
+              'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(240,253,255,0.5) 0%, rgba(45,212,191,0.18) 32%, rgba(34,211,238,0.08) 52%, transparent 72%)',
           }}
         />
       </motion.div>
-      <motion.div className="absolute inset-0 z-[1] flex justify-center">
-        <div
-          className="h-28 w-full max-w-[28rem] shrink-0 rounded-full bg-gradient-to-b from-cyan-100/55 via-teal-200/16 to-transparent blur-xl"
-          style={{ marginTop: 0 }}
-        />
+      <motion.div className="absolute inset-x-0 top-0 z-[1] h-[min(10rem,22dvh)]">
+        <div className="h-full w-full bg-gradient-to-b from-cyan-100/55 via-teal-200/16 to-transparent blur-2xl sm:blur-3xl" />
       </motion.div>
 
       <div className="relative z-[2] flex w-full justify-center">
         <svg
-          className="mt-[-0.35rem] block h-[min(32dvh,9.5rem)] w-full max-w-xl opacity-[0.38] mix-blend-plus-lighter max-sm:opacity-[0.30]"
+          className="mt-[-0.35rem] block h-[min(32dvh,9.5rem)] w-full max-w-none opacity-[0.38] mix-blend-plus-lighter max-sm:opacity-[0.30]"
           viewBox="0 0 320 160"
           preserveAspectRatio="xMidYMin meet"
         >
@@ -120,12 +117,12 @@ export default function LaserPortal({ screenKey, contentReady = false }: LaserPo
               transition={{ duration: ABSORB_MS / 1000, ease: [0.33, 1, 0.68, 1] }}
             />
             <motion.div
-              className="absolute inset-0 opacity-90"
+              className="absolute inset-x-0 top-0 h-[min(40dvh,18rem)] opacity-90"
               style={{
                 mixBlendMode: 'screen',
                 transformOrigin: '50% 0%',
                 background:
-                  'radial-gradient(ellipse 78% 62% at 50% 2%, rgba(56,189,248,0.38) 0%, rgba(34,211,238,0.08) 45%, transparent 62%)',
+                  'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(56,189,248,0.38) 0%, rgba(34,211,238,0.1) 42%, transparent 68%)',
               }}
               initial={{ scaleY: 0.92, opacity: 0 }}
               animate={{ scaleY: 1, opacity: 1 }}
@@ -135,10 +132,10 @@ export default function LaserPortal({ screenKey, contentReady = false }: LaserPo
         )}
 
         {phase === 'project' && (
-          <div key={`prj-${cycle}`} className="absolute inset-0 z-[29] flex justify-center">
-            {/* Destello: gradientes centrados en 50% (sin trazo cuñado a la derecha) */}
+          <div key={`prj-${cycle}`} className="absolute inset-x-0 top-0 z-[29] h-[min(42dvh,20rem)] sm:h-[min(38dvh,18rem)]">
+            {/* Destello: gradientes a ancho completo del margen superior */}
             <motion.div
-              className="relative h-full w-full max-w-[42rem] shrink-0 px-2 sm:px-0"
+              className="relative h-full w-full"
               style={{ transformOrigin: 'top center' }}
               initial={{ scaleY: 0.08, opacity: 0 }}
               animate={{ scaleY: 1, opacity: [0, 0.52, 0.38, 0] }}
@@ -158,14 +155,14 @@ export default function LaserPortal({ screenKey, contentReady = false }: LaserPo
                 className="h-full w-full"
                 style={{
                   background: [
-                    'radial-gradient(ellipse 82% 90% at 50% 4%, rgba(56,189,248,0.42) 0%, rgba(34,211,238,0.12) 42%, transparent 76%)',
-                    'linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(190,242,255,0.14) 32%, rgba(45,212,191,0.08) 52%, transparent 90%)',
+                    'radial-gradient(ellipse 140% 100% at 50% 0%, rgba(56,189,248,0.42) 0%, rgba(34,211,238,0.12) 40%, transparent 72%)',
+                    'linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(190,242,255,0.14) 28%, rgba(45,212,191,0.08) 48%, transparent 88%)',
                   ].join(','),
                 }}
               />
             </motion.div>
             <motion.div
-              className="pointer-events-none absolute inset-0 flex justify-center"
+              className="pointer-events-none absolute inset-0"
               initial={{ opacity: 0 }}
               animate={{ opacity: [0, 0.65, 0.45, 0] }}
               transition={{
@@ -174,13 +171,13 @@ export default function LaserPortal({ screenKey, contentReady = false }: LaserPo
                 times: [0, 0.2, 0.55, 1],
               }}
             >
-              <div
-                className="h-full w-full max-w-[42rem] shrink-0"
+              <motion.div
+                className="h-full w-full"
                 style={{
                   mixBlendMode: 'screen',
                   transformOrigin: 'top center',
                   background:
-                    'radial-gradient(ellipse 78% 88% at 50% 4%, rgba(186,230,253,0.42) 0%, rgba(45,212,191,0.18) 48%, transparent 78%)',
+                    'radial-gradient(ellipse 130% 100% at 50% 0%, rgba(186,230,253,0.42) 0%, rgba(45,212,191,0.18) 45%, transparent 72%)',
                 }}
               />
             </motion.div>
@@ -190,15 +187,15 @@ export default function LaserPortal({ screenKey, contentReady = false }: LaserPo
 
       <AnimatePresence>
         {phase === 'project' && (
-          <div key={`rim-wrap-${cycle}`} className="absolute inset-x-0 top-0 z-[30] flex justify-center">
+          <motion.div key={`rim-wrap-${cycle}`} className="absolute inset-x-0 top-0 z-[30]">
             <motion.div
               key={`rim-${cycle}`}
-              className="h-16 w-full max-w-[22rem] rounded-full border border-cyan-200/35 bg-cyan-200/5 shadow-[0_0_48px_rgba(34,211,238,0.28)] mix-blend-screen"
+              className="h-12 w-full border-b border-cyan-200/25 bg-gradient-to-b from-cyan-200/12 to-transparent shadow-[0_0_56px_rgba(34,211,238,0.22)] mix-blend-screen sm:h-14"
               initial={{ scale: 0.5, opacity: 0.65, y: -4 }}
               animate={{ scale: 1.08, opacity: 0, y: 6 }}
               transition={{ duration: PROJECT_MS / 1000, ease: [0.25, 0.1, 0.25, 1] }}
             />
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

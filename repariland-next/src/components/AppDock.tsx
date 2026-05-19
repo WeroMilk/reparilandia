@@ -11,7 +11,7 @@ interface AppDockProps {
 
 export default function AppDock({ currentScreen, onNavigate, onPrev, onNext }: AppDockProps) {
   return (
-    <div className="dock-chrome pointer-events-auto relative z-[1] flex w-full app-canvas touch-manipulation flex-col overflow-hidden border-t border-white/[0.07] bg-black/75 shadow-dock backdrop-blur-md supports-[backdrop-filter]:bg-black/60 safe-pbDock lg:mb-3 lg:rounded-2xl lg:border lg:border-white/[0.08] lg:bg-[#0c0c10]/96 lg:backdrop-blur-xl lg:supports-[backdrop-filter]:bg-[#0c0c10]/80 lg:px-2">
+    <div className="dock-chrome pointer-events-auto relative z-[1] mx-auto flex w-full max-w-[min(100%,56rem)] touch-manipulation flex-col overflow-hidden border-t border-white/[0.08] bg-[var(--chrome-surface)] shadow-dock backdrop-blur-2xl supports-[backdrop-filter]:bg-black/60 safe-pbDock lg:mb-[max(0.75rem,env(safe-area-inset-bottom,0px))] lg:rounded-2xl lg:border lg:px-2 app-canvas">
       <Navigation
         currentScreen={currentScreen}
         onNavigate={onNavigate}

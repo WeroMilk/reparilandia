@@ -1,11 +1,13 @@
-"""Knock outer black to alpha for noticias-monito-periodico.png."""
+"""Knock outer black to alpha for noticias monito PNGs."""
 from pathlib import Path
+import sys
 
 from PIL import Image
 import numpy as np
 
-path = Path(__file__).resolve().parents[1] / "public" / "assets" / "noticias-monito-periodico.png"
-TOL = 38
+name = sys.argv[1] if len(sys.argv) > 1 else "noticias-monito-nave.png"
+path = Path(__file__).resolve().parents[1] / "public" / "assets" / name
+TOL = 48
 
 im = Image.open(path).convert("RGBA")
 arr = np.array(im)

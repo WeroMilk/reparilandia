@@ -39,7 +39,7 @@ export const mobileNavItems: {
   },
   {
     screen: 'contacto',
-    label: 'Cotizar',
+    label: 'Contacto',
     Icon: MessageCircle,
     activeClass: 'text-[#FF7BC4]',
     idleClass: 'text-white/55',
@@ -54,13 +54,13 @@ interface MobileTabBarProps {
 export default function MobileTabBar({ currentScreen, onNavigate }: MobileTabBarProps) {
   return (
     <nav
-      className="dock-nav-rail relative z-[20] w-full shrink-0 touch-manipulation pointer-events-auto lg:hidden"
+      className="dock-nav-rail relative z-[20] w-full shrink-0 touch-manipulation border-t border-white/10 bg-black/80 backdrop-blur-xl supports-[backdrop-filter]:bg-black/65 pointer-events-auto lg:hidden"
       aria-label="Navegación principal"
     >
       <div
         role="tablist"
         aria-label="Secciones"
-        className="mx-auto grid h-full min-h-[4rem] w-full max-w-[100vw] grid-cols-5 items-stretch px-1"
+        className="mx-auto grid h-full w-full max-w-[100vw] grid-cols-5 items-stretch gap-0.5 px-1.5"
       >
         {mobileNavItems.map(({ screen, label, Icon, activeClass, idleClass }) => {
           const isActive = currentScreen === screen;
@@ -77,16 +77,18 @@ export default function MobileTabBar({ currentScreen, onNavigate }: MobileTabBar
                 e.stopPropagation();
                 onNavigate(screen);
               }}
-              className="mobile-tab-hit relative z-[20] flex min-h-[4rem] w-full cursor-pointer flex-col items-center justify-center gap-0.5 px-0.5 [-webkit-tap-highlight-color:transparent] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-cyan-400/70"
+              className={`mobile-tab-hit relative z-[20] flex h-full w-full cursor-pointer flex-col items-center justify-center gap-0.5 px-0.5 [-webkit-tap-highlight-color:transparent] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-cyan-400/70 ${
+                isActive ? 'rounded-lg bg-white/[0.08]' : ''
+              }`}
             >
               <Icon
-                className={`h-7 w-7 shrink-0 ${isActive ? activeClass : idleClass}`}
+                className={`h-[1.35rem] w-[1.35rem] shrink-0 sm:h-[1.5rem] sm:w-[1.5rem] ${isActive ? activeClass : idleClass}`}
                 strokeWidth={isActive ? 2.25 : 1.75}
                 aria-hidden
               />
               <span
-                className={`pointer-events-none line-clamp-1 w-full text-center font-space text-[9px] font-medium uppercase leading-tight tracking-[0.06em] sm:text-[10px] ${
-                  isActive ? 'text-white' : 'text-white/58'
+                className={`pointer-events-none max-w-none whitespace-nowrap px-0.5 text-center font-space text-[clamp(9px,2.75vw,12px)] font-semibold uppercase leading-none tracking-[0.03em] sm:tracking-[0.045em] ${
+                  isActive ? 'text-white' : 'text-white/62'
                 }`}
               >
                 {label}
