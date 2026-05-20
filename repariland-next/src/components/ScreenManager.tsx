@@ -6,6 +6,7 @@ import InicioScreen from './screens/InicioScreen';
 import HistoriaScreen from './screens/HistoriaScreen';
 import ServiciosScreen from './screens/ServiciosScreen';
 import NoticiasScreen from './screens/NoticiasScreen';
+import ReelsScreen from './screens/ReelsScreen';
 import ContactoScreen from './screens/ContactoScreen';
 import { SCREEN_ORDER } from '@/hooks/useScreenManager';
 import type { ScreenName } from '@/types';
@@ -22,9 +23,11 @@ const CROSSFADE_S = 0.2;
 function ScreenBody({
   screen,
   onNavigate,
+  isScreenVisible,
 }: {
   screen: ScreenName;
   onNavigate: (screen: ScreenName) => void;
+  isScreenVisible: boolean;
 }) {
   switch (screen) {
     case 'inicio':
@@ -35,6 +38,8 @@ function ScreenBody({
       return <ServiciosScreen />;
     case 'noticias':
       return <NoticiasScreen />;
+    case 'reels':
+      return <ReelsScreen isScreenActive={isScreenVisible} />;
     case 'contacto':
       return <ContactoScreen />;
     default:
@@ -113,7 +118,7 @@ export default function ScreenManager({
                 .join(' ')}
             >
               <motion.div className="pointer-events-auto relative flex min-h-0 w-full flex-1 flex-col overflow-hidden">
-                <ScreenBody screen={screen} onNavigate={onNavigate} />
+                <ScreenBody screen={screen} onNavigate={onNavigate} isScreenVisible={active} />
               </motion.div>
             </motion.div>
           );

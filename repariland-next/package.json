@@ -17,6 +17,9 @@
     "test:visual:update": "playwright test --update-snapshots",
     "test:visual:ci": "playwright test --project=laptop",
     "test:visual:ui": "playwright test --ui",
+    "reels:add": "node scripts/add-reel.cjs",
+    "reels:list": "node scripts/add-reel.cjs list",
+    "reels:remove": "node scripts/add-reel.cjs remove",
     "postinstall": "node scripts/fix-types-node-junction.cjs"
   },
   "dependencies": {
@@ -47,6 +50,7 @@
     "@radix-ui/react-toggle": "^1.1.10",
     "@radix-ui/react-toggle-group": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@vercel/blob": "^2.4.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -62,6 +66,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.70.0",
     "react-resizable-panels": "^4.2.2",
+    "server-only": "^0.0.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
     "vaul": "^1.1.2",

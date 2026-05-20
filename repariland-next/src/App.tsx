@@ -34,6 +34,9 @@ export default function App() {
     const onKeyDown = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement | null)?.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      if (currentScreen === 'reels' && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+        return;
+      }
       if (e.key === 'ArrowRight') {
         e.preventDefault();
         goNext();
@@ -44,7 +47,7 @@ export default function App() {
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [bootDone, goNext, goPrev]);
+  }, [bootDone, currentScreen, goNext, goPrev]);
 
   return (
     <motion.div

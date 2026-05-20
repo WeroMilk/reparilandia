@@ -58,7 +58,7 @@ export default function LaserPortal({ screenKey, contentReady = false }: LaserPo
     >
       {/* Por debajo del scanline (z-12) y del contenido (z-20) */}
       {/* Haz idle — ancho completo del margen superior */}
-      <motion.div className="absolute inset-x-0 top-0 z-[1] h-[min(36dvh,16rem)] opacity-[0.48] mix-blend-soft-light sm:h-[min(32dvh,14rem)] sm:opacity-[0.44] lg:h-[min(28dvh,12rem)] lg:opacity-[0.38]">
+      <motion.div className="laser-portal-idle-glow absolute inset-x-0 top-0 z-[1] h-[min(36dvh,16rem)] opacity-[0.48] mix-blend-soft-light sm:h-[min(32dvh,14rem)] sm:opacity-[0.44] lg:h-[min(28dvh,12rem)] lg:opacity-[0.38]">
         <div
           className="h-full w-full"
           style={{
@@ -67,11 +67,11 @@ export default function LaserPortal({ screenKey, contentReady = false }: LaserPo
           }}
         />
       </motion.div>
-      <motion.div className="absolute inset-x-0 top-0 z-[1] h-[min(10rem,22dvh)]">
+      <motion.div className="laser-portal-idle-flare absolute inset-x-0 top-0 z-[1] h-[min(10rem,22dvh)]">
         <div className="h-full w-full bg-gradient-to-b from-cyan-100/55 via-teal-200/16 to-transparent blur-2xl sm:blur-3xl" />
       </motion.div>
 
-      <div className="relative z-[2] flex w-full justify-center">
+      <motion.div className="laser-portal-beam-wrap relative z-[2] flex w-full justify-center">
         <svg
           className="mt-[-0.35rem] block h-[min(32dvh,9.5rem)] w-full max-w-none opacity-[0.38] mix-blend-plus-lighter max-sm:opacity-[0.30]"
           viewBox="0 0 320 160"
@@ -98,7 +98,7 @@ export default function LaserPortal({ screenKey, contentReady = false }: LaserPo
             />
           ))}
         </svg>
-      </div>
+      </motion.div>
 
       <AnimatePresence mode="wait">
         {phase === 'absorb' && (

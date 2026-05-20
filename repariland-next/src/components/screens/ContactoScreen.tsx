@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
-import AppModal from '@/components/AppModal';
 import ContactForm from '@/components/forms/ContactForm';
 import {
   Phone,
@@ -16,6 +15,7 @@ import {
   Clock,
   ExternalLink,
   Send,
+  ChevronLeft,
 } from 'lucide-react';
 import { assetUrl } from '@/lib/assetUrl';
 
@@ -53,122 +53,148 @@ const socialBtn =
 const MONITO_SOMBRERO = '/assets/contacto-monito-izq-busto.png';
 const ILUSTRACION_CONTACTO = '/assets/contacto-ilustracion-recuerdos.png';
 
-function ContactoMobileCard({
-  onWhatsApp,
-  onOpenMessage,
-}: {
-  onWhatsApp: () => void;
-  onOpenMessage: () => void;
-}) {
-  const { email, telefonoDisplay, telefonoTel, whatsappDisplay, facebook, instagram, youtube } = CONTACT;
-  const { workshopAddress, googleMapsUrl } = getWorkshopLocation();
+function getWhatsAppUrl() {
+  const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || CONTACT.whatsappWa;
+  const message =
+    '¡Hola, Reparilandia! Me gustaría recibir más información sobre sus servicios.';
+  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+}
 
+function ContactoMobileMessageView({ onBack }: { onBack: () => void }) {
   return (
     <motion.div
-      className={`${panelOpaque} flex h-full min-h-0 flex-1 flex-col overflow-hidden p-2.5 sm:p-3`}
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
+      className={`contacto-mobile-message ${panelOpaque} flex h-full min-h-0 flex-1 flex-col overflow-hidden p-2 sm:p-2.5`}
+      initial={{ opacity: 0, x: 24 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 24 }}
     >
-      <div className="flex shrink-0 flex-wrap items-center justify-between gap-1.5 border-b border-white/[0.07] pb-1.5">
-        <span className="font-space text-[12px] uppercase tracking-[0.16em] text-white/55">Síguenos</span>
-        <div className="flex flex-wrap gap-1">
-          <a href={facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className={socialBtn}>
-            <Facebook className="h-4 w-4" />
-          </a>
-          <a href={instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className={socialBtn}>
-            <Instagram className="h-4 w-4" />
-          </a>
-          <a href={youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className={socialBtn}>
-            <Youtube className="h-4 w-4" />
-          </a>
-        </div>
-      </div>
-
-      <div className="mt-1.5 flex min-h-0 flex-1 flex-col justify-between gap-1.5 overflow-hidden">
-        <div className="flex min-h-0 flex-col gap-1.5 overflow-hidden">
-        <section className={innerSection}>
-          <div className="mb-1 flex items-center gap-1.5 font-orbitron text-[12px] tracking-[0.12em] text-cyan-100/95">
-            <Mail className="h-3 w-3 text-hologram-cyan" />
-            CORREO
-          </div>
-          <a href={`mailto:${email}`} className="break-all font-space text-xs text-sky-200/95 hover:underline">
-            {email}
-          </a>
-          <motion.div className="mt-1.5 space-y-1 border-t border-white/[0.08] pt-1.5">
-            <div className="flex items-center gap-1.5 text-[12px] text-white/88">
-              <Phone className="h-3.5 w-3.5 text-hologram-gold" />
-              <a href={`tel:${telefonoTel}`} className="font-space text-sky-200/95 hover:underline">
-                {telefonoDisplay}
-              </a>
-            </div>
-            <div className="flex items-center gap-1.5 text-[12px] text-white/88">
-              <MessageCircle className="h-3.5 w-3.5 text-emerald-300/90" />
-              <span className="font-space">{whatsappDisplay}</span>
-            </div>
-          </motion.div>
-        </section>
-
-        <section className={`${innerSection} shrink-0`}>
-          <div className="mb-1 flex items-center gap-1.5 font-orbitron text-[12px] tracking-[0.12em] text-amber-100/95">
-            <MapPin className="h-3 w-3 text-amber-200/90" />
-            DIRECCIÓN
-          </div>
-          <p className="font-space text-xs leading-relaxed text-white/90">{workshopAddress}</p>
-          <a
-            href={googleMapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-1.5 inline-flex min-h-[40px] w-full items-center justify-center gap-1.5 rounded-md border border-sky-400/30 bg-sky-500/15 px-2 py-1.5 font-space text-xs font-semibold text-sky-100/95 touch-manipulation"
-          >
-            <ExternalLink className="h-4 w-4" />
-            Abrir en Google Maps
-          </a>
-        </section>
-
-        <section className={`${innerSection} shrink-0`}>
-          <div className="mb-1 flex items-center gap-1.5 font-orbitron text-[12px] tracking-[0.12em] text-emerald-100/95">
-            <Clock className="h-3 w-3 text-emerald-300/90" />
-            HORARIO
-          </div>
-          <p className="font-space text-[12px] leading-snug text-white/88">
-            Lun–vie 8:30–12:50, 14:30–18:50 · Sáb 9–13 · Dom cierre
-          </p>
-        </section>
-        </div>
-
-        <div className="flex shrink-0 flex-col gap-1.5 pt-1">
-          <motion.button
-          type="button"
-          onClick={onWhatsApp}
-          className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg border border-emerald-400/25 bg-gradient-to-r from-emerald-500/25 to-teal-600/20 font-semibold text-emerald-50 touch-manipulation active:scale-[0.98]"
-          whileTap={{ scale: 0.99 }}
-        >
-          <MessageCircle className="h-4 w-4" />
-          WHATSAPP
-        </motion.button>
-        <motion.button
-          type="button"
-          onClick={onOpenMessage}
-          className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/[0.06] font-space text-xs font-semibold text-white touch-manipulation active:scale-[0.98]"
-          whileTap={{ scale: 0.99 }}
-        >
-          <Send className="h-4 w-4" />
-          Enviar mensaje
-        </motion.button>
-        </div>
+      <motion.button
+        type="button"
+        onClick={onBack}
+        className="mb-2 flex min-h-[40px] w-full shrink-0 items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/[0.06] font-space text-[11px] font-semibold uppercase tracking-[0.12em] text-white touch-manipulation active:scale-[0.98]"
+        whileTap={{ scale: 0.99 }}
+      >
+        <ChevronLeft className="h-4 w-4 shrink-0" strokeWidth={2} />
+        Regresar a contacto
+      </motion.button>
+      <p className="mb-1 shrink-0 font-orbitron text-[12px] tracking-[0.14em] text-cyan-100/95 sm:text-[13px]">MENSAJE</p>
+      <div className="contacto-mobile-message-form flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden native-scroll">
+        <ContactForm embedded />
       </div>
     </motion.div>
   );
 }
 
+function ContactoMobileCard({ onOpenMessage }: { onOpenMessage: () => void }) {
+  const { email, telefonoDisplay, telefonoTel, whatsappDisplay, facebook, instagram, youtube } = CONTACT;
+  const { workshopAddress, googleMapsUrl } = getWorkshopLocation();
+
+  const whatsappUrl = getWhatsAppUrl();
+
+  return (
+    <motion.div
+      className={`contacto-mobile-card ${panelOpaque} flex h-full min-h-0 flex-1 flex-col overflow-hidden overflow-x-hidden p-2 sm:p-2.5`}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
+      <motion.div className="contacto-mobile-card-scroll flex min-h-0 flex-1 flex-col gap-1 overflow-x-hidden overflow-y-auto native-scroll">
+        <div className="flex shrink-0 flex-wrap items-center justify-between gap-1 border-b border-white/[0.07] pb-1">
+          <span className="font-space text-[12px] uppercase tracking-[0.16em] text-white/55">Síguenos</span>
+          <motion.div className="flex flex-wrap gap-1">
+            <a href={facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className={socialBtn}>
+              <Facebook className="h-4 w-4" />
+            </a>
+            <a href={instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className={socialBtn}>
+              <Instagram className="h-4 w-4" />
+            </a>
+            <a href={youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className={socialBtn}>
+              <Youtube className="h-4 w-4" />
+            </a>
+          </motion.div>
+        </div>
+
+        <div className="mt-1 flex flex-col gap-1">
+          <section className={`${innerSection} shrink-0`}>
+            <motion.div className="mb-1 flex items-center gap-1.5 font-orbitron text-[12px] tracking-[0.12em] text-cyan-100/95">
+              <Mail className="h-3 w-3 text-hologram-cyan" />
+              CORREO
+            </motion.div>
+            <a href={`mailto:${email}`} className="break-all font-space text-xs text-sky-200/95 hover:underline">
+              {email}
+            </a>
+            <motion.div className="mt-1 space-y-0.5 border-t border-white/[0.08] pt-1">
+              <motion.div className="flex items-center gap-1.5 text-[12px] text-white/88">
+                <Phone className="h-3.5 w-3.5 text-hologram-gold" />
+                <a href={`tel:${telefonoTel}`} className="font-space text-sky-200/95 hover:underline">
+                  {telefonoDisplay}
+                </a>
+              </motion.div>
+              <motion.div className="flex items-center gap-1.5 text-[12px] text-white/88">
+                <MessageCircle className="h-3.5 w-3.5 text-emerald-300/90" />
+                <span className="font-space">{whatsappDisplay}</span>
+              </motion.div>
+            </motion.div>
+          </section>
+
+          <section className={`${innerSection} shrink-0`}>
+            <motion.div className="mb-1 flex items-center gap-1.5 font-orbitron text-[12px] tracking-[0.12em] text-amber-100/95">
+              <MapPin className="h-3 w-3 text-amber-200/90" />
+              DIRECCIÓN
+            </motion.div>
+            <p className="font-space text-xs leading-relaxed text-white/90">{workshopAddress}</p>
+            <a
+              href={googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1 inline-flex min-h-[36px] w-full items-center justify-center gap-1.5 rounded-md border border-sky-400/30 bg-sky-500/15 px-2 py-1 font-space text-xs font-semibold text-sky-100/95 touch-manipulation"
+            >
+              <ExternalLink className="h-4 w-4" />
+              Abrir en Google Maps
+            </a>
+          </section>
+
+          <section className={`${innerSection} shrink-0`}>
+            <motion.div className="mb-1 flex items-center gap-1.5 font-orbitron text-[12px] tracking-[0.12em] text-emerald-100/95">
+              <Clock className="h-3 w-3 text-emerald-300/90" />
+              HORARIO
+            </motion.div>
+            <p className="font-space text-[12px] leading-snug text-white/88">
+              Lun–vie 8:30–12:50, 14:30–18:50 · Sáb 9–13 · Dom cierre
+            </p>
+          </section>
+        </div>
+      </motion.div>
+
+      <div className="contacto-mobile-actions flex shrink-0 flex-col gap-1.5">
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex min-h-[40px] w-full items-center justify-center gap-2 rounded-lg border border-emerald-400/25 bg-gradient-to-r from-emerald-500/25 to-teal-600/20 font-space text-xs font-semibold text-emerald-50 touch-manipulation active:scale-[0.98]"
+        >
+          <MessageCircle className="h-4 w-4 shrink-0" />
+          Enviar WhatsApp
+        </a>
+        <motion.button
+          type="button"
+          onClick={onOpenMessage}
+          className="flex min-h-[40px] w-full items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/[0.06] font-space text-xs font-semibold text-white touch-manipulation active:scale-[0.98]"
+          whileTap={{ scale: 0.99 }}
+        >
+          <Send className="h-4 w-4 shrink-0" />
+          MENSAJE
+        </motion.button>
+      </div>
+    </motion.div>
+  );
+}
+
+
 export default function ContactoScreen() {
   const [showMessage, setShowMessage] = useState(false);
 
   const handleWhatsApp = () => {
-    const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || CONTACT.whatsappWa;
-    const message =
-      '¡Hola, Reparilandia! Me gustaría recibir más información sobre sus servicios.';
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+    window.open(getWhatsAppUrl(), '_blank', 'noopener,noreferrer');
   };
 
   const { email, telefonoDisplay, telefonoTel, whatsappDisplay, facebook, instagram, youtube } = CONTACT;
@@ -186,17 +212,21 @@ export default function ContactoScreen() {
           <img
             src={assetUrl(MONITO_SOMBRERO)}
             alt=""
-            className="contacto-monito-header pointer-events-none select-none object-contain object-left-bottom drop-shadow-[0_14px_28px_rgba(0,0,0,0.5)] [image-rendering:auto]"
+            className="contacto-monito-header pointer-events-none hidden max-lg:!hidden select-none object-contain object-left-bottom drop-shadow-[0_14px_28px_rgba(0,0,0,0.5)] [image-rendering:auto] lg:block"
             draggable={false}
             loading="eager"
             decoding="async"
           />
         }
       >
-        <motion.div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:justify-start lg:pt-2 xl:pt-3">
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:hidden">
-            <ContactoMobileCard onWhatsApp={handleWhatsApp} onOpenMessage={() => setShowMessage(true)} />
-          </div>
+        <motion.div className="contacto-mobile-stage flex min-h-0 flex-1 flex-col overflow-hidden lg:justify-start lg:pt-2 xl:pt-3">
+          <motion.div className="contacto-mobile-wrap flex min-h-0 flex-1 flex-col overflow-hidden lg:hidden">
+            {showMessage ? (
+              <ContactoMobileMessageView onBack={() => setShowMessage(false)} />
+            ) : (
+              <ContactoMobileCard onOpenMessage={() => setShowMessage(true)} />
+            )}
+          </motion.div>
 
           <motion.div className="contacto-desktop-grid mx-auto hidden min-h-0 max-h-full w-full min-w-0 max-w-[min(100%,80rem)] flex-1 shrink-0 grid-cols-2 items-start justify-items-stretch gap-x-5 gap-y-1 overflow-visible pt-0 lg:grid lg:mt-0.5 lg:translate-y-1.5 xl:mt-1 xl:translate-y-2">
             <motion.div className="contacto-monito-col relative flex w-full min-w-0 flex-col overflow-visible lg:translate-y-[4.5rem] xl:translate-y-[5.75rem]">
@@ -318,19 +348,6 @@ export default function ContactoScreen() {
           </motion.div>
         </motion.div>
       </MobileScreenLayout>
-
-      <AppModal
-        open={showMessage}
-        ariaLabel="Enviar mensaje"
-        windowSubtitle="Contacto"
-        windowTitle="Mensaje"
-        contentClassName="max-lg:-translate-y-0 lg:-translate-y-[min(3.25rem,7.5dvh)]"
-        onClose={() => setShowMessage(false)}
-      >
-        <div className="mx-auto w-full max-w-2xl px-3 py-2 sm:px-4">
-          <ContactForm embedded />
-        </div>
-      </AppModal>
     </>
   );
 }

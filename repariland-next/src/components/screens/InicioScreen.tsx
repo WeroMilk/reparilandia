@@ -6,6 +6,7 @@ import Image from 'next/image';
 import useEmblaCarousel from 'embla-carousel-react';
 import CarouselDots from '@/components/CarouselDots';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
+import GuaranteePromise from '@/components/GuaranteePromise';
 import type { ScreenName } from '@/types';
 import { assetUrl } from '@/lib/assetUrl';
 
@@ -64,9 +65,9 @@ export default function InicioScreen({ onNavigate }: InicioScreenProps) {
 
   return (
     <MobileScreenLayout title="INICIO" className="inicio-screen">
-      <motion.div className="relative flex min-h-0 flex-1 flex-col overflow-hidden max-lg:overflow-hidden lg:overflow-visible lg:justify-start lg:gap-2 lg:pb-12 xl:gap-3 xl:pb-14">
+      <motion.div className="inicio-mobile-stage relative flex min-h-0 flex-1 flex-col overflow-hidden max-lg:overflow-hidden lg:overflow-visible lg:justify-start lg:gap-1 lg:pb-6 xl:gap-1.5 xl:pb-8">
         <motion.div
-          className="relative z-10 flex w-full shrink-0 flex-col items-center gap-0 px-1 text-center max-lg:max-h-[min(20dvh,8.5rem)] sm:px-2 lg:-mt-2 lg:max-h-none lg:pt-0 xl:-mt-3"
+          className="inicio-mobile-hero inicio-desktop-hero relative z-10 flex w-full shrink-0 flex-col items-center gap-1 px-1 text-center max-lg:gap-1 sm:px-2 lg:-mt-5 lg:max-h-none lg:gap-0 lg:pt-0 xl:-mt-6"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
@@ -79,46 +80,55 @@ export default function InicioScreen({ onNavigate }: InicioScreenProps) {
             priority
             quality={100}
             placeholder="empty"
-            sizes="(max-width: 1023px) min(94vw, 32rem), min(88vw, 58rem)"
-            className="mx-auto block h-auto w-full max-h-[min(12.5dvh,6rem)] max-w-[min(84vw,20rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)] sm:max-h-[min(15dvh,7rem)] sm:max-w-[min(90vw,25rem)] md:max-w-[min(88vw,32rem)] lg:max-h-[min(36dvh,21.5rem)] lg:max-w-[min(94vw,52rem)] xl:max-h-[min(38dvh,23.5rem)] xl:max-w-[min(90vw,58rem)]"
+            sizes="(max-width: 1023px) min(94vw, 38rem), min(88vw, 58rem)"
+            className="mx-auto block h-auto w-full max-h-[min(26dvh,14.5rem)] max-w-[min(94vw,36rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)] sm:max-h-[min(28dvh,15.5rem)] sm:max-w-[min(94vw,38rem)] md:max-h-[min(29dvh,16.25rem)] md:max-w-[min(92vw,40rem)] lg:max-h-[min(30dvh,18.5rem)] lg:max-w-[min(88vw,48rem)] xl:max-h-[min(32dvh,20rem)] xl:max-w-[min(86vw,52rem)]"
             draggable={false}
           />
-          <p className="-mt-2 max-w-xl px-3 font-orbitron text-[clamp(0.6875rem,2.8vw,0.875rem)] font-medium leading-none tracking-[0.14em] text-cyan-100/95 drop-shadow-[0_0_20px_rgba(34,211,238,0.22)] max-lg:-mt-3 sm:text-sm sm:tracking-[0.22em] lg:-mt-10 lg:mb-5 lg:text-lg lg:tracking-[0.26em] xl:-mt-12 xl:mb-6 xl:text-xl xl:tracking-[0.28em]">
-            La capital de la reparación
-          </p>
+          <motion.div className="inicio-mobile-trust inicio-desktop-trust flex w-full flex-col items-center gap-1.5 max-lg:gap-1 lg:gap-1.5">
+            <p className="max-w-xl px-3 font-orbitron text-[clamp(0.6875rem,2.8vw,0.875rem)] font-medium leading-none tracking-[0.14em] text-cyan-100/95 drop-shadow-[0_0_20px_rgba(34,211,238,0.22)] sm:text-sm sm:tracking-[0.22em] lg:-mt-12 lg:mb-0.5 lg:text-base lg:tracking-[0.24em] xl:-mt-14 xl:mb-0.5 xl:text-lg xl:tracking-[0.26em]">
+              La capital de la reparación
+            </p>
+            <GuaranteePromise variant="compact" className="w-full max-w-md sm:max-w-lg lg:hidden" />
+            <GuaranteePromise className="hidden w-full lg:mt-1 lg:mb-0.5 lg:block xl:mb-1" />
+          </motion.div>
         </motion.div>
 
         {/* Móvil: un slide a pantalla completa, sin peek horizontal */}
         <motion.div
-          className="flex min-h-0 flex-1 flex-col overflow-hidden lg:hidden"
+          className="inicio-mobile-boxes flex min-h-0 flex-1 flex-col overflow-hidden lg:hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.06, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div ref={emblaRef} className="min-h-0 flex-1 overflow-hidden">
-            <div className="flex h-full touch-pan-x">
+          <motion.div className="inicio-mobile-center-block flex w-full min-h-0 max-h-full flex-col items-center justify-center gap-1">
+          <motion.div className="inicio-mobile-carousel">
+            <motion.div ref={emblaRef} className="inicio-mobile-embla min-h-0 overflow-hidden">
+              <motion.div className="flex h-full touch-pan-x">
               {homeCards.map((card) => (
-                <div
+                <motion.div
                   key={card.img}
-                  className="flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full px-1"
+                  className="flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full justify-center px-4 sm:px-5"
                 >
-                  <HomeSpotlightCard
-                    img={card.img}
-                    caption={card.caption}
-                    onClick={() => onNavigate(card.screen)}
-                    accent={card.accent}
-                    centerProminent={card.centerProminent}
-                  />
-                </div>
+                  <div className="flex h-full min-h-0 w-full max-w-[min(86vw,20.5rem)] flex-col">
+                    <HomeSpotlightCard
+                      img={card.img}
+                      caption={card.caption}
+                      onClick={() => onNavigate(card.screen)}
+                      accent={card.accent}
+                      centerProminent={card.centerProminent}
+                    />
+                  </div>
+                </motion.div>
               ))}
-            </div>
-          </div>
-          <CarouselDots count={homeCards.length} active={slideIndex} onSelect={scrollTo} className="shrink-0 pt-1.5" />
+              </motion.div>
+            </motion.div>
+            <CarouselDots count={homeCards.length} active={slideIndex} onSelect={scrollTo} className="inicio-mobile-dots shrink-0 pt-1" />
+          </motion.div>
+          </motion.div>
         </motion.div>
-
         {/* Escritorio: tres columnas, más arriba y separadas del dock */}
         <motion.div
-          className="relative z-[1] mx-auto hidden min-h-0 w-full max-w-6xl flex-1 grid-cols-3 items-stretch justify-items-stretch gap-3 overflow-visible px-0 pb-1 pt-2 lg:grid lg:max-h-[min(38cqh,34dvh)] lg:self-start lg:pt-3 xl:max-w-[68rem] xl:gap-4 xl:pt-3.5"
+          className="inicio-desktop-boxes relative z-[1] mx-auto hidden min-h-0 w-full max-w-6xl flex-1 grid-cols-3 items-stretch justify-items-stretch gap-2.5 overflow-visible px-0 pb-0 pt-0 lg:grid lg:max-h-[min(36cqh,32dvh)] lg:self-start lg:translate-y-1.5 xl:max-w-[68rem] xl:gap-3 xl:translate-y-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.06, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}

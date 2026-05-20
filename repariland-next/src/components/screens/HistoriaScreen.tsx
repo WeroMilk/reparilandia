@@ -105,7 +105,10 @@ const storyCardCharacterImg =
   '!max-w-none w-auto object-contain object-bottom max-h-[min(8.75rem,34vw)] sm:max-h-[min(11.25rem,36vw)] lg:max-h-[14.25rem] xl:max-h-[15rem]';
 
 const storyCardCharacterImgCompact =
-  '!max-w-none w-auto object-contain object-bottom max-h-[min(6.5rem,26vw)]';
+  '!max-w-none w-auto max-h-full max-w-[min(96%,14rem)] object-contain object-bottom sm:max-w-[min(96%,15rem)]';
+
+const storyCardCharacterImgMobileGrid =
+  '!max-w-none w-auto object-contain object-bottom max-h-[min(2.75rem,11vw)]';
 
 function StoryCard({
   src,
@@ -113,35 +116,55 @@ function StoryCard({
   text,
   blendLighten = false,
   compact = false,
+  mobileGrid = false,
 }: {
   src: string;
   alt: string;
   text: string;
   blendLighten?: boolean;
   compact?: boolean;
+  mobileGrid?: boolean;
 }) {
-  const imgClass = `${compact ? storyCardCharacterImgCompact : storyCardCharacterImg}${blendLighten ? ' mix-blend-lighten' : ''}`;
+  const imgClass = mobileGrid
+    ? `${storyCardCharacterImgMobileGrid}${blendLighten ? ' mix-blend-lighten' : ''}`
+    : `${compact ? storyCardCharacterImgCompact : storyCardCharacterImg}${blendLighten ? ' mix-blend-lighten' : ''}`;
 
   return (
     <motion.div
-      className={`relative z-[1] flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl px-3 pb-3 pt-3 sm:px-3.5 sm:pb-3 sm:pt-4 lg:px-4 lg:pb-4 lg:pt-4 ${historiaPanel}`}
+      className={`relative z-[1] flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl ${historiaPanel} ${
+        mobileGrid
+          ? 'rounded-xl px-1.5 pb-1.5 pt-1.5'
+          : 'px-3 pb-3 pt-3 sm:px-3.5 sm:pb-3 sm:pt-4 lg:px-4 lg:pb-4 lg:pt-4'
+      }`}
     >
-      <motion.div className="relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col gap-2 lg:justify-center lg:gap-1.5">
-        <motion.div className={`${historiaCharacterSpot} lg:shrink-0`}>
+      <motion.div
+        className={`relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col lg:justify-center ${
+          mobileGrid ? 'gap-0.5' : compact ? 'min-h-0 flex-1 gap-1.5' : 'gap-2 lg:gap-1.5'
+        }`}
+      >
+        <motion.div
+          className={`${
+            compact
+              ? 'relative z-[1] flex min-h-0 w-full max-w-full flex-1 items-end justify-center overflow-visible pt-0'
+              : `${historiaCharacterSpot} lg:shrink-0`
+          } ${mobileGrid ? 'max-w-full pt-0' : ''}`}
+        >
           <CutoutCharacter
             src={src}
             alt={alt}
             bare
             align="end"
-            className="flex w-full items-end justify-center rounded-none bg-transparent py-0"
+            className={`flex w-full items-end justify-center rounded-none bg-transparent py-0 ${compact ? 'h-full' : ''}`}
             imgClassName={imgClass}
           />
         </motion.div>
         <p
           className={`story-card-text relative z-[1] min-h-0 overflow-hidden font-space text-white/92 ${
-            compact
-              ? 'line-clamp-[10] flex-1 text-[14px] leading-snug'
-              : 'text-xs leading-relaxed sm:text-xs sm:leading-snug md:text-[0.8125rem] md:leading-relaxed lg:shrink-0 lg:line-clamp-[10] lg:text-[0.875rem] xl:text-[0.9375rem] xl:leading-snug'
+            mobileGrid
+              ? 'line-clamp-[6] flex-1 text-[9px] leading-[1.25] tracking-[0.01em] sm:text-[10px]'
+              : compact
+                ? 'max-lg:native-scroll max-lg:overflow-y-auto max-lg:line-clamp-none max-lg:max-h-[min(28dvh,9.5rem)] line-clamp-[8] shrink-0 text-[11px] leading-snug tracking-[0.01em] sm:text-xs sm:leading-snug'
+                : 'text-xs leading-relaxed sm:text-xs sm:leading-snug md:text-[0.8125rem] md:leading-relaxed lg:shrink-0 lg:line-clamp-[10] lg:text-[0.875rem] xl:text-[0.9375rem] xl:leading-snug'
           }`}
         >
           {text}
@@ -151,79 +174,122 @@ function StoryCard({
   );
 }
 
-function TimelinePanel({ compact = false }: { compact?: boolean }) {
+function TimelinePanel({
+  compact = false,
+  mobileGrid = false,
+}: {
+  compact?: boolean;
+  mobileGrid?: boolean;
+}) {
   return (
     <motion.div
-      className={`relative z-[1] flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-2xl px-3 pb-3 pt-3.5 sm:px-3.5 sm:pb-3.5 sm:pt-4 lg:gap-2.5 lg:px-4 lg:pb-4 lg:pt-4 ${historiaPanel} ${
-        compact ? 'gap-2' : 'gap-2.5 sm:gap-3'
+      className={`relative z-[1] flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden ${historiaPanel} ${
+        mobileGrid
+          ? 'gap-1 rounded-xl px-1.5 pb-1.5 pt-1.5'
+          : `rounded-2xl px-3 pb-3 pt-3.5 sm:px-3.5 sm:pb-3.5 sm:pt-4 lg:gap-2.5 lg:px-4 lg:pb-4 lg:pt-4 ${compact ? 'gap-0 px-2.5 pb-2.5 pt-2.5 sm:px-3' : 'gap-2.5 sm:gap-3'}`
       }`}
     >
       <motion.div
-        className={`relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden sm:gap-3 lg:flex-row lg:items-stretch lg:justify-center lg:gap-2 ${
-          compact ? 'gap-2' : 'gap-2.5'
+        className={`relative z-[1] flex min-h-0 min-w-0 flex-1 overflow-hidden ${
+          compact
+            ? 'flex-row items-stretch gap-1.5 sm:gap-2'
+            : `flex-col lg:flex-row lg:items-stretch lg:justify-center lg:gap-2 ${mobileGrid ? 'gap-1' : 'gap-2.5 sm:gap-3'}`
         }`}
       >
+        {!mobileGrid ? (
         <motion.div
-          className={`relative z-[8] flex w-full shrink-0 items-end justify-center overflow-visible px-0 pt-0 max-lg:overflow-visible lg:h-full lg:min-h-0 lg:w-[48%] lg:max-w-none lg:flex-none lg:items-center lg:justify-center lg:overflow-hidden lg:px-1 ${
+          className={`relative z-[8] flex shrink-0 items-end justify-center overflow-visible px-0 pt-0 max-lg:overflow-visible lg:h-full lg:min-h-0 lg:flex-none lg:items-center lg:justify-center lg:overflow-hidden lg:px-1 ${
             compact
-              ? 'h-[min(9vh,4.25rem)]'
-              : 'h-[min(20vh,10rem)] sm:h-[min(28vh,13rem)]'
+              ? 'historia-et-col w-[42%] min-w-[6rem] max-w-[10rem] self-stretch'
+              : 'w-full lg:w-[48%] lg:max-w-none h-[min(20vh,10rem)] sm:h-[min(28vh,13rem)]'
           }`}
         >
           <img
             src={assetUrl('/assets/historia-linea-tiempo.png')}
             alt="E.T. con playera Reparilandia"
-            className={`relative z-[1] pointer-events-none h-auto max-h-full max-w-full select-none object-contain object-bottom brightness-[1.14] contrast-[1.08] saturate-[1.05] [image-rendering:auto] origin-bottom max-lg:origin-bottom lg:mx-auto lg:origin-center lg:object-center ${
+            className={`relative z-[1] pointer-events-none h-auto select-none object-contain object-bottom brightness-[1.14] contrast-[1.08] saturate-[1.05] [image-rendering:auto] origin-bottom max-lg:origin-bottom lg:mx-auto lg:max-h-full lg:max-w-full lg:origin-center lg:object-center ${
               compact
-                ? 'mb-0 w-[min(100%,9rem)] scale-[1.05]'
-                : 'mb-4 w-[min(100%,20.5rem)] translate-y-0 scale-[1.08] sm:mb-9 sm:w-[min(100%,25.5rem)] sm:translate-y-1 sm:scale-[1.12] lg:mb-0 lg:w-full lg:max-h-none lg:max-w-full lg:-translate-y-4 lg:scale-[2.52] xl:-translate-y-5 xl:scale-[2.74]'
+                ? 'w-full max-h-[min(52dvh,17rem)] scale-[1.12]'
+                : 'mb-4 max-h-full max-w-full w-[min(100%,20.5rem)] translate-y-0 scale-[1.08] sm:mb-9 sm:w-[min(100%,25.5rem)] sm:translate-y-1 sm:scale-[1.12] lg:mb-0 lg:w-full lg:max-h-none lg:-translate-y-4 lg:scale-[2.52] xl:-translate-y-5 xl:scale-[2.74]'
             }`}
             draggable={false}
             loading="eager"
             decoding="async"
           />
         </motion.div>
+        ) : null}
 
-        <motion.div className="relative z-[15] flex min-h-0 min-w-0 flex-1 flex-col justify-center pt-2 sm:pt-2.5 lg:self-start lg:justify-start lg:pt-5 lg:min-w-0 lg:flex-1 lg:overflow-hidden xl:pt-6">
+        <motion.div
+          className={`relative z-[15] flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden lg:self-start lg:justify-start lg:min-w-0 lg:flex-1 lg:overflow-hidden ${
+            mobileGrid || compact
+              ? 'justify-start pt-0'
+              : 'justify-center pt-2 sm:pt-2.5 lg:pt-5 xl:pt-6'
+          }`}
+        >
           <h3
-            className={`mb-2 flex min-w-0 shrink-0 items-center gap-2 font-orbitron tracking-[0.18em] text-amber-100/95 ${
-              compact ? 'text-[12px]' : 'text-xs sm:text-xs md:text-[0.8125rem] lg:mb-1 lg:text-[0.9375rem]'
+            className={`flex min-w-0 shrink-0 items-center gap-1.5 font-orbitron tracking-[0.14em] text-amber-100/95 ${
+              mobileGrid
+                ? 'mb-0.5 text-[9px] sm:text-[10px]'
+                : compact
+                  ? 'mb-1 text-[10px] tracking-[0.12em] sm:text-[11px]'
+                  : 'mb-2 text-xs sm:text-xs md:text-[0.8125rem] lg:mb-1 lg:text-[0.9375rem]'
             }`}
           >
             <span
-              className={`inline-block shrink-0 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.65)] ${compact ? 'h-1.5 w-1.5' : 'h-1.5 w-1.5 sm:h-2 sm:w-2 lg:h-2 lg:w-2'}`}
+              className={`inline-block shrink-0 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.65)] ${
+                mobileGrid ? 'h-1 w-1' : compact ? 'h-1.5 w-1.5' : 'h-1.5 w-1.5 sm:h-2 sm:w-2 lg:h-2 lg:w-2'
+              }`}
               aria-hidden
             />
-            <span className="min-w-0 break-words">LÍNEA DEL TIEMPO</span>
+            <span className="min-w-0 break-words leading-none">LÍNEA DEL TIEMPO</span>
           </h3>
           <motion.div
             className={`relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden py-0.5 pl-1 pr-0.5 ${
-              compact ? 'gap-1' : 'gap-2 sm:gap-2.5 lg:gap-2 lg:mt-2'
+              mobileGrid ? 'gap-0' : compact ? 'gap-0.5' : 'gap-2 sm:gap-2.5 lg:gap-2 lg:mt-2'
             }`}
           >
             <motion.div
-              className={`absolute bottom-1 left-[0.45rem] w-0 border-l border-dashed border-cyan-400/45 ${compact ? 'top-7' : 'top-9 sm:top-10 lg:top-12 xl:top-[3.25rem]'}`}
+              className={`absolute bottom-0.5 left-[0.35rem] w-0 border-l border-dashed border-cyan-400/45 ${
+                mobileGrid ? 'top-4' : compact ? 'top-5 sm:top-6' : 'top-9 sm:top-10 lg:top-12 xl:top-[3.25rem]'
+              }`}
               aria-hidden
             />
             {milestones.map((m, i) => (
-              <motion.div key={i} className={`relative flex min-w-0 items-start pl-6 ${compact ? 'gap-1.5' : 'gap-2 sm:gap-3 sm:pl-7'}`}>
+              <motion.div
+                key={i}
+                className={`relative flex min-w-0 items-start ${
+                  mobileGrid ? 'gap-1 pl-4' : compact ? 'gap-1 pl-4 sm:pl-4' : 'gap-2 pl-6 sm:gap-3 sm:pl-7'
+                }`}
+              >
                 <span
                   className={`absolute left-0 z-[1] shrink-0 rounded-full border border-cyan-300/70 bg-[#0b1a1f] shadow-[0_0_10px_rgba(34,211,238,0.35)] ${
-                    compact ? 'top-1 h-1.5 w-1.5' : 'top-1.5 h-2 w-2 sm:top-2 sm:h-2.5 sm:w-2.5'
+                    mobileGrid
+                      ? 'top-0.5 h-1 w-1'
+                      : compact
+                        ? 'top-0.5 h-1 w-1 sm:h-1.5 sm:w-1.5'
+                        : 'top-1.5 h-2 w-2 sm:top-2 sm:h-2.5 sm:w-2.5'
                   }`}
                   aria-hidden
                 />
                 <motion.div className="min-w-0 flex-1">
                   <p
-                    className={`font-orbitron font-semibold tabular-nums tracking-[0.14em] text-cyan-200/95 ${
-                      compact ? 'text-[12px]' : 'text-xs sm:text-xs md:text-[0.8125rem] lg:text-[0.9375rem]'
+                    className={`font-orbitron font-semibold tabular-nums leading-none tracking-[0.1em] text-cyan-200/95 ${
+                      mobileGrid
+                        ? 'text-[9px] sm:text-[10px]'
+                        : compact
+                          ? 'text-[10px] sm:text-[11px]'
+                          : 'text-xs sm:text-xs md:text-[0.8125rem] lg:text-[0.9375rem]'
                     }`}
                   >
                     {m.year}
                   </p>
                   <p
-                    className={`mt-0.5 break-words font-space text-white/90 ${
-                      compact ? 'text-[14px] leading-relaxed' : 'text-xs leading-relaxed sm:text-xs sm:leading-snug md:text-[0.8125rem] lg:text-[0.875rem] xl:text-[0.9375rem] xl:leading-snug'
+                    className={`break-words font-space text-white/90 ${
+                      mobileGrid
+                        ? 'mt-0 text-[8px] leading-[1.2] sm:text-[9px]'
+                        : compact
+                          ? 'mt-0 line-clamp-3 text-[9px] leading-[1.25] sm:text-[10px] sm:leading-snug'
+                          : 'mt-0.5 text-xs leading-relaxed sm:text-xs sm:leading-snug md:text-[0.8125rem] lg:text-[0.875rem] xl:text-[0.9375rem] xl:leading-snug'
                     }`}
                   >
                     {m.text}
@@ -259,34 +325,36 @@ export default function HistoriaScreen() {
 
   return (
     <MobileScreenLayout title="HISTORIA" showRule hideLeadOnMobile className="historia-screen">
-      {/* Móvil: un slide a la vez, sin scroll vertical de página */}
+      {/* Móvil: un panel por slide (deslizar), como Inicio */}
       <motion.div
-        className="flex min-h-0 flex-1 flex-col overflow-hidden lg:hidden"
+        className="historia-mobile-slides flex min-h-0 flex-1 flex-col overflow-hidden lg:hidden"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       >
-        <motion.div ref={emblaRef} className="min-h-0 flex-1 overflow-hidden">
-          <motion.div className="flex h-full touch-pan-x">
-            <motion.div className="flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full px-0.5">
-              <TimelinePanel compact />
-            </motion.div>
-            {storySlides.map((slide) => (
-              <motion.div
-                key={slide.src}
-                className="flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full px-0.5"
-              >
-                <StoryCard {...slide} compact />
-              </motion.div>
-            ))}
+        <motion.div className="historia-mobile-carousel">
+          <motion.div ref={emblaRef} className="historia-mobile-embla min-h-0 flex-1 overflow-hidden">
+            <div className="flex h-full touch-pan-x">
+              <div className="flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full px-0.5">
+                <TimelinePanel compact />
+              </div>
+              {storySlides.map((slide) => (
+                <motion.div
+                  key={slide.src}
+                  className="historia-story-slide flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full px-0.5"
+                >
+                  <StoryCard {...slide} compact />
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
+          <CarouselDots
+            count={slideCount}
+            active={slideIndex}
+            onSelect={scrollTo}
+            className="historia-mobile-dots shrink-0 pt-1.5 max-lg:pb-0"
+          />
         </motion.div>
-        <CarouselDots
-          count={slideCount}
-          active={slideIndex}
-          onSelect={scrollTo}
-          className="shrink-0 pt-1.5 max-lg:pb-0"
-        />
       </motion.div>
 
       {/* Escritorio: 4 paneles centrados entre título y dock */}

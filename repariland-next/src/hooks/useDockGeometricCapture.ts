@@ -1,6 +1,13 @@
 import { useEffect } from 'react';
 import type { ScreenName } from '@/types';
-const SCREEN_NAMES: ScreenName[] = ['inicio', 'historia', 'servicios', 'noticias', 'contacto'];
+const SCREEN_NAMES: ScreenName[] = [
+  'inicio',
+  'historia',
+  'servicios',
+  'noticias',
+  'reels',
+  'contacto',
+];
 
 function pointInRect(x: number, y: number, r: DOMRect) {
   return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;

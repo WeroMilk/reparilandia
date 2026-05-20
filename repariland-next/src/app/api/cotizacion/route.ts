@@ -21,10 +21,6 @@ async function sendQuoteEmail(payload: {
   const from = process.env.QUOTE_FROM_EMAIL || 'Reparilandia <cotizaciones@reparilandia.com>';
 
   if (!apiKey) {
-    console.info('[cotización]', {
-      ...payload,
-      foto: `${payload.foto.name} (${payload.foto.size} bytes)`,
-    });
     return;
   }
 

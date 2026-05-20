@@ -10,13 +10,11 @@ export async function saveQuote(formData: FormData) {
     const result = (await response.json()) as { success?: boolean; error?: string };
 
     if (!response.ok || !result.success) {
-      console.warn('[cotización]', result.error ?? response.statusText);
       return { success: false as const, error: result.error ?? 'Error al enviar' };
     }
 
     return { success: true as const, data: null };
-  } catch (error) {
-    console.error('[cotización]', error);
+  } catch {
     return { success: false as const, error: 'Error de conexión' };
   }
 }
@@ -30,7 +28,6 @@ export async function saveAppointment(data: {
   tipo_cita: string;
   notas: string;
 }) {
-  console.info('[cita]', data);
   return { success: true as const, data: null };
 }
 
@@ -40,6 +37,5 @@ export async function saveContact(data: {
   motivo: string;
   mensaje: string;
 }) {
-  console.info('[contacto]', data);
   return { success: true as const, data: null };
 }

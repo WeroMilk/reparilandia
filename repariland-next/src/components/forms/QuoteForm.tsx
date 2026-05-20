@@ -146,7 +146,7 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
           className={
             hasPreview
               ? 'quote-form-with-preview flex min-h-0 flex-1 flex-col gap-2 sm:gap-2.5'
-              : 'space-y-3 sm:space-y-4'
+              : 'space-y-2.5 max-lg:space-y-2 sm:space-y-4'
           }
         >
           <motion.div
@@ -218,13 +218,13 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
                   id="quote-descripcion"
                   name="descripcion"
                   required
-                  rows={hasPreview ? 2 : 4}
+                  rows={hasPreview ? 2 : 3}
                   autoComplete="off"
                   placeholder="Describe el problema o lo que necesitas reparar..."
                   className={`${inputClass} resize-none ${
                     hasPreview
-                      ? 'min-h-[4.5rem] max-lg:min-h-[5rem] lg:min-h-0 lg:max-h-[min(14dvh,6.5rem)]'
-                      : 'min-h-[96px] sm:min-h-[112px]'
+                      ? 'min-h-[4.5rem] max-lg:min-h-[4.25rem] lg:min-h-0 lg:max-h-[min(14dvh,6.5rem)]'
+                      : 'min-h-[4.5rem] max-lg:min-h-[4.25rem] sm:min-h-[96px]'
                   }`}
                   value={formData.descripcion}
                   onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}

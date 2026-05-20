@@ -1,4 +1,10 @@
-export type ScreenName = 'inicio' | 'historia' | 'servicios' | 'noticias' | 'contacto';
+export type ScreenName =
+  | 'inicio'
+  | 'historia'
+  | 'servicios'
+  | 'noticias'
+  | 'reels'
+  | 'contacto';
 
 export interface Service {
   id: string;

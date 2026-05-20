@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 
-const SCREENS = ['inicio', 'historia', 'servicios', 'noticias', 'contacto'] as const;
+const SCREENS = ['inicio', 'historia', 'servicios', 'noticias', 'reels', 'contacto'] as const;
 
 async function waitForAppReady(page: Page) {
   await page.goto('/');
@@ -14,6 +14,7 @@ const TAB_LABELS: Record<(typeof SCREENS)[number], RegExp> = {
   historia: /historia/i,
   servicios: /servicios/i,
   noticias: /noticias/i,
+  reels: /reels/i,
   contacto: /contacto/i,
 };
 
@@ -51,21 +52,25 @@ test.describe('responsive screens', () => {
     });
   });
 
-  test('contacto: message modal on mobile', async ({ page }, testInfo) => {
+  test('reels: empty feed visible', async ({ page }) => {
+    await navigateTo(page, 'reels');
+    await expect(page.getByText(/REELS/i).first()).toBeVisible();
+    await expect(page.locator('[data-screen="reels"]')).toBeVisible();
+  });
+
+  test('contacto: message form on mobile', async ({ page }, testInfo) => {
     await navigateTo(page, 'contacto');
     const isMobile = testInfo.project.name.includes('iphone') || testInfo.project.name === 'ipad-portrait';
     if (!isMobile) {
       test.skip();
       return;
     }
-    const msgBtn = page.getByRole('button', { name: /^enviar mensaje$/i });
-    if (await msgBtn.isVisible()) {
-      await msgBtn.dispatchEvent('pointerdown');
-      await page.waitForTimeout(400);
-      await expect(page.getByRole('dialog')).toBeVisible();
-      await expect(page).toHaveScreenshot('modal-contact.png', {
-        maxDiffPixelRatio: 0.05,
-      });
-    }
+    await expect(page.getByRole('link', { name: /whatsapp/i })).toBeVisible();
+    const msgBtn = page.getByRole('button', { name: /^mensaje$/i });
+    await expect(msgBtn).toBeVisible();
+    await msgBtn.click();
+    await expect(page.getByRole('button', { name: /regresar a contacto/i })).toBeVisible();
+    await expect(page.getByLabel('Nombre')).toBeVisible();
+    await expect(page.getByRole('button', { name: /^enviar mensaje$/i })).toBeVisible();
   });
 });

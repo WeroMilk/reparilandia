@@ -35,6 +35,11 @@ const navItems: {
     gradient: 'from-[#FF9A4A] via-[#FF7528] to-[#E85F12]',
   },
   {
+    screen: 'reels',
+    label: 'REELS',
+    gradient: 'from-[#4DA3FF] via-[#0077FF] to-[#0055CC]',
+  },
+  {
     screen: 'contacto',
     label: 'CONTACTO',
     gradient: 'from-[#FF7BC4] via-[#FF4AAD] to-[#E31D8F]',
@@ -99,7 +104,7 @@ function DockNav({ currentScreen, onNavigate, onPrev, onNext }: NavigationProps)
           <div
             role="tablist"
             aria-label="Secciones"
-            className="grid h-full min-w-0 flex-1 grid-cols-5 items-center gap-0 overflow-visible"
+            className="grid h-full min-w-0 flex-1 grid-cols-6 items-center gap-0 overflow-visible"
           >
             {navItems.map((item) => {
               const isActive = currentScreen === item.screen;
@@ -132,7 +137,7 @@ function DockNav({ currentScreen, onNavigate, onPrev, onNext }: NavigationProps)
                   </span>
 
                   <span
-                    className={`pointer-events-none max-w-none whitespace-nowrap px-0.5 text-center font-space text-[clamp(8.5px,2.55vw,11px)] font-medium uppercase leading-none tracking-[0.03em] sm:tracking-[0.045em] lg:tracking-[0.05em] ${
+                    className={`pointer-events-none max-w-none whitespace-nowrap px-0.5 text-center font-space text-[clamp(7px,2.1vw,10px)] font-medium uppercase leading-none tracking-[0.02em] sm:text-[clamp(8px,2.35vw,10.5px)] sm:tracking-[0.035em] lg:tracking-[0.04em] ${
                       isActive ? 'text-white' : 'text-white/58'
                     }`}
                   >

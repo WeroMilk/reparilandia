@@ -5,6 +5,7 @@ export const SCREEN_ORDER: readonly ScreenName[] = [
   'historia',
   'servicios',
   'noticias',
+  'reels',
   'contacto',
 ] as const;
 

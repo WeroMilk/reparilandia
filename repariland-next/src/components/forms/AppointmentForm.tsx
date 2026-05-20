@@ -8,7 +8,7 @@ interface AppointmentFormProps {
 }
 
 const shell =
-  'w-full max-w-2xl mx-auto rounded-2xl sm:rounded-3xl border border-white/10 bg-[rgba(12,12,18,0.96)] backdrop-blur-xl shadow-[0_32px_96px_rgba(0,0,0,0.65)] relative overflow-hidden ring-1 ring-white/[0.07] flex flex-col max-h-[calc(100dvh-12px)] sm:max-h-[calc(100dvh-24px)]';
+  'appointment-form-shell w-full max-w-2xl mx-auto rounded-2xl sm:rounded-3xl border border-white/10 bg-[rgba(12,12,18,0.96)] backdrop-blur-xl shadow-[0_32px_96px_rgba(0,0,0,0.65)] relative overflow-hidden ring-1 ring-white/[0.07] flex flex-col max-h-[min(88dvh,calc(100dvh-var(--dock-chrome-height)-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-1.5rem))]';
 
 const labelClass =
   'block font-space text-white text-[14px] sm:text-xs font-medium mb-1 tracking-wide';
