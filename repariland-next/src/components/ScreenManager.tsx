@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import InicioScreen from './screens/InicioScreen';
 import HistoriaScreen from './screens/HistoriaScreen';
@@ -10,15 +10,13 @@ import ReelsScreen from './screens/ReelsScreen';
 import ContactoScreen from './screens/ContactoScreen';
 import { SCREEN_ORDER } from '@/hooks/useScreenManager';
 import type { ScreenName } from '@/types';
+import { getScreenEnterMotion, SCREEN_LAYER_TRANSITION } from '@/lib/motionPresets';
 
 interface ScreenManagerProps {
   currentScreen: ScreenName;
   direction: number;
   onNavigate: (screen: ScreenName) => void;
 }
-
-const crossfadeEase = [0.22, 1, 0.36, 1] as const;
-const CROSSFADE_S = 0.2;
 
 function ScreenBody({
   screen,
@@ -56,6 +54,7 @@ export default function ScreenManager({
   const [mountedScreens, setMountedScreens] = useState<Set<ScreenName>>(
     () => new Set([currentScreen]),
   );
+  const prevScreenRef = useRef(currentScreen);
 
   useEffect(() => {
     setMountedScreens((prev) => {
@@ -80,7 +79,14 @@ export default function ScreenManager({
     return () => window.clearTimeout(t);
   }, [reduceMotion]);
 
-  const fadeDuration = reduceMotion ? 0 : CROSSFADE_S;
+  const isScreenEntering = currentScreen !== prevScreenRef.current;
+  useEffect(() => {
+    prevScreenRef.current = currentScreen;
+  }, [currentScreen]);
+
+  const layerTransition = reduceMotion
+    ? { opacity: { duration: 0 } }
+    : SCREEN_LAYER_TRANSITION;
 
   return (
     <motion.div
@@ -94,6 +100,8 @@ export default function ScreenManager({
       >
         {SCREEN_ORDER.filter((screen) => mountedScreens.has(screen)).map((screen) => {
           const active = screen === currentScreen;
+          const enterMotion = getScreenEnterMotion(direction, reduceMotion);
+
           return (
             <motion.div
               key={screen}
@@ -102,23 +110,29 @@ export default function ScreenManager({
               animate={{
                 opacity: active ? 1 : 0,
               }}
-              transition={{
-                opacity: { duration: fadeDuration, ease: crossfadeEase },
-              }}
+              transition={layerTransition}
               style={{
                 pointerEvents: active ? 'auto' : 'none',
               }}
               aria-hidden={!active}
               className={[
-                'absolute inset-0 flex min-h-0 w-full flex-col',
+                'screen-transition-layer absolute inset-0 flex min-h-0 w-full flex-col',
                 active ? 'z-[2]' : 'z-[1]',
-                !active && 'invisible',
-              ]
-                .filter(Boolean)
-                .join(' ')}
+              ].join(' ')}
             >
               <motion.div className="pointer-events-auto relative flex min-h-0 w-full flex-1 flex-col overflow-hidden">
-                <ScreenBody screen={screen} onNavigate={onNavigate} isScreenVisible={active} />
+                <motion.div
+                  className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden"
+                  initial={
+                    active && isScreenEntering && !reduceMotion
+                      ? enterMotion.initial
+                      : false
+                  }
+                  animate={active ? enterMotion.animate : enterMotion.animate}
+                  transition={enterMotion.transition}
+                >
+                  <ScreenBody screen={screen} onNavigate={onNavigate} isScreenVisible={active} />
+                </motion.div>
               </motion.div>
             </motion.div>
           );

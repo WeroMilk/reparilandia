@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import useEmblaCarousel from 'embla-carousel-react';
+import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
 import { assetUrl } from '@/lib/assetUrl';
+import { useNoticiasMobileZone } from '@/hooks/useNoticiasMobileZone';
 
 type NewsItem = {
   id: string;
@@ -62,7 +63,7 @@ function NewspaperSlide({
             <p className="font-serif text-[11px] font-semibold uppercase tracking-[0.28em] text-zinc-700 sm:text-[12px]">
               Hermosillo, Sonora
             </p>
-            <h4 className="font-serif text-sm font-black uppercase leading-tight tracking-tight text-zinc-950 max-lg:line-clamp-2 max-lg:text-[12px] sm:text-base lg:truncate">
+            <h4 className="font-serif text-sm font-black uppercase leading-tight tracking-tight text-zinc-950 max-lg:text-[12px] sm:text-base lg:truncate">
               {masthead}
             </h4>
           </div>
@@ -71,12 +72,12 @@ function NewspaperSlide({
           </span>
         </div>
       </header>
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-2 py-1.5 sm:px-3 sm:py-2">
+      <div className="noticias-slide-body flex min-h-0 flex-1 flex-col overflow-hidden px-2 py-1.5 sm:px-3 sm:py-2">
         <h3 className="shrink-0 whitespace-pre-line font-serif text-xs font-black uppercase leading-[1.12] text-zinc-950 sm:text-sm">
           {title}
         </h3>
         <div className="mt-1 h-px w-full shrink-0 bg-zinc-900/80" aria-hidden />
-        <p className="mt-1.5 overflow-hidden font-serif text-[12px] leading-snug text-zinc-800 max-lg:line-clamp-[8] max-lg:text-[11px] max-lg:leading-[1.35] sm:text-[14px] sm:leading-relaxed lg:line-clamp-[5]">
+        <p className="noticias-slide-copy mt-1.5 min-h-0 flex-1 overflow-y-auto overflow-x-hidden font-serif text-[12px] leading-snug text-zinc-800 max-lg:text-[11px] max-lg:leading-[1.35] sm:text-[14px] sm:leading-relaxed lg:line-clamp-[5] lg:overflow-hidden">
           {body}
         </p>
         {videoUrl && videoLinkLabel ? (
@@ -100,16 +101,12 @@ function NewspaperSlide({
 
 export default function NoticiasScreen() {
   const reduceMotion = useReducedMotion();
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, axis: 'x', duration: 22 });
+  useNoticiasMobileZone(true);
+  const [emblaRef, emblaApi, scrollTo, scrollPrev, scrollNext] = useSmoothEmblaCarousel({
+    loop: true,
+    axis: 'x',
+  });
   const [slideIndex, setSlideIndex] = useState(0);
-
-  const scrollPrev = useCallback(() => {
-    emblaApi?.scrollPrev();
-  }, [emblaApi]);
-
-  const scrollNext = useCallback(() => {
-    emblaApi?.scrollNext();
-  }, [emblaApi]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -129,8 +126,9 @@ export default function NoticiasScreen() {
       lead="Desliza en la pantalla del televisor o usa las flechas para cambiar de noticia."
       hideLeadOnMobile
       className="noticias-screen"
+      data-screen="noticias"
     >
-      <motion.div className="noticias-stage noticias-mobile-stage flex h-full min-h-0 max-h-full flex-1 flex-col items-center justify-start overflow-hidden overscroll-none px-1 pb-0 pt-1 max-lg:mt-0 max-lg:justify-start max-lg:gap-0.5 sm:px-5 lg:mt-0.5 lg:justify-start lg:translate-x-0 lg:px-6 lg:pt-0 xl:mt-1 xl:translate-x-1 xl:px-8">
+      <motion.div className="noticias-stage noticias-mobile-stage flex min-h-0 w-full max-h-full flex-col items-center overflow-hidden overscroll-none px-1 pb-0 max-lg:min-h-0 max-lg:max-h-full max-lg:justify-center max-lg:gap-1 max-lg:pt-0 sm:px-5 lg:h-full lg:flex-1 lg:mt-0.5 lg:justify-start lg:translate-x-0 lg:px-6 lg:pt-0 xl:mt-1 xl:translate-x-1 xl:px-8">
         <motion.div
           className="noticias-monito-mobile pointer-events-none relative z-[16] mx-auto flex w-full shrink-0 items-end justify-center px-1 pb-0 max-lg:flex lg:hidden"
           animate={reduceMotion ? undefined : { y: [0, -6, 0] }}
@@ -139,7 +137,7 @@ export default function NoticiasScreen() {
           <img
             src={assetUrl(MONITO_NOTICIAS)}
             alt=""
-            className="block h-auto w-full max-w-[min(70vw,15rem)] max-h-[min(11dvh,6.25rem)] bg-transparent object-contain object-bottom drop-shadow-[0_18px_36px_rgba(0,0,0,0.42)] [image-rendering:auto]"
+            className="noticias-monito-mobile-img block h-auto w-full bg-transparent object-contain object-bottom drop-shadow-[0_18px_36px_rgba(0,0,0,0.42)] [image-rendering:auto]"
             draggable={false}
             loading="eager"
             decoding="async"
@@ -147,7 +145,7 @@ export default function NoticiasScreen() {
         </motion.div>
 
         <motion.div
-          className="relative flex min-h-0 w-full max-w-[min(100%,60rem)] flex-col justify-start overflow-hidden max-lg:h-auto max-lg:max-h-none max-lg:flex-1 sm:max-w-[62rem] lg:h-full lg:max-h-full lg:shrink-0"
+          className="noticias-mobile-content relative flex min-h-0 w-full max-w-[min(100%,60rem)] flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-1 max-lg:justify-center sm:max-w-[62rem] lg:h-full lg:max-h-full lg:flex-none lg:shrink-0 lg:justify-start"
           initial={false}
           animate={{ opacity: 1 }}
         >
@@ -166,7 +164,7 @@ export default function NoticiasScreen() {
             />
           </motion.div>
 
-          <motion.div className="noticias-mobile-monitor-col relative z-[18] flex min-h-0 w-full flex-1 flex-col items-center justify-center overflow-hidden lg:h-full lg:justify-start lg:translate-y-11 xl:translate-y-14">
+          <motion.div className="noticias-mobile-monitor-col relative z-[18] flex min-h-0 w-full flex-col items-center justify-center overflow-hidden max-lg:min-h-0 max-lg:flex-1 lg:h-full lg:flex-1 lg:justify-start lg:translate-y-11 xl:translate-y-14">
             <motion.div className="flex w-full max-w-[44rem] flex-col items-center max-lg:ml-0 lg:ml-[clamp(7.5rem,18vw,12.5rem)] xl:max-w-[46rem] xl:-translate-x-1">
               <motion.div className="flex w-full items-center justify-center gap-3 max-lg:gap-0 sm:gap-3.5 lg:-translate-x-1.5 xl:-translate-x-2">
                 <button
@@ -179,17 +177,20 @@ export default function NoticiasScreen() {
                 </button>
 
                 <motion.div className="relative flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center overflow-hidden">
-                  <motion.div className="noticias-crt-bezel relative w-full max-w-[min(94vw,24rem)] shrink-0 rounded-[6px] bg-gradient-to-b from-[#e8dfd2] via-[#cfc4b6] to-[#b9aea2] p-[clamp(7px,1.65vw,11px)] pb-[clamp(8px,1.75vw,12px)] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-4px_12px_rgba(0,0,0,0.08),0_14px_28px_rgba(0,0,0,0.42)] ring-2 ring-[#7a7269]/55 max-lg:max-w-[min(98vw,40rem)] max-lg:max-h-none max-lg:p-2 lg:max-w-[42rem] lg:max-h-[min(56cqh,54dvh)] lg:p-3 lg:pb-3.5">
+                  <motion.div className="noticias-crt-bezel relative flex w-full max-w-[min(94vw,24rem)] min-h-0 flex-col rounded-[6px] bg-gradient-to-b from-[#e8dfd2] via-[#cfc4b6] to-[#b9aea2] p-[clamp(7px,1.65vw,11px)] pb-[clamp(8px,1.75vw,12px)] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-4px_12px_rgba(0,0,0,0.08),0_14px_28px_rgba(0,0,0,0.42)] ring-2 ring-[#7a7269]/55 max-lg:max-h-none max-lg:min-h-0 max-lg:flex-1 max-lg:shrink max-lg:p-2 lg:max-w-[42rem] lg:max-h-[min(56cqh,54dvh)] lg:flex-none lg:shrink-0 lg:p-3 lg:pb-3.5">
                     <motion.div className="mb-2 flex justify-center gap-1.5 opacity-[0.38]" aria-hidden>
                       {[0, 1, 2, 3, 4].map((i) => (
                         <span key={i} className="h-1 w-6 rounded-full bg-[#3f3a34]" />
                       ))}
                     </motion.div>
 
-                    <motion.div className="rounded-[4px] bg-[#141210] p-[6px] shadow-[inset_0_5px_14px_rgba(0,0,0,0.92)] ring-1 ring-black sm:p-[7px]">
+                    <motion.div className="noticias-crt-inner rounded-[4px] bg-[#141210] p-[6px] shadow-[inset_0_5px_14px_rgba(0,0,0,0.92)] ring-1 ring-black sm:p-[7px]">
                       <motion.div className="relative overflow-hidden rounded-[3px] bg-[#080706] shadow-[inset_0_0_0_4px_rgba(28,25,22,0.96)]">
-                        <motion.div className="noticias-crt-screen relative aspect-[4/3] h-auto w-full min-h-0 shrink-0 overflow-hidden max-lg:aspect-[16/10] max-lg:max-h-[min(40dvh,20rem)] max-lg:min-h-0 lg:aspect-auto lg:h-[min(44cqh,46dvh)] lg:max-h-none">
-                          <div className="relative h-full w-full overflow-hidden bg-[#cdbfaa]" ref={emblaRef}>
+                        <motion.div className="noticias-crt-screen relative aspect-[4/3] h-auto w-full min-h-0 shrink-0 overflow-hidden max-lg:aspect-auto max-lg:min-h-0 max-lg:flex-1 lg:aspect-auto lg:h-[min(44cqh,46dvh)] lg:max-h-none lg:flex-none">
+                          <div
+                            className="embla-fluid relative h-full w-full overflow-hidden bg-[#cdbfaa]"
+                            ref={emblaRef}
+                          >
                             <motion.div className="flex h-full touch-pan-x">
                               {newsItems.map((item) => (
                                 <div
@@ -245,7 +246,7 @@ export default function NoticiasScreen() {
                           type="button"
                           aria-label={`Ver noticia: ${newsItems[i]?.title ?? i + 1}`}
                           aria-current={i === slideIndex ? 'true' : undefined}
-                          onClick={() => emblaApi?.scrollTo(i)}
+                          onClick={() => scrollTo(i)}
                           className={`h-3 rounded-full transition-all duration-300 touch-manipulation active:scale-95 ${
                             i === slideIndex
                               ? 'w-7 bg-amber-400 shadow-[0_0_14px_rgba(251,191,36,0.62)] ring-1 ring-amber-900/35'

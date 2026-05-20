@@ -5,7 +5,7 @@ import { Film, Settings2 } from 'lucide-react';
 
 type ReelsEmptyStateProps = {
   onOpenAdmin?: () => void;
-  storage: 'blob' | 'static' | null;
+  storage: 'supabase' | 'blob' | 'static' | null;
 };
 
 export default function ReelsEmptyState({ onOpenAdmin, storage }: ReelsEmptyStateProps) {

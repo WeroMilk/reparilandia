@@ -15,14 +15,14 @@ npm run dev
 
 Desde la **raíz del repo**, `npm run dev` ya ejecuta un arranque limpio (`dev:clean`).
 
-Abre [http://localhost:3000](http://localhost:3000).
+Abre **[http://localhost:3000](http://localhost:3000)** (puerto por defecto).
 
-Si ves **404** en `layout.css`, `main-app.js` o `page.js` en la consola:
+Si ves **404** en `main.js`, `react-refresh.js` o `_app.js` en la consola:
 
 1. Cierra **todas** las terminales con Node/Next.
-2. Ejecuta otra vez **`npm run dev`** (o `npm run dev:clean` dentro de `repariland-next`).
-3. En el navegador: **Ctrl+Shift+R** (recarga forzada) o ventana de incógnito.
-4. Solo **http://localhost:3000** — no uses otro puerto ni pestañas viejas.
+2. Ejecuta **`npm run dev`** o **`npm run dev:clean`** (borra `.next` y libera puertos 3000–3012).
+3. En el navegador: **Ctrl+Shift+R** o ventana de incógnito.
+4. Usa solo **http://localhost:3000** — no otra pestaña ni otro puerto guardado.
 
 ## Producción
 
@@ -72,14 +72,27 @@ Desde la **raíz del repo** puedes usar lo mismo con `npm run reels:add --prefix
 
 Tras añadir, recarga la pestaña **REELS** en el navegador. Al hacer deploy, los videos van en el repo como archivos estáticos.
 
+**Deploy:** incluye en el commit `public/reels/*.mp4` y `public/data/reels-manifest.json`. Si en Vercel tienes Supabase o Blob configurados pero sin videos subidos, la app usa igual el manifiesto estático del repo (reel de muestra incluido).
+
 ### Manual (sin script)
 
 1. Copia `mi-video.mp4` → `public/reels/`
 2. Edita `public/data/reels-manifest.json` (máx. 5 entradas en `items`)
 
-### Panel web + nube (opcional)
+### Panel web + nube (recomendado en producción)
+
+**Supabase Storage** (solo si el bucket ya tiene reels en `manifest.json`; si está vacío, se sirven los del repo):
+
+
+1. En [Supabase](https://supabase.com), crea un bucket público llamado **`reels`**.
+2. Variables en Vercel / `.env.local`:
 
 | Variable | Uso |
 |----------|-----|
-| `BLOB_READ_WRITE_TOKEN` | Subida y manifiesto en Vercel Blob |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL del proyecto Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clave service role (solo servidor; nunca en el cliente) |
 | `REELS_UPLOAD_SECRET` | Clave del panel de administración en la app |
+
+Los videos se guardan en `reels/videos/{id}.mp4` y el listado en `reels/manifest.json`.
+
+**Alternativa:** Vercel Blob con `BLOB_READ_WRITE_TOKEN` (se usa si Supabase no está configurado).

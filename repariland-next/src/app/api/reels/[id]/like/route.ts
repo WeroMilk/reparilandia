@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getReelsManifest, hasBlobStorage, writeBlobManifest } from '@/lib/reels/storage';
+import { getReelsManifest, writeManifest } from '@/lib/reels/storage';
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -17,8 +17,8 @@ export async function POST(_request: NextRequest, context: RouteContext) {
   const likeCount = current.likeCount + 1;
   items[index] = { ...current, likeCount };
 
-  if (storage === 'blob' && hasBlobStorage()) {
-    await writeBlobManifest({ version: 1, items });
+  if (storage === 'supabase' || storage === 'blob') {
+    await writeManifest({ version: 1, items }, storage);
   }
 
   return NextResponse.json({ ok: true, id, likeCount });

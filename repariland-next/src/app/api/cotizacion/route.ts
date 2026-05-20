@@ -98,8 +98,7 @@ export async function POST(request: NextRequest) {
     await sendQuoteEmail({ nombre, email, telefono, servicio, descripcion, foto });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('[cotización]', error);
+  } catch {
     return NextResponse.json({ success: false, error: 'No se pudo enviar la solicitud.' }, { status: 500 });
   }
 }

@@ -173,88 +173,90 @@ export default function ReelSlide({
       data-reel-id={reel.id}
       aria-label={reel.title}
     >
-      <div className="reels-slide__media absolute inset-0 flex items-center justify-center bg-black">
-        <video
-          ref={videoRef}
-          src={reel.videoUrl}
-          poster={reel.posterUrl}
-          className={
-            orientation === 'portrait'
-              ? 'h-full w-auto max-w-full object-contain object-center'
-              : 'h-auto max-h-full w-full object-contain object-center'
-          }
-          playsInline
-          loop
-          muted={muted}
-          preload={isActive ? 'auto' : 'metadata'}
-          onLoadedMetadata={handleVideoMetadata}
-          onPlay={syncPlayingFromVideo}
-          onPause={syncPlayingFromVideo}
-          onEnded={syncPlayingFromVideo}
-        />
-      </div>
-
-      {isActive && isScreenActive ? (
-        <button
-          type="button"
-          className="reels-slide__tap absolute inset-0 z-[15] flex cursor-pointer items-center justify-center border-0 bg-transparent p-0 touch-manipulation"
-          onClick={togglePlayPause}
-          aria-label={playing ? 'Pausar video' : 'Reproducir video'}
-        >
-          {pausedVisible ? (
-            <motion.span
-              className="pointer-events-none flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full border border-white/25 bg-black/50 text-white shadow-lg backdrop-blur-sm"
-              initial={reduceMotion ? undefined : { scale: 0.85, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Play className="ml-1 h-10 w-10 fill-white" strokeWidth={1.5} />
-            </motion.span>
-          ) : showPlayHint && !reduceMotion ? (
-            <motion.span
-              className="pointer-events-none flex h-14 w-14 items-center justify-center rounded-full bg-black/35 text-white/90 opacity-0"
-              initial={{ opacity: 0.7, scale: 1 }}
-              animate={{ opacity: 0, scale: 1.15 }}
-              transition={{ duration: 0.45 }}
-              onAnimationComplete={() => setShowPlayHint(false)}
-            >
-              <Pause className="h-8 w-8" strokeWidth={1.75} />
-            </motion.span>
-          ) : null}
-        </button>
-      ) : null}
-
-      <div
-        className="pointer-events-none absolute inset-0 z-[18] bg-gradient-to-b from-black/30 via-transparent to-black/80"
-        aria-hidden
-      />
-
-      <div className="reels-slide__chrome pointer-events-none absolute inset-0 z-[25] flex">
-        <div className="relative flex min-h-0 min-w-0 flex-1 flex-col justify-end p-4 pb-5 sm:p-5">
-          <div className="pointer-events-none max-w-[78%] space-y-1 sm:max-w-[72%]">
-            <h3 className="font-space text-base font-semibold uppercase tracking-wide text-white drop-shadow-md sm:text-lg">
-              {reel.title}
-            </h3>
-            {reel.caption ? (
-              <p className="line-clamp-2 text-sm leading-snug text-white/88 drop-shadow">
-                {reel.caption}
-              </p>
-            ) : null}
-            <p className="text-[11px] tabular-nums text-white/55">{reel.durationSec}s · Reparilandia</p>
-          </div>
+      <div className="reels-slide__stage relative min-h-0 w-full flex-1">
+        <div className="reels-slide__media absolute inset-0 flex items-center justify-center bg-black">
+          <video
+            ref={videoRef}
+            src={reel.videoUrl}
+            poster={reel.posterUrl}
+            className={
+              orientation === 'portrait'
+                ? 'h-full w-auto max-h-full max-w-full object-contain object-center'
+                : 'h-auto max-h-full w-full object-contain object-center max-lg:min-w-[min(92vw,100%)] max-lg:w-auto'
+            }
+            playsInline
+            loop
+            muted={muted}
+            preload={isActive ? 'auto' : 'metadata'}
+            onLoadedMetadata={handleVideoMetadata}
+            onPlay={syncPlayingFromVideo}
+            onPause={syncPlayingFromVideo}
+            onEnded={syncPlayingFromVideo}
+          />
         </div>
 
-        <div className="pointer-events-auto flex shrink-0 flex-col items-center justify-end pb-8 pr-3 sm:pr-4">
-          <ReelActionRail
-            muted={muted}
-            onToggleMute={toggleMute}
-            likeCount={likeCount}
-            liked={liked}
-            likeDisabled={liked || likePending}
-            onLike={() => void handleLike()}
-            onShare={() => void handleShare()}
-            shareFeedback={shareFeedback}
-          />
+        {isActive && isScreenActive ? (
+          <button
+            type="button"
+            className="reels-slide__tap absolute inset-0 z-[15] flex cursor-pointer items-center justify-center border-0 bg-transparent p-0 touch-manipulation"
+            onClick={togglePlayPause}
+            aria-label={playing ? 'Pausar video' : 'Reproducir video'}
+          >
+            {pausedVisible ? (
+              <motion.span
+                className="pointer-events-none flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full border border-white/25 bg-black/50 text-white shadow-lg backdrop-blur-sm"
+                initial={reduceMotion ? undefined : { scale: 0.85, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Play className="ml-1 h-10 w-10 fill-white" strokeWidth={1.5} />
+              </motion.span>
+            ) : showPlayHint && !reduceMotion ? (
+              <motion.span
+                className="pointer-events-none flex h-14 w-14 items-center justify-center rounded-full bg-black/35 text-white/90 opacity-0"
+                initial={{ opacity: 0.7, scale: 1 }}
+                animate={{ opacity: 0, scale: 1.15 }}
+                transition={{ duration: 0.45 }}
+                onAnimationComplete={() => setShowPlayHint(false)}
+              >
+                <Pause className="h-8 w-8" strokeWidth={1.75} />
+              </motion.span>
+            ) : null}
+          </button>
+        ) : null}
+
+        <div
+          className="pointer-events-none absolute inset-0 z-[18] bg-gradient-to-b from-black/30 via-transparent to-black/80"
+          aria-hidden
+        />
+
+        <div className="reels-slide__chrome pointer-events-none absolute inset-0 z-[25] flex">
+          <div className="relative flex min-h-0 min-w-0 flex-1 flex-col justify-end p-4 sm:p-5">
+            <div className="pointer-events-none max-w-[78%] space-y-1 sm:max-w-[72%]">
+              <h3 className="font-space text-base font-semibold uppercase tracking-wide text-white drop-shadow-md sm:text-lg">
+                {reel.title}
+              </h3>
+              {reel.caption ? (
+                <p className="line-clamp-2 text-sm leading-snug text-white/88 drop-shadow">
+                  {reel.caption}
+                </p>
+              ) : null}
+              <p className="text-[11px] tabular-nums text-white/55">{reel.durationSec}s · Reparilandia</p>
+            </div>
+          </div>
+
+          <div className="pointer-events-auto flex shrink-0 flex-col items-center justify-end pr-3 sm:pr-4">
+            <ReelActionRail
+              muted={muted}
+              onToggleMute={toggleMute}
+              likeCount={likeCount}
+              liked={liked}
+              likeDisabled={liked || likePending}
+              onLike={() => void handleLike()}
+              onShare={() => void handleShare()}
+              shareFeedback={shareFeedback}
+            />
+          </div>
         </div>
       </div>
     </article>

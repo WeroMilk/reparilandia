@@ -38,11 +38,15 @@ copy .env.example .env
 
 ### Desarrollo
 
+Desde la **raíz del repo** o desde `repariland-next/`:
+
 ```bash
 npm run dev
 ```
 
-Abre [http://localhost:3000](http://localhost:3000).
+Abre **[http://localhost:3000](http://localhost:3000)** (el script `dev:clean` libera puertos 3000–3012 y borra `.next` corrupto).
+
+Si la consola muestra 404 en `main.js`, `react-refresh.js` o `_app.js`: es HTML en caché de un arranque viejo → **Ctrl+Shift+R** o cierra la pestaña y vuelve a abrir esa URL.
 
 ### Producción
 

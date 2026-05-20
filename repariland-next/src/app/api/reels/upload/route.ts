@@ -10,9 +10,9 @@ import type { ReelItem } from '@/lib/reels/types';
 import {
   createReelId,
   getReelsManifest,
-  hasBlobStorage,
+  getWritableBackend,
   uploadReelVideo,
-  writeBlobManifest,
+  writeManifest,
 } from '@/lib/reels/storage';
 
 function formString(formData: FormData, key: string): string {
@@ -28,11 +28,12 @@ function parseDuration(value: FormDataEntryValue | null): number | null {
 }
 
 export async function POST(request: NextRequest) {
-  if (!hasBlobStorage()) {
+  const backend = getWritableBackend();
+  if (!backend) {
     return NextResponse.json(
       {
         error:
-          'Subida no disponible: configura BLOB_READ_WRITE_TOKEN en Vercel o usa videos en public/reels/.',
+          'Subida no disponible: configura Supabase (NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY) o BLOB_READ_WRITE_TOKEN, o usa public/reels/.',
       },
       { status: 503 },
     );
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { url: videoUrl } = await uploadReelVideo(id, video);
+  const { url: videoUrl } = await uploadReelVideo(id, video, backend);
 
   const reel: ReelItem = {
     id,
@@ -105,7 +106,7 @@ export async function POST(request: NextRequest) {
     items.push(reel);
   }
 
-  await writeBlobManifest({ version: 1, items });
+  await writeManifest({ version: 1, items }, backend);
 
   return NextResponse.json({ ok: true, reel });
 }

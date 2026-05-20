@@ -10,7 +10,7 @@ type ReelsAdminPanelProps = {
   items: ReelItem[];
   maxReels: number;
   maxDurationSec: number;
-  blobEnabled: boolean;
+  uploadEnabled: boolean;
   onClose: () => void;
   onRefresh: () => Promise<void>;
   onLogout: () => Promise<void>;
@@ -21,7 +21,7 @@ export default function ReelsAdminPanel({
   items,
   maxReels,
   maxDurationSec,
-  blobEnabled,
+  uploadEnabled,
   onClose,
   onRefresh,
   onLogout,
@@ -66,8 +66,8 @@ export default function ReelsAdminPanel({
   );
 
   const handleUpload = useCallback(async () => {
-    if (!blobEnabled) {
-      setError('Configura BLOB_READ_WRITE_TOKEN para subir desde el panel.');
+    if (!uploadEnabled) {
+      setError('Configura Supabase o BLOB_READ_WRITE_TOKEN para subir desde el panel.');
       return;
     }
     if (!file || durationSec === null) {
@@ -104,7 +104,7 @@ export default function ReelsAdminPanel({
       setUploading(false);
     }
   }, [
-    blobEnabled,
+    uploadEnabled,
     file,
     durationSec,
     title,
@@ -118,7 +118,7 @@ export default function ReelsAdminPanel({
 
   const handleDelete = useCallback(
     async (id: string) => {
-      if (!blobEnabled) return;
+      if (!uploadEnabled) return;
       setDeletingId(id);
       setError(null);
       try {
@@ -133,7 +133,7 @@ export default function ReelsAdminPanel({
         setDeletingId(null);
       }
     },
-    [blobEnabled, replaceId, onRefresh],
+    [uploadEnabled, replaceId, onRefresh],
   );
 
   if (!open) return null;
@@ -170,10 +170,10 @@ export default function ReelsAdminPanel({
         </header>
 
         <div className="native-scroll flex-1 space-y-4 overflow-y-auto p-4">
-          {!blobEnabled ? (
+          {!uploadEnabled ? (
             <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-100/90">
-              Subida en la nube desactivada. Añade BLOB_READ_WRITE_TOKEN en Vercel o usa archivos en{' '}
-              <code className="text-white/80">public/reels/</code>.
+              Subida en la nube desactivada. Configura Supabase Storage o BLOB_READ_WRITE_TOKEN en
+              Vercel, o usa archivos en <code className="text-white/80">public/reels/</code>.
             </p>
           ) : null}
 
@@ -244,7 +244,7 @@ export default function ReelsAdminPanel({
 
           <button
             type="button"
-            disabled={uploading || !blobEnabled}
+            disabled={uploading || !uploadEnabled}
             onClick={() => void handleUpload()}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#4DA3FF] via-[#0077FF] to-[#0055CC] py-3 text-sm font-semibold uppercase tracking-wide text-white disabled:opacity-50"
           >
@@ -267,7 +267,7 @@ export default function ReelsAdminPanel({
                   </div>
                   <button
                     type="button"
-                    disabled={!blobEnabled || deletingId === item.id}
+                    disabled={!uploadEnabled || deletingId === item.id}
                     onClick={() => void handleDelete(item.id)}
                     aria-label={`Eliminar ${item.title}`}
                     className="shrink-0 rounded-lg p-2 text-red-400/90 hover:bg-red-500/10 disabled:opacity-40"

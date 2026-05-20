@@ -14,9 +14,11 @@ export type ReelsManifest = {
   items: ReelItem[];
 };
 
+export type ReelsStorageKind = 'supabase' | 'blob' | 'static';
+
 export type ReelsApiResponse = {
   manifest: ReelsManifest;
-  storage: 'blob' | 'static';
+  storage: ReelsStorageKind;
   maxReels: number;
   maxDurationSec: number;
 };

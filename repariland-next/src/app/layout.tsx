@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Orbitron, Space_Grotesk } from 'next/font/google';
+import DevStaleCacheRecovery from '@/components/DevStaleCacheRecovery';
 import './globals.css';
 
 const inter = Inter({
@@ -45,6 +46,7 @@ export default function RootLayout({
         className={`${inter.variable} ${spaceGrotesk.variable} ${orbitron.variable} font-sans antialiased`}
         style={{ backgroundColor: '#050508', color: '#fafafa' }}
       >
+        {process.env.NODE_ENV === 'development' ? <DevStaleCacheRecovery /> : null}
         {children}
       </body>
     </html>

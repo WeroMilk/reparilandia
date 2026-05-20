@@ -1,11 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import useEmblaCarousel from 'embla-carousel-react';
+import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
 import CarouselDots from '@/components/CarouselDots';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
 import { assetUrl } from '@/lib/assetUrl';
+import { useHistoriaMobileZone } from '@/hooks/useHistoriaMobileZone';
+import { useHistoriaMobileFit } from '@/hooks/useHistoriaMobileFit';
 
 const milestones = [
   { year: '1985', text: 'Don Jaime abre el taller con una caja de herramientas y un sueño.' },
@@ -107,6 +109,9 @@ const storyCardCharacterImg =
 const storyCardCharacterImgCompact =
   '!max-w-none w-auto max-h-full max-w-[min(96%,14rem)] object-contain object-bottom sm:max-w-[min(96%,15rem)]';
 
+const storyCardCharacterImgMobileStack =
+  '!max-w-none h-full w-auto max-h-full max-w-[min(98%,18rem)] object-contain object-bottom';
+
 const storyCardCharacterImgMobileGrid =
   '!max-w-none w-auto object-contain object-bottom max-h-[min(2.75rem,11vw)]';
 
@@ -117,6 +122,7 @@ function StoryCard({
   blendLighten = false,
   compact = false,
   mobileGrid = false,
+  mobileStack = false,
 }: {
   src: string;
   alt: string;
@@ -124,10 +130,14 @@ function StoryCard({
   blendLighten?: boolean;
   compact?: boolean;
   mobileGrid?: boolean;
+  /** Móvil: caricatura arriba, texto abajo */
+  mobileStack?: boolean;
 }) {
   const imgClass = mobileGrid
     ? `${storyCardCharacterImgMobileGrid}${blendLighten ? ' mix-blend-lighten' : ''}`
-    : `${compact ? storyCardCharacterImgCompact : storyCardCharacterImg}${blendLighten ? ' mix-blend-lighten' : ''}`;
+    : mobileStack
+      ? `${storyCardCharacterImgMobileStack}${blendLighten ? ' mix-blend-lighten' : ''}`
+      : `${compact ? storyCardCharacterImgCompact : storyCardCharacterImg}${blendLighten ? ' mix-blend-lighten' : ''}`;
 
   return (
     <motion.div
@@ -135,17 +145,17 @@ function StoryCard({
         mobileGrid
           ? 'rounded-xl px-1.5 pb-1.5 pt-1.5'
           : 'px-3 pb-3 pt-3 sm:px-3.5 sm:pb-3 sm:pt-4 lg:px-4 lg:pb-4 lg:pt-4'
-      }`}
+      } ${mobileStack ? 'historia-story-panel--mobile-stack' : ''}`}
     >
       <motion.div
-        className={`relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col lg:justify-center ${
-          mobileGrid ? 'gap-0.5' : compact ? 'min-h-0 flex-1 gap-1.5' : 'gap-2 lg:gap-1.5'
+        className={`historia-story-layout relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col lg:justify-center ${
+          mobileGrid ? 'gap-0.5' : compact || mobileStack ? 'min-h-0 flex-1 gap-2' : 'gap-2 lg:gap-1.5'
         }`}
       >
         <motion.div
-          className={`${
-            compact
-              ? 'relative z-[1] flex min-h-0 w-full max-w-full flex-1 items-end justify-center overflow-visible pt-0'
+          className={`historia-story-char ${
+            compact || mobileStack
+              ? 'relative z-[1] flex min-h-0 w-full max-w-full flex-[0_1_auto] items-end justify-center overflow-visible pt-0'
               : `${historiaCharacterSpot} lg:shrink-0`
           } ${mobileGrid ? 'max-w-full pt-0' : ''}`}
         >
@@ -159,12 +169,12 @@ function StoryCard({
           />
         </motion.div>
         <p
-          className={`story-card-text relative z-[1] min-h-0 overflow-hidden font-space text-white/92 ${
+          className={`story-card-text relative z-[1] min-h-0 font-space text-white/92 ${
             mobileGrid
-              ? 'line-clamp-[6] flex-1 text-[9px] leading-[1.25] tracking-[0.01em] sm:text-[10px]'
-              : compact
-                ? 'max-lg:native-scroll max-lg:overflow-y-auto max-lg:line-clamp-none max-lg:max-h-[min(28dvh,9.5rem)] line-clamp-[8] shrink-0 text-[11px] leading-snug tracking-[0.01em] sm:text-xs sm:leading-snug'
-                : 'text-xs leading-relaxed sm:text-xs sm:leading-snug md:text-[0.8125rem] md:leading-relaxed lg:shrink-0 lg:line-clamp-[10] lg:text-[0.875rem] xl:text-[0.9375rem] xl:leading-snug'
+              ? 'line-clamp-[6] flex-1 overflow-hidden text-[9px] leading-[1.25] tracking-[0.01em] sm:text-[10px]'
+              : compact || mobileStack
+                ? 'historia-story-fit-text flex flex-1 flex-col justify-start overflow-hidden text-[11px] leading-snug tracking-[0.01em] sm:text-xs sm:leading-snug max-lg:overflow-y-hidden'
+                : 'overflow-hidden text-xs leading-relaxed sm:text-xs sm:leading-snug md:text-[0.8125rem] md:leading-relaxed lg:shrink-0 lg:line-clamp-[10] lg:text-[0.875rem] xl:text-[0.9375rem] xl:leading-snug'
           }`}
         >
           {text}
@@ -177,9 +187,12 @@ function StoryCard({
 function TimelinePanel({
   compact = false,
   mobileGrid = false,
+  mobileRow = false,
 }: {
   compact?: boolean;
   mobileGrid?: boolean;
+  /** Móvil: alien izquierda, línea del tiempo derecha */
+  mobileRow?: boolean;
 }) {
   return (
     <motion.div
@@ -187,30 +200,34 @@ function TimelinePanel({
         mobileGrid
           ? 'gap-1 rounded-xl px-1.5 pb-1.5 pt-1.5'
           : `rounded-2xl px-3 pb-3 pt-3.5 sm:px-3.5 sm:pb-3.5 sm:pt-4 lg:gap-2.5 lg:px-4 lg:pb-4 lg:pt-4 ${compact ? 'gap-0 px-2.5 pb-2.5 pt-2.5 sm:px-3' : 'gap-2.5 sm:gap-3'}`
-      }`}
+      } ${mobileRow ? 'historia-timeline-panel--mobile-row' : ''}`}
     >
       <motion.div
         className={`relative z-[1] flex min-h-0 min-w-0 flex-1 overflow-hidden ${
-          compact
-            ? 'flex-row items-stretch gap-1.5 sm:gap-2'
+          compact || mobileRow
+            ? 'historia-timeline-layout--row flex-row items-stretch gap-2 sm:gap-2'
             : `flex-col lg:flex-row lg:items-stretch lg:justify-center lg:gap-2 ${mobileGrid ? 'gap-1' : 'gap-2.5 sm:gap-3'}`
         }`}
       >
         {!mobileGrid ? (
         <motion.div
-          className={`relative z-[8] flex shrink-0 items-end justify-center overflow-visible px-0 pt-0 max-lg:overflow-visible lg:h-full lg:min-h-0 lg:flex-none lg:items-center lg:justify-center lg:overflow-hidden lg:px-1 ${
-            compact
-              ? 'historia-et-col w-[42%] min-w-[6rem] max-w-[10rem] self-stretch'
-              : 'w-full lg:w-[48%] lg:max-w-none h-[min(20vh,10rem)] sm:h-[min(28vh,13rem)]'
+          className={`historia-et-col relative z-[8] flex shrink-0 items-end justify-center overflow-visible px-0 pt-0 max-lg:overflow-visible lg:h-full lg:min-h-0 lg:flex-none lg:items-center lg:justify-center lg:overflow-hidden lg:px-1 ${
+            mobileRow
+              ? 'min-w-0 max-w-none self-stretch max-lg:items-center max-lg:justify-end'
+              : compact
+                ? 'w-[40%] min-w-[5.5rem] max-w-[9.5rem] self-stretch max-lg:items-center max-lg:justify-end'
+                : 'w-full lg:w-[48%] lg:max-w-none h-[min(20vh,10rem)] sm:h-[min(28vh,13rem)]'
           }`}
         >
           <img
             src={assetUrl('/assets/historia-linea-tiempo.png')}
             alt="E.T. con playera Reparilandia"
-            className={`relative z-[1] pointer-events-none h-auto select-none object-contain object-bottom brightness-[1.14] contrast-[1.08] saturate-[1.05] [image-rendering:auto] origin-bottom max-lg:origin-bottom lg:mx-auto lg:max-h-full lg:max-w-full lg:origin-center lg:object-center ${
-              compact
-                ? 'w-full max-h-[min(52dvh,17rem)] scale-[1.12]'
-                : 'mb-4 max-h-full max-w-full w-[min(100%,20.5rem)] translate-y-0 scale-[1.08] sm:mb-9 sm:w-[min(100%,25.5rem)] sm:translate-y-1 sm:scale-[1.12] lg:mb-0 lg:w-full lg:max-h-none lg:-translate-y-4 lg:scale-[2.52] xl:-translate-y-5 xl:scale-[2.74]'
+            className={`historia-et-img relative z-[12] pointer-events-none block select-none brightness-[1.14] contrast-[1.08] saturate-[1.05] [image-rendering:auto] ${
+              mobileRow
+                ? 'h-auto w-auto max-h-none max-w-none min-h-0 object-contain'
+                : compact
+                  ? 'h-full max-h-full min-h-0 w-full max-w-full object-contain object-bottom origin-bottom'
+                  : 'mb-4 h-auto min-h-[4.25rem] w-full min-w-[3.75rem] max-h-full max-w-full object-contain object-bottom origin-bottom max-lg:origin-bottom lg:mx-auto lg:min-h-0 lg:min-w-0 lg:origin-center lg:object-center lg:mb-0 lg:max-h-none lg:-translate-y-4 lg:scale-[2.52] xl:-translate-y-5 xl:scale-[2.74]'
             }`}
             draggable={false}
             loading="eager"
@@ -220,8 +237,8 @@ function TimelinePanel({
         ) : null}
 
         <motion.div
-          className={`relative z-[15] flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden lg:self-start lg:justify-start lg:min-w-0 lg:flex-1 lg:overflow-hidden ${
-            mobileGrid || compact
+          className={`historia-timeline-copy relative z-[15] flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden lg:self-start lg:justify-start lg:min-w-0 lg:flex-1 lg:overflow-hidden ${
+            mobileGrid || compact || mobileRow
               ? 'justify-start pt-0'
               : 'justify-center pt-2 sm:pt-2.5 lg:pt-5 xl:pt-6'
           }`}
@@ -230,8 +247,8 @@ function TimelinePanel({
             className={`flex min-w-0 shrink-0 items-center gap-1.5 font-orbitron tracking-[0.14em] text-amber-100/95 ${
               mobileGrid
                 ? 'mb-0.5 text-[9px] sm:text-[10px]'
-                : compact
-                  ? 'mb-1 text-[10px] tracking-[0.12em] sm:text-[11px]'
+                : compact || mobileRow
+                  ? 'mb-0.5 text-[10px] tracking-[0.1em] sm:text-[11px]'
                   : 'mb-2 text-xs sm:text-xs md:text-[0.8125rem] lg:mb-1 lg:text-[0.9375rem]'
             }`}
           >
@@ -244,13 +261,25 @@ function TimelinePanel({
             <span className="min-w-0 break-words leading-none">LÍNEA DEL TIEMPO</span>
           </h3>
           <motion.div
-            className={`relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden py-0.5 pl-1 pr-0.5 ${
-              mobileGrid ? 'gap-0' : compact ? 'gap-0.5' : 'gap-2 sm:gap-2.5 lg:gap-2 lg:mt-2'
+            className={`relative flex min-h-0 min-w-0 flex-col overflow-hidden py-0.5 pl-1 pr-0.5 ${
+              mobileRow
+                ? 'historia-timeline-milestones historia-timeline-fit-copy max-lg:flex-1 max-lg:min-h-0 max-lg:justify-between max-lg:gap-1'
+                : mobileGrid
+                  ? 'flex-1 gap-0'
+                  : compact
+                    ? 'flex-1 gap-0.5'
+                    : 'flex-1 gap-2 sm:gap-2.5 lg:gap-2 lg:mt-2'
             }`}
           >
             <motion.div
-              className={`absolute bottom-0.5 left-[0.35rem] w-0 border-l border-dashed border-cyan-400/45 ${
-                mobileGrid ? 'top-4' : compact ? 'top-5 sm:top-6' : 'top-9 sm:top-10 lg:top-12 xl:top-[3.25rem]'
+              className={`historia-timeline-axis absolute left-[0.35rem] w-0 border-l border-dashed border-cyan-400/45 ${
+                mobileRow
+                  ? 'historia-timeline-axis--mobile top-[1.05rem] bottom-auto h-[calc(100%-0.2rem)]'
+                  : mobileGrid
+                    ? 'bottom-0.5 top-4'
+                    : compact
+                      ? 'bottom-0.5 top-5 sm:top-6'
+                      : 'bottom-0.5 top-9 sm:top-10 lg:top-12 xl:top-[3.25rem]'
               }`}
               aria-hidden
             />
@@ -258,7 +287,11 @@ function TimelinePanel({
               <motion.div
                 key={i}
                 className={`relative flex min-w-0 items-start ${
-                  mobileGrid ? 'gap-1 pl-4' : compact ? 'gap-1 pl-4 sm:pl-4' : 'gap-2 pl-6 sm:gap-3 sm:pl-7'
+                  mobileGrid
+                    ? 'gap-1 pl-4'
+                    : compact || mobileRow
+                      ? 'gap-0.5 pl-3.5'
+                      : 'gap-2 pl-6 sm:gap-3 sm:pl-7'
                 }`}
               >
                 <span
@@ -276,7 +309,7 @@ function TimelinePanel({
                     className={`font-orbitron font-semibold tabular-nums leading-none tracking-[0.1em] text-cyan-200/95 ${
                       mobileGrid
                         ? 'text-[9px] sm:text-[10px]'
-                        : compact
+                        : compact || mobileRow
                           ? 'text-[10px] sm:text-[11px]'
                           : 'text-xs sm:text-xs md:text-[0.8125rem] lg:text-[0.9375rem]'
                     }`}
@@ -287,8 +320,8 @@ function TimelinePanel({
                     className={`break-words font-space text-white/90 ${
                       mobileGrid
                         ? 'mt-0 text-[8px] leading-[1.2] sm:text-[9px]'
-                        : compact
-                          ? 'mt-0 line-clamp-3 text-[9px] leading-[1.25] sm:text-[10px] sm:leading-snug'
+                        : compact || mobileRow
+                          ? 'mt-0 text-[9px] leading-[1.2] sm:text-[10px] sm:leading-[1.22]'
                           : 'mt-0.5 text-xs leading-relaxed sm:text-xs sm:leading-snug md:text-[0.8125rem] lg:text-[0.875rem] xl:text-[0.9375rem] xl:leading-snug'
                     }`}
                   >
@@ -305,9 +338,12 @@ function TimelinePanel({
 }
 
 export default function HistoriaScreen() {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, axis: 'x', duration: 22 });
+  const [emblaRef, emblaApi, scrollTo] = useSmoothEmblaCarousel({ loop: false, axis: 'x' });
   const [slideIndex, setSlideIndex] = useState(0);
   const slideCount = 1 + storySlides.length;
+
+  useHistoriaMobileZone(true);
+  useHistoriaMobileFit(slideIndex, true);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -321,10 +357,8 @@ export default function HistoriaScreen() {
     };
   }, [emblaApi]);
 
-  const scrollTo = useCallback((i: number) => emblaApi?.scrollTo(i), [emblaApi]);
-
   return (
-    <MobileScreenLayout title="HISTORIA" showRule hideLeadOnMobile className="historia-screen">
+    <MobileScreenLayout title="HISTORIA" showRule hideLeadOnMobile className="historia-screen" data-screen="historia">
       {/* Móvil: un panel por slide (deslizar), como Inicio */}
       <motion.div
         className="historia-mobile-slides flex min-h-0 flex-1 flex-col overflow-hidden lg:hidden"
@@ -333,17 +367,17 @@ export default function HistoriaScreen() {
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       >
         <motion.div className="historia-mobile-carousel">
-          <motion.div ref={emblaRef} className="historia-mobile-embla min-h-0 flex-1 overflow-hidden">
+          <motion.div ref={emblaRef} className="embla-fluid historia-mobile-embla min-h-0 flex-1 overflow-hidden">
             <div className="flex h-full touch-pan-x">
-              <div className="flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full px-0.5">
-                <TimelinePanel compact />
+              <div className="historia-timeline-slide flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full px-1">
+                <TimelinePanel compact mobileRow />
               </div>
               {storySlides.map((slide) => (
                 <motion.div
                   key={slide.src}
-                  className="historia-story-slide flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full px-0.5"
+                  className="historia-story-slide flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full px-1"
                 >
-                  <StoryCard {...slide} compact />
+                  <StoryCard {...slide} compact mobileStack />
                 </motion.div>
               ))}
             </div>
@@ -352,7 +386,7 @@ export default function HistoriaScreen() {
             count={slideCount}
             active={slideIndex}
             onSelect={scrollTo}
-            className="historia-mobile-dots shrink-0 pt-1.5 max-lg:pb-0"
+            className="historia-mobile-dots shrink-0 pt-1 max-lg:pb-1"
           />
         </motion.div>
       </motion.div>

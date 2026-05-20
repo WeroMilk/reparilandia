@@ -4,6 +4,21 @@ import path from 'path';
 /** Raíz de tracing para el árbol de archivos del paquete (monorepo / carpeta anidada). */
 const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(process.cwd()),
+  devIndicators: false,
+  compiler: {
+    removeConsole:
+      process.env.NODE_ENV === 'production'
+        ? { exclude: ['error'] }
+        : false,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  logging: {
+    fetches: {
+      fullUrl: false,
+    },
+  },
   images: {
     qualities: [75, 100],
     localPatterns: [

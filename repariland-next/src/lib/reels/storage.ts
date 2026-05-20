@@ -3,13 +3,33 @@ import 'server-only';
 import { readFile } from 'fs/promises';
 import path from 'path';
 import { head, put } from '@vercel/blob';
-import type { ReelItem, ReelsManifest } from '@/lib/reels/types';
-import { BLOB_MANIFEST_PATH, MAX_REELS } from '@/lib/reels/constants';
+import { createSupabaseAdmin, hasSupabaseConfig } from '@/lib/supabase/server';
+import type { ReelItem, ReelsManifest, ReelsStorageKind } from '@/lib/reels/types';
+import {
+  BLOB_MANIFEST_PATH,
+  MAX_REELS,
+  SUPABASE_MANIFEST_PATH,
+  SUPABASE_REELS_BUCKET,
+} from '@/lib/reels/constants';
 
 const EMPTY_MANIFEST: ReelsManifest = { version: 1, items: [] };
 
+export function hasSupabaseStorage(): boolean {
+  return hasSupabaseConfig();
+}
+
 export function hasBlobStorage(): boolean {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+}
+
+export function hasWritableStorage(): boolean {
+  return hasSupabaseStorage() || hasBlobStorage();
+}
+
+export function getWritableBackend(): 'supabase' | 'blob' | null {
+  if (hasSupabaseStorage()) return 'supabase';
+  if (hasBlobStorage()) return 'blob';
+  return null;
 }
 
 function normalizeManifest(data: unknown): ReelsManifest {
@@ -46,6 +66,21 @@ export async function readStaticManifest(): Promise<ReelsManifest> {
   }
 }
 
+export async function readSupabaseManifest(): Promise<ReelsManifest | null> {
+  if (!hasSupabaseStorage()) return null;
+  try {
+    const supabase = createSupabaseAdmin();
+    const { data, error } = await supabase.storage
+      .from(SUPABASE_REELS_BUCKET)
+      .download(SUPABASE_MANIFEST_PATH);
+    if (error || !data) return null;
+    const raw = await data.text();
+    return normalizeManifest(JSON.parse(raw));
+  } catch {
+    return null;
+  }
+}
+
 export async function readBlobManifest(): Promise<ReelsManifest | null> {
   if (!hasBlobStorage()) return null;
   try {
@@ -54,21 +89,53 @@ export async function readBlobManifest(): Promise<ReelsManifest | null> {
     if (!response.ok) return null;
     return normalizeManifest(await response.json());
   } catch {
-    // Token inválido o Blob sin manifiesto → usar public/data estático
     return null;
   }
 }
 
 export async function getReelsManifest(): Promise<{
   manifest: ReelsManifest;
-  storage: 'blob' | 'static';
+  storage: ReelsStorageKind;
 }> {
+  const staticManifest = await readStaticManifest();
+
+  if (hasSupabaseStorage()) {
+    const supabaseManifest = await readSupabaseManifest();
+    if (supabaseManifest && supabaseManifest.items.length > 0) {
+      return { manifest: supabaseManifest, storage: 'supabase' };
+    }
+  }
+
   const blobManifest = await readBlobManifest();
-  if (blobManifest !== null) {
+  if (blobManifest !== null && blobManifest.items.length > 0) {
     return { manifest: blobManifest, storage: 'blob' };
   }
-  const staticManifest = await readStaticManifest();
+
   return { manifest: staticManifest, storage: 'static' };
+}
+
+export async function writeManifest(
+  manifest: ReelsManifest,
+  storage: Exclude<ReelsStorageKind, 'static'>,
+): Promise<void> {
+  if (storage === 'supabase') {
+    await writeSupabaseManifest(manifest);
+    return;
+  }
+  await writeBlobManifest(manifest);
+}
+
+export async function writeSupabaseManifest(manifest: ReelsManifest): Promise<void> {
+  if (!hasSupabaseStorage()) {
+    throw new Error('Supabase no configurado');
+  }
+  const supabase = createSupabaseAdmin();
+  const body = Buffer.from(JSON.stringify(manifest, null, 2), 'utf8');
+  const { error } = await supabase.storage.from(SUPABASE_REELS_BUCKET).upload(SUPABASE_MANIFEST_PATH, body, {
+    upsert: true,
+    contentType: 'application/json',
+  });
+  if (error) throw new Error(error.message);
 }
 
 export async function writeBlobManifest(manifest: ReelsManifest): Promise<void> {
@@ -86,11 +153,29 @@ export async function writeBlobManifest(manifest: ReelsManifest): Promise<void> 
 export async function uploadReelVideo(
   id: string,
   file: File,
+  backend: 'supabase' | 'blob',
 ): Promise<{ url: string }> {
+  const ext = file.type === 'video/webm' ? 'webm' : 'mp4';
+
+  if (backend === 'supabase') {
+    if (!hasSupabaseStorage()) {
+      throw new Error('Supabase no configurado');
+    }
+    const supabase = createSupabaseAdmin();
+    const objectPath = `videos/${id}.${ext}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const { error } = await supabase.storage.from(SUPABASE_REELS_BUCKET).upload(objectPath, buffer, {
+      upsert: true,
+      contentType: file.type,
+    });
+    if (error) throw new Error(error.message);
+    const { data } = supabase.storage.from(SUPABASE_REELS_BUCKET).getPublicUrl(objectPath);
+    return { url: data.publicUrl };
+  }
+
   if (!hasBlobStorage()) {
     throw new Error('BLOB_READ_WRITE_TOKEN no configurado');
   }
-  const ext = file.type === 'video/webm' ? 'webm' : 'mp4';
   const blob = await put(`reels/${id}.${ext}`, file, {
     access: 'public',
     addRandomSuffix: false,
@@ -98,6 +183,25 @@ export async function uploadReelVideo(
     contentType: file.type,
   });
   return { url: blob.url };
+}
+
+export async function deleteReelVideo(id: string, videoUrl: string, storage: ReelsStorageKind): Promise<void> {
+  if (storage === 'supabase' && hasSupabaseStorage()) {
+    const supabase = createSupabaseAdmin();
+    const marker = `/object/public/${SUPABASE_REELS_BUCKET}/`;
+    const idx = videoUrl.indexOf(marker);
+    const objectPath = idx >= 0 ? decodeURIComponent(videoUrl.slice(idx + marker.length)) : `videos/${id}.mp4`;
+    await supabase.storage.from(SUPABASE_REELS_BUCKET).remove([objectPath]);
+    return;
+  }
+  if (storage === 'blob' && hasBlobStorage()) {
+    try {
+      const { del } = await import('@vercel/blob');
+      await del(videoUrl);
+    } catch {
+      // El manifiesto ya no referencia el video; fallo de borrado no es crítico
+    }
+  }
 }
 
 export function createReelId(): string {

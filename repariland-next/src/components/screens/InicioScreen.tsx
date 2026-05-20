@@ -1,14 +1,15 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import useEmblaCarousel from 'embla-carousel-react';
+import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
 import CarouselDots from '@/components/CarouselDots';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
 import GuaranteePromise from '@/components/GuaranteePromise';
 import type { ScreenName } from '@/types';
 import { assetUrl } from '@/lib/assetUrl';
+import { useInicioMobileBoxesZone } from '@/hooks/useInicioMobileBoxesZone';
 
 const LOGO = '/assets/logo-reparilandia.png';
 
@@ -46,8 +47,10 @@ interface InicioScreenProps {
 }
 
 export default function InicioScreen({ onNavigate }: InicioScreenProps) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, axis: 'x', duration: 22 });
+  const [emblaRef, emblaApi, scrollTo] = useSmoothEmblaCarousel({ loop: true, axis: 'x' });
   const [slideIndex, setSlideIndex] = useState(0);
+
+  useInicioMobileBoxesZone(true);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -61,68 +64,104 @@ export default function InicioScreen({ onNavigate }: InicioScreenProps) {
     };
   }, [emblaApi]);
 
-  const scrollTo = useCallback((i: number) => emblaApi?.scrollTo(i), [emblaApi]);
-
   return (
-    <MobileScreenLayout title="INICIO" className="inicio-screen">
-      <motion.div className="inicio-mobile-stage relative flex min-h-0 flex-1 flex-col overflow-hidden max-lg:overflow-hidden lg:overflow-visible lg:justify-start lg:gap-1 lg:pb-6 xl:gap-1.5 xl:pb-8">
+    <MobileScreenLayout title="INICIO" className="inicio-screen" data-screen="inicio">
+      <motion.div className="inicio-mobile-stage relative flex min-h-0 flex-1 flex-col overflow-hidden max-lg:min-h-0 max-lg:overflow-hidden lg:overflow-visible lg:justify-start lg:gap-1 lg:pb-6 xl:gap-1.5 xl:pb-8">
+        {/* Móvil: logo → eslogan → garantía con huecos; escritorio sin cambios */}
         <motion.div
-          className="inicio-mobile-hero inicio-desktop-hero relative z-10 flex w-full shrink-0 flex-col items-center gap-1 px-1 text-center max-lg:gap-1 sm:px-2 lg:-mt-5 lg:max-h-none lg:gap-0 lg:pt-0 xl:-mt-6"
+          className="inicio-mobile-top relative z-10 flex w-full shrink-0 flex-col items-center px-1 text-center sm:px-2 lg:hidden"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
         >
-          <Image
-            src={assetUrl(LOGO)}
-            alt="Reparilandia"
-            width={1024}
-            height={682}
-            priority
-            quality={100}
-            placeholder="empty"
-            sizes="(max-width: 1023px) min(94vw, 38rem), min(88vw, 58rem)"
-            className="mx-auto block h-auto w-full max-h-[min(26dvh,14.5rem)] max-w-[min(94vw,36rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)] sm:max-h-[min(28dvh,15.5rem)] sm:max-w-[min(94vw,38rem)] md:max-h-[min(29dvh,16.25rem)] md:max-w-[min(92vw,40rem)] lg:max-h-[min(30dvh,18.5rem)] lg:max-w-[min(88vw,48rem)] xl:max-h-[min(32dvh,20rem)] xl:max-w-[min(86vw,52rem)]"
-            draggable={false}
-          />
-          <motion.div className="inicio-mobile-trust inicio-desktop-trust flex w-full flex-col items-center gap-1.5 max-lg:gap-1 lg:gap-1.5">
-            <p className="max-w-xl px-3 font-orbitron text-[clamp(0.6875rem,2.8vw,0.875rem)] font-medium leading-none tracking-[0.14em] text-cyan-100/95 drop-shadow-[0_0_20px_rgba(34,211,238,0.22)] sm:text-sm sm:tracking-[0.22em] lg:-mt-12 lg:mb-0.5 lg:text-base lg:tracking-[0.24em] xl:-mt-14 xl:mb-0.5 xl:text-lg xl:tracking-[0.26em]">
+          <div className="inicio-mobile-brand flex w-full flex-col items-center">
+            <div className="inicio-mobile-logo-wrap w-full">
+              <Image
+                src={assetUrl(LOGO)}
+                alt="Reparilandia"
+                width={1024}
+                height={682}
+                priority
+                quality={100}
+                placeholder="empty"
+                sizes="(max-width: 1023px) min(96vw, 40rem)"
+                className="inicio-mobile-logo mx-auto block h-auto w-full max-w-[min(96vw,40rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)]"
+                draggable={false}
+              />
+            </div>
+            <p className="inicio-mobile-slogan max-w-xl px-3 font-orbitron text-[clamp(0.6875rem,2.8vw,0.875rem)] font-medium leading-none tracking-[0.14em] text-cyan-100/95 drop-shadow-[0_0_20px_rgba(34,211,238,0.22)] sm:text-sm sm:tracking-[0.22em]">
               La capital de la reparación
             </p>
-            <GuaranteePromise variant="compact" className="w-full max-w-md sm:max-w-lg lg:hidden" />
-            <GuaranteePromise className="hidden w-full lg:mt-1 lg:mb-0.5 lg:block xl:mb-1" />
+          </div>
+          <GuaranteePromise className="inicio-mobile-guarantee w-full max-w-md sm:max-w-lg" />
+        </motion.div>
+
+        <motion.div
+          className="inicio-mobile-hero inicio-desktop-hero relative z-10 hidden w-full shrink-0 flex-col items-center gap-1 px-1 text-center sm:px-2 lg:flex lg:-mt-5 lg:max-h-none lg:gap-2 lg:pt-0 xl:-mt-6 xl:gap-2.5"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="inicio-desktop-brand flex w-full flex-col items-center lg:gap-1 xl:gap-1.5">
+            <Image
+              src={assetUrl(LOGO)}
+              alt="Reparilandia"
+              width={1024}
+              height={682}
+              priority
+              quality={100}
+              placeholder="empty"
+              sizes="(max-width: 1023px) min(94vw, 38rem), min(88vw, 58rem)"
+              className="inicio-desktop-logo mx-auto block h-auto w-full max-h-[min(26dvh,14.5rem)] max-w-[min(94vw,36rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)] sm:max-h-[min(28dvh,15.5rem)] sm:max-w-[min(94vw,38rem)] md:max-h-[min(29dvh,16.25rem)] md:max-w-[min(92vw,40rem)] lg:max-h-[min(30dvh,18.5rem)] lg:max-w-[min(88vw,48rem)] xl:max-h-[min(32dvh,20rem)] xl:max-w-[min(86vw,52rem)]"
+              draggable={false}
+            />
+            <p className="inicio-desktop-slogan max-w-xl px-3 font-orbitron text-[clamp(0.6875rem,2.8vw,0.875rem)] font-medium leading-none tracking-[0.14em] text-cyan-100/95 drop-shadow-[0_0_20px_rgba(34,211,238,0.22)] sm:text-sm sm:tracking-[0.22em] lg:-mt-[3.75rem] lg:mb-1 lg:w-full lg:text-base lg:tracking-[0.24em] xl:-mt-[4.25rem] xl:mb-1.5 xl:text-lg xl:tracking-[0.26em]">
+              La capital de la reparación
+            </p>
+          </div>
+          <motion.div className="inicio-desktop-trust flex w-full flex-col items-center gap-1.5 lg:gap-1.5">
+            <GuaranteePromise className="inicio-desktop-guarantee w-full lg:mb-0.5 xl:mb-1" />
           </motion.div>
         </motion.div>
 
         {/* Móvil: un slide a pantalla completa, sin peek horizontal */}
         <motion.div
-          className="inicio-mobile-boxes flex min-h-0 flex-1 flex-col overflow-hidden lg:hidden"
+          className="inicio-mobile-boxes flex min-h-0 flex-1 flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-1 lg:hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.06, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
         >
-          <motion.div className="inicio-mobile-center-block flex w-full min-h-0 max-h-full flex-col items-center justify-center gap-1">
-          <motion.div className="inicio-mobile-carousel">
-            <motion.div ref={emblaRef} className="inicio-mobile-embla min-h-0 overflow-hidden">
-              <motion.div className="flex h-full touch-pan-x">
+          <motion.div className="inicio-mobile-center-block flex min-h-0 w-full flex-1 flex-col items-stretch">
+          <motion.div className="inicio-mobile-carousel flex min-h-0 w-full flex-1 flex-col">
+            <motion.div ref={emblaRef} className="embla-fluid inicio-mobile-embla min-h-0 flex-1 overflow-hidden">
+              <motion.div className="flex h-full min-h-0 touch-pan-x">
               {homeCards.map((card) => (
                 <motion.div
                   key={card.img}
-                  className="flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full justify-center px-4 sm:px-5"
+                  className="inicio-mobile-slide flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full justify-center px-3 sm:px-4"
                 >
-                  <div className="flex h-full min-h-0 w-full max-w-[min(86vw,20.5rem)] flex-col">
+                  <div className="inicio-mobile-slide__inner flex h-full min-h-0 w-full flex-col">
                     <HomeSpotlightCard
                       img={card.img}
                       caption={card.caption}
                       onClick={() => onNavigate(card.screen)}
                       accent={card.accent}
                       centerProminent={card.centerProminent}
+                      mobileCarousel
                     />
                   </div>
                 </motion.div>
               ))}
               </motion.div>
             </motion.div>
-            <CarouselDots count={homeCards.length} active={slideIndex} onSelect={scrollTo} className="inicio-mobile-dots shrink-0 pt-1" />
+            <div className="inicio-mobile-carousel-foot shrink-0">
+              <CarouselDots
+                count={homeCards.length}
+                active={slideIndex}
+                onSelect={scrollTo}
+                className="inicio-mobile-dots"
+              />
+            </div>
           </motion.div>
           </motion.div>
         </motion.div>
@@ -159,6 +198,7 @@ function HomeSpotlightCard({
   accent,
   centerProminent = false,
   cropLegs = false,
+  mobileCarousel = false,
 }: {
   img: string;
   caption: string;
@@ -166,15 +206,18 @@ function HomeSpotlightCard({
   accent: HomeBoxAccent;
   centerProminent?: boolean;
   cropLegs?: boolean;
+  mobileCarousel?: boolean;
 }) {
   const styles = HOME_BOX_ACCENT[accent];
 
-  let imgTreat =
-    'max-h-full max-w-[92%] object-contain object-center origin-center';
+  let imgTreat = mobileCarousel
+    ? 'inicio-home-card__img h-auto w-auto max-h-full max-w-[92%] object-contain object-center origin-center'
+    : 'max-h-full max-w-[92%] object-contain object-center origin-center';
 
   if (centerProminent) {
-    imgTreat =
-      'max-h-[106%] max-w-[96%] origin-center scale-[1.05] translate-y-2 object-contain object-center sm:scale-[1.04] sm:translate-y-2 md:scale-[1.03] md:translate-y-2.5';
+    imgTreat = mobileCarousel
+      ? 'inicio-home-card__img h-auto w-auto max-h-[106%] max-w-[96%] origin-center scale-[1.05] translate-y-2 object-contain object-center'
+      : 'max-h-[106%] max-w-[96%] origin-center scale-[1.05] translate-y-2 object-contain object-center sm:scale-[1.04] sm:translate-y-2 md:scale-[1.03] md:translate-y-2.5';
   }
 
   const wrapAlign = centerProminent
@@ -188,9 +231,13 @@ function HomeSpotlightCard({
     centerProminent ? ' home-box-glow--center' : ''
   }`;
 
+  const imageShell = mobileCarousel
+    ? 'inicio-home-card__art w-full flex-1'
+    : 'min-h-0 w-full flex-1';
+
   const imageArea = cropLegs ? (
     <motion.div
-      className={`relative mx-auto min-h-0 w-full flex-1 overflow-hidden rounded-lg ${glowStage}`}
+      className={`relative mx-auto overflow-hidden rounded-lg ${imageShell} ${glowStage}`}
     >
       <img
         src={assetUrl(img)}
@@ -205,7 +252,7 @@ function HomeSpotlightCard({
     </motion.div>
   ) : (
     <motion.div
-      className={`relative isolate flex min-h-0 flex-1 overflow-hidden rounded-xl ${wrapAlign} ${glowStage}`}
+      className={`relative isolate flex overflow-hidden rounded-xl ${imageShell} ${wrapAlign} ${glowStage}`}
     >
       <img
         src={assetUrl(img)}
@@ -226,13 +273,13 @@ function HomeSpotlightCard({
       whileHover={{ scale: 1.012 }}
       whileTap={{ scale: 0.992 }}
       transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-      className={`group relative z-[1] ${CARD_BOX} touch-manipulation overflow-hidden rounded-2xl border p-2.5 outline-none active:scale-[0.98] sm:p-3 lg:overflow-visible lg:rounded-xl lg:p-2.5 lg:pt-3 xl:p-3 xl:pt-3.5 ${styles.restShadow} ${cardChrome} ${styles.frame}`}
+      className={`group relative z-[1] ${CARD_BOX} inicio-home-card touch-manipulation overflow-hidden rounded-2xl border p-2.5 outline-none active:scale-[0.98] sm:p-3 lg:overflow-visible lg:rounded-xl lg:p-2.5 lg:pt-3 xl:p-3 xl:pt-3.5 ${styles.restShadow} ${cardChrome} ${styles.frame}`}
     >
       <span
         aria-hidden
         className={`pointer-events-none absolute inset-0 z-0 rounded-2xl opacity-[0.52] ${styles.innerSheen}`}
       />
-      <motion.div className="relative z-[1] flex min-h-0 flex-1 flex-col overflow-hidden px-0.5 pt-1 sm:pt-1.5 lg:pt-2">
+      <motion.div className="inicio-home-card__body relative z-[1] flex min-h-0 flex-1 flex-col overflow-hidden px-0.5 pt-1 sm:pt-1.5 lg:pt-2">
         {imageArea}
       </motion.div>
       <p className="relative z-[1] mt-1.5 shrink-0 px-1.5 text-center font-space text-[clamp(0.6875rem,2.6vw,0.8125rem)] font-semibold leading-snug tracking-[0.03em] text-white/95 sm:mt-2 sm:text-xs md:text-[0.8125rem] lg:mt-1 lg:text-[0.6875rem] lg:leading-tight xl:text-xs">

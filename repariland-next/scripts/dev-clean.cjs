@@ -9,6 +9,8 @@ const path = require('path');
 const projectRoot = path.join(__dirname, '..');
 const nextDir = path.join(projectRoot, '.next');
 const port = Number(process.env.PORT) || 3000;
+const extraPorts = [];
+for (let p = 3000; p <= 3012; p += 1) extraPorts.push(p);
 
 function rm(dir) {
   if (fs.existsSync(dir)) {
@@ -49,13 +51,26 @@ rm(nextDir);
 const rootNext = path.join(projectRoot, '..', '.next');
 rm(rootNext);
 
-freePort(port);
+for (const p of extraPorts) {
+  freePort(p);
+}
+
+try {
+  execSync('node scripts/optimize-app-icons.cjs', {
+    cwd: projectRoot,
+    stdio: 'ignore',
+  });
+} catch {
+  /* iconos opcionales */
+}
 
 console.log('');
-console.log('  Reparilandia → http://localhost:' + port);
-console.log('  Si la página falla: Ctrl+Shift+R en el navegador');
+console.log('  Reparilandia (Next.js App Router)');
+console.log('  → http://localhost:' + port);
+console.log('  Solo desde repariland-next. Si ves 404 en main.js: Ctrl+Shift+R');
 console.log('');
-const child = spawn('npm', ['run', 'dev'], {
+
+const child = spawn('npx', ['next', 'dev', '-p', String(port)], {
   cwd: projectRoot,
   stdio: 'inherit',
   shell: true,

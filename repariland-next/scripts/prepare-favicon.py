@@ -4,34 +4,56 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageEnhance
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "public" / "assets" / "favicon-source.png"
 OUT_ICON = ROOT / "src" / "app" / "icon.png"
 OUT_APPLE = ROOT / "src" / "app" / "apple-icon.png"
 OUT_FAVICON = ROOT / "src" / "app" / "favicon.ico"
-FAVICON_SIZE = 32
 ICON_SIZE = 512
 APPLE_SIZE = 180
+FAVICON_SIZES = (16, 32, 48)
 
 
 def knock_checkerboard(im: Image.Image) -> Image.Image:
     arr = np.array(im.convert("RGBA"))
     rgb = arr[:, :, :3].astype(np.int16)
     r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
-    neutral = (np.abs(r - g) <= 12) & (np.abs(g - b) <= 12)
-    # Checkerboard squares (white + light gray) including pockets inside the logo bbox.
-    checker = neutral & ((r > 200) | ((r > 178) & (r < 225)))
-    arr[checker, 3] = 0
-    # Remove light neutral halos (avoids white box in browser tabs).
-    halo = neutral & (r > 232) & (arr[:, :, 3] > 0)
+    neutral = (np.abs(r - g) <= 14) & (np.abs(g - b) <= 14)
+    # Checkerboard / export backdrop (white + light gray), not logo colors.
+    backdrop = neutral & (
+        (r >= 248)
+        | (r > 200)
+        | ((r > 168) & (r < 238))
+    )
+    arr[backdrop, 3] = 0
+    # Only remove near-white halos (keep yellow/green logo highlights).
+    halo = neutral & (r >= 246) & (arr[:, :, 3] > 0)
     arr[halo, 3] = 0
     return Image.fromarray(arr)
 
 
-def trim_and_square(im: Image.Image, margin_frac: float = 0.04) -> Image.Image:
-    """Fit the full logo inside a square (no crop) with a thin transparent margin."""
+def tight_content_bbox(im: Image.Image, alpha_min: int = 20) -> Image.Image:
+    arr = np.array(im.convert("RGBA"))
+    mask = arr[:, :, 3] > alpha_min
+    if not mask.any():
+        return im
+    ys, xs = np.where(mask)
+    return im.crop((int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1))
+
+
+def boost_for_browser_tab(im: Image.Image) -> Image.Image:
+    """Brighter, punchier colors so the mark reads on dark browser chrome."""
+    out = ImageEnhance.Brightness(im).enhance(1.52)
+    out = ImageEnhance.Contrast(out).enhance(1.32)
+    out = ImageEnhance.Color(out).enhance(1.22)
+    out = ImageEnhance.Sharpness(out).enhance(1.4)
+    return out
+
+
+def trim_and_square(im: Image.Image, margin_frac: float = 0.06) -> Image.Image:
+    """Fit logo in a square with a small transparent margin."""
     bbox = im.getbbox()
     if not bbox:
         return im
@@ -48,23 +70,44 @@ def trim_and_square(im: Image.Image, margin_frac: float = 0.04) -> Image.Image:
     return canvas
 
 
-def main() -> None:
+def resize_sharp(im: Image.Image, size: int) -> Image.Image:
+    if im.size[0] == size:
+        return im
+    mid = max(size * 2, size + 8)
+    if im.size[0] < mid:
+        im = im.resize((mid, mid), Image.Resampling.LANCZOS)
+    out = im.resize((size, size), Image.Resampling.LANCZOS)
+    return ImageEnhance.Sharpness(out).enhance(1.2)
+
+
+def build_master() -> Image.Image:
     if not SRC.exists():
         raise SystemExit(f"Missing source: {SRC}")
 
-    im = knock_checkerboard(Image.open(SRC))
-    squared = trim_and_square(im)
-    squared.resize((ICON_SIZE, ICON_SIZE), Image.Resampling.LANCZOS).save(
+    raw = knock_checkerboard(Image.open(SRC))
+    content = tight_content_bbox(raw)
+    boosted = boost_for_browser_tab(content)
+    return trim_and_square(boosted, margin_frac=0.06)
+
+
+def main() -> None:
+    master = build_master()
+
+    master.resize((ICON_SIZE, ICON_SIZE), Image.Resampling.LANCZOS).save(
         OUT_ICON, "PNG", optimize=True
     )
-    squared.resize((APPLE_SIZE, APPLE_SIZE), Image.Resampling.LANCZOS).save(
+    master.resize((APPLE_SIZE, APPLE_SIZE), Image.Resampling.LANCZOS).save(
         OUT_APPLE, "PNG", optimize=True
     )
-    squared.resize((FAVICON_SIZE, FAVICON_SIZE), Image.Resampling.LANCZOS).save(
+
+    favicons = [resize_sharp(master, s) for s in FAVICON_SIZES]
+    favicons[-1].save(
         OUT_FAVICON,
         format="ICO",
-        sizes=[(FAVICON_SIZE, FAVICON_SIZE)],
+        sizes=[(s, s) for s in FAVICON_SIZES],
+        append_images=favicons[:-1],
     )
+
     print("Wrote", OUT_ICON.name, OUT_ICON.stat().st_size, "bytes")
     print("Wrote", OUT_APPLE.name, OUT_APPLE.stat().st_size, "bytes")
     print("Wrote", OUT_FAVICON.name, OUT_FAVICON.stat().st_size, "bytes")

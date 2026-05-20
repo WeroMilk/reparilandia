@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Loader2, Settings2 } from 'lucide-react';
 import { useReels } from '@/hooks/useReels';
+import { useReelsViewportHeight } from '@/hooks/useReelsViewportHeight';
 import ReelsFeed from '@/components/reels/ReelsFeed';
 import ReelsEmptyState from '@/components/reels/ReelsEmptyState';
 import ReelsAdminPanel from '@/components/reels/ReelsAdminPanel';
@@ -28,7 +29,7 @@ export default function ReelsScreen({ isScreenActive = true }: ReelsScreenProps)
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const blobEnabled = storage === 'blob';
+  const uploadEnabled = storage === 'supabase' || storage === 'blob';
 
   const openAdminFlow = useCallback(() => {
     if (isAdmin) {
@@ -76,13 +77,15 @@ export default function ReelsScreen({ isScreenActive = true }: ReelsScreenProps)
     [updateItem],
   );
 
+  useReelsViewportHeight(isScreenActive);
+
   return (
     <div
       className="reels-screen relative flex min-h-0 flex-1 flex-col overflow-hidden bg-black lg:px-4"
       data-screen="reels"
     >
       <div className="reels-screen__frame relative mx-auto flex h-full min-h-0 w-full max-w-[28rem] flex-1 flex-col overflow-hidden lg:rounded-2xl lg:border lg:border-white/[0.08] lg:shadow-[0_0_80px_-20px_rgba(0,119,255,0.35)]">
-        <header className="reels-screen__header pointer-events-none absolute inset-x-0 top-0 z-40 flex items-start justify-between gap-3 px-4 pt-[max(0.75rem,env(safe-area-inset-top))]">
+        <header className="reels-screen__header pointer-events-none z-40 flex shrink-0 items-start justify-between gap-3 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2">
           <div className="pointer-events-auto rounded-full border border-white/10 bg-black/45 px-3 py-1 backdrop-blur-md">
             <span className="font-space text-[11px] font-semibold uppercase tracking-[0.25em] text-white">
               REELS
@@ -105,7 +108,7 @@ export default function ReelsScreen({ isScreenActive = true }: ReelsScreenProps)
           </div>
         </header>
 
-        <div className="reels-screen__body relative min-h-0 flex-1">
+        <div className="reels-screen__body relative min-h-0 flex-1 overflow-hidden">
           {loading ? (
             <div className="flex h-full items-center justify-center">
               <Loader2 className="h-8 w-8 animate-spin text-[#4DA3FF]" />
@@ -199,7 +202,7 @@ export default function ReelsScreen({ isScreenActive = true }: ReelsScreenProps)
         items={items}
         maxReels={maxReels}
         maxDurationSec={maxDurationSec}
-        blobEnabled={blobEnabled}
+        uploadEnabled={uploadEnabled}
         onClose={() => setAdminOpen(false)}
         onRefresh={refresh}
         onLogout={handleLogout}

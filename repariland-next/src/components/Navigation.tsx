@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
+import { MOTION_IOS_SPRING } from '@/lib/motionPresets';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { ScreenName } from '@/types';
 
@@ -85,6 +86,8 @@ function ChevronControl({
 }
 
 function DockNav({ currentScreen, onNavigate, onPrev, onNext }: NavigationProps) {
+  const reduceMotion = useReducedMotion();
+
   return (
     <nav
       className="relative z-[20] w-full shrink-0 touch-manipulation pointer-events-auto"
@@ -127,22 +130,30 @@ function DockNav({ currentScreen, onNavigate, onPrev, onNext }: NavigationProps)
                   aria-current={isActive ? 'page' : undefined}
                   className="relative z-[20] flex h-full min-w-0 w-full cursor-pointer flex-col items-center justify-center gap-0.5 overflow-visible pointer-events-auto [-webkit-tap-highlight-color:transparent] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400/70 active:opacity-90 sm:gap-1"
                 >
-                  <span
-                    className={`pointer-events-none relative rounded-full bg-gradient-to-br transition-transform duration-200 hover:scale-[1.08] hover:brightness-105 ${item.gradient} ${isActive ? `${dotActive} scale-[1.08]` : dotIdle}`}
+                  <motion.span
+                    className={`pointer-events-none relative block rounded-full bg-gradient-to-br hover:brightness-105 ${item.gradient} ${isActive ? dotActive : dotIdle}`}
+                    animate={{ scale: isActive ? 1.08 : 1 }}
+                    whileHover={reduceMotion ? undefined : { scale: isActive ? 1.1 : 1.06 }}
+                    whileTap={reduceMotion ? undefined : { scale: 0.96 }}
+                    transition={reduceMotion ? { duration: 0 } : MOTION_IOS_SPRING}
                   >
                     <span
                       className="pointer-events-none absolute inset-[1.5px] rounded-full bg-black/10 mix-blend-multiply backdrop-blur-[1px]"
                       aria-hidden
                     />
-                  </span>
+                  </motion.span>
 
-                  <span
+                  <motion.span
                     className={`pointer-events-none max-w-none whitespace-nowrap px-0.5 text-center font-space text-[clamp(7px,2.1vw,10px)] font-medium uppercase leading-none tracking-[0.02em] sm:text-[clamp(8px,2.35vw,10.5px)] sm:tracking-[0.035em] lg:tracking-[0.04em] ${
                       isActive ? 'text-white' : 'text-white/58'
                     }`}
+                    animate={{ opacity: isActive ? 1 : 0.58 }}
+                    transition={
+                      reduceMotion ? { duration: 0 } : { duration: 0.32, ease: [0.32, 0.72, 0, 1] }
+                    }
                   >
                     {item.label}
-                  </span>
+                  </motion.span>
                 </button>
               );
             })}

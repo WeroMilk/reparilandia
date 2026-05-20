@@ -14,8 +14,5 @@
     "reels:add": "npm run reels:add --prefix repariland-next",
     "reels:list": "npm run reels:list --prefix repariland-next",
     "reels:remove": "npm run reels:remove --prefix repariland-next"
-  },
-  "dependencies": {
-    "next": "15.5.18"
   }
 }

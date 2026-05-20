@@ -12,6 +12,8 @@ type MobileScreenLayoutProps = {
   headerOverlay?: ReactNode;
   children: ReactNode;
   className?: string;
+  /** Identificador para hooks de zona móvil (p. ej. useContactoMobileZone) */
+  'data-screen'?: string;
 };
 
 /**
@@ -25,13 +27,17 @@ export default function MobileScreenLayout({
   headerOverlay,
   children,
   className = '',
+  'data-screen': dataScreen,
 }: MobileScreenLayoutProps) {
   const leadClass = hideLeadOnMobile
     ? 'screen-page-lead max-lg:screen-page-lead--mobile-hidden'
     : 'screen-page-lead';
 
   return (
-    <div className={`screen-shell mobile-screen relative flex min-h-0 flex-1 flex-col overflow-hidden ${className}`}>
+    <div
+      className={`screen-shell mobile-screen relative flex min-h-0 flex-1 flex-col overflow-hidden ${className}`}
+      {...(dataScreen != null ? { 'data-screen': dataScreen } : {})}
+    >
       {headerOverlay != null ? (
         <div className="mobile-screen__overlay pointer-events-none absolute inset-x-0 top-0 z-[18] hidden overflow-visible lg:block">
           {headerOverlay}

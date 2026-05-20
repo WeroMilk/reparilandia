@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ElementType } from 'react';
 import { motion } from 'framer-motion';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
-import useEmblaCarousel from 'embla-carousel-react';
+import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
 import {
   ChevronLeft,
   ChevronRight,
@@ -24,6 +24,7 @@ import AppModal from '@/components/AppModal';
 import GuaranteePromise from '@/components/GuaranteePromise';
 import type { Service } from '@/types';
 import { assetUrl } from '@/lib/assetUrl';
+import { useServiciosMobileZone } from '@/hooks/useServiciosMobileZone';
 
 const services: Service[] = [
   {
@@ -150,16 +151,16 @@ function ServicioHeroBanner({
   const [heroFailed, setHeroFailed] = useState(false);
 
   return (
-    <div className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-[inherit] bg-transparent">
-      <div className="relative isolate flex min-h-0 w-full flex-1 flex-col bg-transparent max-lg:max-h-[min(30dvh,12.5rem)] sm:max-h-[min(32dvh,13.5rem)] md:max-h-[min(34dvh,14rem)] lg:max-h-none">
+    <div className="servicios-slide-hero relative flex min-h-0 w-full flex-col overflow-hidden rounded-[inherit] bg-transparent max-lg:flex-none max-lg:shrink-0 lg:flex-1">
+      <div className="relative isolate flex min-h-0 w-full flex-col bg-transparent max-lg:max-h-full max-lg:shrink-0 lg:flex-1 lg:max-h-none">
         {heroFailed ? (
           <ServicioHeroIconFallback icon={fallbackIcon} />
         ) : (
-          <div className="relative z-[1] mx-auto flex min-h-0 w-full max-w-[min(100%,38rem)] flex-1 justify-center isolate rounded-lg bg-transparent px-2 pt-1 sm:px-2.5 sm:pt-1.5 lg:max-w-[min(100%,44rem)] lg:px-3 lg:pt-2">
+          <div className="relative z-[1] mx-auto flex min-h-0 w-full max-w-[min(100%,38rem)] justify-center isolate rounded-lg bg-transparent px-2 pt-1 max-lg:flex-none sm:px-2.5 sm:pt-1.5 lg:max-w-[min(100%,44rem)] lg:flex-1 lg:px-3 lg:pt-2">
             <img
               src={assetUrl(src)}
               alt={alt}
-              className="h-auto w-full max-h-full max-lg:max-h-[min(30dvh,12.5rem)] object-contain object-center pb-0.5 [image-rendering:auto] drop-shadow-[0_14px_40px_rgba(0,0,0,0.28)] brightness-[1.04] contrast-[1.04] sm:max-h-[min(32dvh,13.5rem)] lg:max-h-[min(38cqh,18rem)] xl:max-h-[min(42cqh,20rem)]"
+              className="servicios-slide-hero-img h-auto w-full max-h-full object-contain object-center pb-0.5 [image-rendering:auto] drop-shadow-[0_14px_40px_rgba(0,0,0,0.28)] brightness-[1.04] contrast-[1.04] lg:max-h-[min(38cqh,18rem)] xl:max-h-[min(42cqh,20rem)]"
               draggable={false}
               loading={priority ? 'eager' : 'lazy'}
               decoding="async"
@@ -186,8 +187,13 @@ const carouselArrowClass =
 
 export default function ServiciosScreen() {
   const [quoteService, setQuoteService] = useState<string | null>(null);
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, axis: 'x', duration: 22 });
+  const [emblaRef, emblaApi, scrollTo, scrollPrev, scrollNext] = useSmoothEmblaCarousel({
+    loop: true,
+    axis: 'x',
+  });
   const [slideIndex, setSlideIndex] = useState(0);
+
+  useServiciosMobileZone(true);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -201,9 +207,6 @@ export default function ServiciosScreen() {
     };
   }, [emblaApi]);
 
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
-
   const activeService = services[slideIndex] ?? services[0];
   const activeTitle = activeService.heroCaption ?? activeService.title;
 
@@ -213,23 +216,44 @@ export default function ServiciosScreen() {
       lead="Desliza o usa flechas y puntos. Toca un servicio abajo o «Cotizar» en cada slide."
       hideLeadOnMobile
       className="servicios-screen"
+      data-screen="servicios"
     >
       <motion.div
-        className="servicios-mobile-stage servicios-desktop-stage flex min-h-0 flex-1 flex-col overflow-hidden lg:mt-4 lg:gap-1 xl:mt-5 xl:gap-1.5"
+        className="servicios-mobile-stage servicios-desktop-stage flex min-h-0 w-full flex-1 flex-col overflow-hidden max-lg:justify-start max-lg:gap-0 lg:mt-4 lg:gap-1 xl:mt-5 xl:gap-1.5"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        <motion.div className="servicios-mobile-cta servicios-desktop-intro flex shrink-0 flex-col items-center gap-1.5 justify-center max-lg:pt-0.5 lg:gap-1.5">
-          <p className="inline-flex min-h-[36px] items-center justify-center rounded-lg border border-amber-400/45 bg-amber-500/12 px-2.5 py-1 text-center font-orbitron text-[12px] font-semibold uppercase tracking-wide text-amber-100 shadow-[0_0_16px_rgba(255,215,0,0.08)] sm:min-h-[38px] sm:px-3 sm:py-1.5 sm:text-xs lg:min-h-[40px] lg:rounded-xl lg:px-3.5 lg:py-1.5">
-            DECANOS EN LA REPARACIÓN
-          </p>
-          <GuaranteePromise variant="compact" className="w-full max-w-md sm:max-w-lg" />
+        <motion.div className="servicios-mobile-intro flex w-full shrink-0 flex-col items-center max-lg:flex lg:hidden">
+          <motion.div className="servicios-mobile-top flex w-full shrink-0 flex-col items-center px-1">
+            <p className="servicios-mobile-decanos inline-flex min-h-[36px] items-center justify-center rounded-lg border border-amber-400/45 bg-amber-500/12 px-2.5 py-1 text-center font-orbitron text-[12px] font-semibold uppercase tracking-wide text-amber-100 shadow-[0_0_16px_rgba(255,215,0,0.08)] sm:min-h-[38px] sm:px-3 sm:py-1.5 sm:text-xs">
+              DECANOS EN LA REPARACIÓN
+            </p>
+          </motion.div>
+          <div className="servicios-mobile-spacer" aria-hidden />
+          <motion.div className="servicios-mobile-guarantee-wrap flex w-full shrink-0 flex-col items-center px-1">
+          <GuaranteePromise
+            variant="compact"
+            compactMessage="nos hacemos cargo de todo."
+            className="servicios-mobile-guarantee w-full max-w-md sm:max-w-lg"
+          />
+          </motion.div>
         </motion.div>
 
-        <motion.div className="servicios-mobile-carousel-zone servicios-desktop-main flex min-h-0 flex-1 flex-col items-stretch justify-start overflow-hidden max-lg:pt-0.5 lg:mt-2 lg:min-h-0 lg:justify-start lg:gap-1 lg:mb-1 lg:translate-y-0.5 xl:mt-2.5 xl:translate-y-1">
-        <motion.div className="servicios-mobile-center-block flex w-full min-h-0 flex-1 flex-col items-center justify-start gap-1 max-h-full lg:contents">
+        <motion.div className="servicios-desktop-intro hidden shrink-0 flex-col items-center gap-2 px-1 lg:flex">
+          <p className="servicios-desktop-decanos inline-flex min-h-[40px] items-center justify-center rounded-xl border border-amber-400/45 bg-amber-500/12 px-3.5 py-1.5 text-center font-orbitron text-xs font-semibold uppercase tracking-wide text-amber-100 shadow-[0_0_16px_rgba(255,215,0,0.08)]">
+            DECANOS EN LA REPARACIÓN
+          </p>
+          <GuaranteePromise
+            variant="compact"
+            compactMessage="nos hacemos cargo de todo."
+            className="w-full max-w-md sm:max-w-lg"
+          />
+        </motion.div>
+
+        <motion.div className="servicios-mobile-carousel-zone servicios-desktop-main flex min-h-0 w-full flex-1 flex-col items-stretch justify-start overflow-hidden max-lg:min-h-0 max-lg:shrink-0 lg:mt-2 lg:min-h-0 lg:justify-start lg:gap-1 lg:mb-1 lg:translate-y-0.5 xl:mt-2.5 xl:translate-y-1">
+        <motion.div className="servicios-mobile-center-block flex w-full min-h-0 flex-col items-center justify-center gap-1 max-lg:max-h-full max-lg:min-h-0 max-lg:flex-none lg:contents lg:flex-1 lg:justify-start">
         <motion.div
-          className="servicios-mobile-card relative mx-auto flex h-[min(48cqh,42dvh)] min-h-0 w-full max-w-[min(100%,52rem)] flex-col overflow-hidden rounded-2xl border border-cyan-400/50 bg-hologram-darker shadow-[0_0_44px_-10px_rgba(34,211,238,0.32)] ring-1 ring-inset ring-cyan-400/22 max-lg:h-auto max-lg:min-h-0 max-lg:flex-1 max-lg:max-h-none lg:h-[min(50cqh,46dvh)] lg:flex-none xl:max-w-[56rem] xl:h-[min(54cqh,50dvh)]"
+          className="servicios-mobile-card relative mx-auto flex min-h-0 w-full max-w-[min(100%,52rem)] flex-col overflow-hidden rounded-2xl border border-cyan-400/50 bg-hologram-darker shadow-[0_0_44px_-10px_rgba(34,211,238,0.32)] ring-1 ring-inset ring-cyan-400/22 max-lg:min-h-0 max-lg:flex-1 max-lg:max-h-none lg:h-[min(50cqh,46dvh)] lg:flex-none xl:max-w-[56rem] xl:h-[min(54cqh,50dvh)]"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.08 }}
@@ -253,17 +277,17 @@ export default function ServiciosScreen() {
             </button>
           </div>
 
-          <div ref={emblaRef} className="servicios-mobile-embla min-h-0 flex-1 overflow-hidden">
+          <div ref={emblaRef} className="embla-fluid servicios-mobile-embla min-h-0 flex-1 overflow-hidden">
             <div className="flex h-full touch-pan-x">
               {services.map((service) => {
                 const Icon = iconMap[service.icon] || Wrench;
                 return (
                   <div
                     key={service.id}
-                    className="flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full flex-col gap-0.5 overflow-hidden px-2.5 py-1.5 max-lg:gap-0.5 sm:gap-1 sm:px-3 sm:py-2 lg:gap-1.5 lg:px-4 lg:py-2"
+                    className="servicios-mobile-slide flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full flex-col gap-0.5 overflow-hidden px-2.5 py-1.5 max-lg:gap-1 sm:gap-1 sm:px-3 sm:py-2 lg:gap-1.5 lg:px-4 lg:py-2"
                   >
                     {service.heroImage ? (
-                      <div className="flex min-h-0 w-full flex-1 flex-col gap-1 overflow-hidden lg:max-w-none">
+                      <div className="flex min-h-0 w-full flex-col gap-1 overflow-hidden max-lg:contents lg:max-w-none lg:flex-1">
                         <ServicioHeroBanner
                           src={service.heroImage}
                           alt={`Equipo Reparilandia — ${service.title}`}
@@ -271,17 +295,21 @@ export default function ServiciosScreen() {
                           fallbackIcon={Icon}
                           priority={service.id === 'carritos-montables'}
                         />
-                        <p className="line-clamp-2 shrink-0 overflow-hidden text-balance px-0.5 text-center font-space text-[11px] leading-snug text-white/92 sm:text-[12px] lg:text-[13px] xl:text-sm">
+                        <p className="servicios-slide-desc shrink-0 overflow-x-hidden text-balance px-0.5 text-center font-space text-[11px] leading-snug text-white/92 max-lg:min-h-0 max-lg:overflow-y-auto sm:text-[12px] lg:line-clamp-2 lg:overflow-hidden lg:text-[13px] xl:text-sm">
                           {service.description}
                         </p>
                       </div>
                     ) : (
-                      <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-1 overflow-hidden py-0.5">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/[0.12] bg-[#12161f] shadow-inner sm:h-12 sm:w-12">
-                          <Icon className="h-5 w-5 text-sky-300 sm:h-6 sm:w-6" strokeWidth={1.75} />
+                      <div className="flex min-h-0 w-full flex-col gap-1 overflow-hidden max-lg:contents lg:max-w-none lg:flex-1">
+                        <div className="servicios-slide-icon flex min-h-0 flex-col items-center justify-center gap-1 overflow-hidden py-0.5 max-lg:min-h-0">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/[0.12] bg-[#12161f] shadow-inner sm:h-12 sm:w-12">
+                            <Icon className="h-5 w-5 text-sky-300 sm:h-6 sm:w-6" strokeWidth={1.75} />
+                          </div>
+                          <h3 className="hidden shrink-0 text-center font-orbitron text-[12px] font-semibold tracking-[0.12em] text-white sm:text-xs lg:block">
+                            {service.title}
+                          </h3>
                         </div>
-                        <h3 className="hidden shrink-0 text-center font-orbitron text-[12px] font-semibold tracking-[0.12em] text-white sm:text-xs lg:block">{service.title}</h3>
-                        <p className="line-clamp-3 shrink-0 overflow-hidden text-balance text-center font-space text-[12px] leading-snug text-white/88 sm:text-[14px]">
+                        <p className="servicios-slide-desc shrink-0 overflow-x-hidden text-balance text-center font-space text-[12px] leading-snug text-white/88 max-lg:min-h-0 max-lg:overflow-y-auto sm:text-[14px] lg:line-clamp-3 lg:overflow-hidden">
                           {service.description}
                         </p>
                       </div>
@@ -289,7 +317,7 @@ export default function ServiciosScreen() {
                     <button
                       type="button"
                       onClick={() => setQuoteService(service.title)}
-                      className="mt-auto mx-auto inline-flex min-h-[26px] w-fit max-w-full shrink-0 items-center justify-center gap-1 rounded-md border border-sky-400/35 bg-[#0f1826] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-sky-100 touch-manipulation active:scale-95 hover:bg-[#152232] sm:min-h-[28px] sm:px-3 sm:py-1 sm:text-[10px] lg:min-h-[28px] lg:rounded-md lg:px-3 lg:py-0.5 lg:text-[11px]"
+                      className="servicios-slide-cta mx-auto inline-flex min-h-[26px] w-fit max-w-full shrink-0 items-center justify-center gap-1 rounded-md border border-sky-400/35 bg-[#0f1826] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-sky-100 touch-manipulation active:scale-95 hover:bg-[#152232] max-lg:mt-0 sm:min-h-[28px] sm:px-3 sm:py-1 sm:text-[10px] lg:mt-auto lg:min-h-[28px] lg:rounded-md lg:px-3 lg:py-0.5 lg:text-[11px]"
                     >
                       <Wrench className="h-3 w-3 shrink-0 text-sky-300" strokeWidth={2} />
                       {service.quoteCta ?? `Cotizar — ${service.title}`}
@@ -301,7 +329,7 @@ export default function ServiciosScreen() {
           </div>
         </motion.div>
 
-        <motion.div className="servicios-mobile-paginator servicios-desktop-paginator flex shrink-0 flex-col items-center gap-1 max-lg:mt-0 lg:mt-2.5 xl:mt-3">
+        <motion.div className="servicios-mobile-paginator servicios-desktop-paginator flex shrink-0 flex-col items-center gap-1 max-lg:mt-0.5 max-lg:pb-1 lg:mt-2.5 xl:mt-3">
         <motion.div className="servicios-mobile-icon-grid flex shrink-0 flex-wrap justify-center gap-1 px-1 pb-0 sm:gap-1.5 lg:mb-0.5">
           {services.map((service, i) => {
             const Icon = iconMap[service.icon] || Wrench;
@@ -312,7 +340,7 @@ export default function ServiciosScreen() {
                 type="button"
                 aria-label={`Ver ${service.title}`}
                 aria-current={active ? 'true' : undefined}
-                onClick={() => emblaApi?.scrollTo(i)}
+                onClick={() => scrollTo(i)}
                 className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border bg-[#12161f] transition-all touch-manipulation active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 ${
                   active
                     ? 'border-cyan-400/55 ring-2 ring-cyan-400/35 shadow-[0_0_14px_rgba(34,211,238,0.25)]'
@@ -328,7 +356,7 @@ export default function ServiciosScreen() {
         <CarouselDots
           count={services.length}
           active={slideIndex}
-          onSelect={(i) => emblaApi?.scrollTo(i)}
+          onSelect={scrollTo}
           className="servicios-mobile-dots hidden shrink-0 py-0.5 lg:mb-0.5 lg:flex"
         />
         </motion.div>

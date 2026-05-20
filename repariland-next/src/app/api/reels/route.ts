@@ -13,8 +13,7 @@ export async function GET() {
       maxReels: MAX_REELS,
       maxDurationSec: MAX_REEL_DURATION_SEC,
     });
-  } catch (error) {
-    console.error('[GET /api/reels]', error);
+  } catch {
     return NextResponse.json(
       {
         manifest: { version: 1, items: [] },
