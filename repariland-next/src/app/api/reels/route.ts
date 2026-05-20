@@ -1,27 +1,16 @@
 import { NextResponse } from 'next/server';
-import { MAX_REEL_DURATION_SEC, MAX_REELS } from '@/lib/reels/constants';
-import { getReelsManifest } from '@/lib/reels/storage';
+import { buildReelsApiPayload, getSeedReelsApiPayload } from '@/lib/reels/seedManifest';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
+    const { getReelsManifest } = await import('@/lib/reels/storage');
     const { manifest, storage } = await getReelsManifest();
-    return NextResponse.json({
-      manifest,
-      storage,
-      maxReels: MAX_REELS,
-      maxDurationSec: MAX_REEL_DURATION_SEC,
-    });
-  } catch {
-    return NextResponse.json(
-      {
-        manifest: { version: 1, items: [] },
-        storage: 'static',
-        maxReels: MAX_REELS,
-        maxDurationSec: MAX_REEL_DURATION_SEC,
-      },
-      { status: 200 },
-    );
+    return NextResponse.json(buildReelsApiPayload(manifest, storage));
+  } catch (err) {
+    console.error('[api/reels] GET failed:', err);
+    return NextResponse.json(getSeedReelsApiPayload());
   }
 }

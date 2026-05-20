@@ -2,7 +2,6 @@ import 'server-only';
 
 import { readFile } from 'fs/promises';
 import path from 'path';
-import { head, put } from '@vercel/blob';
 import { createSupabaseAdmin, hasSupabaseConfig } from '@/lib/supabase/server';
 import type { ReelItem, ReelsManifest, ReelsStorageKind } from '@/lib/reels/types';
 import {
@@ -11,15 +10,24 @@ import {
   SUPABASE_MANIFEST_PATH,
   SUPABASE_REELS_BUCKET,
 } from '@/lib/reels/constants';
+import { SEED_REELS_MANIFEST } from '@/lib/reels/seedManifest';
 
 const EMPTY_MANIFEST: ReelsManifest = { version: 1, items: [] };
+
+function staticManifestPaths(): string[] {
+  const cwd = process.cwd();
+  return [
+    path.join(cwd, 'public', 'data', 'reels-manifest.json'),
+    path.join(cwd, 'repariland-next', 'public', 'data', 'reels-manifest.json'),
+  ];
+}
 
 export function hasSupabaseStorage(): boolean {
   return hasSupabaseConfig();
 }
 
 export function hasBlobStorage(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim());
 }
 
 export function hasWritableStorage(): boolean {
@@ -56,14 +64,22 @@ function normalizeManifest(data: unknown): ReelsManifest {
   return EMPTY_MANIFEST;
 }
 
+function withSeedFallback(manifest: ReelsManifest): ReelsManifest {
+  if (manifest.items.length > 0) return manifest;
+  return SEED_REELS_MANIFEST;
+}
+
 export async function readStaticManifest(): Promise<ReelsManifest> {
-  const filePath = path.join(process.cwd(), 'public', 'data', 'reels-manifest.json');
-  try {
-    const raw = await readFile(filePath, 'utf8');
-    return normalizeManifest(JSON.parse(raw));
-  } catch {
-    return EMPTY_MANIFEST;
+  for (const filePath of staticManifestPaths()) {
+    try {
+      const raw = await readFile(filePath, 'utf8');
+      const parsed = normalizeManifest(JSON.parse(raw));
+      if (parsed.items.length > 0) return parsed;
+    } catch {
+      // Siguiente ruta (monorepo Vercel vs local)
+    }
   }
+  return SEED_REELS_MANIFEST;
 }
 
 export async function readSupabaseManifest(): Promise<ReelsManifest | null> {
@@ -84,6 +100,7 @@ export async function readSupabaseManifest(): Promise<ReelsManifest | null> {
 export async function readBlobManifest(): Promise<ReelsManifest | null> {
   if (!hasBlobStorage()) return null;
   try {
+    const { head } = await import('@vercel/blob');
     const meta = await head(BLOB_MANIFEST_PATH);
     const response = await fetch(meta.url, { cache: 'no-store' });
     if (!response.ok) return null;
@@ -97,21 +114,25 @@ export async function getReelsManifest(): Promise<{
   manifest: ReelsManifest;
   storage: ReelsStorageKind;
 }> {
-  const staticManifest = await readStaticManifest();
+  try {
+    const staticManifest = await readStaticManifest();
 
-  if (hasSupabaseStorage()) {
-    const supabaseManifest = await readSupabaseManifest();
-    if (supabaseManifest && supabaseManifest.items.length > 0) {
-      return { manifest: supabaseManifest, storage: 'supabase' };
+    if (hasSupabaseStorage()) {
+      const supabaseManifest = await readSupabaseManifest();
+      if (supabaseManifest && supabaseManifest.items.length > 0) {
+        return { manifest: supabaseManifest, storage: 'supabase' };
+      }
     }
-  }
 
-  const blobManifest = await readBlobManifest();
-  if (blobManifest !== null && blobManifest.items.length > 0) {
-    return { manifest: blobManifest, storage: 'blob' };
-  }
+    const blobManifest = await readBlobManifest();
+    if (blobManifest !== null && blobManifest.items.length > 0) {
+      return { manifest: blobManifest, storage: 'blob' };
+    }
 
-  return { manifest: staticManifest, storage: 'static' };
+    return { manifest: withSeedFallback(staticManifest), storage: 'static' };
+  } catch {
+    return { manifest: SEED_REELS_MANIFEST, storage: 'static' };
+  }
 }
 
 export async function writeManifest(
@@ -142,6 +163,7 @@ export async function writeBlobManifest(manifest: ReelsManifest): Promise<void> 
   if (!hasBlobStorage()) {
     throw new Error('BLOB_READ_WRITE_TOKEN no configurado');
   }
+  const { put } = await import('@vercel/blob');
   await put(BLOB_MANIFEST_PATH, JSON.stringify(manifest, null, 2), {
     access: 'public',
     addRandomSuffix: false,
@@ -176,6 +198,7 @@ export async function uploadReelVideo(
   if (!hasBlobStorage()) {
     throw new Error('BLOB_READ_WRITE_TOKEN no configurado');
   }
+  const { put } = await import('@vercel/blob');
   const blob = await put(`reels/${id}.${ext}`, file, {
     access: 'public',
     addRandomSuffix: false,
