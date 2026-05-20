@@ -3,13 +3,18 @@ import * as React from 'react';
 /** Breakpoint app móvil/desktop (alineado con globals.css lg) */
 export const APP_MOBILE_BREAKPOINT = 1024;
 
+function readIsMobile(): boolean {
+  if (typeof window === 'undefined') return false;
+  return window.innerWidth < APP_MOBILE_BREAKPOINT;
+}
+
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState(false);
+  const [isMobile, setIsMobile] = React.useState(readIsMobile);
 
   React.useEffect(() => {
     const mql = window.matchMedia(`(max-width: ${APP_MOBILE_BREAKPOINT - 1}px)`);
     const onChange = () => {
-      setIsMobile(window.innerWidth < APP_MOBILE_BREAKPOINT);
+      setIsMobile(mql.matches);
     };
     mql.addEventListener('change', onChange);
     onChange();

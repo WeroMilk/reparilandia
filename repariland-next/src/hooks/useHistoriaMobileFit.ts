@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
 const MIN_SCALE = 0.82;
 const SCALE_STEP = 0.02;
@@ -73,12 +74,12 @@ export function useHistoriaMobileFit(activeSlideIndex: number, enabled: boolean)
       document.querySelector<HTMLElement>('.historia-screen.screen-shell');
     if (!screen) return;
 
-    const mq = window.matchMedia('(min-width: 1024px)');
+    const desktopMq = window.matchMedia('(min-width: 1024px)');
     const isTimeline = activeSlideIndex === 0;
     const scaleVar = isTimeline ? '--historia-timeline-scale' : '--historia-story-scale';
 
     const runFit = () => {
-      if (mq.matches) {
+      if (desktopMq.matches) {
         screen.removeAttribute('data-historia-fit-ready');
         screen.removeAttribute('data-historia-scroll-fallback');
         screen.removeAttribute('data-historia-tall');
@@ -181,37 +182,20 @@ export function useHistoriaMobileFit(activeSlideIndex: number, enabled: boolean)
       }
     };
 
-    const schedule = () => {
-      requestAnimationFrame(() => {
-        runFit();
-        requestAnimationFrame(runFit);
-      });
-    };
-
-    schedule();
-
-    const ro = new ResizeObserver(schedule);
-    ro.observe(screen);
     const carousel = screen.querySelector('.historia-mobile-carousel');
     const dock = document.querySelector('[data-app-dock]');
-    if (carousel) ro.observe(carousel);
-    if (dock) ro.observe(dock);
 
-    mq.addEventListener('change', schedule);
-    window.addEventListener('resize', schedule);
-    window.visualViewport?.addEventListener('resize', schedule);
-    window.visualViewport?.addEventListener('scroll', schedule);
+    const cleanup = subscribeMobileLayout(runFit, {
+      observe: [screen, carousel, dock],
+      mediaQueries: [desktopMq],
+    });
 
     if (document.fonts?.ready) {
-      document.fonts.ready.then(schedule).catch(() => {});
+      document.fonts.ready.then(() => runFit()).catch(() => {});
     }
 
     return () => {
-      ro.disconnect();
-      mq.removeEventListener('change', schedule);
-      window.removeEventListener('resize', schedule);
-      window.visualViewport?.removeEventListener('resize', schedule);
-      window.visualViewport?.removeEventListener('scroll', schedule);
+      cleanup();
       screen.removeAttribute('data-historia-fit-ready');
       screen.removeAttribute('data-historia-scroll-fallback');
       screen.removeAttribute('data-historia-tall');

@@ -2788,3 +2788,19 @@ select:focus-visible {
     will-change: auto;
   }
 }
+
+/* Móvil: pantallas ocultas no pintan ni ejecutan layout costoso en segundo plano */
+@media (max-width: 1023px) {
+  .screen-transition-layer[aria-hidden='true'] {
+    visibility: hidden;
+    content-visibility: hidden;
+    contain: strict;
+    will-change: auto;
+  }
+
+  .historia-screen[data-historia-fit-ready] .historia-story-fit-text,
+  .historia-screen[data-historia-fit-ready] .historia-timeline-fit-copy,
+  .contacto-screen[data-contacto-fit-ready] .contacto-mobile-fit-root {
+    contain: layout style;
+  }
+}

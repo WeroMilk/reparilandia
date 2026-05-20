@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
 const MIN_SCALE = 0.76;
 const SCALE_STEP = 0.025;
@@ -62,10 +63,10 @@ export function useContactoMobileFit(showMessage: boolean, enabled: boolean) {
       document.querySelector<HTMLElement>('.contacto-screen.screen-shell');
     if (!screen) return;
 
-    const mq = window.matchMedia('(min-width: 1024px)');
+    const desktopMq = window.matchMedia('(min-width: 1024px)');
 
     const runFit = () => {
-      if (mq.matches) {
+      if (desktopMq.matches) {
         screen.removeAttribute('data-contacto-fit-ready');
         screen.removeAttribute('data-contacto-scroll-fallback');
         screen.style.removeProperty('--contacto-ui-scale');
@@ -125,43 +126,20 @@ export function useContactoMobileFit(showMessage: boolean, enabled: boolean) {
       }
     };
 
-    const schedule = () => {
-      requestAnimationFrame(() => {
-        runFit();
-        requestAnimationFrame(runFit);
-      });
-    };
-
-    schedule();
-
-    const ro = new ResizeObserver(schedule);
-    ro.observe(screen);
     const wrap = screen.querySelector('.contacto-mobile-wrap');
     const dock = document.querySelector('[data-app-dock]');
-    if (wrap) ro.observe(wrap);
-    if (dock) ro.observe(dock);
 
-    const mo = new MutationObserver(schedule);
-    if (wrap) {
-      mo.observe(wrap, { childList: true, subtree: true, attributes: true });
-    }
-
-    mq.addEventListener('change', schedule);
-    window.addEventListener('resize', schedule);
-    window.visualViewport?.addEventListener('resize', schedule);
-    window.visualViewport?.addEventListener('scroll', schedule);
+    const cleanup = subscribeMobileLayout(runFit, {
+      observe: [screen, wrap, dock],
+      mediaQueries: [desktopMq],
+    });
 
     if (document.fonts?.ready) {
-      document.fonts.ready.then(schedule).catch(() => {});
+      document.fonts.ready.then(() => runFit()).catch(() => {});
     }
 
     return () => {
-      ro.disconnect();
-      mo.disconnect();
-      mq.removeEventListener('change', schedule);
-      window.removeEventListener('resize', schedule);
-      window.visualViewport?.removeEventListener('resize', schedule);
-      window.visualViewport?.removeEventListener('scroll', schedule);
+      cleanup();
       screen.removeAttribute('data-contacto-fit-ready');
       screen.removeAttribute('data-contacto-scroll-fallback');
       screen.style.removeProperty('--contacto-ui-scale');

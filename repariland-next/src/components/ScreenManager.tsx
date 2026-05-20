@@ -10,7 +10,15 @@ import ReelsScreen from './screens/ReelsScreen';
 import ContactoScreen from './screens/ContactoScreen';
 import { SCREEN_ORDER } from '@/hooks/useScreenManager';
 import type { ScreenName } from '@/types';
-import { getScreenEnterMotion, SCREEN_LAYER_TRANSITION } from '@/lib/motionPresets';
+import { getScreenEnterMotion, MOTION_IOS_EASE_OUT, SCREEN_LAYER_TRANSITION } from '@/lib/motionPresets';
+import { useIsMobile } from '@/hooks/use-mobile';
+
+const MOBILE_SCREEN_LAYER_TRANSITION = {
+  opacity: { duration: 0.28, ease: MOTION_IOS_EASE_OUT },
+};
+
+/** Tras cambiar de pestaña en móvil, desmontar la anterior (menos hooks/RO en segundo plano). */
+const MOBILE_UNMOUNT_DELAY_MS = 480;
 
 interface ScreenManagerProps {
   currentScreen: ScreenName;
@@ -21,25 +29,25 @@ interface ScreenManagerProps {
 function ScreenBody({
   screen,
   onNavigate,
-  isScreenVisible,
+  isScreenActive,
 }: {
   screen: ScreenName;
   onNavigate: (screen: ScreenName) => void;
-  isScreenVisible: boolean;
+  isScreenActive: boolean;
 }) {
   switch (screen) {
     case 'inicio':
-      return <InicioScreen onNavigate={onNavigate} />;
+      return <InicioScreen onNavigate={onNavigate} isScreenActive={isScreenActive} />;
     case 'historia':
-      return <HistoriaScreen />;
+      return <HistoriaScreen isScreenActive={isScreenActive} />;
     case 'servicios':
-      return <ServiciosScreen />;
+      return <ServiciosScreen isScreenActive={isScreenActive} />;
     case 'noticias':
-      return <NoticiasScreen />;
+      return <NoticiasScreen isScreenActive={isScreenActive} />;
     case 'reels':
-      return <ReelsScreen isScreenActive={isScreenVisible} />;
+      return <ReelsScreen isScreenActive={isScreenActive} />;
     case 'contacto':
-      return <ContactoScreen />;
+      return <ContactoScreen isScreenActive={isScreenActive} />;
     default:
       return null;
   }
@@ -51,6 +59,7 @@ export default function ScreenManager({
   onNavigate,
 }: ScreenManagerProps) {
   const reduceMotion = useReducedMotion();
+  const isMobile = useIsMobile();
   const [mountedScreens, setMountedScreens] = useState<Set<ScreenName>>(
     () => new Set([currentScreen]),
   );
@@ -70,6 +79,7 @@ export default function ScreenManager({
       setMountedScreens(new Set(SCREEN_ORDER));
       return;
     }
+    if (isMobile) return;
     const mountAll = () => setMountedScreens(new Set(SCREEN_ORDER));
     if (typeof window.requestIdleCallback === 'function') {
       const id = window.requestIdleCallback(mountAll, { timeout: 1600 });
@@ -77,7 +87,15 @@ export default function ScreenManager({
     }
     const t = window.setTimeout(mountAll, 600);
     return () => window.clearTimeout(t);
-  }, [reduceMotion]);
+  }, [reduceMotion, isMobile]);
+
+  useEffect(() => {
+    if (!isMobile || reduceMotion) return;
+    const t = window.setTimeout(() => {
+      setMountedScreens(new Set([currentScreen]));
+    }, MOBILE_UNMOUNT_DELAY_MS);
+    return () => window.clearTimeout(t);
+  }, [currentScreen, isMobile, reduceMotion]);
 
   const isScreenEntering = currentScreen !== prevScreenRef.current;
   useEffect(() => {
@@ -86,7 +104,9 @@ export default function ScreenManager({
 
   const layerTransition = reduceMotion
     ? { opacity: { duration: 0 } }
-    : SCREEN_LAYER_TRANSITION;
+    : isMobile
+      ? MOBILE_SCREEN_LAYER_TRANSITION
+      : SCREEN_LAYER_TRANSITION;
 
   return (
     <motion.div
@@ -100,7 +120,7 @@ export default function ScreenManager({
       >
         {SCREEN_ORDER.filter((screen) => mountedScreens.has(screen)).map((screen) => {
           const active = screen === currentScreen;
-          const enterMotion = getScreenEnterMotion(direction, reduceMotion);
+          const enterMotion = getScreenEnterMotion(direction, reduceMotion, isMobile);
 
           return (
             <motion.div
@@ -131,7 +151,7 @@ export default function ScreenManager({
                   animate={active ? enterMotion.animate : enterMotion.animate}
                   transition={enterMotion.transition}
                 >
-                  <ScreenBody screen={screen} onNavigate={onNavigate} isScreenVisible={active} />
+                  <ScreenBody screen={screen} onNavigate={onNavigate} isScreenActive={active} />
                 </motion.div>
               </motion.div>
             </motion.div>

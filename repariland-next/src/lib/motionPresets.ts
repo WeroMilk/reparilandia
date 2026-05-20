@@ -20,12 +20,32 @@ export const SCREEN_ENTER_OFFSET = 16;
 export function getScreenEnterMotion(
   direction: number,
   reduceMotion: boolean | null,
+  lightMobile = false,
 ): { initial: Record<string, number | string>; animate: Record<string, number | string>; transition: object } {
   if (reduceMotion) {
     return {
       initial: { opacity: 1, x: 0, scale: 1 },
       animate: { opacity: 1, x: 0, scale: 1 },
       transition: { duration: 0 },
+    };
+  }
+  if (lightMobile) {
+    return {
+      initial: {
+        opacity: 0.94,
+        x: direction * 10,
+        scale: 1,
+      },
+      animate: {
+        opacity: 1,
+        x: 0,
+        scale: 1,
+      },
+      transition: {
+        duration: 0.28,
+        ease: MOTION_IOS_EASE_OUT,
+        opacity: { duration: 0.24, ease: MOTION_IOS_EASE_OUT },
+      },
     };
   }
   return {
@@ -73,3 +93,6 @@ export const panelSwapVariants = {
 
 /** Duración base del scroll Embla (más alto = más fluido al deslizar). */
 export const EMBLA_SMOOTH_DURATION = 32;
+
+/** Móvil: scroll más corto = menos trabajo por frame al soltar el dedo. */
+export const EMBLA_SMOOTH_DURATION_MOBILE = 18;

@@ -44,13 +44,14 @@ const homeCards = [
 
 interface InicioScreenProps {
   onNavigate: (screen: ScreenName) => void;
+  isScreenActive?: boolean;
 }
 
-export default function InicioScreen({ onNavigate }: InicioScreenProps) {
+export default function InicioScreen({ onNavigate, isScreenActive = true }: InicioScreenProps) {
   const [emblaRef, emblaApi, scrollTo] = useSmoothEmblaCarousel({ loop: true, axis: 'x' });
   const [slideIndex, setSlideIndex] = useState(0);
 
-  useInicioMobileBoxesZone(true);
+  useInicioMobileBoxesZone(isScreenActive);
 
   useEffect(() => {
     if (!emblaApi) return;

@@ -337,13 +337,13 @@ function TimelinePanel({
   );
 }
 
-export default function HistoriaScreen() {
+export default function HistoriaScreen({ isScreenActive = true }: { isScreenActive?: boolean }) {
   const [emblaRef, emblaApi, scrollTo] = useSmoothEmblaCarousel({ loop: false, axis: 'x' });
   const [slideIndex, setSlideIndex] = useState(0);
   const slideCount = 1 + storySlides.length;
 
-  useHistoriaMobileZone(true);
-  useHistoriaMobileFit(slideIndex, true);
+  useHistoriaMobileZone(isScreenActive);
+  useHistoriaMobileFit(slideIndex, isScreenActive);
 
   useEffect(() => {
     if (!emblaApi) return;

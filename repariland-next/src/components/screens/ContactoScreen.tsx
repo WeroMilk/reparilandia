@@ -206,11 +206,11 @@ function ContactoMobileCard({ onOpenMessage }: { onOpenMessage: () => void }) {
 }
 
 
-export default function ContactoScreen() {
+export default function ContactoScreen({ isScreenActive = true }: { isScreenActive?: boolean }) {
   const [showMessage, setShowMessage] = useState(false);
 
-  useContactoMobileZone(true);
-  useContactoMobileFit(showMessage, true);
+  useContactoMobileZone(isScreenActive);
+  useContactoMobileFit(showMessage, isScreenActive);
 
   const handleWhatsApp = () => {
     window.open(getWhatsAppUrl(), '_blank', 'noopener,noreferrer');

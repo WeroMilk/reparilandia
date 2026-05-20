@@ -99,9 +99,9 @@ function NewspaperSlide({
   );
 }
 
-export default function NoticiasScreen() {
+export default function NoticiasScreen({ isScreenActive = true }: { isScreenActive?: boolean }) {
   const reduceMotion = useReducedMotion();
-  useNoticiasMobileZone(true);
+  useNoticiasMobileZone(isScreenActive);
   const [emblaRef, emblaApi, scrollTo, scrollPrev, scrollNext] = useSmoothEmblaCarousel({
     loop: true,
     axis: 'x',

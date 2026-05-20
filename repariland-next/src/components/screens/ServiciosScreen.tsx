@@ -185,7 +185,7 @@ const carouselArrowInlineClass =
 const carouselArrowClass =
   'mobile-carousel-arrow absolute top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/18 bg-black/50 text-white/95 shadow-lg backdrop-blur-md hover:bg-black/68 touch-manipulation lg:h-10 lg:w-10';
 
-export default function ServiciosScreen() {
+export default function ServiciosScreen({ isScreenActive = true }: { isScreenActive?: boolean }) {
   const [quoteService, setQuoteService] = useState<string | null>(null);
   const [emblaRef, emblaApi, scrollTo, scrollPrev, scrollNext] = useSmoothEmblaCarousel({
     loop: true,
@@ -193,7 +193,7 @@ export default function ServiciosScreen() {
   });
   const [slideIndex, setSlideIndex] = useState(0);
 
-  useServiciosMobileZone(true);
+  useServiciosMobileZone(isScreenActive);
 
   useEffect(() => {
     if (!emblaApi) return;

@@ -2,14 +2,17 @@ import { useCallback } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import useEmblaCarousel from 'embla-carousel-react';
 import type { EmblaOptionsType } from 'embla-carousel';
-import { EMBLA_SMOOTH_DURATION } from '@/lib/motionPresets';
+import { EMBLA_SMOOTH_DURATION, EMBLA_SMOOTH_DURATION_MOBILE } from '@/lib/motionPresets';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 /**
  * Carrusel Embla con scroll más fluido (tipo app nativa) y scrollTo animado en taps.
  */
 export function useSmoothEmblaCarousel(options?: EmblaOptionsType) {
   const reduceMotion = useReducedMotion();
-  const duration = reduceMotion ? 0 : (options?.duration ?? EMBLA_SMOOTH_DURATION);
+  const isMobile = useIsMobile();
+  const defaultDuration = isMobile ? EMBLA_SMOOTH_DURATION_MOBILE : EMBLA_SMOOTH_DURATION;
+  const duration = reduceMotion ? 0 : (options?.duration ?? defaultDuration);
 
   const [carouselRef, emblaApi] = useEmblaCarousel({
     ...options,
