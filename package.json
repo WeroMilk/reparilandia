@@ -4,6 +4,9 @@
   "engines": {
     "node": "20.x"
   },
+  "dependencies": {
+    "next": "15.5.18"
+  },
   "scripts": {
     "dev": "npm run dev:clean --prefix repariland-next",
     "dev:clean": "npm run dev:clean --prefix repariland-next",
