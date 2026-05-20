@@ -113,7 +113,8 @@ function ContactoMobileCard({ onOpenMessage }: { onOpenMessage: () => void }) {
       exit="exit"
       transition={PANEL_SWAP_TRANSITION}
     >
-      <motion.div className="contacto-mobile-fit-root contacto-mobile-card-scroll flex min-h-0 flex-1 flex-col gap-2 overflow-x-hidden overflow-y-hidden max-lg:gap-2">
+      <div className="contacto-mobile-card-scroll flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-hidden max-lg:min-h-0">
+        <motion.div className="contacto-mobile-fit-root flex w-full min-w-0 flex-col gap-2 max-lg:gap-2">
         <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-white/[0.07] pb-2 max-lg:pb-2.5">
           <span className="font-space text-[12px] uppercase tracking-[0.16em] text-white/55">Síguenos</span>
           <motion.div className="flex flex-wrap gap-1">
@@ -179,7 +180,8 @@ function ContactoMobileCard({ onOpenMessage }: { onOpenMessage: () => void }) {
             </p>
           </section>
         </div>
-      </motion.div>
+        </motion.div>
+      </div>
 
       <div className="contacto-mobile-actions flex shrink-0 flex-col gap-2 max-lg:gap-2.5">
         <a

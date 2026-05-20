@@ -3,6 +3,8 @@ import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
 const MIN_SCALE = 0.76;
 const SCALE_STEP = 0.025;
+/** Espacio reservado para WhatsApp + MENSAJE (móvil contacto). */
+const CONTACTO_MOBILE_ACTIONS_RESERVE_PX = 118;
 
 function getMaxScale(zoneHeight: number, viewportWidth: number): number {
   if (zoneHeight >= 560 || viewportWidth >= 430) return 1.08;
@@ -104,22 +106,49 @@ export function useContactoMobileFit(showMessage: boolean, enabled: boolean) {
           )
         : Array.from(box.querySelectorAll<HTMLElement>('.contacto-mobile-actions'));
 
+      let chromeHeight = 0;
+      for (const el of chromeEls) {
+        if (!el.isConnected) continue;
+        const style = getComputedStyle(el);
+        const rect = el.getBoundingClientRect();
+        chromeHeight +=
+          rect.height +
+          parseFloat(style.marginTop || '0') +
+          parseFloat(style.marginBottom || '0');
+      }
+      if (!showMessage) {
+        chromeHeight = Math.max(chromeHeight, CONTACTO_MOBILE_ACTIONS_RESERVE_PX);
+      }
+
       const maxScale = getMaxScale(zoneHeight, viewportWidth);
       let scale = maxScale;
-      let fits = false;
+
+      const measureWithReserve = () => {
+        const boxRect = box.getBoundingClientRect();
+        const boxStyle = getComputedStyle(box);
+        const padY =
+          parseFloat(boxStyle.paddingTop || '0') + parseFloat(boxStyle.paddingBottom || '0');
+        const available = Math.max(0, boxRect.height - chromeHeight - padY);
+        const contentHeight = fitRoot.getBoundingClientRect().height;
+        return {
+          fits: contentHeight <= available + 2,
+          available,
+          contentHeight,
+        };
+      };
 
       applyScale(screen, fitRoot, scale);
-      ({ fits } = measureFit(box, fitRoot, chromeEls));
+      let measure = measureWithReserve();
 
-      while (!fits && scale > MIN_SCALE + 0.001) {
+      while (!measure.fits && scale > MIN_SCALE + 0.001) {
         scale = Math.max(MIN_SCALE, Math.round((scale - SCALE_STEP) * 1000) / 1000);
         applyScale(screen, fitRoot, scale);
-        ({ fits } = measureFit(box, fitRoot, chromeEls));
+        measure = measureWithReserve();
       }
 
       screen.setAttribute('data-contacto-fit-ready', 'true');
 
-      if (fits) {
+      if (measure.fits) {
         screen.removeAttribute('data-contacto-scroll-fallback');
       } else {
         screen.setAttribute('data-contacto-scroll-fallback', 'true');

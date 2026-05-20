@@ -67,7 +67,7 @@ try {
 console.log('');
 console.log('  Reparilandia (Next.js App Router)');
 console.log('  → http://localhost:' + port);
-console.log('  Solo desde repariland-next. Si ves 404 en main.js: Ctrl+Shift+R');
+console.log('  Solo desde repariland-next. Si la página no carga: cierra pestañas localhost y Ctrl+Shift+R');
 console.log('');
 
 const child = spawn('npx', ['next', 'dev', '-p', String(port)], {

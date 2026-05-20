@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
 import CarouselDots from '@/components/CarouselDots';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
@@ -115,6 +116,53 @@ const storyCardCharacterImgMobileStack =
 const storyCardCharacterImgMobileGrid =
   '!max-w-none w-auto object-contain object-bottom max-h-[min(2.75rem,11vw)]';
 
+const historiaMobilePanelArrowClass =
+  'historia-mobile-panel-arrow flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/20 bg-black/55 text-white/95 shadow-[0_0_14px_rgba(0,0,0,0.45)] backdrop-blur-sm touch-manipulation transition-[opacity,background-color] disabled:pointer-events-none disabled:opacity-35 enabled:hover:bg-black/72 enabled:active:scale-95';
+
+function HistoriaMobilePanelNav({
+  index,
+  total,
+  onPrev,
+  onNext,
+}: {
+  index: number;
+  total: number;
+  onPrev: () => void;
+  onNext: () => void;
+}) {
+  const canPrev = index > 0;
+  const canNext = index < total - 1;
+
+  return (
+    <nav
+      className="historia-story-mobile-nav flex shrink-0 items-center justify-center gap-2.5 pt-1 max-lg:min-h-[2.35rem] max-lg:pb-0.5 lg:hidden"
+      aria-label="Cambiar panel de historia"
+    >
+      <button
+        type="button"
+        className={historiaMobilePanelArrowClass}
+        aria-label="Panel anterior"
+        disabled={!canPrev}
+        onClick={onPrev}
+      >
+        <ChevronLeft className="h-4 w-4" strokeWidth={2.25} />
+      </button>
+      <span className="min-w-[2.75rem] text-center font-orbitron text-[9px] tabular-nums tracking-[0.12em] text-white/45">
+        {index + 1}/{total}
+      </span>
+      <button
+        type="button"
+        className={historiaMobilePanelArrowClass}
+        aria-label="Panel siguiente"
+        disabled={!canNext}
+        onClick={onNext}
+      >
+        <ChevronRight className="h-4 w-4" strokeWidth={2.25} />
+      </button>
+    </nav>
+  );
+}
+
 function StoryCard({
   src,
   alt,
@@ -123,6 +171,7 @@ function StoryCard({
   compact = false,
   mobileGrid = false,
   mobileStack = false,
+  mobileNav,
 }: {
   src: string;
   alt: string;
@@ -132,6 +181,8 @@ function StoryCard({
   mobileGrid?: boolean;
   /** Móvil: caricatura arriba, texto abajo */
   mobileStack?: boolean;
+  /** Móvil: flechas bajo el texto para cambiar de panel */
+  mobileNav?: { index: number; total: number; onPrev: () => void; onNext: () => void };
 }) {
   const imgClass = mobileGrid
     ? `${storyCardCharacterImgMobileGrid}${blendLighten ? ' mix-blend-lighten' : ''}`
@@ -180,6 +231,14 @@ function StoryCard({
           {text}
         </p>
       </motion.div>
+      {mobileStack && mobileNav ? (
+        <HistoriaMobilePanelNav
+          index={mobileNav.index}
+          total={mobileNav.total}
+          onPrev={mobileNav.onPrev}
+          onNext={mobileNav.onNext}
+        />
+      ) : null}
     </motion.div>
   );
 }
@@ -247,9 +306,11 @@ function TimelinePanel({
             className={`flex min-w-0 shrink-0 items-center gap-1.5 font-orbitron tracking-[0.14em] text-amber-100/95 ${
               mobileGrid
                 ? 'mb-0.5 text-[9px] sm:text-[10px]'
-                : compact || mobileRow
-                  ? 'mb-0.5 text-[10px] tracking-[0.1em] sm:text-[11px]'
-                  : 'mb-2 text-xs sm:text-xs md:text-[0.8125rem] lg:mb-1 lg:text-[0.9375rem]'
+                : mobileRow
+                  ? 'mb-0.5 text-[11px] tracking-[0.1em] sm:text-[12px] lg:text-xs'
+                  : compact
+                    ? 'mb-0.5 text-[10px] tracking-[0.1em] sm:text-[11px]'
+                    : 'mb-2 text-xs sm:text-xs md:text-[0.8125rem] lg:mb-1 lg:text-[0.9375rem]'
             }`}
           >
             <span
@@ -263,7 +324,7 @@ function TimelinePanel({
           <motion.div
             className={`relative flex min-h-0 min-w-0 flex-col overflow-hidden py-0.5 pl-1 pr-0.5 ${
               mobileRow
-                ? 'historia-timeline-milestones historia-timeline-fit-copy max-lg:flex-1 max-lg:min-h-0 max-lg:justify-between max-lg:gap-1'
+                ? 'historia-timeline-milestones historia-timeline-fit-copy max-lg:flex-1 max-lg:min-h-0 max-lg:justify-start max-lg:gap-1.5'
                 : mobileGrid
                   ? 'flex-1 gap-0'
                   : compact
@@ -309,9 +370,11 @@ function TimelinePanel({
                     className={`font-orbitron font-semibold tabular-nums leading-none tracking-[0.1em] text-cyan-200/95 ${
                       mobileGrid
                         ? 'text-[9px] sm:text-[10px]'
-                        : compact || mobileRow
-                          ? 'text-[10px] sm:text-[11px]'
-                          : 'text-xs sm:text-xs md:text-[0.8125rem] lg:text-[0.9375rem]'
+                        : mobileRow
+                          ? 'text-[11px] sm:text-[12px] lg:text-xs'
+                          : compact
+                            ? 'text-[10px] sm:text-[11px]'
+                            : 'text-xs sm:text-xs md:text-[0.8125rem] lg:text-[0.9375rem]'
                     }`}
                   >
                     {m.year}
@@ -320,9 +383,11 @@ function TimelinePanel({
                     className={`break-words font-space text-white/90 ${
                       mobileGrid
                         ? 'mt-0 text-[8px] leading-[1.2] sm:text-[9px]'
-                        : compact || mobileRow
-                          ? 'mt-0 text-[9px] leading-[1.2] sm:text-[10px] sm:leading-[1.22]'
-                          : 'mt-0.5 text-xs leading-relaxed sm:text-xs sm:leading-snug md:text-[0.8125rem] lg:text-[0.875rem] xl:text-[0.9375rem] xl:leading-snug'
+                        : mobileRow
+                          ? 'mt-0 text-[10px] leading-[1.28] sm:text-[11px] sm:leading-[1.32] lg:text-xs'
+                          : compact
+                            ? 'mt-0 text-[9px] leading-[1.2] sm:text-[10px] sm:leading-[1.22]'
+                            : 'mt-0.5 text-xs leading-relaxed sm:text-xs sm:leading-snug md:text-[0.8125rem] lg:text-[0.875rem] xl:text-[0.9375rem] xl:leading-snug'
                     }`}
                   >
                     {m.text}
@@ -372,14 +437,27 @@ export default function HistoriaScreen({ isScreenActive = true }: { isScreenActi
               <div className="historia-timeline-slide flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full px-1">
                 <TimelinePanel compact mobileRow />
               </div>
-              {storySlides.map((slide) => (
-                <motion.div
-                  key={slide.src}
-                  className="historia-story-slide flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full px-1"
-                >
-                  <StoryCard {...slide} compact mobileStack />
-                </motion.div>
-              ))}
+              {storySlides.map((slide, storyIdx) => {
+                const panelIndex = storyIdx + 1;
+                return (
+                  <motion.div
+                    key={slide.src}
+                    className="historia-story-slide flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full px-1"
+                  >
+                    <StoryCard
+                      {...slide}
+                      compact
+                      mobileStack
+                      mobileNav={{
+                        index: panelIndex,
+                        total: slideCount,
+                        onPrev: () => scrollTo(panelIndex - 1),
+                        onNext: () => scrollTo(panelIndex + 1),
+                      }}
+                    />
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
           <CarouselDots

@@ -819,9 +819,9 @@
     }
 
     .historia-mobile-carousel .historia-story-panel--mobile-stack .historia-story-char {
-      flex: 0 0 clamp(8.5rem, 52%, 15rem);
-      min-height: clamp(8.5rem, 52%, 15rem);
-      max-height: min(54%, 15.5rem);
+      flex: 0 0 clamp(8.25rem, 50%, 14.5rem);
+      min-height: clamp(8.25rem, 50%, 14.5rem);
+      max-height: min(50%, 14.5rem);
       align-items: flex-end;
       justify-content: center;
       overflow: visible;
@@ -846,8 +846,13 @@
       text-align: left;
       padding-top: clamp(0.08rem, 0.35dvh, 0.15rem);
       padding-bottom: clamp(0.05rem, 0.2dvh, 0.12rem);
-      font-size: clamp(0.75rem, 3.35vw, 0.875rem);
-      line-height: 1.36;
+      font-size: clamp(0.8125rem, 3.65vw, 0.9375rem);
+      line-height: 1.4;
+    }
+
+    .historia-mobile-carousel .historia-story-panel--mobile-stack .historia-story-mobile-nav {
+      flex-shrink: 0;
+      margin-top: auto;
     }
 
     .historia-screen[data-historia-fit-ready] .historia-story-fit-text {
@@ -871,11 +876,11 @@
     /* Panel 1: E.T. izquierda, línea del tiempo derecha (texto más amplio) */
     .historia-mobile-carousel .historia-timeline-panel--mobile-row .historia-timeline-layout--row {
       flex-direction: row;
-      align-items: center;
+      align-items: flex-start;
       justify-content: flex-start;
       height: 100%;
       min-height: 0;
-      gap: clamp(0.25rem, 1dvh, 0.45rem);
+      gap: clamp(0.2rem, 0.85dvh, 0.4rem);
       overflow: visible;
     }
 
@@ -886,12 +891,13 @@
       max-width: none;
       align-self: stretch;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: flex-end;
       overflow: visible;
       z-index: 12;
       min-height: 0;
       height: 100%;
+      padding-top: 0;
       padding-bottom: 0;
     }
 
@@ -899,14 +905,14 @@
       display: block;
       width: auto;
       height: auto;
-      max-width: 118%;
-      max-height: 118%;
-      min-width: 6.5rem;
-      min-height: clamp(9.5rem, 72cqb, 16rem);
+      max-width: 138%;
+      max-height: 106%;
+      min-width: 7.5rem;
+      min-height: clamp(11.5rem, 86cqb, 19.5rem);
       object-fit: contain;
-      object-position: 78% 48%;
-      transform: translateY(-8%) translateX(3%) scale(1.28);
-      transform-origin: 78% 52%;
+      object-position: 74% 36%;
+      transform: translateY(-10%) translateX(1%) scale(1.52);
+      transform-origin: 74% 38%;
       visibility: visible;
       opacity: 1;
       filter: brightness(1.16) contrast(1.1) saturate(1.06);
@@ -918,8 +924,8 @@
       width: 50%;
       min-height: 0;
       height: 100%;
-      justify-content: center;
-      padding: 0.02rem 0.08rem 0.02rem 0;
+      justify-content: flex-start;
+      padding: clamp(0.7rem, 5dvh, 1.55rem) 0.06rem 0.1rem 0;
     }
 
     .historia-mobile-carousel
@@ -930,16 +936,16 @@
       width: 100%;
       min-height: 0;
       justify-content: flex-start;
-      gap: clamp(0.1rem, 0.4dvh, 0.22rem);
-      padding-top: 0.08rem;
-      padding-bottom: 0.08rem;
+      gap: clamp(0.16rem, 0.65dvh, 0.32rem);
+      padding-top: clamp(0.28rem, 1.35dvh, 0.55rem);
+      padding-bottom: clamp(0.08rem, 0.35dvh, 0.18rem);
     }
 
     .historia-mobile-carousel
       .historia-timeline-panel--mobile-row
       .historia-timeline-axis--mobile {
-      top: 1.05rem;
-      bottom: 0.2rem;
+      top: clamp(1.35rem, 5.25dvh, 1.75rem);
+      bottom: 0.12rem;
       height: auto;
     }
 
@@ -948,19 +954,19 @@
     }
 
     .historia-mobile-carousel .historia-timeline-panel--mobile-row .historia-timeline-copy .font-orbitron {
-      font-size: clamp(0.6875rem, 3vw, 0.8125rem);
-      line-height: 1.1;
+      font-size: clamp(0.8125rem, 3.7vw, 0.9375rem);
+      line-height: 1.14;
     }
 
     .historia-mobile-carousel .historia-timeline-panel--mobile-row .historia-timeline-copy .font-space {
-      font-size: clamp(0.625rem, 2.75vw, 0.75rem);
-      line-height: 1.2;
+      font-size: clamp(0.75rem, 3.4vw, 0.875rem);
+      line-height: 1.3;
     }
 
     .historia-mobile-carousel .historia-timeline-panel--mobile-row .historia-timeline-copy h3 {
-      font-size: clamp(0.6875rem, 2.9vw, 0.8125rem);
-      margin-bottom: 0.12rem;
-      line-height: 1.1;
+      font-size: clamp(0.8125rem, 3.55vw, 0.9375rem);
+      margin-bottom: clamp(0.18rem, 0.7dvh, 0.35rem);
+      line-height: 1.14;
     }
 
     .historia-mobile-carousel
@@ -1029,8 +1035,20 @@
       }
 
       .historia-mobile-carousel .historia-timeline-panel--mobile-row .historia-et-img {
-        min-height: clamp(8rem, 64cqb, 13rem);
-        transform: translateY(-6%) translateX(2%) scale(1.18);
+        min-height: clamp(10rem, 72cqb, 15.5rem);
+        transform: translateY(-8%) translateX(1%) scale(1.42);
+      }
+
+      .historia-mobile-carousel .historia-timeline-panel--mobile-row .historia-timeline-copy {
+        padding-top: clamp(0.55rem, 3.8dvh, 1.15rem);
+      }
+
+      .historia-mobile-carousel .historia-timeline-panel--mobile-row .historia-timeline-copy .font-orbitron {
+        font-size: clamp(0.75rem, 3.45vw, 0.875rem);
+      }
+
+      .historia-mobile-carousel .historia-timeline-panel--mobile-row .historia-timeline-copy .font-space {
+        font-size: clamp(0.6875rem, 3.15vw, 0.8125rem);
       }
     }
 
@@ -1055,12 +1073,16 @@
     .historia-screen[data-historia-tall] .historia-mobile-carousel .historia-story-panel--mobile-stack .story-card-text {
       flex: 1 1 0;
       min-height: 0;
-      font-size: clamp(0.8125rem, 3.55vw, 0.9375rem);
-      line-height: 1.44;
+      font-size: clamp(0.875rem, 3.85vw, 1rem);
+      line-height: 1.46;
       padding-top: clamp(0.2rem, 1dvh, 0.45rem);
-      padding-bottom: clamp(0.12rem, 0.45dvh, 0.25rem);
+      padding-bottom: clamp(0.08rem, 0.35dvh, 0.18rem);
       text-align: justify;
       hyphens: auto;
+    }
+
+    .historia-screen[data-historia-tall] .historia-mobile-carousel .historia-story-panel--mobile-stack .historia-story-char {
+      max-height: min(52%, 18rem);
     }
 
     .historia-screen[data-historia-tall][data-historia-fit-ready] .historia-story-fit-text {
@@ -1688,9 +1710,10 @@
     }
 
     .contacto-mobile-fit-root {
-      flex: 1 1 auto;
+      flex: 0 1 auto;
       min-height: 0;
       max-height: 100%;
+      width: 100%;
       overflow-x: hidden;
       overflow-y: hidden;
       zoom: var(--contacto-ui-scale, 1);
@@ -1713,13 +1736,19 @@
     }
 
     .contacto-mobile-card-scroll {
-      flex: 1 1 auto;
+      flex: 1 1 0;
       min-height: 0;
       max-height: 100%;
       overflow-x: hidden;
       overflow-y: hidden;
-      align-items: center;
+      align-items: stretch;
       text-align: center;
+    }
+
+    .contacto-screen[data-contacto-scroll-fallback] .contacto-mobile-card-scroll {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
     }
 
     .contacto-screen[data-contacto-fit-ready] .contacto-mobile-actions .min-h-\[40px\],
@@ -1765,10 +1794,25 @@
     }
 
     .contacto-mobile-actions {
+      position: relative;
+      z-index: 6;
+      flex: 0 0 auto;
       flex-shrink: 0;
-      margin-top: 0.35rem;
+      width: 100%;
+      min-height: 7.25rem;
+      margin-top: 0.25rem;
       padding-top: 0.5rem;
+      padding-bottom: 0.15rem;
       border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background: linear-gradient(180deg, rgba(28, 28, 36, 0.72) 0%, #1c1c24 38%);
+    }
+
+    .contacto-mobile-actions a,
+    .contacto-mobile-actions button {
+      position: relative;
+      z-index: 1;
+      visibility: visible;
+      opacity: 1;
     }
 
     .contacto-mobile-message-form {

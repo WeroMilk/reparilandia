@@ -6,7 +6,7 @@
     "node": "20.x"
   },
   "scripts": {
-    "dev": "next dev -p 3000",
+    "dev": "node scripts/dev-clean.cjs",
     "dev:clean": "node scripts/dev-clean.cjs",
     "dev:3004": "node scripts/dev-clean.cjs",
     "dev:3012": "next dev -p 3012",

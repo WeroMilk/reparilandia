@@ -6,12 +6,12 @@ const SCALE_STEP = 0.02;
 
 function getMaxScale(zoneHeight: number, viewportWidth: number, isTimeline: boolean): number {
   if (isTimeline) {
-    if (zoneHeight >= 520 || viewportWidth >= 400) return 1.04;
-    if (zoneHeight >= 440) return 1;
-    return 0.96;
+    if (zoneHeight >= 520 || viewportWidth >= 400) return 1.14;
+    if (zoneHeight >= 440) return 1.08;
+    return 1.02;
   }
-  if (zoneHeight >= 600 || viewportWidth >= 430) return 1.18;
-  if (zoneHeight >= 520 || viewportWidth >= 390) return 1.12;
+  if (zoneHeight >= 600 || viewportWidth >= 430) return 1.22;
+  if (zoneHeight >= 520 || viewportWidth >= 390) return 1.16;
   if (zoneHeight >= 440) return 1.02;
   if (zoneHeight >= 380) return 0.98;
   return 0.95;
@@ -125,9 +125,10 @@ export function useHistoriaMobileFit(activeSlideIndex: number, enabled: boolean)
       } else {
         textEl = panel.querySelector<HTMLElement>('.historia-story-fit-text');
         const char = panel.querySelector<HTMLElement>('.historia-story-char');
+        const nav = panel.querySelector<HTMLElement>('.historia-story-mobile-nav');
         const layout = panel.querySelector<HTMLElement>('.historia-story-layout');
-        chromeEls = char ? [char] : [];
-        measureContainer = isTallZone && layout ? layout : panel;
+        chromeEls = [char, nav].filter(Boolean) as HTMLElement[];
+        measureContainer = panel;
         extraGap = layout
           ? parseFloat(getComputedStyle(layout).gap || '0') ||
             parseFloat(getComputedStyle(layout).rowGap || '0')
