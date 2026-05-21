@@ -233,7 +233,7 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
           <motion.div className="servicios-mobile-guarantee-wrap flex w-full shrink-0 flex-col items-center px-1">
           <GuaranteePromise
             variant="compact"
-            compactMessage="nos hacemos cargo de todo."
+            compactMessage="nos hacemos cargo de todo. (Aplica restricciones)."
             className="servicios-mobile-guarantee w-full max-w-md sm:max-w-lg"
           />
           </motion.div>
@@ -245,7 +245,7 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
           </p>
           <GuaranteePromise
             variant="compact"
-            compactMessage="nos hacemos cargo de todo."
+            compactMessage="nos hacemos cargo de todo. (Aplica restricciones)."
             className="w-full max-w-md sm:max-w-lg"
           />
         </motion.div>

@@ -9,6 +9,7 @@ import MobileScreenLayout from '@/components/MobileScreenLayout';
 import GuaranteePromise from '@/components/GuaranteePromise';
 import type { ScreenName } from '@/types';
 import { assetUrl } from '@/lib/assetUrl';
+import { useInicioDesktopFit } from '@/hooks/useInicioDesktopFit';
 import { useInicioMobileBoxesZone } from '@/hooks/useInicioMobileBoxesZone';
 
 const LOGO = '/assets/logo-reparilandia.png';
@@ -18,7 +19,7 @@ const IMG_SERVICIO = '/assets/home-box-servicio.png';
 const IMG_NOVEDADES = '/assets/home-box-novedades.png';
 
 const CARD_BOX =
-  'flex h-full min-h-0 w-full max-h-full flex-col lg:min-h-0 lg:max-h-[min(36cqh,32dvh)]';
+  'flex h-full min-h-0 w-full max-h-full flex-col lg:min-h-0 lg:max-h-full';
 
 const homeCards = [
   {
@@ -52,6 +53,7 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
   const [slideIndex, setSlideIndex] = useState(0);
 
   useInicioMobileBoxesZone(isScreenActive);
+  useInicioDesktopFit(isScreenActive);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -67,7 +69,7 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
 
   return (
     <MobileScreenLayout title="INICIO" className="inicio-screen" data-screen="inicio">
-      <motion.div className="inicio-mobile-stage relative flex min-h-0 flex-1 flex-col overflow-hidden max-lg:min-h-0 max-lg:overflow-hidden lg:overflow-visible lg:justify-start lg:gap-1 lg:pb-6 xl:gap-1.5 xl:pb-8">
+      <motion.div className="inicio-mobile-stage relative flex min-h-0 flex-1 flex-col overflow-hidden max-lg:min-h-0 max-lg:gap-0.5 max-lg:overflow-hidden max-lg:pb-0 lg:min-h-0 lg:flex-1 lg:flex-col lg:justify-start lg:gap-0 lg:overflow-visible lg:pb-0">
         {/* Móvil: logo → eslogan → garantía con huecos; escritorio sin cambios */}
         <motion.div
           className="inicio-mobile-top relative z-10 flex w-full shrink-0 flex-col items-center px-1 text-center sm:px-2 lg:hidden"
@@ -98,7 +100,7 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
         </motion.div>
 
         <motion.div
-          className="inicio-mobile-hero inicio-desktop-hero relative z-10 hidden w-full shrink-0 flex-col items-center gap-1 px-1 text-center sm:px-2 lg:flex lg:-mt-5 lg:max-h-none lg:gap-2 lg:pt-0 xl:-mt-6 xl:gap-2.5"
+          className="inicio-mobile-hero inicio-desktop-hero relative z-10 hidden w-full shrink-0 flex-col items-center gap-1 px-1 text-center sm:px-2 lg:flex lg:-mt-3 lg:max-h-none lg:gap-2 lg:pt-0 xl:-mt-4 xl:gap-2.5"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
@@ -112,17 +114,14 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
               priority
               quality={100}
               placeholder="empty"
-              sizes="(max-width: 1023px) min(94vw, 38rem), min(88vw, 58rem)"
-              className="inicio-desktop-logo mx-auto block h-auto w-full max-h-[min(26dvh,14.5rem)] max-w-[min(94vw,36rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)] sm:max-h-[min(28dvh,15.5rem)] sm:max-w-[min(94vw,38rem)] md:max-h-[min(29dvh,16.25rem)] md:max-w-[min(92vw,40rem)] lg:max-h-[min(30dvh,18.5rem)] lg:max-w-[min(88vw,48rem)] xl:max-h-[min(32dvh,20rem)] xl:max-w-[min(86vw,52rem)]"
+              sizes="(max-width: 1023px) min(94vw, 38rem), min(92vw, 62rem)"
+              className="inicio-desktop-logo mx-auto block h-auto w-full max-h-[min(26dvh,14.5rem)] max-w-[min(94vw,36rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)] sm:max-h-[min(28dvh,15.5rem)] sm:max-w-[min(94vw,38rem)] md:max-h-[min(29dvh,16.25rem)] md:max-w-[min(92vw,40rem)] lg:max-h-[min(30dvh,18.5rem)] lg:max-w-[min(90vw,54rem)] xl:max-h-[min(32dvh,20.5rem)] xl:max-w-[min(88vw,58rem)]"
               draggable={false}
             />
-            <p className="inicio-desktop-slogan max-w-xl px-3 font-orbitron text-[clamp(0.6875rem,2.8vw,0.875rem)] font-medium leading-none tracking-[0.14em] text-cyan-100/95 drop-shadow-[0_0_20px_rgba(34,211,238,0.22)] sm:text-sm sm:tracking-[0.22em] lg:-mt-[3.75rem] lg:mb-1 lg:w-full lg:text-base lg:tracking-[0.24em] xl:-mt-[4.25rem] xl:mb-1.5 xl:text-lg xl:tracking-[0.26em]">
+            <p className="inicio-desktop-slogan max-w-xl px-3 font-orbitron text-[clamp(0.6875rem,2.8vw,0.875rem)] font-medium leading-none tracking-[0.14em] text-cyan-100/95 drop-shadow-[0_0_20px_rgba(34,211,238,0.22)] sm:text-sm sm:tracking-[0.22em] lg:mb-0 lg:w-full lg:text-base lg:tracking-[0.24em] xl:text-lg xl:tracking-[0.26em]">
               La capital de la reparación
             </p>
           </div>
-          <motion.div className="inicio-desktop-trust flex w-full flex-col items-center gap-1.5 lg:gap-1.5">
-            <GuaranteePromise className="inicio-desktop-guarantee w-full lg:mb-0.5 xl:mb-1" />
-          </motion.div>
         </motion.div>
 
         {/* Móvil: un slide a pantalla completa, sin peek horizontal */}
@@ -166,24 +165,35 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
           </motion.div>
           </motion.div>
         </motion.div>
-        {/* Escritorio: tres columnas, más arriba y separadas del dock */}
+
+        {/* Escritorio: garantía + 3 boxes anclados al dock */}
         <motion.div
-          className="inicio-desktop-boxes relative z-[1] mx-auto hidden min-h-0 w-full max-w-6xl flex-1 grid-cols-3 items-stretch justify-items-stretch gap-2.5 overflow-visible px-0 pb-0 pt-0 lg:grid lg:max-h-[min(36cqh,32dvh)] lg:self-start lg:translate-y-1.5 xl:max-w-[68rem] xl:gap-3 xl:translate-y-2"
+          className="inicio-desktop-even hidden min-h-0 w-full flex-col items-center justify-start gap-2 overflow-visible lg:flex lg:shrink-0 lg:gap-4 xl:gap-5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.06, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ delay: 0.04, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
         >
-          {homeCards.map((card) => (
-            <motion.div key={card.img} className="flex min-h-0 h-full flex-col pt-1 lg:pt-0.5">
-              <HomeSpotlightCard
-                img={card.img}
-                caption={card.caption}
-                onClick={() => onNavigate(card.screen)}
-                accent={card.accent}
-                centerProminent={card.centerProminent}
-              />
-            </motion.div>
-          ))}
+          <motion.div className="inicio-desktop-trust flex w-full shrink-0 flex-col items-center">
+            <GuaranteePromise className="inicio-desktop-guarantee w-full" />
+          </motion.div>
+          <motion.div
+            className="inicio-desktop-boxes relative z-[1] mx-auto grid w-full max-w-6xl shrink-0 grid-cols-3 items-stretch justify-items-stretch gap-3 overflow-visible px-0 xl:max-w-[72rem] xl:gap-3.5"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.06, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {homeCards.map((card) => (
+              <motion.div key={card.img} className="flex h-full min-h-0 flex-col">
+                <HomeSpotlightCard
+                  img={card.img}
+                  caption={card.caption}
+                  onClick={() => onNavigate(card.screen)}
+                  accent={card.accent}
+                  centerProminent={card.centerProminent}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
         </motion.div>
       </motion.div>
 
@@ -217,7 +227,7 @@ function HomeSpotlightCard({
 
   if (centerProminent) {
     imgTreat = mobileCarousel
-      ? 'inicio-home-card__img h-auto w-auto max-h-[106%] max-w-[96%] origin-center scale-[1.05] translate-y-2 object-contain object-center'
+      ? 'inicio-home-card__img h-auto w-auto max-h-full max-w-[94%] origin-center scale-[1.02] object-contain object-center'
       : 'max-h-[106%] max-w-[96%] origin-center scale-[1.05] translate-y-2 object-contain object-center sm:scale-[1.04] sm:translate-y-2 md:scale-[1.03] md:translate-y-2.5';
   }
 

@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
 import { assetUrl } from '@/lib/assetUrl';
 import { useNoticiasMobileZone } from '@/hooks/useNoticiasMobileZone';
+import { useNoticiasMobileCrtSize } from '@/hooks/useNoticiasMobileCrtSize';
 
 type NewsItem = {
   id: string;
@@ -102,6 +103,7 @@ function NewspaperSlide({
 export default function NoticiasScreen({ isScreenActive = true }: { isScreenActive?: boolean }) {
   const reduceMotion = useReducedMotion();
   useNoticiasMobileZone(isScreenActive);
+  useNoticiasMobileCrtSize(isScreenActive);
   const [emblaRef, emblaApi, scrollTo, scrollPrev, scrollNext] = useSmoothEmblaCarousel({
     loop: true,
     axis: 'x',
@@ -128,7 +130,8 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
       className="noticias-screen"
       data-screen="noticias"
     >
-      <motion.div className="noticias-stage noticias-mobile-stage flex min-h-0 w-full max-h-full flex-col items-center overflow-hidden overscroll-none px-1 pb-0 max-lg:min-h-0 max-lg:max-h-full max-lg:justify-center max-lg:gap-1 max-lg:pt-0 sm:px-5 lg:h-full lg:flex-1 lg:mt-0.5 lg:justify-start lg:translate-x-0 lg:px-6 lg:pt-0 xl:mt-1 xl:translate-x-1 xl:px-8">
+      <div className="noticias-mobile-stage-positioner max-lg:flex max-lg:w-full max-lg:flex-col max-lg:items-center lg:contents">
+        <motion.div className="noticias-stage noticias-mobile-stage flex min-h-0 w-full max-h-full flex-col items-center overflow-hidden overscroll-none px-1 pb-0 max-lg:min-h-0 max-lg:max-h-full max-lg:justify-start max-lg:gap-0 max-lg:pt-0 sm:px-5 lg:h-full lg:flex-1 lg:mt-0.5 lg:justify-start lg:gap-1 lg:translate-x-0 lg:px-6 lg:pt-0 xl:mt-1 xl:translate-x-1 xl:px-8">
         <motion.div
           className="noticias-monito-mobile pointer-events-none relative z-[16] mx-auto flex w-full shrink-0 items-end justify-center px-1 pb-0 max-lg:flex lg:hidden"
           animate={reduceMotion ? undefined : { y: [0, -6, 0] }}
@@ -145,7 +148,7 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
         </motion.div>
 
         <motion.div
-          className="noticias-mobile-content relative flex min-h-0 w-full max-w-[min(100%,60rem)] flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-1 max-lg:justify-center sm:max-w-[62rem] lg:h-full lg:max-h-full lg:flex-none lg:shrink-0 lg:justify-start"
+          className="noticias-mobile-content relative flex min-h-0 w-full max-w-[min(100%,60rem)] flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-none max-lg:shrink-0 max-lg:justify-start sm:max-w-[62rem] lg:h-full lg:max-h-full lg:flex-none lg:shrink-0 lg:justify-start"
           initial={false}
           animate={{ opacity: 1 }}
         >
@@ -164,9 +167,9 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
             />
           </motion.div>
 
-          <motion.div className="noticias-mobile-monitor-col relative z-[18] flex min-h-0 w-full flex-col items-center justify-center overflow-hidden max-lg:min-h-0 max-lg:flex-1 lg:h-full lg:flex-1 lg:justify-start lg:translate-y-11 xl:translate-y-14">
+          <motion.div className="noticias-mobile-monitor-col relative z-[18] flex min-h-0 w-full flex-col items-center overflow-hidden max-lg:min-h-0 max-lg:flex-none max-lg:shrink-0 max-lg:items-center max-lg:justify-start lg:h-full lg:flex-1 lg:justify-start lg:translate-y-11 xl:translate-y-14">
             <motion.div className="flex w-full max-w-[44rem] flex-col items-center max-lg:ml-0 lg:ml-[clamp(7.5rem,18vw,12.5rem)] xl:max-w-[46rem] xl:-translate-x-1">
-              <motion.div className="flex w-full items-center justify-center gap-3 max-lg:gap-0 sm:gap-3.5 lg:-translate-x-1.5 xl:-translate-x-2">
+              <motion.div className="noticias-mobile-crt-row flex w-full items-center max-lg:justify-center max-lg:gap-0 lg:justify-center gap-3 sm:gap-3.5 lg:-translate-x-1.5 xl:-translate-x-2">
                 <button
                   type="button"
                   aria-label="Noticia anterior"
@@ -176,8 +179,8 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
                   <ChevronLeft className="h-6 w-6 max-lg:h-5 max-lg:w-5 lg:h-7 lg:w-7" strokeWidth={2.25} />
                 </button>
 
-                <motion.div className="relative flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center overflow-hidden">
-                  <motion.div className="noticias-crt-bezel relative flex w-full max-w-[min(94vw,24rem)] min-h-0 flex-col rounded-[6px] bg-gradient-to-b from-[#e8dfd2] via-[#cfc4b6] to-[#b9aea2] p-[clamp(7px,1.65vw,11px)] pb-[clamp(8px,1.75vw,12px)] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-4px_12px_rgba(0,0,0,0.08),0_14px_28px_rgba(0,0,0,0.42)] ring-2 ring-[#7a7269]/55 max-lg:max-h-none max-lg:min-h-0 max-lg:flex-1 max-lg:shrink max-lg:p-2 lg:max-w-[42rem] lg:max-h-[min(56cqh,54dvh)] lg:flex-none lg:shrink-0 lg:p-3 lg:pb-3.5">
+                <motion.div className="noticias-mobile-crt-wrap relative flex min-h-0 min-w-0 flex-col items-center overflow-hidden max-lg:flex-none max-lg:shrink-0 max-lg:justify-start lg:flex-1 lg:justify-center">
+                  <motion.div className="noticias-crt-bezel relative flex w-full max-w-[min(94vw,24rem)] flex-col rounded-[6px] bg-gradient-to-b from-[#e8dfd2] via-[#cfc4b6] to-[#b9aea2] p-[clamp(7px,1.65vw,11px)] pb-[clamp(8px,1.75vw,12px)] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-4px_12px_rgba(0,0,0,0.08),0_14px_28px_rgba(0,0,0,0.42)] ring-2 ring-[#7a7269]/55 max-lg:min-h-0 max-lg:shrink-0 max-lg:flex-none max-lg:p-2 lg:max-w-[42rem] lg:min-h-0 lg:max-h-[min(56cqh,54dvh)] lg:flex-none lg:shrink-0 lg:p-3 lg:pb-3.5">
                     <motion.div className="mb-2 flex justify-center gap-1.5 opacity-[0.38]" aria-hidden>
                       {[0, 1, 2, 3, 4].map((i) => (
                         <span key={i} className="h-1 w-6 rounded-full bg-[#3f3a34]" />
@@ -186,7 +189,7 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
 
                     <motion.div className="noticias-crt-inner rounded-[4px] bg-[#141210] p-[6px] shadow-[inset_0_5px_14px_rgba(0,0,0,0.92)] ring-1 ring-black sm:p-[7px]">
                       <motion.div className="relative overflow-hidden rounded-[3px] bg-[#080706] shadow-[inset_0_0_0_4px_rgba(28,25,22,0.96)]">
-                        <motion.div className="noticias-crt-screen relative aspect-[4/3] h-auto w-full min-h-0 shrink-0 overflow-hidden max-lg:aspect-auto max-lg:min-h-0 max-lg:flex-1 lg:aspect-auto lg:h-[min(44cqh,46dvh)] lg:max-h-none lg:flex-none">
+                        <motion.div className="noticias-crt-screen relative aspect-[4/3] h-auto w-full min-h-0 shrink-0 overflow-hidden max-lg:aspect-[5/4] max-lg:h-auto max-lg:max-h-none max-lg:min-h-0 max-lg:flex-none lg:aspect-auto lg:h-[min(44cqh,46dvh)] lg:max-h-none lg:flex-none">
                           <div
                             className="embla-fluid relative h-full w-full overflow-hidden bg-[#cdbfaa]"
                             ref={emblaRef}
@@ -230,7 +233,7 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
                     </motion.div>
                   </motion.div>
 
-                  <motion.div className="relative mx-auto mt-0 flex w-full max-w-[42rem] flex-col items-center px-1">
+                  <motion.div className="noticias-mobile-crt-foot relative mx-auto mt-0 flex w-full max-w-[42rem] flex-col items-center px-1">
                     <motion.div
                       className="noticias-crt-stand-neck h-9 max-lg:h-[clamp(2.25rem,6dvh,3.25rem)] max-lg:w-[92%] w-[88%] max-w-[36rem] bg-gradient-to-b from-[#a39b92] via-[#8f877e] to-[#6e6760] shadow-[inset_0_2px_4px_rgba(255,255,255,0.22),inset_0_-3px_8px_rgba(0,0,0,0.38)] [clip-path:polygon(7%_0,93%_0,100%_100%,0_100%)] lg:h-11"
                       aria-hidden
@@ -239,7 +242,7 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
                       className="-mt-px h-3 w-[94%] max-w-[36rem] rounded-b-md bg-gradient-to-b from-[#4a4540] to-[#2f2c28] shadow-[0_8px_18px_rgba(0,0,0,0.55)] ring-1 ring-black/45"
                       aria-hidden
                     />
-                    <motion.div className="mt-1.5 flex justify-center gap-2 pb-0">
+                    <motion.div className="noticias-mobile-dots mt-1.5 flex justify-center gap-2 max-lg:max-h-[1.25rem]">
                       {newsItems.map((_, i) => (
                         <button
                           key={newsItems[i]?.id ?? i}
@@ -270,7 +273,12 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
             </motion.div>
           </motion.div>
         </motion.div>
-      </motion.div>
+
+        <p className="noticias-mobile-swipe-hint pointer-events-none mx-auto max-w-[22rem] shrink-0 px-3 text-center font-space text-[0.6875rem] font-medium uppercase leading-snug tracking-[0.14em] text-cyan-200/88 max-lg:flex lg:hidden">
+          DESLIZA PARA VER MÁS NOTICIAS
+        </p>
+        </motion.div>
+      </div>
     </MobileScreenLayout>
   );
 }

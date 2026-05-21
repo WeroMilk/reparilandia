@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Send, CheckCircle } from 'lucide-react';
 import { saveContact } from '@/lib/formActions';
@@ -22,9 +22,18 @@ const submitBtnClassEmbedded =
 interface ContactFormProps {
   /** En tarjetas embebidas (p. ej. Contacto): altura al contenido, sin estirar al alto del vecino. */
   embedded?: boolean;
+  /** Móvil contacto: el enviar va en un pie fijo fuera del formulario. */
+  hideInlineSubmit?: boolean;
+  onLoadingChange?: (loading: boolean) => void;
+  onSubmittedChange?: (submitted: boolean) => void;
 }
 
-export default function ContactForm({ embedded = false }: ContactFormProps) {
+export default function ContactForm({
+  embedded = false,
+  hideInlineSubmit = false,
+  onLoadingChange,
+  onSubmittedChange,
+}: ContactFormProps) {
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -33,6 +42,14 @@ export default function ContactForm({ embedded = false }: ContactFormProps) {
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    onLoadingChange?.(loading);
+  }, [loading, onLoadingChange]);
+
+  useEffect(() => {
+    onSubmittedChange?.(submitted);
+  }, [submitted, onSubmittedChange]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,7 +142,13 @@ export default function ContactForm({ embedded = false }: ContactFormProps) {
             </div>
           </div>
           <div
-            className={`flex flex-col ${embedded ? 'gap-1.5 sm:gap-2' : 'gap-3'} ${embedded ? 'min-h-0' : 'min-h-0 flex-1 md:min-h-[0] md:flex-1'}`}
+            className={`flex flex-col ${embedded ? 'gap-1.5 sm:gap-2' : 'gap-3'} ${
+              embedded
+                ? hideInlineSubmit
+                  ? 'contacto-mobile-form-stack min-h-0 flex-1'
+                  : 'min-h-0'
+                : 'min-h-0 flex-1 md:min-h-[0] md:flex-1'
+            }`}
           >
             <div className="flex shrink-0 flex-col gap-0">
               <label htmlFor="contact-motivo" className={embedded ? labelClassEmbedded : labelClass}>
@@ -143,7 +166,15 @@ export default function ContactForm({ embedded = false }: ContactFormProps) {
                 onChange={(e) => setFormData({ ...formData, motivo: e.target.value })}
               />
             </div>
-            <div className={embedded ? 'flex flex-col' : 'flex min-h-0 flex-1 flex-col'}>
+            <div
+              className={
+                embedded
+                  ? hideInlineSubmit
+                    ? 'contacto-mobile-form-message flex min-h-0 flex-1 flex-col'
+                    : 'flex flex-col'
+                  : 'flex min-h-0 flex-1 flex-col'
+              }
+            >
               <label htmlFor="contact-mensaje" className={embedded ? labelClassEmbedded : labelClass}>
                 Mensaje
               </label>
@@ -161,16 +192,18 @@ export default function ContactForm({ embedded = false }: ContactFormProps) {
             </div>
           </div>
 
-          <motion.button
-            type="submit"
-            disabled={loading}
-            className={`${embedded ? submitBtnClassEmbedded : submitBtnClass} mt-0.5 ${embedded ? '' : 'md:hidden'}`}
-            whileHover={{ scale: loading ? 1 : 1.02 }}
-            whileTap={{ scale: loading ? 1 : 0.98 }}
-          >
-            <Send className="w-4 h-4" />
-            {loading ? 'Enviando…' : 'Enviar mensaje'}
-          </motion.button>
+          {!hideInlineSubmit ? (
+            <motion.button
+              type="submit"
+              disabled={loading}
+              className={`${embedded ? submitBtnClassEmbedded : submitBtnClass} mt-0.5 ${embedded ? '' : 'md:hidden'}`}
+              whileHover={{ scale: loading ? 1 : 1.02 }}
+              whileTap={{ scale: loading ? 1 : 0.98 }}
+            >
+              <Send className="w-4 h-4" />
+              {loading ? 'Enviando…' : 'Enviar mensaje'}
+            </motion.button>
+          ) : null}
         </div>
       </motion.form>
 

@@ -8,7 +8,6 @@ type ReelsFeedProps = {
   items: ReelItem[];
   initialReelId?: string | null;
   isScreenActive: boolean;
-  onLikeCountChange: (id: string, likeCount: number) => void;
   onActiveIndexChange?: (index: number) => void;
 };
 
@@ -16,7 +15,6 @@ export default function ReelsFeed({
   items,
   initialReelId,
   isScreenActive,
-  onLikeCountChange,
   onActiveIndexChange,
 }: ReelsFeedProps) {
   const feedRef = useRef<HTMLDivElement>(null);
@@ -111,12 +109,7 @@ export default function ReelsFeed({
           className="reels-feed__item h-full min-h-full w-full"
           data-reel-id={reel.id}
         >
-          <ReelSlide
-            reel={reel}
-            isActive={activeId === reel.id}
-            isScreenActive={isScreenActive}
-            onLikeCountChange={onLikeCountChange}
-          />
+          <ReelSlide reel={reel} isActive={activeId === reel.id} isScreenActive={isScreenActive} />
         </div>
       ))}
     </div>

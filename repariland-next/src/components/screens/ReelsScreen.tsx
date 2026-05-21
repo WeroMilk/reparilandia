@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
-import { Loader2, Settings2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useReels } from '@/hooks/useReels';
 import { useReelsViewportHeight } from '@/hooks/useReelsViewportHeight';
 import ReelsFeed from '@/components/reels/ReelsFeed';
@@ -19,8 +19,7 @@ type ReelsScreenProps = {
 };
 
 export default function ReelsScreen({ isScreenActive = true }: ReelsScreenProps) {
-  const { items, storage, maxReels, maxDurationSec, loading, error, refresh, updateItem } =
-    useReels();
+  const { items, storage, maxReels, maxDurationSec, loading, error, refresh } = useReels();
   const [initialReelId] = useState(readInitialReelId);
   const [adminOpen, setAdminOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
@@ -70,13 +69,6 @@ export default function ReelsScreen({ isScreenActive = true }: ReelsScreenProps)
     return `${activeIndex + 1} / ${items.length}`;
   }, [activeIndex, items.length]);
 
-  const handleLikeCountChange = useCallback(
-    (id: string, likeCount: number) => {
-      updateItem(id, { likeCount });
-    },
-    [updateItem],
-  );
-
   useReelsViewportHeight(isScreenActive);
 
   return (
@@ -91,21 +83,11 @@ export default function ReelsScreen({ isScreenActive = true }: ReelsScreenProps)
               REELS
             </span>
           </div>
-          <div className="pointer-events-auto flex shrink-0 items-center gap-2">
-            {progressLabel ? (
-              <span className="rounded-full border border-white/10 bg-black/45 px-2.5 py-1 text-[10px] tabular-nums text-white/75 backdrop-blur-md">
-                {progressLabel}
-              </span>
-            ) : null}
-            <button
-              type="button"
-              onClick={openAdminFlow}
-              aria-label="Administrar reels"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-[#0077FF]/35 bg-[#0077FF]/20 text-[#7ec8ff] backdrop-blur-md transition hover:bg-[#0077FF]/30"
-            >
-              <Settings2 className="h-4 w-4" />
-            </button>
-          </div>
+          {progressLabel ? (
+            <span className="pointer-events-auto shrink-0 rounded-full border border-white/10 bg-black/45 px-2.5 py-1 text-[10px] tabular-nums text-white/75 backdrop-blur-md">
+              {progressLabel}
+            </span>
+          ) : null}
         </header>
 
         <div className="reels-screen__body relative min-h-0 flex-1 overflow-hidden">
@@ -131,7 +113,6 @@ export default function ReelsScreen({ isScreenActive = true }: ReelsScreenProps)
               items={items}
               initialReelId={initialReelId}
               isScreenActive={isScreenActive}
-              onLikeCountChange={handleLikeCountChange}
               onActiveIndexChange={setActiveIndex}
             />
           )}

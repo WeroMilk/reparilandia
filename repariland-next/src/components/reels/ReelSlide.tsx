@@ -5,13 +5,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pause, Play } from 'lucide-react';
 import type { ReelItem } from '@/lib/reels/types';
 import ReelActionRail from '@/components/reels/ReelActionRail';
-import { hasLikedReel, markReelLiked } from '@/lib/reels/likes-local';
 
 type ReelSlideProps = {
   reel: ReelItem;
   isActive: boolean;
   isScreenActive: boolean;
-  onLikeCountChange: (id: string, likeCount: number) => void;
 };
 
 type VideoOrientation = 'portrait' | 'landscape';
@@ -20,14 +18,10 @@ export default function ReelSlide({
   reel,
   isActive,
   isScreenActive,
-  onLikeCountChange,
 }: ReelSlideProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const reduceMotion = useReducedMotion();
   const [muted, setMuted] = useState(true);
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(reel.likeCount);
-  const [likePending, setLikePending] = useState(false);
   const [shareFeedback, setShareFeedback] = useState<string | null>(null);
   const [orientation, setOrientation] = useState<VideoOrientation>('portrait');
   const [userPaused, setUserPaused] = useState(false);
@@ -47,14 +41,6 @@ export default function ReelSlide({
     if (!video) return;
     setPlaying(!video.paused && !video.ended);
   }, []);
-
-  useEffect(() => {
-    setLikeCount(reel.likeCount);
-  }, [reel.likeCount]);
-
-  useEffect(() => {
-    setLiked(hasLikedReel(reel.id));
-  }, [reel.id]);
 
   useEffect(() => {
     setUserPaused(false);
@@ -114,29 +100,6 @@ export default function ReelSlide({
       return next;
     });
   }, []);
-
-  const handleLike = useCallback(async () => {
-    if (liked || likePending) return;
-    setLikePending(true);
-    try {
-      const res = await fetch(`/api/reels/${encodeURIComponent(reel.id)}/like`, {
-        method: 'POST',
-      });
-      if (!res.ok) throw new Error('like failed');
-      const data = (await res.json()) as { likeCount: number };
-      setLikeCount(data.likeCount);
-      onLikeCountChange(reel.id, data.likeCount);
-      markReelLiked(reel.id);
-      setLiked(true);
-    } catch {
-      setLikeCount((c) => c + 1);
-      onLikeCountChange(reel.id, likeCount + 1);
-      markReelLiked(reel.id);
-      setLiked(true);
-    } finally {
-      setLikePending(false);
-    }
-  }, [liked, likePending, reel.id, likeCount, onLikeCountChange]);
 
   const handleShare = useCallback(async () => {
     const url =
@@ -249,10 +212,6 @@ export default function ReelSlide({
             <ReelActionRail
               muted={muted}
               onToggleMute={toggleMute}
-              likeCount={likeCount}
-              liked={liked}
-              likeDisabled={liked || likePending}
-              onLike={() => void handleLike()}
               onShare={() => void handleShare()}
               shareFeedback={shareFeedback}
             />

@@ -9,8 +9,7 @@ export async function GET() {
     const { getReelsManifest } = await import('@/lib/reels/storage');
     const { manifest, storage } = await getReelsManifest();
     return NextResponse.json(buildReelsApiPayload(manifest, storage));
-  } catch (err) {
-    console.error('[api/reels] GET failed:', err);
+  } catch {
     return NextResponse.json(getSeedReelsApiPayload());
   }
 }

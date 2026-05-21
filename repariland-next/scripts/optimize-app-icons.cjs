@@ -7,31 +7,36 @@ const sharp = require('sharp');
 
 const projectRoot = path.join(__dirname, '..');
 const appDir = path.join(projectRoot, 'src', 'app');
-const srcIcon =
-  [path.join(appDir, 'icon.png'), path.join(projectRoot, 'public', 'assets', 'favicon-source.png')].find(
-    (p) => fs.existsSync(p),
-  ) ?? null;
+const faviconSource = path.join(projectRoot, 'public', 'assets', 'favicon-source.png');
+const existingIcon = path.join(appDir, 'icon.png');
+
+/** Origen distinto del destino (sharp no permite in-place). */
+function resolveSourceIcon() {
+  if (fs.existsSync(faviconSource)) return faviconSource;
+  if (fs.existsSync(existingIcon)) return existingIcon;
+  return null;
+}
+
+async function writePng(base, size, dest) {
+  const tmp = `${dest}.tmp`;
+  await base
+    .clone()
+    .resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .png({ compressionLevel: 9 })
+    .toFile(tmp);
+  fs.renameSync(tmp, dest);
+}
 
 async function main() {
+  const srcIcon = resolveSourceIcon();
   if (!srcIcon) {
-    console.error('No hay src/app/icon.png ni public/assets/favicon-source.png');
+    console.error('No hay public/assets/favicon-source.png ni src/app/icon.png');
     process.exit(1);
   }
 
   const base = sharp(srcIcon, { failOn: 'none' });
-  await base
-    .clone()
-    .resize(32, 32, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-    .png({ compressionLevel: 9 })
-    .toFile(path.join(appDir, 'icon.png'));
-
-  await base
-    .clone()
-    .resize(180, 180, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-    .png({ compressionLevel: 9 })
-    .toFile(path.join(appDir, 'apple-icon.png'));
-
-  console.log('OK src/app/icon.png (32px) y apple-icon.png (180px)');
+  await writePng(base, 32, path.join(appDir, 'icon.png'));
+  await writePng(base, 180, path.join(appDir, 'apple-icon.png'));
 }
 
 main().catch((err) => {

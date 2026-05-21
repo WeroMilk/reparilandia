@@ -36,14 +36,14 @@ const navItems: {
     gradient: 'from-[#FF9A4A] via-[#FF7528] to-[#E85F12]',
   },
   {
-    screen: 'reels',
-    label: 'REELS',
-    gradient: 'from-[#4DA3FF] via-[#0077FF] to-[#0055CC]',
-  },
-  {
     screen: 'contacto',
     label: 'CONTACTO',
     gradient: 'from-[#FF7BC4] via-[#FF4AAD] to-[#E31D8F]',
+  },
+  {
+    screen: 'reels',
+    label: 'REELS',
+    gradient: 'from-[#4DA3FF] via-[#0077FF] to-[#0055CC]',
   },
 ];
 

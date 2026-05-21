@@ -10,7 +10,7 @@
     "dev:clean": "node scripts/dev-clean.cjs",
     "dev:3004": "node scripts/dev-clean.cjs",
     "dev:3012": "next dev -p 3012",
-    "icons:optimize": "node scripts/optimize-app-icons.cjs",
+    "icons:optimize": "python scripts/prepare-favicon.py",
     "dev:turbo": "next dev --turbopack",
     "build": "next build",
     "start": "next start",

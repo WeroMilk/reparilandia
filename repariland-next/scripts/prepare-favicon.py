@@ -21,15 +21,19 @@ def knock_checkerboard(im: Image.Image) -> Image.Image:
     rgb = arr[:, :, :3].astype(np.int16)
     r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
     neutral = (np.abs(r - g) <= 14) & (np.abs(g - b) <= 14)
-    # Checkerboard / export backdrop (white + light gray), not logo colors.
-    backdrop = neutral & (
-        (r >= 248)
-        | (r > 200)
-        | ((r > 168) & (r < 238))
+    # Fondo blanco sólido o gris de exportación (no colores del logo).
+    solid_white = (r >= 250) & (g >= 250) & (b >= 250)
+    backdrop = solid_white | (
+        neutral
+        & (
+            (r >= 248)
+            | (r > 200)
+            | ((r > 168) & (r < 238))
+        )
     )
     arr[backdrop, 3] = 0
-    # Only remove near-white halos (keep yellow/green logo highlights).
-    halo = neutral & (r >= 246) & (arr[:, :, 3] > 0)
+    # Halos casi blancos pegados al borde del lienzo.
+    halo = neutral & (r >= 244) & (arr[:, :, 3] > 0)
     arr[halo, 3] = 0
     return Image.fromarray(arr)
 

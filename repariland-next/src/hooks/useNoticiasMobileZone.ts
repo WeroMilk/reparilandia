@@ -32,13 +32,13 @@ export function useNoticiasMobileZone(enabled: boolean) {
 
       const headerBottom = header.getBoundingClientRect().bottom;
       const navTop = navRail.getBoundingClientRect().top;
+      const dock = document.querySelector<HTMLElement>('[data-app-dock]');
+      const dockTop = dock?.getBoundingClientRect().top ?? navTop;
       const vv = window.visualViewport;
       const visibleBottom =
         vv != null ? vv.offsetTop + vv.height : window.innerHeight;
-      const height = Math.max(
-        0,
-        Math.round(Math.min(navTop, visibleBottom) - headerBottom),
-      );
+      const zoneBottom = Math.min(navTop, dockTop, visibleBottom);
+      const height = Math.max(0, Math.round(zoneBottom - headerBottom));
 
       screen.style.setProperty('--noticias-mobile-zone-height', `${height}px`);
       screen.setAttribute('data-noticias-layout-ready', 'true');

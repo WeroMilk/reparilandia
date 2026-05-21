@@ -55,14 +55,25 @@ for (const p of extraPorts) {
   freePort(p);
 }
 
-try {
-  execSync('node scripts/optimize-app-icons.cjs', {
-    cwd: projectRoot,
-    stdio: 'ignore',
-  });
-} catch {
-  /* iconos opcionales */
+function prepareFavicons() {
+  const pyScript = path.join(projectRoot, 'scripts', 'prepare-favicon.py');
+  if (!fs.existsSync(pyScript)) return;
+  const attempts = [
+    ['python', pyScript],
+    ['py', '-3', pyScript],
+    ['python3', pyScript],
+  ];
+  for (const cmd of attempts) {
+    try {
+      execSync(cmd.join(' '), { cwd: projectRoot, stdio: 'pipe' });
+      return;
+    } catch {
+      /* siguiente intérprete */
+    }
+  }
 }
+
+prepareFavicons();
 
 console.log('');
 console.log('  Reparilandia (Next.js App Router)');

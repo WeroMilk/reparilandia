@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 
-const SCREENS = ['inicio', 'historia', 'servicios', 'noticias', 'reels', 'contacto'] as const;
+const SCREENS = ['inicio', 'historia', 'servicios', 'noticias', 'contacto', 'reels'] as const;
 
 async function waitForAppReady(page: Page) {
   await page.goto('/');
@@ -66,7 +66,7 @@ test.describe('responsive screens', () => {
       return;
     }
     await expect(page.getByRole('link', { name: /whatsapp/i })).toBeVisible();
-    const msgBtn = page.getByRole('button', { name: /^mensaje$/i });
+    const msgBtn = page.getByRole('button', { name: /enviar mensaje/i });
     await expect(msgBtn).toBeVisible();
     await msgBtn.click();
     await expect(page.getByRole('button', { name: /regresar a contacto/i })).toBeVisible();

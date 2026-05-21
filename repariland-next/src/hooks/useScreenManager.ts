@@ -5,8 +5,8 @@ export const SCREEN_ORDER: readonly ScreenName[] = [
   'historia',
   'servicios',
   'noticias',
-  'reels',
   'contacto',
+  'reels',
 ] as const;
 
 function screenIndex(screen: ScreenName): number {

@@ -50,6 +50,9 @@ export default function GuaranteePromise({
         Cada reparación queda respaldada de principio a fin. Si algo no cumple, nos hacemos cargo de todo — para
         que nunca te lleves un mal sabor de boca, solo la tranquilidad de haber elegido bien.
       </p>
+      <p className="guarantee-promise__restrictions mt-0.5 font-space text-[11px] leading-snug text-white/82 sm:text-xs lg:mt-1 lg:whitespace-nowrap">
+        (Aplica Restricciones).
+      </p>
     </aside>
   );
 }
