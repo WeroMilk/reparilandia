@@ -37,7 +37,7 @@ const CONTACT = {
   email: 'reparilandia@hotmail.com',
   telefonoDisplay: '(662) 355-5470',
   telefonoTel: '+526623555470',
-  telefono2Display: '6622 38 36 56',
+  telefono2Display: '(662) 238-3656',
   telefono2Tel: '+526622383656',
   whatsappDisplay: '(662) 238-3656',
   whatsappWa: '526622383656',
