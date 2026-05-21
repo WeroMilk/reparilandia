@@ -186,7 +186,14 @@ function ContactoMobileCard({ onOpenMessage }: { onOpenMessage: () => void }) {
               </motion.div>
               <motion.div className="contacto-mobile-phone-row flex items-center justify-center gap-1.5 text-[12px] text-white/88">
                 <MessageCircle className="h-3.5 w-3.5 text-emerald-300/90" />
-                <span className="font-space">{whatsappDisplay}</span>
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-space text-emerald-200/95 hover:underline"
+                >
+                  {whatsappDisplay}
+                </a>
               </motion.div>
             </motion.div>
           </section>
@@ -252,8 +259,10 @@ export default function ContactoScreen({ isScreenActive = true }: { isScreenActi
   useContactoMobileZone(isScreenActive);
   useContactoMobileFit(showMessage, isScreenActive);
 
+  const whatsappUrl = getWhatsAppUrl();
+
   const handleWhatsApp = () => {
-    window.open(getWhatsAppUrl(), '_blank', 'noopener,noreferrer');
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
 
   const { email, telefonoDisplay, telefonoTel, telefono2Display, telefono2Tel, whatsappDisplay, facebook, instagram, youtube } =
@@ -347,7 +356,14 @@ export default function ContactoScreen({ isScreenActive = true }: { isScreenActi
                       </motion.div>
                       <motion.div className="flex items-center gap-1.5 font-orbitron text-[12px] text-white/85 md:text-[14px]">
                         <MessageCircle className="h-4 w-4 text-emerald-300/90" />
-                        <span className="font-space text-white/88">{whatsappDisplay}</span>
+                        <a
+                          href={whatsappUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-space text-emerald-200/95 hover:underline"
+                        >
+                          {whatsappDisplay}
+                        </a>
                       </motion.div>
                     </div>
                   </section>
