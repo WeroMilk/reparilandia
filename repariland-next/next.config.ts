@@ -6,10 +6,7 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(process.cwd()),
   devIndicators: false,
   compiler: {
-    removeConsole:
-      process.env.NODE_ENV === 'production'
-        ? { exclude: ['error'] }
-        : false,
+    removeConsole: process.env.NODE_ENV === 'production',
   },
   eslint: {
     ignoreDuringBuilds: true,
@@ -33,6 +30,16 @@ const nextConfig: NextConfig = {
       {
         source: '/:path*',
         headers: [{ key: 'Cache-Control', value: 'no-store, must-revalidate' }],
+      },
+    ];
+  },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'reparilandia.com' }],
+        destination: 'https://www.reparilandia.com/:path*',
+        permanent: true,
       },
     ];
   },

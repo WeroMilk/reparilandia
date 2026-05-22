@@ -6,6 +6,15 @@ export const SEED_REELS_MANIFEST: ReelsManifest = {
   version: 1,
   items: [
     {
+      id: 'reel-screen-0522-2026',
+      title: 'Reparilandia',
+      caption: 'Así se vive la experiencia en Reparilandia',
+      videoUrl: '/reels/reel-screen-0522-2026.mp4',
+      durationSec: 30,
+      likeCount: 0,
+      createdAt: '2026-05-22T18:34:26.000Z',
+    },
+    {
       id: 'reel-mpdei80m-8d05d',
       title: 'Reparilandia',
       caption: 'Nuestro primer reel',

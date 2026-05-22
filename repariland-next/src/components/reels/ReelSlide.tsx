@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pause, Play } from 'lucide-react';
 import type { ReelItem } from '@/lib/reels/types';
 import ReelActionRail from '@/components/reels/ReelActionRail';
+import ReelProgressBar from '@/components/reels/ReelProgressBar';
 
 type ReelSlideProps = {
   reel: ReelItem;
@@ -193,9 +194,9 @@ export default function ReelSlide({
           aria-hidden
         />
 
-        <div className="reels-slide__chrome pointer-events-none absolute inset-0 z-[25] flex">
-          <div className="relative flex min-h-0 min-w-0 flex-1 flex-col justify-end p-4 sm:p-5">
-            <div className="pointer-events-none max-w-[78%] space-y-1 sm:max-w-[72%]">
+        <div className="reels-slide__chrome pointer-events-none absolute inset-0 z-[25] flex flex-col justify-end">
+          <div className="flex min-h-0 w-full flex-1 items-end justify-between gap-2 px-4 pb-1 pt-4 sm:px-5 sm:pb-2">
+            <div className="pointer-events-none min-w-0 max-w-[78%] space-y-1 sm:max-w-[72%]">
               <h3 className="font-space text-base font-semibold uppercase tracking-wide text-white drop-shadow-md sm:text-lg">
                 {reel.title}
               </h3>
@@ -206,16 +207,22 @@ export default function ReelSlide({
               ) : null}
               <p className="text-[11px] tabular-nums text-white/55">{reel.durationSec}s · Reparilandia</p>
             </div>
+
+            <div className="pointer-events-auto flex shrink-0 flex-col items-center justify-end pr-0 sm:pr-1">
+              <ReelActionRail
+                muted={muted}
+                onToggleMute={toggleMute}
+                onShare={() => void handleShare()}
+                shareFeedback={shareFeedback}
+              />
+            </div>
           </div>
 
-          <div className="pointer-events-auto flex shrink-0 flex-col items-center justify-end pr-3 sm:pr-4">
-            <ReelActionRail
-              muted={muted}
-              onToggleMute={toggleMute}
-              onShare={() => void handleShare()}
-              shareFeedback={shareFeedback}
-            />
-          </div>
+          <ReelProgressBar
+            videoRef={videoRef}
+            isActive={isActive && isScreenActive}
+            fallbackDurationSec={reel.durationSec}
+          />
         </div>
       </div>
     </article>

@@ -61,9 +61,8 @@ function clearPanelVars(panel: HTMLElement) {
   panel.style.removeProperty('--historia-timeline-scale');
   panel.style.removeProperty('--historia-timeline-title-px');
   panel.style.removeProperty('--historia-et-scale');
-  panel.style.removeProperty('--historia-story-figure-scale');
-  panel.style.removeProperty('--historia-story-name-px');
-  panel.style.removeProperty('--historia-story-font-px');
+  panel.style.removeProperty('--hm-story-figure-max-h');
+  clearStoryPanelInlineStyles(panel);
   panel.removeAttribute('data-hm-fitted');
 }
 
@@ -131,76 +130,110 @@ function growScaleToFill(
   return measure;
 }
 
-function fitStoryFigure(
-  panel: HTMLElement,
-  figureEl: HTMLElement,
-  imgEl: HTMLElement,
-  nameEl: HTMLElement,
-) {
+function clearStoryPanelInlineStyles(panel: HTMLElement) {
+  panel.style.removeProperty('--historia-story-figure-scale');
+  panel.style.removeProperty('--historia-story-name-px');
+  panel.style.removeProperty('--historia-story-font-px');
+  panel.style.removeProperty('--historia-story-line-px');
+  panel.querySelectorAll<HTMLElement>('.historia-story-fit-text, .hm-story__name').forEach((el) => {
+    el.style.removeProperty('font-size');
+    el.style.removeProperty('line-height');
+    el.style.removeProperty('transform');
+  });
+  panel.querySelectorAll<HTMLElement>('.hm-story__img').forEach((el) => {
+    el.style.removeProperty('transform');
+  });
+}
+
+function fitStoryFigure(panel: HTMLElement, figureEl: HTMLElement, imgEl: HTMLElement) {
   imgEl.style.removeProperty('transform');
   panel.style.removeProperty('--historia-story-figure-scale');
 
   const figRect = figureEl.getBoundingClientRect();
-  const nameRect = nameEl.getBoundingClientRect();
-  const figStyle = getComputedStyle(figureEl);
-  const gap =
-    parseFloat(figStyle.rowGap || '0') || parseFloat(figStyle.gap || '0') || 0;
-  const imgSlotH = Math.max(40, figRect.height - nameRect.height - gap - 2);
+  const imgSlotH = Math.max(48, figRect.height - 2);
 
-  imgEl.style.removeProperty('transform');
   const imgRect = imgEl.getBoundingClientRect();
   if (imgSlotH < 8 || imgRect.height < 8) {
-    setPanelVar(panel, '--historia-story-figure-scale', '1.65');
+    setPanelVar(panel, '--historia-story-figure-scale', '1.35');
     return;
   }
 
-  const scaleByH = (imgSlotH * 0.94) / imgRect.height;
-  const scaleByW = (figRect.width * 0.94) / imgRect.width;
-  const scale = Math.min(3.2, Math.max(1.12, Math.min(scaleByH, scaleByW)));
+  const scaleByH = (imgSlotH * 0.96) / imgRect.height;
+  const scaleByW = (figRect.width * 0.96) / imgRect.width;
+  const scale = Math.min(3.4, Math.max(1.05, Math.min(scaleByH, scaleByW)));
   setPanelVar(panel, '--historia-story-figure-scale', String(Math.round(scale * 1000) / 1000));
 }
 
 function fitStoryName(panel: HTMLElement, nameEl: HTMLElement, zoneHeight: number) {
-  const size = Math.min(24, Math.max(15, Math.round(13 + zoneHeight * 0.021)));
+  const size = Math.min(26, Math.max(16, Math.round(14 + zoneHeight * 0.027)));
   nameEl.style.fontSize = `${size}px`;
   setPanelVar(panel, '--historia-story-name-px', `${size}px`);
 }
 
-function fillStoryLineHeight(textEl: HTMLElement, available: number, fontPx: number) {
-  textEl.style.lineHeight = '1.28';
-  let contentHeight = textEl.scrollHeight;
+function fillStoryLineHeight(
+  panel: HTMLElement,
+  textEl: HTMLElement,
+  available: number,
+  fontPx: number,
+) {
+  textEl.style.lineHeight = '1.32';
+  const contentHeight = textEl.scrollHeight;
   if (contentHeight >= available * FILL_RATIO - 1) return;
 
-  const lh = parseFloat(getComputedStyle(textEl).lineHeight) || fontPx * 1.28;
+  const lh = parseFloat(getComputedStyle(textEl).lineHeight) || fontPx * 1.32;
   const lines = Math.max(1, Math.ceil(contentHeight / lh));
   const targetLh = (available * FILL_RATIO) / lines;
-  const maxLh = fontPx * 1.58;
-  textEl.style.lineHeight = `${Math.min(maxLh, Math.max(lh, targetLh)).toFixed(2)}px`;
+  const maxLh = fontPx * 1.5;
+  const nextLh = Math.min(maxLh, Math.max(lh, targetLh));
+  textEl.style.lineHeight = `${nextLh.toFixed(2)}px`;
+  setPanelVar(panel, '--historia-story-line-px', `${nextLh.toFixed(2)}px`);
 }
 
-function fitStoryText(
-  panel: HTMLElement,
-  copyEl: HTMLElement,
-  textEl: HTMLElement,
-  zoneHeight: number,
-): { fits: boolean; available: number; contentHeight: number } {
-  textEl.style.removeProperty('zoom');
-  textEl.style.removeProperty('transform');
-  textEl.style.removeProperty('line-height');
+/** Escala el párrafo al hueco del bloque centrado (caricatura + nombre + texto). */
+function fitStoryTextFill(panel: HTMLElement, zoneHeight: number): boolean {
+  const stackEl = panel.querySelector<HTMLElement>('.hm-story__stack');
+  const panelMain = panel.querySelector<HTMLElement>('.hm-panel__main') ?? panel;
+  const figureEl = panel.querySelector<HTMLElement>('.hm-story__figure');
+  const nameEl = panel.querySelector<HTMLElement>('.hm-story__name');
+  const textEl = panel.querySelector<HTMLElement>('.historia-story-fit-text');
+  if (!stackEl || !figureEl || !nameEl || !textEl) return false;
 
-  const copyRect = copyEl.getBoundingClientRect();
-  const copyStyle = getComputedStyle(copyEl);
-  const padY =
-    parseFloat(copyStyle.paddingTop || '0') + parseFloat(copyStyle.paddingBottom || '0');
-  const border = parseFloat(copyStyle.borderTopWidth || '0');
-  const available = Math.max(64, copyRect.height - padY - border - 2);
+  textEl.style.removeProperty('font-size');
+  textEl.style.removeProperty('line-height');
+  panel.style.removeProperty('--historia-story-font-px');
+  panel.style.removeProperty('--historia-story-line-px');
+
+  const panelStyle = getComputedStyle(panel);
+  const panelPadY =
+    parseFloat(panelStyle.paddingTop || '0') + parseFloat(panelStyle.paddingBottom || '0');
+  const stackStyle = getComputedStyle(stackEl);
+  const stackPadY =
+    parseFloat(stackStyle.paddingTop || '0') + parseFloat(stackStyle.paddingBottom || '0');
+  const gap =
+    parseFloat(stackStyle.rowGap || '0') || parseFloat(stackStyle.gap || '0') || 0;
+
+  const chromeHeights = [figureEl, nameEl].map((el) => {
+    const style = getComputedStyle(el);
+    const rect = el.getBoundingClientRect();
+    return (
+      rect.height +
+      parseFloat(style.marginTop || '0') +
+      parseFloat(style.marginBottom || '0')
+    );
+  });
+  const chrome = chromeHeights.reduce((sum, h) => sum + h, 0) + gap * 2;
+
+  const available = Math.max(
+    44,
+    panelMain.getBoundingClientRect().height - panelPadY - stackPadY - chrome - 4,
+  );
 
   const hiCap = Math.min(
-    58,
+    28,
     Math.max(
-      17,
-      Math.round(available * 0.42 + zoneHeight * 0.018),
-      Math.floor((available / 5.2) * 1.05),
+      13,
+      Math.round(available / 4.1),
+      Math.round(12 + zoneHeight * 0.03),
     ),
   );
   let lo = STORY_FONT_MIN_PX;
@@ -210,9 +243,8 @@ function fitStoryText(
   while (lo <= hi) {
     const mid = Math.round((lo + hi) / 2);
     textEl.style.fontSize = `${mid}px`;
-    textEl.style.lineHeight = '1.28';
-    const contentHeight = textEl.scrollHeight;
-    if (contentHeight <= available + 2) {
+    textEl.style.lineHeight = '1.32';
+    if (textEl.scrollHeight <= available + 2) {
       best = mid;
       lo = mid + 1;
     } else {
@@ -227,7 +259,7 @@ function fitStoryText(
   while (fits && contentHeight < available * FILL_RATIO && best < hiCap) {
     const trial = best + 1;
     textEl.style.fontSize = `${trial}px`;
-    textEl.style.lineHeight = '1.28';
+    textEl.style.lineHeight = '1.32';
     const trialHeight = textEl.scrollHeight;
     if (trialHeight > available + 2) break;
     best = trial;
@@ -235,13 +267,28 @@ function fitStoryText(
   }
 
   textEl.style.fontSize = `${best}px`;
-  fillStoryLineHeight(textEl, available, best);
+  fillStoryLineHeight(panel, textEl, available, best);
   setPanelVar(panel, '--historia-story-font-px', `${best}px`);
 
-  contentHeight = textEl.scrollHeight;
-  fits = contentHeight <= available + 2;
+  return textEl.scrollHeight <= available + 2;
+}
 
-  return { fits, available, contentHeight };
+/** Maximiza caricatura, nombre y texto dentro del box centrado. */
+function fitStoryPanel(panel: HTMLElement, zoneHeight: number): { fits: boolean } {
+  clearStoryPanelInlineStyles(panel);
+
+  const figureEl = panel.querySelector<HTMLElement>('.hm-story__figure');
+  const imgEl = panel.querySelector<HTMLElement>('.hm-story__img');
+  const nameEl = panel.querySelector<HTMLElement>('.hm-story__name');
+
+  const figureMaxPx = Math.round(Math.min(Math.max(zoneHeight * 0.44, 124), 232));
+  panel.style.setProperty('--hm-story-figure-max-h', `${figureMaxPx}px`);
+
+  if (figureEl && imgEl) fitStoryFigure(panel, figureEl, imgEl);
+  if (nameEl) fitStoryName(panel, nameEl, zoneHeight);
+
+  const fits = fitStoryTextFill(panel, zoneHeight);
+  return { fits };
 }
 
 function fitTimelineTitle(panel: HTMLElement, titleEl: HTMLElement, zoneHeight: number) {
@@ -277,21 +324,6 @@ function fitTimelinePanel(
     titleEl ? [titleEl] : [],
   );
   fitEtColumn(panel);
-  return { fits: measure.fits };
-}
-
-function fitStoryPanel(panel: HTMLElement, zoneHeight: number): { fits: boolean } {
-  const figureEl = panel.querySelector<HTMLElement>('.hm-story__figure, .historia-story-char');
-  const imgEl = panel.querySelector<HTMLElement>('.hm-story__img');
-  const nameEl = panel.querySelector<HTMLElement>('.hm-story__name');
-  const copyEl = panel.querySelector<HTMLElement>('.hm-story__copy');
-  const textEl = panel.querySelector<HTMLElement>('.historia-story-fit-text');
-
-  if (!figureEl || !imgEl || !nameEl || !copyEl || !textEl) return { fits: false };
-
-  fitStoryFigure(panel, figureEl, imgEl, nameEl);
-  fitStoryName(panel, nameEl, zoneHeight);
-  const measure = fitStoryText(panel, copyEl, textEl, zoneHeight);
   return { fits: measure.fits };
 }
 

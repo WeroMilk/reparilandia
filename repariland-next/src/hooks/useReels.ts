@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { MAX_REEL_DURATION_SEC, MAX_REELS } from '@/lib/reels/constants';
+import { loadReelsForClient, type LoadReelsOptions } from '@/lib/reels/clientManifest';
 import type { ReelItem, ReelsApiResponse } from '@/lib/reels/types';
 
 type UseReelsState = {
@@ -11,11 +11,11 @@ type UseReelsState = {
   maxDurationSec: number;
   loading: boolean;
   error: string | null;
-  refresh: () => Promise<void>;
+  refresh: (options?: LoadReelsOptions) => Promise<void>;
   updateItem: (id: string, patch: Partial<ReelItem>) => void;
 };
 
-export function useReels(): UseReelsState {
+export function useReels(enabled = true): UseReelsState {
   const [items, setItems] = useState<ReelItem[]>([]);
   const [storage, setStorage] = useState<ReelsApiResponse['storage'] | null>(null);
   const [maxReels, setMaxReels] = useState(5);
@@ -31,34 +31,26 @@ export function useReels(): UseReelsState {
     setError(null);
   }, []);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (options?: LoadReelsOptions) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/reels', { cache: 'no-store' });
-      if (res.ok) {
-        applyPayload((await res.json()) as ReelsApiResponse);
-        return;
-      }
-      const staticRes = await fetch('/data/reels-manifest.json', { cache: 'no-store' });
-      if (!staticRes.ok) throw new Error('No se pudieron cargar los reels.');
-      const manifest = (await staticRes.json()) as ReelsApiResponse['manifest'];
-      applyPayload({
-        manifest,
-        storage: 'static',
-        maxReels: MAX_REELS,
-        maxDurationSec: MAX_REEL_DURATION_SEC,
-      });
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Error al cargar reels.');
+      const data = await loadReelsForClient(options);
+      applyPayload(data);
+    } catch {
+      setError('No se pudieron cargar los reels.');
     } finally {
       setLoading(false);
     }
   }, [applyPayload]);
 
   useEffect(() => {
+    if (!enabled) {
+      setLoading(false);
+      return;
+    }
     void refresh();
-  }, [refresh]);
+  }, [enabled, refresh]);
 
   const updateItem = useCallback((id: string, patch: Partial<ReelItem>) => {
     setItems((prev) => prev.map((item) => (item.id === id ? { ...item, ...patch } : item)));

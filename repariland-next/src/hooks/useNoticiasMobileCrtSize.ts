@@ -3,32 +3,24 @@ import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
 /** Pantalla CRT: más ancha que alta (5:4) — evita estiramiento vertical en móvil. */
 const CRT_ASPECT = 5 / 4;
-const BEZEL_CHROME_PX = 76;
-const STAND_AND_DOTS_PX = 84;
-const STAND_NO_DOTS_PX = 52;
-const STAGE_GAP_PX = 6;
+/** Estimación conservadora (marco + etiqueta CRT) para que no se recorte el monitor. */
+const BEZEL_CHROME_PX = 92;
+/** Base + cuello + puntos (valores reales suelen superar 76px). */
+const STAND_AND_DOTS_PX = 100;
+const STAND_NO_DOTS_PX = 58;
+const ZONE_SAFETY_PX = 16;
+/** ring-2 + sombra + padding del stage — margen derecho visible en todos los móviles. */
+const HORIZONTAL_GUTTER_PX = 28;
+const CRT_MAX_WIDTH_PX = 480;
 
-function getMonitoMaxPx(zoneHeight: number): number {
-  if (zoneHeight >= 560) return Math.min(zoneHeight * 0.34, 158);
-  if (zoneHeight >= 480) return Math.min(zoneHeight * 0.32, 142);
-  return Math.min(zoneHeight * 0.3, 126);
-}
-
-/**
- * iPhone SE y móviles bajos: diseño ya cuadra — sin puntos amarillos ni bajada extra.
- */
 function isNoticiasShortPhone(viewportHeight: number, viewportWidth: number): boolean {
   return viewportHeight <= 700 && viewportWidth <= 430;
 }
 
-/** Zona muy baja (legado compact). */
 function isNoticiasCompactZone(zoneHeight: number, viewportHeight: number): boolean {
   return zoneHeight < 460 || viewportHeight < 620;
 }
 
-/**
- * Pixel 7, Galaxy S, iPhone Pro Max, etc.: pantalla alta y ancha estándar.
- */
 function isNoticiasTallPhone(
   zoneHeight: number,
   viewportHeight: number,
@@ -42,82 +34,6 @@ function isNoticiasTallPhone(
     viewportWidth <= 480 &&
     zoneHeight >= 400
   );
-}
-
-function getNavTop(): number {
-  const navRail = document.querySelector<HTMLElement>('[data-app-dock] .dock-nav-rail');
-  const dock = document.querySelector<HTMLElement>('[data-app-dock]');
-  const vv = window.visualViewport;
-  const visibleBottom =
-    vv != null ? vv.offsetTop + vv.height : window.innerHeight;
-  const navTop = navRail?.getBoundingClientRect().top ?? visibleBottom;
-  const dockTop = dock?.getBoundingClientRect().top ?? navTop;
-  return Math.min(navTop, dockTop, visibleBottom);
-}
-
-/** Margen superior para bajar caricatura + monitor en pantallas altas (p. ej. Pixel 7). */
-function measureNoticiasOffsetTop(
-  screen: HTMLElement,
-  zoneHeight: number,
-  viewportHeight: number,
-): number {
-  const body = screen.querySelector<HTMLElement>('.mobile-screen__body');
-  const positioner = screen.querySelector<HTMLElement>('.noticias-mobile-stage-positioner');
-  const blockEl =
-    screen.querySelector<HTMLElement>('.noticias-mobile-stage') ?? positioner;
-  if (!body || !blockEl) return 0;
-
-  const bodyRect = body.getBoundingClientRect();
-  const blockRect = blockEl.getBoundingClientRect();
-  const blockHeight = Math.max(1, blockRect.height);
-  const slack = Math.max(0, bodyRect.height - blockHeight);
-
-  const ratio =
-    viewportHeight >= 900
-      ? 0.54
-      : viewportHeight >= 820
-        ? 0.5
-        : viewportHeight >= 740
-          ? 0.46
-          : viewportHeight >= 680
-            ? 0.42
-            : 0.36;
-  let offsetTop = Math.round(slack * ratio);
-
-  const minOffset = Math.round(
-    Math.min(
-      Math.max(zoneHeight * 0.09, 44),
-      viewportHeight >= 900 ? 84 : viewportHeight >= 820 ? 72 : viewportHeight >= 740 ? 64 : 56,
-    ),
-  );
-  offsetTop = Math.max(offsetTop, minOffset);
-
-  const tallBoost = Math.round(zoneHeight * 0.04 + Math.min(28, viewportHeight * 0.022));
-  offsetTop += tallBoost;
-
-  const header = screen.querySelector<HTMLElement>('.mobile-screen__header');
-  const headerBottom = header?.getBoundingClientRect().bottom ?? bodyRect.top;
-  const navTop = getNavTop();
-
-  if (positioner) {
-    screen.style.setProperty('--noticias-mobile-offset-top', `${offsetTop}px`);
-  }
-
-  const blockBottom = blockEl.getBoundingClientRect().bottom;
-  const gapNav = navTop - blockBottom;
-  if (gapNav < 14 && offsetTop > 10) {
-    offsetTop = Math.max(0, offsetTop - Math.ceil(14 - gapNav));
-    screen.style.setProperty('--noticias-mobile-offset-top', `${offsetTop}px`);
-  }
-
-  const blockTop = blockEl.getBoundingClientRect().top;
-  const gapTitle = blockTop - headerBottom;
-  if (gapTitle < 6) {
-    offsetTop += Math.ceil(6 - gapTitle);
-    screen.style.setProperty('--noticias-mobile-offset-top', `${offsetTop}px`);
-  }
-
-  return offsetTop;
 }
 
 function clearMobileOffsets(screen: HTMLElement): void {
@@ -171,6 +87,125 @@ function clearMobileProfile(screen: HTMLElement): void {
   screen.removeAttribute('data-noticias-show-swipe-hint');
 }
 
+function monitorMarginBottom(profile: MobileProfile, zoneHeight: number): number {
+  if (profile.compactZone || profile.shortPhone) {
+    return Math.round(Math.min(14, Math.max(6, zoneHeight * 0.022)));
+  }
+  if (profile.tallPhone) {
+    return Math.round(Math.min(40, Math.max(14, zoneHeight * 0.04 + 6)));
+  }
+  return Math.round(Math.min(28, Math.max(10, zoneHeight * 0.034 + 4)));
+}
+
+/** Altura total del bloque CRT (pantalla + marco + base) a partir del ancho. */
+function estimateCrtBlockHeight(width: number, standPx: number, monitorMb: number): number {
+  const screenH = Math.max(0, (width - 12) / CRT_ASPECT);
+  return screenH + BEZEL_CHROME_PX + standPx + monitorMb;
+}
+
+function setNumVar(screen: HTMLElement, name: string, value: number, unit = 'px'): boolean {
+  const raw = getComputedStyle(screen).getPropertyValue(name).trim();
+  const prev = parseFloat(raw) || 0;
+  const next = Math.round(value * 1000) / 1000;
+  if (Math.abs(prev - next) < (unit === 'px' ? 1 : 0.01)) return false;
+  screen.style.setProperty(name, unit === 'px' ? `${Math.round(next)}px` : String(next));
+  return true;
+}
+
+function getContentMaxWidth(screen: HTMLElement, viewportWidth: number): number {
+  const positioner = screen.querySelector<HTMLElement>('.noticias-mobile-stage-positioner');
+  const body = screen.querySelector<HTMLElement>('.mobile-screen__body');
+  const ref = positioner ?? body;
+  if (ref && ref.clientWidth > 0) {
+    return Math.max(160, ref.clientWidth - HORIZONTAL_GUTTER_PX);
+  }
+  const vv = window.visualViewport;
+  const vw = vv?.width ?? viewportWidth;
+  const pad =
+    body != null
+      ? parseFloat(getComputedStyle(body).paddingLeft) +
+        parseFloat(getComputedStyle(body).paddingRight)
+      : 12;
+  return Math.max(160, Math.floor(vw - pad - HORIZONTAL_GUTTER_PX));
+}
+
+function fitNoticiasCrtWidth(
+  zoneHeight: number,
+  maxWidthPx: number,
+  profile: MobileProfile,
+  standPx: number,
+  hintH: number,
+  monitorMb: number,
+): number {
+  const available = Math.max(
+    120,
+    zoneHeight - standPx - hintH - monitorMb - ZONE_SAFETY_PX,
+  );
+  const maxW = maxWidthPx;
+  const minW = Math.min(200, Math.floor(maxWidthPx * 0.82));
+
+  let width = Math.min(
+    Math.round((available - BEZEL_CHROME_PX) * CRT_ASPECT + 12),
+    maxW,
+    CRT_MAX_WIDTH_PX,
+  );
+  width = Math.max(width, minW);
+
+  while (width > minW && estimateCrtBlockHeight(width, standPx, monitorMb) > available) {
+    width -= 2;
+  }
+
+  return width;
+}
+
+/** Una sola pasada tras pintar: si el bloque real aún no cabe, reduce ancho (sin bucle). */
+function verifyNoticiasCrtFits(
+  screen: HTMLElement,
+  zoneHeight: number,
+  hintH: number,
+  minW: number,
+): number | null {
+  const monitorCol = screen.querySelector<HTMLElement>('.noticias-mobile-monitor-col');
+  if (!monitorCol || zoneHeight <= 0) return null;
+
+  const avail = zoneHeight - hintH - ZONE_SAFETY_PX;
+  const blockH = monitorCol.getBoundingClientRect().height;
+  if (blockH <= avail) return null;
+
+  const currentWidth =
+    parseFloat(getComputedStyle(screen).getPropertyValue('--noticias-crt-width')) || 0;
+  if (currentWidth <= 0) return null;
+
+  const ratio = (avail - 6) / blockH;
+  const next = Math.max(minW, Math.floor(currentWidth * ratio * 0.985));
+  return next < currentWidth - 1 ? next : null;
+}
+
+function verifyNoticiasCrtHorizontal(
+  screen: HTMLElement,
+  minW: number,
+): number | null {
+  const bezel = screen.querySelector<HTMLElement>('.noticias-crt-bezel');
+  const container =
+    screen.querySelector<HTMLElement>('.noticias-mobile-stage-positioner') ??
+    screen.querySelector<HTMLElement>('.mobile-screen__body');
+  if (!bezel || !container) return null;
+
+  const b = bezel.getBoundingClientRect();
+  const c = container.getBoundingClientRect();
+  const overflowRight = b.right - (c.right - 4);
+  const overflowLeft = c.left + 4 - b.left;
+  const overflow = Math.max(overflowRight, overflowLeft);
+  if (overflow <= 1) return null;
+
+  const currentWidth =
+    parseFloat(getComputedStyle(screen).getPropertyValue('--noticias-crt-width')) || 0;
+  if (currentWidth <= 0) return null;
+
+  const next = Math.max(minW, Math.floor(currentWidth - overflow - 6));
+  return next < currentWidth - 1 ? next : null;
+}
+
 export function useNoticiasMobileCrtSize(enabled: boolean) {
   useEffect(() => {
     if (!enabled) return;
@@ -181,6 +216,8 @@ export function useNoticiasMobileCrtSize(enabled: boolean) {
     if (!screen) return;
 
     const desktopMq = window.matchMedia('(min-width: 1024px)');
+    let lastSignature = '';
+    let verifyToken = '';
 
     const measure = () => {
       if (desktopMq.matches) {
@@ -189,7 +226,9 @@ export function useNoticiasMobileCrtSize(enabled: boolean) {
         screen.style.removeProperty('--noticias-monito-max-height');
         screen.style.removeProperty('--noticias-mobile-unit-scale');
         clearMobileOffsets(screen);
+        screen.style.removeProperty('--noticias-mobile-monitor-mb');
         clearMobileProfile(screen);
+        lastSignature = '';
         return;
       }
 
@@ -198,88 +237,102 @@ export function useNoticiasMobileCrtSize(enabled: boolean) {
         screen.style.removeProperty('--noticias-monito-max-height');
         screen.style.removeProperty('--noticias-mobile-unit-scale');
         clearMobileOffsets(screen);
+        screen.style.removeProperty('--noticias-mobile-monitor-mb');
         clearMobileProfile(screen);
+        lastSignature = '';
         return;
       }
 
-      const zoneVar = getComputedStyle(screen).getPropertyValue('--noticias-mobile-zone-height');
-      const zoneHeight = parseFloat(zoneVar) || 0;
+      const zoneHeight =
+        parseFloat(
+          getComputedStyle(screen).getPropertyValue('--noticias-mobile-zone-height'),
+        ) || 0;
       const vv = window.visualViewport;
-      const viewportWidth = vv?.width ?? window.innerWidth;
-      const viewportHeight = vv?.height ?? window.innerHeight;
+      const viewportWidth = Math.round(vv?.width ?? window.innerWidth);
+      const viewportHeight = Math.round(vv?.height ?? window.innerHeight);
 
       const profile = resolveMobileProfile(zoneHeight, viewportHeight, viewportWidth);
+      const monitorMb = monitorMarginBottom(profile, zoneHeight);
+      const hideDots = profile.shortPhone || profile.compactZone;
+      const standPx = hideDots ? STAND_NO_DOTS_PX : STAND_AND_DOTS_PX;
+      const hintEl = screen.querySelector<HTMLElement>('.noticias-mobile-swipe-hint');
+      const hintVisible =
+        profile.tallPhone &&
+        hintEl != null &&
+        getComputedStyle(hintEl).display !== 'none';
+      let hintH = hintVisible && hintEl ? Math.ceil(hintEl.getBoundingClientRect().height) : 0;
+      if (hintVisible && hintH < 24) hintH = 44;
+      const contentMaxW = getContentMaxWidth(screen, viewportWidth);
+      const minW = Math.min(200, Math.floor(contentMaxW * 0.82));
+
+      const signature = [
+        zoneHeight,
+        viewportWidth,
+        viewportHeight,
+        contentMaxW,
+        profile.compactZone ? 1 : 0,
+        profile.shortPhone ? 1 : 0,
+        profile.tallPhone ? 1 : 0,
+        hintH,
+      ].join('|');
+
+      if (signature === lastSignature) return;
+      lastSignature = signature;
+      verifyToken = '';
+
       applyMobileProfile(screen, profile);
 
-      const hideDots = profile.shortPhone || profile.compactZone;
-      const monitoH = getMonitoMaxPx(zoneHeight);
-      const standPx = hideDots ? STAND_NO_DOTS_PX : STAND_AND_DOTS_PX;
-      const availableForUnit = Math.max(160, zoneHeight - monitoH - standPx - STAGE_GAP_PX);
+      const width = fitNoticiasCrtWidth(
+        zoneHeight,
+        contentMaxW,
+        profile,
+        standPx,
+        hintH,
+        monitorMb,
+      );
 
-      let width = Math.min(viewportWidth * 0.92, 352);
-      const totalUnit = (width - 12) / CRT_ASPECT + BEZEL_CHROME_PX;
-      if (totalUnit > availableForUnit) {
-        const innerH = Math.max(120, availableForUnit - BEZEL_CHROME_PX);
-        width = Math.round(innerH * CRT_ASPECT + 12);
-        width = Math.min(width, Math.floor(viewportWidth * 0.92));
-        width = Math.max(width, Math.min(248, Math.floor(viewportWidth * 0.88)));
-      }
+      setNumVar(screen, '--noticias-mobile-monitor-mb', monitorMb);
+      setNumVar(screen, '--noticias-crt-width', width);
+      screen.style.setProperty('--noticias-crt-aspect', String(CRT_ASPECT));
+      screen.style.removeProperty('--noticias-monito-max-height');
+      screen.style.setProperty('--noticias-mobile-unit-scale', '1');
+      screen.style.setProperty('--noticias-mobile-translate-y', '0px');
 
-      screen.style.setProperty('--noticias-crt-width', `${width}px`);
-      screen.style.setProperty('--noticias-crt-aspect', `${CRT_ASPECT}`);
-      screen.style.setProperty('--noticias-monito-max-height', `${Math.round(monitoH)}px`);
-
-      const stage = screen.querySelector<HTMLElement>('.noticias-mobile-stage');
-      if (stage && zoneHeight > 0) {
-        const maxUnit = Math.max(140, zoneHeight * 0.96);
-        const natural = stage.scrollHeight;
-        const scale =
-          natural > maxUnit ? Math.max(0.72, Math.min(1, (maxUnit / natural) * 0.995)) : 1;
-        screen.style.setProperty(
-          '--noticias-mobile-unit-scale',
-          String(Math.round(scale * 1000) / 1000),
-        );
-      } else {
-        screen.style.setProperty('--noticias-mobile-unit-scale', '1');
-      }
-
-      if (profile.tallPhone) {
-        measureNoticiasOffsetTop(screen, zoneHeight, viewportHeight);
+      if (verifyToken !== signature) {
+        verifyToken = signature;
         requestAnimationFrame(() => {
-          measureNoticiasOffsetTop(screen, zoneHeight, viewportHeight);
+          if (lastSignature !== signature) return;
+          let fitted = verifyNoticiasCrtFits(screen, zoneHeight, hintH, minW);
+          if (fitted != null) {
+            setNumVar(screen, '--noticias-crt-width', fitted);
+          }
+          const fittedX = verifyNoticiasCrtHorizontal(screen, minW);
+          if (fittedX != null) {
+            setNumVar(screen, '--noticias-crt-width', fittedX);
+          }
         });
-      } else {
-        clearMobileOffsets(screen);
       }
     };
 
-    const stage = screen.querySelector('.noticias-mobile-stage');
-    const positioner = screen.querySelector('.noticias-mobile-stage-positioner');
     const body = screen.querySelector('.mobile-screen__body');
-    const hint = screen.querySelector('.noticias-mobile-swipe-hint');
+    const header = screen.querySelector('.mobile-screen__header');
     const dock = document.querySelector('[data-app-dock]');
+    const navRail = document.querySelector('[data-app-dock] .dock-nav-rail');
 
-    const cleanup = subscribeMobileLayout(
-      () => {
-        measure();
-        requestAnimationFrame(() => {
-          measure();
-          requestAnimationFrame(() => measure());
-        });
-      },
-      {
-        observe: [screen, body, positioner, stage, hint, dock],
-        mediaQueries: [desktopMq],
-      },
-    );
+    const cleanup = subscribeMobileLayout(measure, {
+      observe: [screen, body, header, navRail, dock],
+      mediaQueries: [desktopMq],
+    });
 
     return () => {
       cleanup();
+      lastSignature = '';
       screen.style.removeProperty('--noticias-crt-width');
       screen.style.removeProperty('--noticias-crt-aspect');
       screen.style.removeProperty('--noticias-monito-max-height');
       screen.style.removeProperty('--noticias-mobile-unit-scale');
       clearMobileOffsets(screen);
+      screen.style.removeProperty('--noticias-mobile-monitor-mb');
       clearMobileProfile(screen);
     };
   }, [enabled]);

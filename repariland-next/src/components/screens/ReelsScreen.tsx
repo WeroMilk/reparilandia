@@ -19,7 +19,7 @@ type ReelsScreenProps = {
 };
 
 export default function ReelsScreen({ isScreenActive = true }: ReelsScreenProps) {
-  const { items, storage, maxReels, maxDurationSec, loading, error, refresh } = useReels();
+  const { items, storage, maxReels, maxDurationSec, loading, error, refresh } = useReels(isScreenActive);
   const [initialReelId] = useState(readInitialReelId);
   const [adminOpen, setAdminOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
@@ -185,7 +185,7 @@ export default function ReelsScreen({ isScreenActive = true }: ReelsScreenProps)
         maxDurationSec={maxDurationSec}
         uploadEnabled={uploadEnabled}
         onClose={() => setAdminOpen(false)}
-        onRefresh={refresh}
+        onRefresh={() => refresh({ preferApi: true })}
         onLogout={handleLogout}
       />
     </div>

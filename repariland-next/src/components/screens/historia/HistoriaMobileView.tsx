@@ -41,6 +41,10 @@ const SLIDE_COUNT = 1 + storySlides.length;
 function TimelinePanel() {
   return (
     <article className="hm-panel hm-panel--timeline historia-panel">
+      <h2 className="hm-timeline__title">
+        <span className="hm-timeline__title-dot" aria-hidden />
+        Línea del tiempo
+      </h2>
       <div className="hm-panel__main hm-timeline">
         <div className="hm-timeline__et historia-et-col" aria-hidden>
           <img
@@ -54,14 +58,15 @@ function TimelinePanel() {
         </div>
 
         <div className="hm-timeline__copy">
-          <h2 className="hm-timeline__title">
-            <span className="hm-timeline__title-dot" aria-hidden />
-            Línea del tiempo
-          </h2>
           <ol className="historia-timeline-fit-copy hm-timeline__list">
-            {milestones.map((m) => (
+            {milestones.map((m, index) => (
               <li key={m.year} className="hm-timeline__item">
-                <span className="hm-timeline__year">{m.year}</span>
+                <div className="hm-timeline__marker">
+                  <span className="hm-timeline__year">{m.year}</span>
+                  {index < milestones.length - 1 ? (
+                    <span className="hm-timeline__connector" aria-hidden />
+                  ) : null}
+                </div>
                 <p className="hm-timeline__text">{m.text}</p>
               </li>
             ))}
@@ -86,19 +91,21 @@ function StoryPanel({
   return (
     <article className="hm-panel hm-panel--story historia-panel">
       <div className="hm-panel__main hm-story">
-        <div className="hm-story__figure historia-story-char">
-          <img
-            src={assetUrl(src)}
-            alt={alt}
-            className="hm-story__img mix-blend-lighten"
-            draggable={false}
-            loading="eager"
-            decoding="async"
-          />
+        <div className="hm-story__stack">
+          <div className="hm-story__figure historia-story-char">
+            <img
+              src={assetUrl(src)}
+              alt={alt}
+              className="hm-story__img mix-blend-lighten"
+              draggable={false}
+              loading="eager"
+              decoding="async"
+            />
+          </div>
           <h3 className="hm-story__name">{name}</h3>
-        </div>
-        <div className="hm-story__copy">
-          <p className="historia-story-fit-text hm-story__text">{text}</p>
+          <div className="hm-story__copy">
+            <p className="historia-story-fit-text hm-story__text">{text}</p>
+          </div>
         </div>
       </div>
     </article>

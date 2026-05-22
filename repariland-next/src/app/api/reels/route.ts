@@ -4,12 +4,20 @@ import { buildReelsApiPayload, getSeedReelsApiPayload } from '@/lib/reels/seedMa
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+/** Siempre 200: evita 500 en consola del navegador y mantiene el feed con seed/estático. */
 export async function GET() {
+  let payload = getSeedReelsApiPayload();
+
   try {
     const { getReelsManifest } = await import('@/lib/reels/storage');
     const { manifest, storage } = await getReelsManifest();
-    return NextResponse.json(buildReelsApiPayload(manifest, storage));
+    payload = buildReelsApiPayload(manifest, storage);
   } catch {
-    return NextResponse.json(getSeedReelsApiPayload());
+    // Manifiesto embebido / estático
   }
+
+  return NextResponse.json(payload, {
+    status: 200,
+    headers: { 'Cache-Control': 'no-store' },
+  });
 }
