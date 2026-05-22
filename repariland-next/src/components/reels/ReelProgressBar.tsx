@@ -7,6 +7,7 @@ import {
   useState,
   type PointerEvent,
   type RefObject,
+  type SyntheticEvent,
 } from 'react';
 
 type ReelProgressBarProps = {
@@ -88,7 +89,7 @@ export default function ReelProgressBar({
     [videoRef, effectiveDuration],
   );
 
-  const stopBubble = useCallback((e: PointerEvent) => {
+  const stopBubble = useCallback((e: SyntheticEvent) => {
     e.stopPropagation();
   }, []);
 
