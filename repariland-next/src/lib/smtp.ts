@@ -1,12 +1,10 @@
 import nodemailer from 'nodemailer';
 import { getFormToEmail } from '@/lib/resend';
 
+export { isSmtpConfigured } from '@/lib/smtp-config';
+
 const DEFAULT_SMTP_HOST = 'smtp-mail.outlook.com';
 const DEFAULT_SMTP_PORT = 587;
-
-export function isSmtpConfigured(): boolean {
-  return Boolean(process.env.SMTP_USER?.trim() && process.env.SMTP_PASS?.trim());
-}
 
 export async function sendSmtpEmail(options: {
   subject: string;

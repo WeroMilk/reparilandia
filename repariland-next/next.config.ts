@@ -1,9 +1,9 @@
 import type { NextConfig } from 'next';
 import path from 'path';
 
-/** Incluye dependencias del monorepo al empaquetar rutas API en Vercel. */
+/** Limita el tracing al paquete Next (evita referencias a ../package.json del monorepo en Vercel). */
 const nextConfig: NextConfig = {
-  outputFileTracingRoot: path.join(__dirname, '..'),
+  outputFileTracingRoot: path.join(__dirname),
   devIndicators: false,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',

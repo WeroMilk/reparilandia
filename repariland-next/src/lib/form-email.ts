@@ -1,7 +1,6 @@
-import { sendMicrosoftGraphEmail } from '@/lib/microsoft-mail';
 import { isOutlookOAuthConfigured } from '@/lib/outlook-oauth';
 import { isResendConfigured, sendResendEmail } from '@/lib/resend';
-import { isSmtpConfigured, sendSmtpEmail } from '@/lib/smtp';
+import { isSmtpConfigured } from '@/lib/smtp-config';
 
 export type FormEmailPayload = {
   subject: string;
@@ -58,12 +57,16 @@ async function sendViaProvider(provider: FormEmailProvider, options: FormEmailPa
     case 'resend':
       await sendResendEmail(options);
       return;
-    case 'outlook-oauth':
+    case 'outlook-oauth': {
+      const { sendMicrosoftGraphEmail } = await import('@/lib/microsoft-mail');
       await sendMicrosoftGraphEmail(options);
       return;
-    case 'smtp':
+    }
+    case 'smtp': {
+      const { sendSmtpEmail } = await import('@/lib/smtp');
       await sendSmtpEmail(options);
       return;
+    }
     default:
       throw new Error('SMTP_NOT_CONFIGURED');
   }

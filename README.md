@@ -57,29 +57,27 @@ npm run start
 
 ## Deploy (Vercel)
 
-El **`vercel.json` en la raíz del repo** fuerza **Next.js** y **`npm run build`** (y **`npm ci`** en `repariland-next` cuando el proyecto usa la raíz del monorepo). Los comandos también valen si **Root Directory** es **`repariland-next`**.
+**Obligatorio en Vercel:** **Settings → Build & Deployment → Root Directory** = **`repariland-next`**. Sin esto, `/api/cotizacion`, `/api/contacto` y `/api/form-email/health` responden **500**.
+
+Si el Root Directory ya es `repariland-next`, deja **Build Command** e **Install Command** vacíos (usa `repariland-next/vercel.json`).
 
 En **Project → Settings → Build & Deployment**:
 
 1. **Framework Preset** → **Next.js** (no Vite).
-2. **Build Command** → **vacío / por defecto**. Si aparece **`vite build`**, **elimínalo**: es un override viejo del panel y provoca el error 127.
-3. **Install Command** → vacío por defecto salvo override manual; `vercel.json` ya define el install.
-4. **Output Directory** → vacío (sin `dist`).
-5. **Node.js** → **20.x** recomendado.
+2. Si Root Directory = raíz del repo: **Build Command** vacío (usa `vercel.json`). Si Root Directory = `repariland-next`: build por defecto.
+3. **Output Directory** → vacío (sin `dist`).
+4. **Node.js** → **20.x**.
 
-Tras el build desde la raíz del repo, **`vercel.json`** enlaza **`.next`** → **`repariland-next/.next`** y **`public`** → **`repariland-next/public`**; si **`ln`** falla en el runner, hace **`cp -a`** (misma intención: que existan **`path0/.next`** y los PNG en **`/assets/*`**).
+Tras un deploy, comprueba: `https://www.reparilandia.com/api/form-email/health` debe responder JSON con `"configured": true` (no HTML de error 500).
 
-Opción más limpia en el panel: **Root Directory** = **`repariland-next`** y sin overrides de build; entonces no hace falta el `ln`.
-
-Variables de app en Vercel (o `.env` local, copia desde `repariland-next/.env.example`):
+Variables en Vercel (Production), copia desde `repariland-next/.env.example` — **no** subas `.env.local` al repo:
 
 | Variable | Uso |
 |----------|-----|
-| `SMTP_USER` + `SMTP_PASS` | **Recomendado:** envío directo desde Hotmail (contraseña de aplicación Microsoft) |
-| `FORM_TO_EMAIL` | Destino (por defecto `reparilandia@hotmail.com`) |
-| `RESEND_API_KEY` | Alternativa Resend; sin DNS verificado usa `onboarding@resend.dev` |
-| `RESEND_DOMAIN_VERIFIED` | `true` solo cuando reparilandia.com esté **Verified** en Resend |
-| `RESEND_FROM_EMAIL` | Remitente `@reparilandia.com` (solo con dominio verificado) |
+| `FORM_TO_EMAIL` | Destino (p. ej. `reparilandia@hotmail.com`) |
+| `RESEND_API_KEY` | API key de Resend |
+| `RESEND_DOMAIN_VERIFIED` | `true` cuando reparilandia.com esté **Verified** en Resend |
+| `RESEND_FROM_EMAIL` | p. ej. `Reparilandia <cotizaciones@reparilandia.com>` |
 
 ## Estructura relevante
 
