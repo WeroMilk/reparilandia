@@ -1,8 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs",
-  "installCommand": "npm ci --prefix repariland-next && npm ci",
-  "buildCommand": "npm run build --prefix repariland-next && rm -rf .next public && cp -a repariland-next/.next .next && cp -a repariland-next/public public",
   "redirects": [
     {
       "source": "/:path*",

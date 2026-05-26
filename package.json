@@ -12,6 +12,7 @@
     "dev:clean": "npm run dev:clean --prefix repariland-next",
     "dev:turbo": "npm run dev:turbo --prefix repariland-next",
     "build": "npm run build --prefix repariland-next",
+    "vercel-build": "npm run build --prefix repariland-next && node scripts/vercel-sync-next-output.cjs",
     "start": "npm run start --prefix repariland-next",
     "lint": "npm run lint --prefix repariland-next",
     "reels:add": "npm run reels:add --prefix repariland-next",

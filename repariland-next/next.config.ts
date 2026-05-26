@@ -1,9 +1,9 @@
 import type { NextConfig } from 'next';
 import path from 'path';
 
-/** Raíz de tracing para el árbol de archivos del paquete (monorepo / carpeta anidada). */
+/** Incluye dependencias del monorepo al empaquetar rutas API en Vercel. */
 const nextConfig: NextConfig = {
-  outputFileTracingRoot: path.join(process.cwd()),
+  outputFileTracingRoot: path.join(__dirname, '..'),
   devIndicators: false,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
