@@ -1,71 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { mapFormSendError } from '@/lib/form-api-errors';
+import { formEmailNotConfiguredMessage, isFormEmailConfigured, sendFormEmail } from '@/lib/form-email';
+import {
+  isAllowedImageFile,
+  isValidEmail,
+  MAX_FILE_BYTES,
+  MAX_FORM_FIELD,
+  trimFormField,
+} from '@/lib/form-validation';
+import { escapeHtml } from '@/lib/resend';
 
-const MAX_FILE_BYTES = 5 * 1024 * 1024;
-const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/heic', 'image/heif']);
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
 
 function requiredField(formData: FormData, key: string): string {
   const value = formData.get(key);
-  return typeof value === 'string' ? value.trim() : '';
-}
-
-async function sendQuoteEmail(payload: {
-  nombre: string;
-  email: string;
-  telefono: string;
-  servicio: string;
-  descripcion: string;
-  foto: File;
-}) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.QUOTE_TO_EMAIL || 'hola@reparilandia.com';
-  const from = process.env.QUOTE_FROM_EMAIL || 'Reparilandia <cotizaciones@reparilandia.com>';
-
-  if (!apiKey) {
-    return;
-  }
-
-  const buffer = Buffer.from(await payload.foto.arrayBuffer());
-  const attachmentContent = buffer.toString('base64');
-
-  const html = `
-    <h2>Nueva solicitud de cotización</h2>
-    <p><strong>Servicio:</strong> ${payload.servicio}</p>
-    <p><strong>Nombre:</strong> ${payload.nombre}</p>
-    <p><strong>Correo:</strong> ${payload.email}</p>
-    <p><strong>Teléfono:</strong> ${payload.telefono}</p>
-    <p><strong>Descripción:</strong></p>
-    <p>${payload.descripcion.replace(/\n/g, '<br>')}</p>
-    <p><em>La fotografía del equipo va adjunta a este correo.</em></p>
-  `;
-
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from,
-      to: [to],
-      reply_to: payload.email,
-      subject: `Cotización — ${payload.servicio} — ${payload.nombre}`,
-      html,
-      attachments: [
-        {
-          filename: payload.foto.name || 'equipo.jpg',
-          content: attachmentContent,
-        },
-      ],
-    }),
-  });
-
-  if (!response.ok) {
-    const detail = await response.text();
-    throw new Error(`Resend error ${response.status}: ${detail}`);
-  }
+  return typeof value === 'string' ? trimFormField(value, MAX_FORM_FIELD) : '';
 }
 
 export async function POST(request: NextRequest) {
+  if (!isFormEmailConfigured()) {
+    return NextResponse.json({ success: false, error: formEmailNotConfiguredMessage() }, { status: 503 });
+  }
+
   try {
     const formData = await request.formData();
 
@@ -80,6 +38,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Faltan campos obligatorios.' }, { status: 400 });
     }
 
+    if (!isValidEmail(email)) {
+      return NextResponse.json({ success: false, error: 'Correo electrónico no válido.' }, { status: 400 });
+    }
+
     if (!(foto instanceof File) || foto.size === 0) {
       return NextResponse.json({ success: false, error: 'La fotografía del equipo es obligatoria.' }, { status: 400 });
     }
@@ -88,17 +50,43 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'La imagen no debe superar 5 MB.' }, { status: 400 });
     }
 
-    if (!ALLOWED_IMAGE_TYPES.has(foto.type)) {
+    if (!isAllowedImageFile(foto)) {
       return NextResponse.json(
-        { success: false, error: 'Formato no válido. Usa JPG, PNG o WEBP.' },
+        { success: false, error: 'Formato no válido. Usa JPG, PNG, WEBP, GIF o HEIC.' },
         { status: 400 },
       );
     }
 
-    await sendQuoteEmail({ nombre, email, telefono, servicio, descripcion, foto });
+    const buffer = Buffer.from(await foto.arrayBuffer());
+    const attachmentContent = buffer.toString('base64');
+
+    const html = `
+      <h2>Nueva solicitud de cotización</h2>
+      <p><strong>Servicio:</strong> ${escapeHtml(servicio)}</p>
+      <p><strong>Nombre:</strong> ${escapeHtml(nombre)}</p>
+      <p><strong>Correo:</strong> ${escapeHtml(email)}</p>
+      <p><strong>Teléfono:</strong> ${escapeHtml(telefono)}</p>
+      <p><strong>Descripción:</strong></p>
+      <p>${escapeHtml(descripcion).replace(/\n/g, '<br>')}</p>
+      <p><em>La fotografía del equipo va adjunta a este correo.</em></p>
+    `;
+
+    await sendFormEmail({
+      replyTo: email,
+      subject: `Cotización — ${servicio} — ${nombre}`,
+      html,
+      attachments: [
+        {
+          filename: foto.name || 'equipo.jpg',
+          content: attachmentContent,
+        },
+      ],
+    });
 
     return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json({ success: false, error: 'No se pudo enviar la solicitud.' }, { status: 500 });
+  } catch (error) {
+    console.error('[api/cotizacion]', error);
+    const mapped = mapFormSendError(error);
+    return NextResponse.json({ success: false, error: mapped.message }, { status: mapped.status });
   }
 }

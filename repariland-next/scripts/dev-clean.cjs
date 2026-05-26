@@ -45,15 +45,30 @@ function freePort(p) {
   }
 }
 
+// Primero liberar puertos (servidor viejo); si borramos .next antes, el proceso vivo devuelve 404.
+for (const p of extraPorts) {
+  freePort(p);
+}
+
+if (process.platform === 'win32') {
+  try {
+    execSync('timeout /t 1 /nobreak >nul', { stdio: 'ignore', shell: true });
+  } catch {
+    /* noop */
+  }
+} else {
+  try {
+    execSync('sleep 0.5', { stdio: 'ignore' });
+  } catch {
+    /* noop */
+  }
+}
+
 rm(nextDir);
 
 // Symlink de deploy en raíz del monorepo (vercel.json) puede confundir otro `next dev`
 const rootNext = path.join(projectRoot, '..', '.next');
 rm(rootNext);
-
-for (const p of extraPorts) {
-  freePort(p);
-}
 
 function prepareFavicons() {
   const pyScript = path.join(projectRoot, 'scripts', 'prepare-favicon.py');
@@ -78,7 +93,10 @@ prepareFavicons();
 console.log('');
 console.log('  Reparilandia (Next.js App Router)');
 console.log('  → http://localhost:' + port);
-console.log('  Solo desde repariland-next. Si la página no carga: cierra pestañas localhost y Ctrl+Shift+R');
+console.log('  Carpeta: repariland-next (no abras otro puerto sin querer).');
+console.log('  Si ves 404 en main-app.js / app-pages-internals.js:');
+console.log('  1) Cierra TODOS los `npm run dev`  2) No hagas `npm run build` con dev encendido');
+console.log('  3) Vuelve a `npm run dev` aquí  4) Recarga con Ctrl+Shift+R');
 console.log('');
 
 const child = spawn('npx', ['next', 'dev', '-p', String(port)], {

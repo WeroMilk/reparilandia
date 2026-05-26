@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Shield, Cookie, FileText } from 'lucide-react';
@@ -10,10 +10,15 @@ const legalModalShell =
 
 export default function FooterLegal() {
   const [modal, setModal] = useState<ModalType>(null);
+  const [portalReady, setPortalReady] = useState(false);
   const year = new Date().getFullYear();
 
+  useEffect(() => {
+    setPortalReady(true);
+  }, []);
+
   const legalModal =
-    typeof document !== 'undefined' &&
+    portalReady &&
     createPortal(
       <AnimatePresence>
         {modal && (

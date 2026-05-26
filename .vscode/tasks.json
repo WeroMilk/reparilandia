@@ -1,0 +1,16 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Reparilandia: dev (limpio)",
+      "type": "npm",
+      "script": "dev:clean",
+      "path": "repariland-next",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    }
+  ]
+}

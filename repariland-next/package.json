@@ -22,6 +22,9 @@
     "reels:add": "node scripts/add-reel.cjs",
     "reels:list": "node scripts/add-reel.cjs list",
     "reels:remove": "node scripts/add-reel.cjs remove",
+    "verify:email": "node scripts/verify-form-email.cjs",
+    "verify:email:send": "node scripts/verify-form-email.cjs --send-test",
+    "setup:outlook-oauth": "node scripts/outlook-oauth-setup.cjs",
     "postinstall": "node scripts/fix-types-node-junction.cjs"
   },
   "dependencies": {
@@ -64,6 +67,7 @@
     "lucide-react": "^0.562.0",
     "next": "15.5.18",
     "next-themes": "^0.4.6",
+    "nodemailer": "^8.0.8",
     "react": "^19.0.0",
     "react-day-picker": "^9.13.0",
     "react-dom": "^19.0.0",
@@ -79,6 +83,7 @@
     "@eslint/eslintrc": "^3",
     "@playwright/test": "^1.60.0",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.23",

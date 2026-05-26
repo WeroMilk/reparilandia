@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Send, CheckCircle } from 'lucide-react';
 import { saveContact } from '@/lib/formActions';
+import { isValidEmail } from '@/lib/form-validation';
 
 export const CONTACT_FORM_ID = 'contact-form';
 
@@ -42,6 +43,7 @@ export default function ContactForm({
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     onLoadingChange?.(loading);
@@ -53,11 +55,31 @@ export default function ContactForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const payload = {
+      nombre: formData.nombre.trim(),
+      email: formData.email.trim(),
+      motivo: formData.motivo.trim(),
+      mensaje: formData.mensaje.trim(),
+    };
+
+    if (!payload.nombre || !payload.motivo || !payload.mensaje) {
+      setSubmitError('Completa todos los campos obligatorios.');
+      return;
+    }
+    if (!isValidEmail(payload.email)) {
+      setSubmitError('Introduce un correo electrónico válido.');
+      return;
+    }
+
     setLoading(true);
-    const result = await saveContact(formData);
+    setSubmitError(null);
+    const result = await saveContact(payload);
     setLoading(false);
     if (result.success) {
       setSubmitted(true);
+    } else {
+      setSubmitError(result.error ?? 'No se pudo enviar el mensaje. Intenta de nuevo.');
     }
   };
 
@@ -191,6 +213,12 @@ export default function ContactForm({
               />
             </div>
           </div>
+
+          {submitError && (
+            <p className="shrink-0 font-space text-xs text-red-300/95" role="alert">
+              {submitError}
+            </p>
+          )}
 
           {!hideInlineSubmit ? (
             <motion.button

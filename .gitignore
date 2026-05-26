@@ -1,5 +1,11 @@
 node_modules/
 .next/
 
+# Secretos locales — solo Vercel / .env.local (plantilla: repariland-next/.env.example)
+.env
+.env.local
+.env.*.local
+**/.env.local
+
 # Cursor debug (sesiones locales, no van al deploy)
 .cursor/debug-*.log

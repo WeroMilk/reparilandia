@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useReels } from '@/hooks/useReels';
 import { useReelsViewportHeight } from '@/hooks/useReelsViewportHeight';
@@ -20,7 +20,11 @@ type ReelsScreenProps = {
 
 export default function ReelsScreen({ isScreenActive = true }: ReelsScreenProps) {
   const { items, storage, maxReels, maxDurationSec, loading, error, refresh } = useReels(isScreenActive);
-  const [initialReelId] = useState(readInitialReelId);
+  const [initialReelId, setInitialReelId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setInitialReelId(readInitialReelId());
+  }, []);
   const [adminOpen, setAdminOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [authSecret, setAuthSecret] = useState('');
@@ -73,10 +77,10 @@ export default function ReelsScreen({ isScreenActive = true }: ReelsScreenProps)
 
   return (
     <div
-      className="reels-screen relative flex min-h-0 flex-1 flex-col overflow-hidden bg-black lg:px-4"
+      className="reels-screen relative flex min-h-0 flex-1 flex-col overflow-hidden bg-black max-lg:px-0 lg:items-center lg:justify-start lg:overflow-visible lg:px-4"
       data-screen="reels"
     >
-      <div className="reels-screen__frame relative mx-auto flex h-full min-h-0 w-full max-w-[28rem] flex-1 flex-col overflow-hidden lg:rounded-2xl lg:border lg:border-white/[0.08] lg:shadow-[0_0_80px_-20px_rgba(0,119,255,0.35)]">
+      <div className="reels-screen__frame relative mx-auto flex h-full min-h-0 w-full max-w-[28rem] flex-1 flex-col overflow-hidden max-lg:flex-1 lg:w-[28rem] lg:max-w-[min(100%,28rem)] lg:flex-none lg:rounded-2xl lg:border lg:border-cyan-400/20 lg:shadow-[0_0_80px_-16px_rgba(0,119,255,0.45),0_0_32px_-8px_rgba(34,211,238,0.22)]">
         <header className="reels-screen__header pointer-events-none z-40 flex shrink-0 items-start justify-between gap-3 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2">
           <div className="pointer-events-auto rounded-full border border-white/10 bg-black/45 px-3 py-1 backdrop-blur-md">
             <span className="font-space text-[11px] font-semibold uppercase tracking-[0.25em] text-white">

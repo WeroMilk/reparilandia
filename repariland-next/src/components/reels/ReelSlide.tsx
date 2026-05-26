@@ -194,8 +194,8 @@ export default function ReelSlide({
           aria-hidden
         />
 
-        <div className="reels-slide__chrome pointer-events-none absolute inset-0 z-[25] flex flex-col justify-end">
-          <div className="flex min-h-0 w-full flex-1 items-end justify-between gap-2 px-4 pb-1 pt-4 sm:px-5 sm:pb-2">
+        <div className="reels-slide__chrome pointer-events-none absolute inset-0 z-[30] flex flex-col justify-end">
+          <div className="reels-slide__chrome-row flex min-h-0 w-full flex-1 items-end justify-between gap-2 px-4 pb-1 pt-4 sm:px-5 sm:pb-2">
             <div className="pointer-events-none min-w-0 max-w-[78%] space-y-1 sm:max-w-[72%]">
               <h3 className="font-space text-base font-semibold uppercase tracking-wide text-white drop-shadow-md sm:text-lg">
                 {reel.title}

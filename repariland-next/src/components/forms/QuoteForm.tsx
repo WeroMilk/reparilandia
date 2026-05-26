@@ -2,6 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Send, CheckCircle, ImagePlus } from 'lucide-react';
 import { saveQuote } from '@/lib/formActions';
+import {
+  ALLOWED_IMAGE_ACCEPT,
+  isAllowedImageFile,
+  isValidEmail,
+  MAX_FILE_BYTES,
+} from '@/lib/form-validation';
 
 interface QuoteFormProps {
   serviceName: string;
@@ -12,7 +18,7 @@ const shellBase =
   'quote-form-shell w-full mx-auto rounded-2xl sm:rounded-3xl border border-white/10 bg-[rgba(12,12,18,0.94)] backdrop-blur-xl shadow-[0_32px_96px_rgba(0,0,0,0.65)] relative overflow-hidden ring-1 ring-white/[0.07] flex flex-col min-h-0 transition-[max-width] duration-300 ease-out';
 
 function quoteShellClass(hasPreview: boolean) {
-  return `${shellBase} ${hasPreview ? 'quote-form-shell--with-preview max-w-[min(96vw,58rem)]' : 'max-w-2xl'}`;
+  return `${shellBase} ${hasPreview ? 'quote-form-shell--with-preview max-w-[min(94vw,50rem)]' : 'max-w-2xl'}`;
 }
 
 const labelClass = 'block font-space text-white text-xs font-medium mb-1 sm:text-sm sm:mb-1.5 tracking-wide';
@@ -35,6 +41,14 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
   const fotoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    setFormData((prev) =>
+      prev.servicio_seleccionado === serviceName
+        ? prev
+        : { ...prev, servicio_seleccionado: serviceName },
+    );
+  }, [serviceName]);
+
+  useEffect(() => {
     return () => {
       if (fotoPreview) URL.revokeObjectURL(fotoPreview);
     };
@@ -48,6 +62,20 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
       setFotoPreview(null);
       return;
     }
+    if (file.size > MAX_FILE_BYTES) {
+      setFoto(null);
+      setFotoPreview(null);
+      setSubmitError('La imagen no debe superar 5 MB.');
+      e.target.value = '';
+      return;
+    }
+    if (!isAllowedImageFile(file)) {
+      setFoto(null);
+      setFotoPreview(null);
+      setSubmitError('Formato no válido. Usa JPG, PNG, WEBP, GIF o HEIC.');
+      e.target.value = '';
+      return;
+    }
     setFoto(file);
     setFotoPreview(URL.createObjectURL(file));
     setSubmitError(null);
@@ -55,6 +83,21 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const nombre = formData.nombre.trim();
+    const email = formData.email.trim();
+    const telefono = formData.telefono.trim();
+    const descripcion = formData.descripcion.trim();
+    const servicio = serviceName.trim() || formData.servicio_seleccionado.trim();
+
+    if (!nombre || !telefono || !descripcion || !servicio) {
+      setSubmitError('Completa todos los campos obligatorios.');
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setSubmitError('Introduce un correo electrónico válido.');
+      return;
+    }
     if (!foto) {
       setSubmitError('Sube una fotografía del equipo para continuar.');
       return;
@@ -64,11 +107,11 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
     setSubmitError(null);
 
     const payload = new FormData();
-    payload.append('nombre', formData.nombre);
-    payload.append('email', formData.email);
-    payload.append('telefono', formData.telefono);
-    payload.append('servicio_seleccionado', formData.servicio_seleccionado);
-    payload.append('descripcion', formData.descripcion);
+    payload.append('nombre', nombre);
+    payload.append('email', email);
+    payload.append('telefono', telefono);
+    payload.append('servicio_seleccionado', servicio);
+    payload.append('descripcion', descripcion);
     payload.append('foto', foto);
 
     const result = await saveQuote(payload);
@@ -117,7 +160,7 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
       <motion.div className="absolute top-0 right-0 w-px h-24 bg-gradient-to-b from-hologram-cyan/50 to-transparent" />
       <motion.div className="absolute top-0 left-0 w-24 h-px bg-gradient-to-r from-hologram-cyan/50 to-transparent" />
 
-      <motion.div className="flex shrink-0 items-start justify-between gap-3 border-b border-white/[0.06] px-4 pb-2.5 pt-3.5 sm:px-5 sm:pb-3 sm:pt-4">
+      <motion.div className="flex shrink-0 items-start justify-between gap-3 border-b border-white/[0.06] px-4 pb-2 pt-3 sm:px-5 sm:pb-2.5 sm:pt-3.5 lg:px-4 lg:pb-2 lg:pt-3">
         <motion.div className="min-w-0">
           <p className="font-space text-white text-[12px] uppercase tracking-[0.2em] mb-0.5 sm:text-xs">Cotización</p>
           <h3 className="font-orbitron text-base sm:text-lg md:text-xl text-holographic tracking-wider break-words leading-tight">
@@ -135,7 +178,7 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
       </motion.div>
 
       <motion.div
-        className={`min-h-0 flex-1 px-4 py-2.5 sm:px-5 sm:py-3 ${
+        className={`min-h-0 flex-1 px-4 py-2 sm:px-5 sm:py-2.5 lg:px-4 lg:py-2 ${
           hasPreview
             ? 'overflow-hidden max-lg:native-scroll max-lg:overflow-y-auto max-lg:overscroll-contain max-lg:scrollbar-hide'
             : 'native-scroll overflow-y-auto overscroll-contain scrollbar-hide'
@@ -223,7 +266,7 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
                   placeholder="Describe el problema o lo que necesitas reparar..."
                   className={`${inputClass} resize-none ${
                     hasPreview
-                      ? 'min-h-[4.5rem] max-lg:min-h-[4.25rem] lg:min-h-0 lg:max-h-[min(14dvh,6.5rem)]'
+                      ? 'min-h-[4.5rem] max-lg:min-h-[4.25rem] lg:min-h-0 lg:max-h-[min(11dvh,5.25rem)]'
                       : 'min-h-[4.5rem] max-lg:min-h-[4.25rem] sm:min-h-[96px]'
                   }`}
                   value={formData.descripcion}
@@ -247,7 +290,7 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
                 id="quote-foto"
                 name="foto"
                 type="file"
-                accept="image/jpeg,image/png,image/webp,image/gif"
+                accept={ALLOWED_IMAGE_ACCEPT}
                 required
                 className="sr-only"
                 onChange={handleFotoChange}
@@ -266,7 +309,7 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
                 <motion.div
                   className={`flex min-h-0 items-center justify-center overflow-hidden rounded-xl border border-white/12 bg-black/40 ${
                     hasPreview
-                      ? 'mt-0 min-h-[min(18dvh,7.5rem)] flex-1 p-1.5 sm:p-2 lg:min-h-0 lg:max-h-none'
+                      ? 'quote-form-preview mt-0 min-h-[min(16dvh,6.5rem)] flex-1 p-1.5 sm:p-2 lg:min-h-[min(12dvh,5.5rem)] lg:max-h-[min(22dvh,8.75rem)]'
                       : 'mt-2 p-2 sm:p-3'
                   }`}
                 >

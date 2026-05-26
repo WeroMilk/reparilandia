@@ -7,7 +7,7 @@ Landing futurista para Reparilandia (Hermosillo, Sonora, México). El código de
 - **Experiencia inmersiva holográfica**: intro con efectos de luz y partículas
 - **Navegación tipo app**: transiciones entre pantallas completas
 - **Pantallas**: Inicio, Historia, Servicios, Noticias, Contacto
-- **Formularios**: cotizaciones, citas/tours y contacto (por defecto solo consola; enlaza tu backend en `repariland-next/src/lib/formActions.ts`)
+- **Formularios**: cotizaciones y contacto se envían a **reparilandia@hotmail.com** (SMTP Hotmail recomendado o Resend; ver `repariland-next/.env.example`)
 - **WhatsApp**: enlaces directos para cotizar
 - **Footer legal**: privacidad, cookies y aviso legal en modales
 
@@ -71,7 +71,15 @@ Tras el build desde la raíz del repo, **`vercel.json`** enlaza **`.next`** → 
 
 Opción más limpia en el panel: **Root Directory** = **`repariland-next`** y sin overrides de build; entonces no hace falta el `ln`.
 
-Variables de app: `.env` / `.env.example` en el panel de Vercel.
+Variables de app en Vercel (o `.env` local, copia desde `repariland-next/.env.example`):
+
+| Variable | Uso |
+|----------|-----|
+| `SMTP_USER` + `SMTP_PASS` | **Recomendado:** envío directo desde Hotmail (contraseña de aplicación Microsoft) |
+| `FORM_TO_EMAIL` | Destino (por defecto `reparilandia@hotmail.com`) |
+| `RESEND_API_KEY` | Alternativa Resend; sin DNS verificado usa `onboarding@resend.dev` |
+| `RESEND_DOMAIN_VERIFIED` | `true` solo cuando reparilandia.com esté **Verified** en Resend |
+| `RESEND_FROM_EMAIL` | Remitente `@reparilandia.com` (solo con dominio verificado) |
 
 ## Estructura relevante
 

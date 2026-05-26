@@ -56,13 +56,17 @@ export default function AppModal({
     ariaLabel ?? (windowSubtitle && windowTitle ? `${windowSubtitle}: ${windowTitle}` : windowTitle);
 
   const overlayPadding = isMobile
-    ? 'px-2 pt-[max(0.5rem,env(safe-area-inset-top,0px))] pb-[calc(var(--dock-chrome-height)+env(safe-area-inset-bottom,0px)+0.375rem)]'
-    : 'p-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-[max(0.75rem,env(safe-area-inset-top,0px))] sm:p-4 safe-pbDock';
+    ? 'px-2 pt-[max(0.5rem,env(safe-area-inset-top,0px))] pb-[calc(var(--dock-chrome-height)+env(safe-area-inset-bottom,0px)+0.5rem)]'
+    : 'px-4 pt-[max(0.5rem,env(safe-area-inset-top,0px))] pb-[calc(var(--dock-chrome-height)+env(safe-area-inset-bottom,0px)+0.5rem)] sm:px-5';
 
-  const panelMaxWidth = isMobile ? 'max-w-[min(100%,28rem)]' : 'max-w-[min(96vw,58rem)]';
+  /** Centrado en la franja útil: borde superior ↔ rail de los 6 botones */
+  const overlayAlign = 'items-center justify-center';
 
-  const panelMaxHeight =
-    'max-h-[min(88dvh,calc(100dvh-var(--dock-chrome-height)-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-1.25rem))]';
+  const panelMaxWidth = isMobile ? 'max-w-[min(100%,28rem)]' : 'max-w-[min(94vw,50rem)]';
+
+  const panelMaxHeight = isMobile
+    ? 'max-h-[min(88dvh,calc(100dvh-var(--dock-chrome-height)-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-1.25rem))]'
+    : 'max-h-[min(80dvh,calc(100dvh-var(--dock-chrome-height)-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-2.75rem))]';
 
   return createPortal(
     <AnimatePresence>
@@ -72,7 +76,7 @@ export default function AppModal({
           role="dialog"
           aria-modal="true"
           aria-label={dialogLabel}
-          className={`fixed inset-0 z-[12000] flex items-center justify-center overflow-hidden ${overlayPadding} ${className}`}
+          className={`fixed inset-0 z-[12000] flex overflow-hidden ${overlayAlign} ${overlayPadding} ${className}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

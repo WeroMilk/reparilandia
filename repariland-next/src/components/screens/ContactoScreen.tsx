@@ -1,6 +1,7 @@
 ﻿'use client';
 
 import { useState } from 'react';
+import { useContactoDesktopLayout } from '@/hooks/useContactoDesktopLayout';
 import { useContactoMobileFit } from '@/hooks/useContactoMobileFit';
 import { useContactoMobileZone } from '@/hooks/useContactoMobileZone';
 import ContactForm, { CONTACT_FORM_ID } from '@/components/forms/ContactForm';
@@ -258,6 +259,7 @@ export default function ContactoScreen({ isScreenActive = true }: { isScreenActi
 
   useContactoMobileZone(isScreenActive);
   useContactoMobileFit(showMessage, isScreenActive);
+  useContactoDesktopLayout(isScreenActive);
 
   const whatsappUrl = getWhatsAppUrl();
 
@@ -278,18 +280,8 @@ export default function ContactoScreen({ isScreenActive = true }: { isScreenActi
         hideLeadOnMobile
         className="contacto-screen"
         data-screen="contacto"
-        headerOverlay={
-          <img
-            src={assetUrl(MONITO_SOMBRERO)}
-            alt=""
-            className="contacto-monito-header pointer-events-none hidden max-lg:!hidden select-none object-contain object-left-bottom drop-shadow-[0_14px_28px_rgba(0,0,0,0.5)] [image-rendering:auto] lg:block"
-            draggable={false}
-            loading="eager"
-            decoding="async"
-          />
-        }
       >
-        <motion.div className="contacto-mobile-stage flex min-h-0 w-full flex-col overflow-hidden max-lg:flex-1 max-lg:min-h-0 max-lg:max-h-full lg:flex-1 lg:justify-start lg:pt-2 xl:pt-3">
+        <motion.div className="contacto-mobile-stage flex min-h-0 w-full flex-col overflow-hidden max-lg:flex-1 max-lg:min-h-0 max-lg:max-h-full lg:flex-1 lg:justify-start lg:pt-5 xl:pt-7">
           <motion.div className="contacto-mobile-wrap flex min-h-0 w-full flex-col overflow-hidden max-lg:flex-1 max-lg:min-h-0 max-lg:h-full lg:hidden">
             <AnimatePresence mode="wait" initial={false}>
               {showMessage ? (
@@ -300,18 +292,34 @@ export default function ContactoScreen({ isScreenActive = true }: { isScreenActi
             </AnimatePresence>
           </motion.div>
 
-          <motion.div className="contacto-desktop-grid mx-auto hidden min-h-0 max-h-full w-full min-w-0 max-w-[min(100%,80rem)] flex-1 shrink-0 grid-cols-2 items-start justify-items-stretch gap-x-5 gap-y-1 overflow-visible pt-0 lg:grid lg:mt-0.5 lg:translate-y-1.5 xl:mt-1 xl:translate-y-2">
-            <motion.div className="contacto-monito-col relative flex w-full min-w-0 flex-col overflow-visible lg:translate-y-[4.5rem] xl:translate-y-[5.75rem]">
+          <div className="contacto-desktop-fit hidden min-h-0 w-full flex-1 items-center justify-center overflow-visible lg:flex">
+            <div className="contacto-desktop-canvas">
               <motion.div
-                className={`contacto-info-panel relative z-[30] ${panelOpaque} mt-0 p-1.5 lg:mt-8 xl:mt-9`}
-                initial={{ opacity: 0, x: -12 }}
-                animate={{ opacity: 1, x: 0 }}
+                className="contacto-desktop-grid grid grid-cols-2 items-start gap-5"
+                initial={false}
               >
-                <motion.div className="pointer-events-none absolute bottom-0 left-0 z-[1] h-10 w-[45%] rounded-[100%] bg-black/35 blur-lg" aria-hidden />
-                <div className="contacto-info-body relative z-[2] flex min-h-0 flex-col gap-0.5 overflow-visible px-1.5 py-1">
-                  <div className="flex flex-wrap items-start gap-x-1.5 gap-y-1 border-b border-white/[0.07] pb-1">
-                    <motion.div className="min-h-[4.25rem] min-w-[13.5rem] shrink-0" aria-hidden />
-                    <div className="ml-auto flex min-w-0 flex-col items-end gap-1.5">
+                <motion.div className="contacto-monito-col relative w-full min-w-0">
+                  <img
+                    src={assetUrl(MONITO_SOMBRERO)}
+                    alt=""
+                    className="contacto-monito-bust pointer-events-none select-none [image-rendering:auto]"
+                    draggable={false}
+                    loading="eager"
+                    decoding="async"
+                  />
+                  <motion.div
+                    className={`contacto-info-panel relative z-[20] ${panelOpaque} p-1.5`}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                  >
+                    <motion.div
+                      className="pointer-events-none absolute bottom-0 left-0 z-[1] h-10 w-[45%] rounded-[100%] bg-black/35 blur-lg"
+                      aria-hidden
+                    />
+                    <div className="contacto-info-body relative z-[3] flex flex-col gap-0.5 overflow-visible px-1.5 py-1">
+                      <div className="flex flex-wrap items-start gap-x-1.5 gap-y-1 border-b border-white/[0.07] pb-1">
+                        <div className="contacto-monito-spacer shrink-0" aria-hidden />
+                        <div className="ml-auto flex min-w-0 flex-col items-end gap-1.5">
                       <span className="font-space text-[11px] uppercase tracking-[0.2em] text-white/50">Síguenos</span>
                       <div className="flex flex-wrap justify-end gap-1.5">
                         <a href={facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className={socialBtn}>
@@ -405,32 +413,36 @@ export default function ContactoScreen({ isScreenActive = true }: { isScreenActi
                     WHATSAPP
                   </motion.button>
                 </div>
-              </motion.div>
-            </motion.div>
+                  </motion.div>
+                </motion.div>
 
-            <motion.div className="relative flex min-h-0 w-full min-w-0 flex-col overflow-hidden lg:translate-y-5 xl:translate-y-6">
-              <motion.div
-                className={`relative z-[12] ${panelOpaque} flex min-h-0 flex-1 flex-col overflow-hidden p-2`}
-                initial={{ opacity: 0, x: 12 }}
-                animate={{ opacity: 1, x: 0 }}
-              >
-                <motion.div className="relative z-[20] flex min-h-0 flex-1 flex-col overflow-hidden px-2 pb-1 pt-1">
-                  <p className="mb-0.5 font-orbitron text-[12px] tracking-[0.12em] text-cyan-100/85 md:text-[14px]">ENVIAR MENSAJE</p>
-                  <ContactForm embedded />
+                <motion.div className="contacto-form-col relative grid min-h-[520px] w-full min-w-0 grid-rows-[auto_1fr] overflow-visible">
+                  <motion.div
+                    className={`contacto-form-panel relative z-[12] ${panelOpaque} flex flex-col overflow-hidden p-2`}
+                    initial={{ opacity: 0, x: 12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                  >
+                    <motion.div className="relative z-[20] flex flex-col overflow-hidden px-2 pb-1 pt-1">
+                      <p className="mb-0.5 font-orbitron text-[12px] tracking-[0.12em] text-cyan-100/85 md:text-[14px]">
+                        ENVIAR MENSAJE
+                      </p>
+                      <ContactForm embedded />
+                    </motion.div>
+                  </motion.div>
+                  <motion.div className="contacto-ilustracion-wrap relative flex min-h-0 items-end justify-center overflow-visible pt-2">
+                    <img
+                      src={assetUrl(ILUSTRACION_CONTACTO)}
+                      alt=""
+                      className="contacto-ilustracion-img pointer-events-none block [image-rendering:auto]"
+                      draggable={false}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </motion.div>
                 </motion.div>
               </motion.div>
-              <motion.div className="relative z-[11] mx-auto mt-4 flex w-full max-w-[min(98%,34rem)] shrink-0 translate-y-4 justify-center xl:mt-5 xl:max-w-[min(100%,36rem)] xl:translate-y-5">
-                <img
-                  src={assetUrl(ILUSTRACION_CONTACTO)}
-                  alt=""
-                  className="pointer-events-none block h-auto w-full max-h-[min(24dvh,13.5rem)] object-contain object-bottom [image-rendering:auto] sm:max-h-[min(26dvh,14.5rem)] xl:max-h-[min(28dvh,16.25rem)]"
-                  draggable={false}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </motion.div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </motion.div>
       </MobileScreenLayout>
     </>

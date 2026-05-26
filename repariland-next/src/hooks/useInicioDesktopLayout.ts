@@ -1,14 +1,13 @@
 import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
-const STACK_GAP_PX = 16;
-const DOCK_CLEARANCE_PX = 10;
+const DOCK_CLEARANCE_PX = 14;
+const MIN_BOXES_HEIGHT_PX = 196;
 
 /**
- * Escritorio INICIO: reserva altura entre cabecera y dock para que garantía + 3 boxes
- * quepan enteros en cualquier monitor (sin tocar móvil).
+ * Reparto vertical en Inicio (escritorio): altura real para los 3 boxes con caricaturas.
  */
-export function useInicioDesktopFit(enabled: boolean) {
+export function useInicioDesktopLayout(enabled: boolean) {
   useEffect(() => {
     if (!enabled) return;
 
@@ -22,8 +21,8 @@ export function useInicioDesktopFit(enabled: boolean) {
     const clear = () => {
       screen.removeAttribute('data-inicio-desktop-ready');
       screen.style.removeProperty('--inicio-desktop-zone-height');
+      screen.style.removeProperty('--inicio-desktop-boxes-height');
       screen.style.removeProperty('--inicio-desktop-stack-max');
-      screen.style.removeProperty('--inicio-desktop-boxes-max');
     };
 
     const measure = () => {
@@ -34,9 +33,11 @@ export function useInicioDesktopFit(enabled: boolean) {
 
       const header = screen.querySelector<HTMLElement>('.mobile-screen__header');
       const hero = screen.querySelector<HTMLElement>('.inicio-desktop-hero');
-      const stack = screen.querySelector<HTMLElement>('.inicio-desktop-even');
+      const even = screen.querySelector<HTMLElement>('.inicio-desktop-even');
+      const trust = screen.querySelector<HTMLElement>('.inicio-desktop-trust');
+      const boxes = screen.querySelector<HTMLElement>('.inicio-desktop-boxes');
       const navRail = document.querySelector<HTMLElement>('[data-app-dock] .dock-nav-rail');
-      if (!header || !hero || !stack || !navRail) {
+      if (!header || !hero || !even || !navRail) {
         clear();
         return;
       }
@@ -50,27 +51,51 @@ export function useInicioDesktopFit(enabled: boolean) {
       const zoneHeight = Math.max(0, Math.round(zoneBottom - headerBottom));
 
       const heroHeight = Math.ceil(hero.getBoundingClientRect().height);
-      const stackMax = Math.max(
-        120,
-        zoneHeight - heroHeight - STACK_GAP_PX,
+      const trustHeight = trust ? Math.ceil(trust.getBoundingClientRect().height) : 0;
+      const evenStyles = window.getComputedStyle(even);
+      const evenGap =
+        parseFloat(evenStyles.rowGap || evenStyles.gap || '0') || 0;
+      const evenPad =
+        (parseFloat(evenStyles.paddingTop) || 0) +
+        (parseFloat(evenStyles.paddingBottom) || 0);
+      const evenMargin =
+        (parseFloat(evenStyles.marginTop) || 0) +
+        (parseFloat(evenStyles.marginBottom) || 0);
+
+      const stackMax = Math.max(0, zoneHeight - heroHeight);
+      const boxesHeight = Math.max(
+        MIN_BOXES_HEIGHT_PX,
+        stackMax - trustHeight - evenGap - evenPad - evenMargin,
       );
 
-      const boxesMax = Math.max(96, Math.round(stackMax * 0.52));
-
       screen.style.setProperty('--inicio-desktop-zone-height', `${zoneHeight}px`);
+      screen.style.setProperty('--inicio-desktop-boxes-height', `${boxesHeight}px`);
       screen.style.setProperty('--inicio-desktop-stack-max', `${stackMax}px`);
-      screen.style.setProperty('--inicio-desktop-boxes-max', `${boxesMax}px`);
       screen.setAttribute('data-inicio-desktop-ready', 'true');
+
+      if (boxes) {
+        void boxes.offsetHeight;
+      }
     };
 
     const header = screen.querySelector('.mobile-screen__header');
     const hero = screen.querySelector('.inicio-desktop-hero');
-    const stack = screen.querySelector('.inicio-desktop-even');
+    const even = screen.querySelector('.inicio-desktop-even');
+    const trust = screen.querySelector('.inicio-desktop-trust');
+    const boxes = screen.querySelector('.inicio-desktop-boxes');
     const navRail = document.querySelector('[data-app-dock] .dock-nav-rail');
     const dock = document.querySelector('[data-app-dock]');
 
-    return subscribeMobileLayout(measure, {
-      observe: [screen, header, hero, stack, navRail, dock],
+    const runMeasure = () => {
+      measure();
+      requestAnimationFrame(() => {
+        measure();
+        requestAnimationFrame(measure);
+      });
+    };
+
+    return subscribeMobileLayout(runMeasure, {
+      observe: [screen, header, hero, even, trust, boxes, navRail, dock],
       mediaQueries: [desktopMq],
     });
   }, [enabled]);
