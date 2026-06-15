@@ -25,6 +25,7 @@ export default function ReelSlide({
   const [muted, setMuted] = useState(true);
   const [shareFeedback, setShareFeedback] = useState<string | null>(null);
   const [orientation, setOrientation] = useState<VideoOrientation>('portrait');
+  const [displayDurationSec, setDisplayDurationSec] = useState(reel.durationSec);
   const [userPaused, setUserPaused] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [showPlayHint, setShowPlayHint] = useState(false);
@@ -33,8 +34,13 @@ export default function ReelSlide({
 
   const handleVideoMetadata = useCallback(() => {
     const video = videoRef.current;
-    if (!video?.videoWidth || !video?.videoHeight) return;
-    setOrientation(video.videoHeight >= video.videoWidth ? 'portrait' : 'landscape');
+    if (!video) return;
+    if (video.videoWidth && video.videoHeight) {
+      setOrientation(video.videoHeight >= video.videoWidth ? 'portrait' : 'landscape');
+    }
+    if (Number.isFinite(video.duration) && video.duration > 0) {
+      setDisplayDurationSec(Math.round(video.duration));
+    }
   }, []);
 
   const syncPlayingFromVideo = useCallback(() => {
@@ -46,7 +52,8 @@ export default function ReelSlide({
   useEffect(() => {
     setUserPaused(false);
     setPlaying(false);
-  }, [reel.id]);
+    setDisplayDurationSec(reel.durationSec);
+  }, [reel.id, reel.durationSec]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -200,12 +207,22 @@ export default function ReelSlide({
               <h3 className="font-space text-base font-semibold uppercase tracking-wide text-white drop-shadow-md sm:text-lg">
                 {reel.title}
               </h3>
-              {reel.caption ? (
+              {reel.externalUrl ? (
+                <a
+                  href={reel.externalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="pointer-events-auto inline-flex items-center gap-1 text-sm font-medium text-[#4DA3FF] underline decoration-[#4DA3FF]/50 underline-offset-2 drop-shadow hover:text-[#7bb8ff]"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Ver video completo
+                </a>
+              ) : reel.caption ? (
                 <p className="line-clamp-2 text-sm leading-snug text-white/88 drop-shadow">
                   {reel.caption}
                 </p>
               ) : null}
-              <p className="text-[11px] tabular-nums text-white/55">{reel.durationSec}s · Reparilandia</p>
+              <p className="text-[11px] tabular-nums text-white/55">{displayDurationSec}s · Reparilandia</p>
             </div>
 
             <div className="pointer-events-auto flex shrink-0 flex-col items-center justify-end pr-0 sm:pr-1">

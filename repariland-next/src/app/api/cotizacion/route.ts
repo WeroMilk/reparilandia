@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (foto.size > MAX_FILE_BYTES) {
-      return NextResponse.json({ success: false, error: 'La imagen no debe superar 5 MB.' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'La imagen no debe superar 4 MB.' }, { status: 400 });
     }
 
     if (!isAllowedImageFile(foto)) {

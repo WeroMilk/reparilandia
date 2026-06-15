@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
 const DOCK_CLEARANCE_PX = 14;
-const STAGE_GAP_PX = 2;
-const ICON_STACK_GAP_PX = 0;
+const STAGE_GAP_PX = 8;
+const ICON_STACK_GAP_PX = 10;
+const ICON_STACK_GAP_MAX_PX = 18;
 const ICON_SIZE_MIN_PX = 26;
 const ICON_SIZE_MAX_PX = 38;
 const ICON_ROW_FIRST = 6;
@@ -25,7 +26,7 @@ const SHORT_VIEWPORT_RANGE_PX = 160;
 const SHORT_ZONE_PX = 520;
 const SHORT_ZONE_RANGE_PX = 140;
 const COMPACT_THRESHOLD = 0.08;
-const MIN_BOTTOM_PX = 4;
+const MIN_BOTTOM_PX = 10;
 const ICON_SIZE_MIN_COMPACT_PX = 24;
 const HERO_MAX_PX_COMPACT = 132;
 
@@ -175,11 +176,11 @@ export function useServiciosMobileZone(enabled: boolean) {
         screen.setAttribute('data-servicios-small-zone', 'true');
         screen.style.setProperty(
           '--servicios-mobile-spacer-height',
-          `${Math.max(0, Math.round(2 * (1 - Math.max(compactFill, 0.35))))}px`,
+          `${Math.max(4, Math.round(6 * (1 - compactFill * 0.5)))}px`,
         );
         screen.style.setProperty(
           '--servicios-mobile-stage-pull-up',
-          `${Math.round(12 + Math.max(compactFill, 0.35) * 24)}px`,
+          `${Math.round(2 + compactFill * 6)}px`,
         );
       } else {
         screen.removeAttribute('data-servicios-compact-zone');
@@ -192,8 +193,8 @@ export function useServiciosMobileZone(enabled: boolean) {
       screen.style.setProperty(
         '--servicios-mobile-stage-gap',
         tallFill >= TALL_FILL_THRESHOLD
-          ? `${Math.round(4 + tallFill * 8)}px`
-          : `${Math.round(2 + compactFill * 4)}px`,
+          ? `${Math.round(8 + tallFill * 10)}px`
+          : `${Math.round(6 + compactFill * 6)}px`,
       );
 
       const intro = screen.querySelector<HTMLElement>('.servicios-mobile-intro');
@@ -210,6 +211,7 @@ export function useServiciosMobileZone(enabled: boolean) {
       const gap = Math.max(4, Math.min(8, Math.round(gridWidth * 0.012)));
       const introHeight = intro ? Math.ceil(intro.getBoundingClientRect().height) : 0;
       const stageGaps = STAGE_GAP_PX;
+      let iconStackGap = ICON_STACK_GAP_PX;
 
       if (finalPass) {
         const body = screen.querySelector<HTMLElement>('.mobile-screen__body');
@@ -228,7 +230,7 @@ export function useServiciosMobileZone(enabled: boolean) {
       let paginatorHeight = estimatePaginatorHeight(iconSize, gap);
       let cardMax = Math.max(
         CARD_MIN_PX,
-        zoneHeight - introHeight - paginatorHeight - stageGaps - ICON_STACK_GAP_PX,
+        zoneHeight - introHeight - paginatorHeight - stageGaps - iconStackGap,
       );
 
       while (cardMax < CARD_MIN_PX && iconSize > iconMinPx) {
@@ -236,11 +238,11 @@ export function useServiciosMobileZone(enabled: boolean) {
         paginatorHeight = estimatePaginatorHeight(iconSize, gap);
         cardMax = Math.max(
           CARD_MIN_PX,
-          zoneHeight - introHeight - paginatorHeight - stageGaps - ICON_STACK_GAP_PX,
+          zoneHeight - introHeight - paginatorHeight - stageGaps - iconStackGap,
         );
       }
 
-      screen.style.setProperty('--servicios-mobile-icon-stack-gap', `${ICON_STACK_GAP_PX}px`);
+      screen.style.setProperty('--servicios-mobile-icon-stack-gap', `${iconStackGap}px`);
       screen.style.setProperty('--servicios-mobile-icon-size', `${iconSize}px`);
       screen.style.setProperty('--servicios-mobile-icon-gap', `${gap}px`);
       screen.style.setProperty('--servicios-mobile-zone-height', `${zoneHeight}px`);
@@ -270,12 +272,24 @@ export function useServiciosMobileZone(enabled: boolean) {
 
       cardMax = Math.max(
         CARD_MIN_PX,
-        zoneHeight - introActual - paginatorActual - stageGaps - ICON_STACK_GAP_PX,
+        zoneHeight - introActual - paginatorActual - stageGaps - iconStackGap,
       );
       let heroMax = Math.max(64, cardMax - footerReserve);
 
-      let blockHeight = introActual + cardMax + paginatorActual + stageGaps;
+      let blockHeight = introActual + cardMax + paginatorActual + stageGaps + iconStackGap;
       let slack = Math.max(0, zoneHeight - blockHeight);
+
+      if (slack > 4) {
+        const gapBoost = Math.min(
+          ICON_STACK_GAP_MAX_PX - iconStackGap,
+          Math.round(slack * 0.3),
+        );
+        if (gapBoost > 0) {
+          iconStackGap += gapBoost;
+          slack -= gapBoost;
+          blockHeight = introActual + cardMax + paginatorActual + stageGaps + iconStackGap;
+        }
+      }
 
       if (slack > 2) {
         const iconBoost = Math.min(iconSizeMax - iconSize, Math.floor(slack / ICON_ROWS));
@@ -284,25 +298,27 @@ export function useServiciosMobileZone(enabled: boolean) {
           paginatorActual = estimatePaginatorHeight(iconSize, gap);
           cardMax = Math.max(
             CARD_MIN_PX,
-            zoneHeight - introActual - paginatorActual - stageGaps - ICON_STACK_GAP_PX,
+            zoneHeight - introActual - paginatorActual - stageGaps - iconStackGap,
           );
           heroMax = Math.max(64, cardMax - footerReserve);
-          blockHeight = introActual + cardMax + paginatorActual + stageGaps;
+          blockHeight = introActual + cardMax + paginatorActual + stageGaps + iconStackGap;
           slack = Math.max(0, zoneHeight - blockHeight);
         }
       }
 
       if (slack > 0) {
-        heroMax += slack;
-        slack = 0;
+        heroMax += Math.round(slack * 0.65);
+        slack = Math.round(slack * 0.35);
       }
 
-      const totalUsed = introActual + cardMax + paginatorActual + stageGaps;
+      const totalUsed = introActual + cardMax + paginatorActual + stageGaps + iconStackGap + slack;
       if (totalUsed > zoneHeight) {
         const excess = totalUsed - zoneHeight;
         cardMax = Math.max(CARD_MIN_PX, cardMax - excess);
         heroMax = Math.max(56, cardMax - footerReserve);
       }
+
+      screen.style.setProperty('--servicios-mobile-icon-stack-gap', `${iconStackGap}px`);
 
       screen.style.setProperty('--servicios-mobile-icon-size', `${iconSize}px`);
       screen.style.setProperty('--servicios-mobile-card-max-height', `${cardMax}px`);

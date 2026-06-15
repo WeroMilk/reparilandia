@@ -13,7 +13,7 @@ const projectRoot = path.join(__dirname, '..');
 const manifestPath = path.join(projectRoot, 'public', 'data', 'reels-manifest.json');
 const reelsDir = path.join(projectRoot, 'public', 'reels');
 const MAX_REELS = 5;
-const MAX_DURATION = 30;
+const MAX_DURATION = 90;
 const ALLOWED_EXT = new Set(['.mp4', '.webm']);
 
 function parseArgs(argv) {
@@ -135,7 +135,7 @@ function cmdAdd(args) {
   }
 
   if (durationSec === 0) {
-    console.warn('Aviso: no indicaste --duration. Comprueba que el video dure ≤ 30 s.');
+    console.warn('Aviso: no indicaste --duration. Comprueba que el video dure ≤ 90 s.');
   }
 
   const manifest = readManifest();

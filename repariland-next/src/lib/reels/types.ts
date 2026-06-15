@@ -2,6 +2,8 @@ export type ReelItem = {
   id: string;
   title: string;
   caption?: string;
+  /** Enlace externo (p. ej. video completo en Drive) */
+  externalUrl?: string;
   videoUrl: string;
   posterUrl?: string;
   durationSec: number;

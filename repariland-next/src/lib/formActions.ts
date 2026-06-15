@@ -4,6 +4,8 @@ type ApiResult = { success?: boolean; error?: string };
 
 async function readApiResult(response: Response): Promise<ApiResult> {
   const text = await response.text();
+  const isJson = (response.headers.get('content-type') ?? '').includes('application/json');
+
   if (!text) {
     if (response.status === 503) {
       return {
@@ -14,15 +16,22 @@ async function readApiResult(response: Response): Promise<ApiResult> {
     }
     return { success: false, error: 'El servidor no respondió correctamente.' };
   }
+  if (!isJson) {
+    return {
+      success: false,
+      error:
+        response.status >= 500
+          ? 'El servidor de formularios no responde. Si acabas de publicar cambios, espera 1–2 minutos y prueba de nuevo, o escríbenos por WhatsApp.'
+          : 'No se pudo procesar la respuesta del servidor.',
+    };
+  }
+
   try {
     return JSON.parse(text) as ApiResult;
   } catch {
     return {
       success: false,
-      error:
-        response.status >= 500
-          ? 'Error del servidor. Intenta más tarde.'
-          : 'No se pudo procesar la respuesta del servidor.',
+      error: 'No se pudo procesar la respuesta del servidor.',
     };
   }
 }

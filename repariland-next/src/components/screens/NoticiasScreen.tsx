@@ -141,20 +141,6 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
       <div className="noticias-mobile-stage-positioner max-lg:flex max-lg:min-h-0 max-lg:w-full max-lg:flex-1 max-lg:flex-col max-lg:items-center lg:contents">
         <motion.div className="noticias-stage noticias-mobile-stage flex min-h-0 w-full max-h-full flex-col items-center max-lg:overflow-visible overflow-hidden overscroll-none px-2 pb-0 max-lg:min-h-0 max-lg:flex-1 max-lg:justify-center max-lg:gap-0 max-lg:pt-0 sm:px-5 lg:h-full lg:flex-1 lg:mt-0.5 lg:justify-start lg:gap-1 lg:translate-x-0 lg:px-6 lg:pt-0 xl:mt-1 xl:translate-x-1 xl:px-8">
         <motion.div
-          className="noticias-monito-mobile pointer-events-none relative z-[16] mx-auto hidden w-full shrink-0 items-end justify-center px-1 pb-0"
-          aria-hidden
-        >
-          <img
-            src={assetUrl(MONITO_NOTICIAS)}
-            alt=""
-            className="noticias-monito-mobile-img block h-auto w-full bg-transparent object-contain object-bottom drop-shadow-[0_18px_36px_rgba(0,0,0,0.42)] [image-rendering:auto]"
-            draggable={false}
-            loading="lazy"
-            decoding="async"
-          />
-        </motion.div>
-
-        <motion.div
           className="noticias-mobile-content relative flex min-h-0 w-full max-w-[min(100%,60rem)] flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-none max-lg:shrink-0 max-lg:justify-start sm:max-w-[62rem] lg:h-full lg:max-h-full lg:flex-none lg:shrink-0 lg:justify-start"
           initial={false}
           animate={{ opacity: 1 }}
@@ -187,6 +173,20 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
                 </button>
 
                 <motion.div className="noticias-mobile-crt-wrap relative flex min-h-0 min-w-0 w-full max-w-full flex-col items-center max-lg:overflow-visible overflow-hidden max-lg:flex-none max-lg:shrink-0 max-lg:justify-start lg:flex-1 lg:justify-center">
+                  <motion.div className="noticias-crt-monitor-unit relative w-full max-w-full">
+                    <motion.div
+                      className="noticias-monito-mobile pointer-events-none lg:hidden"
+                      aria-hidden
+                    >
+                      <img
+                        src={assetUrl(MONITO_NOTICIAS)}
+                        alt=""
+                        className="noticias-monito-mobile-img block h-auto w-full bg-transparent object-contain object-bottom drop-shadow-[0_18px_36px_rgba(0,0,0,0.42)] [image-rendering:auto]"
+                        draggable={false}
+                        loading="eager"
+                        decoding="async"
+                      />
+                    </motion.div>
                   <motion.div className="noticias-crt-bezel relative mx-auto flex w-full max-w-full flex-col rounded-[6px] bg-gradient-to-b from-[#e8dfd2] via-[#cfc4b6] to-[#b9aea2] p-[clamp(7px,1.65vw,11px)] pb-[clamp(8px,1.75vw,12px)] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-4px_12px_rgba(0,0,0,0.08),0_14px_28px_rgba(0,0,0,0.42)] ring-2 ring-[#7a7269]/55 max-lg:min-h-0 max-lg:shrink-0 max-lg:flex-none max-lg:p-2 lg:max-w-[42rem] lg:min-h-0 lg:max-h-[min(56cqh,54dvh)] lg:flex-none lg:shrink-0 lg:p-3 lg:pb-3.5">
                     <motion.div className="mb-2 flex justify-center gap-1.5 opacity-[0.38]" aria-hidden>
                       {[0, 1, 2, 3, 4].map((i) => (
@@ -238,6 +238,7 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
                       <span className="truncate">Reparilandia</span>
                       <span className="shrink-0 tabular-nums tracking-[0.28em]">CRT‑1985</span>
                     </motion.div>
+                  </motion.div>
                   </motion.div>
 
                   <motion.div className="noticias-mobile-crt-foot relative mx-auto mt-0 flex w-full max-w-[42rem] flex-col items-center px-1">

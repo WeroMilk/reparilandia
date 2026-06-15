@@ -65,7 +65,7 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
     if (file.size > MAX_FILE_BYTES) {
       setFoto(null);
       setFotoPreview(null);
-      setSubmitError('La imagen no debe superar 5 MB.');
+      setSubmitError('La imagen no debe superar 4 MB.');
       e.target.value = '';
       return;
     }
@@ -303,7 +303,7 @@ export default function QuoteForm({ serviceName, onClose }: QuoteFormProps) {
                 }`}
               >
                 <ImagePlus className="h-5 w-5 shrink-0 text-hologram-cyan/90" />
-                <span className="truncate">{foto ? foto.name : 'Seleccionar imagen (máx. 5 MB)'}</span>
+                <span className="truncate">{foto ? foto.name : 'Seleccionar imagen (máx. 4 MB)'}</span>
               </button>
               {fotoPreview && (
                 <motion.div

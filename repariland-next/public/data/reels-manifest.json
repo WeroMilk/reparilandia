@@ -2,11 +2,20 @@
   "version": 1,
   "items": [
     {
+      "id": "reel-video-2026-06-08",
+      "title": "Reparilandia",
+      "externalUrl": "https://drive.google.com/file/d/14koetuV6OpmWXa-VfUENMOb-Lb0e6-6Y/view",
+      "videoUrl": "/reels/reel-video-2026-06-08.mp4",
+      "durationSec": 60,
+      "likeCount": 0,
+      "createdAt": "2026-06-08T12:09:12.000Z"
+    },
+    {
       "id": "reel-screen-0522-2026",
       "title": "Reparilandia",
       "caption": "Así se vive la experiencia en Reparilandia",
       "videoUrl": "/reels/reel-screen-0522-2026.mp4",
-      "durationSec": 30,
+      "durationSec": 60,
       "likeCount": 0,
       "createdAt": "2026-05-22T18:34:26.000Z"
     },

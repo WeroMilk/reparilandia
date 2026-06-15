@@ -34,7 +34,7 @@ const services: Service[] = [
     title: 'CARRITOS MONTABLES',
     description:
       'Diagnóstico, refacciones, batería, cableado y puesta a punto de carritos montables para niños.',
-    heroImage: '/assets/hero-reparamos-carritos.png',
+    heroImage: '/assets/hero-carritos-montables-taller.png',
     heroCaption: 'Reparamos carritos montables',
     quoteCta: 'Cotizar servicio',
   },
@@ -272,7 +272,7 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
       data-screen="servicios"
     >
       <motion.div
-        className="servicios-mobile-stage servicios-desktop-stage flex min-h-0 w-full flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-1 max-lg:max-h-full max-lg:gap-1 max-lg:overflow-hidden lg:mx-auto lg:mt-0 lg:h-full lg:max-h-full lg:w-full lg:flex-1 lg:max-w-[min(100%,56rem)] lg:gap-2 lg:overflow-hidden xl:gap-2.5"
+        className="servicios-mobile-stage servicios-desktop-stage flex min-h-0 w-full flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-1 max-lg:max-h-full max-lg:gap-2 max-lg:overflow-hidden lg:mx-auto lg:mt-0 lg:h-full lg:max-h-full lg:w-full lg:flex-1 lg:max-w-[min(100%,56rem)] lg:gap-2 lg:overflow-hidden xl:gap-2.5"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
@@ -303,9 +303,9 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
           />
         </motion.div>
 
-        <motion.div className="servicios-mobile-content-stack servicios-desktop-main flex min-h-0 w-full min-w-0 flex-col items-center max-lg:min-h-0 max-lg:flex-1 max-lg:justify-start max-lg:gap-0 max-lg:overflow-hidden max-lg:px-0 lg:min-h-0 lg:flex-1 lg:items-stretch lg:justify-start lg:gap-2 lg:overflow-hidden">
-        <motion.div className="servicios-mobile-carousel-zone servicios-desktop-carousel-zone flex min-h-0 w-full min-w-0 flex-col items-center justify-center overflow-hidden max-lg:min-h-0 max-lg:w-full max-lg:max-w-[min(100%,22.5rem)] max-lg:flex-1 max-lg:justify-start lg:min-h-0 lg:flex-1 lg:items-stretch lg:justify-start lg:overflow-hidden">
-        <motion.div className="servicios-mobile-center-block flex w-full min-h-0 min-w-0 flex-col items-center justify-center max-lg:h-full max-lg:max-h-full max-lg:w-full max-lg:flex-1 lg:flex lg:h-full lg:min-h-0 lg:w-full lg:max-w-full lg:flex-1 lg:items-stretch lg:justify-start">
+        <motion.div className="servicios-mobile-content-stack servicios-desktop-main flex min-h-0 w-full min-w-0 flex-col items-center max-lg:min-h-0 max-lg:flex-1 max-lg:justify-start max-lg:overflow-hidden max-lg:px-0 lg:min-h-0 lg:flex-1 lg:items-stretch lg:justify-start lg:gap-2 lg:overflow-hidden">
+        <motion.div className="servicios-mobile-carousel-zone servicios-desktop-carousel-zone flex min-h-0 w-full min-w-0 flex-col items-center justify-center overflow-hidden max-lg:min-h-0 max-lg:w-full max-lg:max-w-[min(100%,22.5rem)] max-lg:flex-none max-lg:justify-start lg:min-h-0 lg:flex-1 lg:items-stretch lg:justify-start lg:overflow-hidden">
+        <motion.div className="servicios-mobile-center-block flex w-full min-h-0 min-w-0 flex-col items-center justify-center max-lg:w-full max-lg:flex-none lg:flex lg:h-full lg:min-h-0 lg:w-full lg:max-w-full lg:flex-1 lg:items-stretch lg:justify-start">
         <div className="servicios-desktop-carousel-shell flex w-full min-h-0 max-lg:contents lg:min-h-0 lg:h-full lg:flex-1 lg:items-stretch lg:justify-center lg:gap-3 lg:px-1">
           <button
             type="button"
@@ -316,7 +316,7 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
             <ChevronLeft className="h-5 w-5" strokeWidth={2} />
           </button>
         <motion.div
-          className="servicios-mobile-card relative mx-auto flex min-h-0 w-full max-w-[min(100%,52rem)] flex-col overflow-hidden rounded-2xl border border-cyan-400/55 bg-hologram-darker shadow-none ring-1 ring-inset ring-cyan-400/28 max-lg:h-full max-lg:max-h-full max-lg:flex-1 lg:min-h-0 lg:w-full lg:min-w-0 lg:max-w-[min(100%,42rem)] lg:flex-1 lg:border-cyan-400/60 lg:shadow-[0_0_56px_-6px_rgba(34,211,238,0.52),0_0_22px_-2px_rgba(34,211,238,0.32)] lg:ring-cyan-400/32"
+          className="servicios-mobile-card relative mx-auto flex min-h-0 w-full max-w-[min(100%,52rem)] flex-col overflow-hidden rounded-2xl border border-cyan-400/55 bg-hologram-darker shadow-none ring-1 ring-inset ring-cyan-400/28 max-lg:flex-none lg:min-h-0 lg:w-full lg:min-w-0 lg:max-w-[min(100%,42rem)] lg:flex-1 lg:border-cyan-400/60 lg:shadow-[0_0_56px_-6px_rgba(34,211,238,0.52),0_0_22px_-2px_rgba(34,211,238,0.32)] lg:ring-cyan-400/32"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.08 }}

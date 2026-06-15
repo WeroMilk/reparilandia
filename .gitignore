@@ -1,5 +1,6 @@
 node_modules/
 .next/
+/public
 
 # Secretos locales — solo Vercel / .env.local (plantilla: repariland-next/.env.example)
 .env

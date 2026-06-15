@@ -1799,28 +1799,29 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      gap: var(--servicios-mobile-icon-stack-gap, 0);
+      gap: var(--servicios-mobile-icon-stack-gap, 0.625rem);
     }
 
     .servicios-screen[data-servicios-fill-zone][data-servicios-layout-ready] .servicios-mobile-carousel-zone {
-      flex: 1 1 0 !important;
-      min-height: var(--servicios-mobile-carousel-zone-height, 8rem);
-      height: auto;
-      max-height: none;
+      flex: 0 0 auto !important;
+      flex-grow: 0 !important;
+      min-height: 0;
+      height: var(--servicios-mobile-card-max-height, auto);
+      max-height: var(--servicios-mobile-card-max-height, 18rem);
     }
 
     .servicios-screen[data-servicios-fill-zone][data-servicios-layout-ready] .servicios-mobile-center-block {
-      flex: 1 1 0;
+      flex: 0 0 auto;
       min-height: 0;
-      height: 100%;
-      max-height: 100%;
+      height: var(--servicios-mobile-card-max-height, auto);
+      max-height: var(--servicios-mobile-card-max-height, 18rem);
     }
 
     .servicios-screen[data-servicios-fill-zone][data-servicios-layout-ready] .servicios-mobile-card {
-      flex: 1 1 0;
+      flex: 0 0 auto;
       min-height: 0;
-      height: 100%;
-      max-height: 100%;
+      height: var(--servicios-mobile-card-max-height, auto);
+      max-height: var(--servicios-mobile-card-max-height, 18rem);
     }
 
     .servicios-screen .servicios-mobile-stage {
@@ -1874,7 +1875,7 @@
 
     .servicios-screen[data-servicios-compact-zone][data-servicios-layout-ready] .servicios-mobile-stage {
       margin-top: calc(-1 * var(--servicios-mobile-stage-pull-up, 0px));
-      gap: clamp(0.04rem, 0.15dvh, 0.1rem);
+      gap: clamp(0.25rem, 0.8dvh, 0.5rem);
     }
 
     .servicios-screen[data-servicios-small-zone][data-servicios-layout-ready] .servicios-mobile-stage {
@@ -1962,8 +1963,8 @@
     }
 
     .servicios-screen[data-servicios-fill-zone][data-servicios-layout-ready] .servicios-mobile-spacer {
-      min-height: 0;
-      height: 0;
+      min-height: var(--servicios-mobile-spacer-height, clamp(0.25rem, 0.9dvh, 0.5rem));
+      height: var(--servicios-mobile-spacer-height, clamp(0.25rem, 0.9dvh, 0.5rem));
     }
 
     .servicios-screen .servicios-mobile-guarantee-wrap {
@@ -1995,7 +1996,7 @@
       max-height: none;
       justify-content: flex-start;
       overflow: hidden;
-      gap: var(--servicios-mobile-icon-stack-gap, 0);
+      gap: var(--servicios-mobile-icon-stack-gap, 0.625rem);
     }
 
     .servicios-screen[data-servicios-layout-ready] .servicios-mobile-content-stack.servicios-desktop-main {
@@ -2012,12 +2013,12 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      flex: 1 1 0 !important;
-      flex-grow: 1 !important;
-      flex-shrink: 1 !important;
-      min-height: var(--servicios-mobile-carousel-zone-height, 8rem);
-      height: auto;
-      max-height: none;
+      flex: 0 0 auto !important;
+      flex-grow: 0 !important;
+      flex-shrink: 0 !important;
+      min-height: 0;
+      height: var(--servicios-mobile-card-max-height, auto);
+      max-height: var(--servicios-mobile-card-max-height, 18rem);
       width: 100%;
       overflow: hidden;
       padding: 0;
@@ -2051,12 +2052,12 @@
     }
 
     .servicios-screen[data-servicios-layout-ready] .servicios-mobile-center-block {
-      flex: 1 1 0;
-      flex-grow: 1;
-      flex-shrink: 1;
+      flex: 0 0 auto;
+      flex-grow: 0;
+      flex-shrink: 0;
       min-height: 0;
-      max-height: 100%;
-      height: 100%;
+      height: var(--servicios-mobile-card-max-height, auto);
+      max-height: var(--servicios-mobile-card-max-height, 18rem);
       width: 100%;
       justify-content: flex-start;
     }
@@ -2077,10 +2078,10 @@
     }
 
     .servicios-screen[data-servicios-layout-ready] .servicios-mobile-card {
-      flex: 1 1 0;
+      flex: 0 0 auto;
       min-height: 0;
-      max-height: 100%;
-      height: 100%;
+      height: var(--servicios-mobile-card-max-height, auto);
+      max-height: var(--servicios-mobile-card-max-height, 18rem);
       width: 100%;
     }
 
@@ -2098,20 +2099,20 @@
       width: 100%;
       max-width: min(100%, 22.5rem);
       margin-inline: auto;
-      margin-top: auto !important;
+      margin-top: 0 !important;
       overflow: visible;
       position: relative;
-      z-index: 3;
+      z-index: 1;
       justify-content: flex-start;
-      gap: clamp(0.08rem, 0.28dvh, 0.18rem);
+      gap: clamp(0.2rem, 0.65dvh, 0.4rem);
       padding-top: 0;
-      padding-bottom: 0;
+      padding-bottom: clamp(0.15rem, 0.5dvh, 0.35rem);
     }
 
     .servicios-screen[data-servicios-layout-ready] .servicios-mobile-icon-grid {
       flex-shrink: 0;
-      padding-top: 0;
-      padding-bottom: 0.05rem;
+      padding-top: 0.1rem;
+      padding-bottom: 0.12rem;
     }
 
     .servicios-screen[data-servicios-layout-ready] .servicios-mobile-embla {
@@ -2490,9 +2491,9 @@
       padding-right: 0.125rem;
     }
 
-    /* Noticias — monitor maximizado entre título y dock (caricatura oculta en móvil) */
+    /* Noticias — caricatura + monitor entre título y dock */
     .noticias-screen {
-      --noticias-mobile-monito-mb: 0px;
+      --noticias-mobile-monito-mb: 2px;
       --noticias-mobile-monitor-mb: clamp(0.875rem, 4dvh, 2.5rem);
       --noticias-mobile-dots-reserve: clamp(1.65rem, 5dvh, 2.15rem);
     }
@@ -2668,26 +2669,32 @@
     }
 
     .noticias-monito-mobile {
-      display: none !important;
-      visibility: hidden;
-      flex: 0 0 0;
+      display: flex !important;
+      visibility: visible;
+      flex: 0 0 auto;
       flex-shrink: 0;
-      margin: 0 !important;
-      padding: 0 !important;
-      width: 0;
-      max-height: 0 !important;
-      min-height: 0 !important;
+      align-items: center;
+      justify-content: center;
+      width: min(var(--noticias-crt-width, 100%), 100%);
+      max-width: 100%;
+      margin: 0 auto var(--noticias-mobile-monito-mb, 2px);
+      padding: 0;
+      max-height: var(--noticias-monito-max-height, clamp(3.25rem, 15dvh, 6.5rem));
+      min-height: 0;
       overflow: hidden;
       pointer-events: none;
     }
 
     .noticias-monito-mobile img,
     .noticias-monito-mobile-img {
-      display: none !important;
-      width: 0;
-      height: 0;
-      max-height: 0;
-      margin: 0;
+      display: block !important;
+      width: auto;
+      height: auto;
+      max-height: var(--noticias-monito-max-height, clamp(3.25rem, 15dvh, 6.5rem));
+      max-width: min(94%, var(--noticias-crt-width, 100%));
+      margin-inline: auto;
+      object-fit: contain;
+      object-position: bottom center;
     }
 
     .noticias-mobile-content {

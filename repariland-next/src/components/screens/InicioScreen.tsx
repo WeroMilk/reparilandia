@@ -138,7 +138,7 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
     const observer = new MutationObserver(reinit);
     observer.observe(screen, {
       attributes: true,
-      attributeFilter: ['data-inicio-layout-ready'],
+      attributeFilter: ['data-inicio-layout-ready', 'data-inicio-fill-zone', 'data-inicio-compact-zone'],
     });
     window.addEventListener('resize', reinit);
     reinit();
@@ -170,7 +170,7 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
                 quality={100}
                 placeholder="empty"
                 sizes="(max-width: 1023px) min(96vw, 40rem)"
-                className="inicio-mobile-logo mx-auto block h-auto w-full max-w-[min(96vw,40rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)]"
+                className="inicio-mobile-logo mx-auto block h-auto w-full max-w-[min(98vw,46rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)]"
                 draggable={false}
               />
             </div>

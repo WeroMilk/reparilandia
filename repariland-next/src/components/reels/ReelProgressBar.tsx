@@ -42,9 +42,12 @@ export default function ReelProgressBar({
   const syncDuration = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
-    if (Number.isFinite(video.duration) && video.duration > 0) {
-      setDuration(video.duration);
-    } else if (fallbackDurationSec > 0) {
+    const fromVideo = video.duration;
+    if (Number.isFinite(fromVideo) && fromVideo > 0) {
+      setDuration(fromVideo);
+      return;
+    }
+    if (fallbackDurationSec > 0) {
       setDuration(fallbackDurationSec);
     }
   }, [videoRef, fallbackDurationSec]);
@@ -61,6 +64,8 @@ export default function ReelProgressBar({
     video.addEventListener('timeupdate', onTimeUpdate);
     video.addEventListener('durationchange', syncDuration);
     video.addEventListener('loadedmetadata', syncDuration);
+    video.addEventListener('loadeddata', syncDuration);
+    video.addEventListener('canplay', syncDuration);
     syncDuration();
     onTimeUpdate();
 
@@ -68,6 +73,8 @@ export default function ReelProgressBar({
       video.removeEventListener('timeupdate', onTimeUpdate);
       video.removeEventListener('durationchange', syncDuration);
       video.removeEventListener('loadedmetadata', syncDuration);
+      video.removeEventListener('loadeddata', syncDuration);
+      video.removeEventListener('canplay', syncDuration);
     };
   }, [videoRef, isActive, scrubbing, syncDuration]);
 

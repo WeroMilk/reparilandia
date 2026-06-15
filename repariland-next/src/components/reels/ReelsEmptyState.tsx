@@ -28,7 +28,7 @@ export default function ReelsEmptyState({ onOpenAdmin, storage }: ReelsEmptyStat
           REELS
         </h2>
         <p className="text-sm leading-relaxed text-white/62">
-          Pronto verás aquí los mejores momentos del taller. Máximo 5 videos de 30 segundos.
+          Pronto verás aquí los mejores momentos del taller. Máximo 5 videos de hasta 90 segundos.
         </p>
         <p className="text-xs text-white/45">
           Añade videos con:{' '}

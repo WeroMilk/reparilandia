@@ -10,7 +10,7 @@ export const SCREEN_ASSET_PATHS = [
   '/assets/historia-panel-2.png',
   '/assets/historia-panel-3.png',
   '/assets/historia-panel-4.png',
-  '/assets/hero-reparamos-carritos.png',
+  '/assets/hero-carritos-montables-taller.png',
   '/assets/noticias-monito-nave.png',
   '/assets/contacto-monito-izq-busto.png',
 ] as const;

@@ -12,6 +12,18 @@ const ZONE_SAFETY_PX = 16;
 /** ring-2 + sombra + padding del stage — margen derecho visible en todos los móviles. */
 const HORIZONTAL_GUTTER_PX = 28;
 const CRT_MAX_WIDTH_PX = 480;
+const MONITO_RESERVE_MIN_PX = 52;
+const MONITO_RESERVE_MAX_PX = 118;
+const MONITO_BOTTOM_GAP_PX = 2;
+
+function monitoReservePx(zoneHeight: number, profile: MobileProfile): number {
+  if (profile.compactZone || profile.shortPhone) {
+    return Math.round(Math.min(68, Math.max(MONITO_RESERVE_MIN_PX, zoneHeight * 0.13)));
+  }
+  return Math.round(
+    Math.min(MONITO_RESERVE_MAX_PX, Math.max(MONITO_RESERVE_MIN_PX, zoneHeight * 0.17)),
+  );
+}
 
 function isNoticiasShortPhone(viewportHeight: number, viewportWidth: number): boolean {
   return viewportHeight <= 700 && viewportWidth <= 430;
@@ -136,10 +148,11 @@ function fitNoticiasCrtWidth(
   standPx: number,
   hintH: number,
   monitorMb: number,
+  monitoH: number,
 ): number {
   const available = Math.max(
     120,
-    zoneHeight - standPx - hintH - monitorMb - ZONE_SAFETY_PX,
+    zoneHeight - standPx - hintH - monitorMb - monitoH - ZONE_SAFETY_PX,
   );
   const maxW = maxWidthPx;
   const minW = Math.min(200, Math.floor(maxWidthPx * 0.82));
@@ -179,6 +192,36 @@ function verifyNoticiasCrtFits(
   const ratio = (avail - 6) / blockH;
   const next = Math.max(minW, Math.floor(currentWidth * ratio * 0.985));
   return next < currentWidth - 1 ? next : null;
+}
+
+function updateMonitoOverlayHeight(screen: HTMLElement, reservedPx?: number): void {
+  if (typeof reservedPx === 'number' && reservedPx > 0) {
+    screen.style.setProperty(
+      '--noticias-monito-max-height',
+      `${Math.max(MONITO_RESERVE_MIN_PX, reservedPx - MONITO_BOTTOM_GAP_PX)}px`,
+    );
+    return;
+  }
+
+  const header = screen.querySelector<HTMLElement>('.mobile-screen__header');
+  const monito = screen.querySelector<HTMLElement>('.noticias-monito-mobile');
+  const monitor = screen.querySelector<HTMLElement>('.noticias-crt-bezel');
+  if (!header || !monitor) {
+    screen.style.removeProperty('--noticias-monito-max-height');
+    return;
+  }
+
+  const gap = Math.round(
+    monitor.getBoundingClientRect().top -
+      (monito?.getBoundingClientRect().top ?? header.getBoundingClientRect().bottom) -
+      MONITO_BOTTOM_GAP_PX,
+  );
+  if (gap < 20) {
+    screen.style.setProperty('--noticias-monito-max-height', `${Math.max(16, gap)}px`);
+    return;
+  }
+
+  screen.style.setProperty('--noticias-monito-max-height', `${Math.max(20, gap)}px`);
 }
 
 function verifyNoticiasCrtHorizontal(
@@ -234,12 +277,12 @@ export function useNoticiasMobileCrtSize(enabled: boolean) {
 
       if (!screen.hasAttribute('data-noticias-layout-ready')) {
         screen.style.removeProperty('--noticias-crt-width');
-        screen.style.removeProperty('--noticias-monito-max-height');
         screen.style.removeProperty('--noticias-mobile-unit-scale');
         clearMobileOffsets(screen);
         screen.style.removeProperty('--noticias-mobile-monitor-mb');
         clearMobileProfile(screen);
         lastSignature = '';
+        requestAnimationFrame(() => updateMonitoOverlayHeight(screen));
         return;
       }
 
@@ -264,6 +307,7 @@ export function useNoticiasMobileCrtSize(enabled: boolean) {
       if (hintVisible && hintH < 24) hintH = 44;
       const contentMaxW = getContentMaxWidth(screen, viewportWidth);
       const minW = Math.min(200, Math.floor(contentMaxW * 0.82));
+      const monitoH = monitoReservePx(zoneHeight, profile);
 
       const signature = [
         zoneHeight,
@@ -274,6 +318,7 @@ export function useNoticiasMobileCrtSize(enabled: boolean) {
         profile.shortPhone ? 1 : 0,
         profile.tallPhone ? 1 : 0,
         hintH,
+        monitoH,
       ].join('|');
 
       if (signature === lastSignature) return;
@@ -281,6 +326,7 @@ export function useNoticiasMobileCrtSize(enabled: boolean) {
       verifyToken = '';
 
       applyMobileProfile(screen, profile);
+      updateMonitoOverlayHeight(screen, monitoH);
 
       const width = fitNoticiasCrtWidth(
         zoneHeight,
@@ -289,12 +335,12 @@ export function useNoticiasMobileCrtSize(enabled: boolean) {
         standPx,
         hintH,
         monitorMb,
+        monitoH,
       );
 
       setNumVar(screen, '--noticias-mobile-monitor-mb', monitorMb);
       setNumVar(screen, '--noticias-crt-width', width);
       screen.style.setProperty('--noticias-crt-aspect', String(CRT_ASPECT));
-      screen.style.removeProperty('--noticias-monito-max-height');
       screen.style.setProperty('--noticias-mobile-unit-scale', '1');
       screen.style.setProperty('--noticias-mobile-translate-y', '0px');
 
@@ -310,17 +356,21 @@ export function useNoticiasMobileCrtSize(enabled: boolean) {
           if (fittedX != null) {
             setNumVar(screen, '--noticias-crt-width', fittedX);
           }
+          updateMonitoOverlayHeight(screen, monitoH);
         });
       }
     };
 
     const body = screen.querySelector('.mobile-screen__body');
     const header = screen.querySelector('.mobile-screen__header');
+    const monitoMobile = screen.querySelector('.noticias-monito-mobile');
+    const monitorUnit = screen.querySelector('.noticias-crt-monitor-unit');
+    const bezel = screen.querySelector('.noticias-crt-bezel');
     const dock = document.querySelector('[data-app-dock]');
     const navRail = document.querySelector('[data-app-dock] .dock-nav-rail');
 
     const cleanup = subscribeMobileLayout(measure, {
-      observe: [screen, body, header, navRail, dock],
+      observe: [screen, body, header, monitoMobile, monitorUnit, bezel, navRail, dock],
       mediaQueries: [desktopMq],
     });
 

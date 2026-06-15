@@ -1,7 +1,8 @@
 /** Validación compartida (cliente y API) para cotización y contacto. */
 
 export const MAX_FORM_FIELD = 4000;
-export const MAX_FILE_BYTES = 5 * 1024 * 1024;
+/** Límite Vercel ~4.5 MB por petición; dejamos margen para multipart. */
+export const MAX_FILE_BYTES = 4 * 1024 * 1024;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

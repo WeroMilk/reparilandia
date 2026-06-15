@@ -19,7 +19,7 @@ export function useReels(enabled = true): UseReelsState {
   const [items, setItems] = useState<ReelItem[]>([]);
   const [storage, setStorage] = useState<ReelsApiResponse['storage'] | null>(null);
   const [maxReels, setMaxReels] = useState(5);
-  const [maxDurationSec, setMaxDurationSec] = useState(30);
+  const [maxDurationSec, setMaxDurationSec] = useState(90);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
