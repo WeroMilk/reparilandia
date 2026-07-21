@@ -19,7 +19,7 @@ APPLE_SIZE = 180
 PUBLIC_192 = 192
 FAVICON_SIZES = (16, 32, 48)
 # Logo ocupa como máximo este % del lienzo (resto = margen blanco centrado).
-HOME_ICON_CONTENT_FRAC = 0.64
+HOME_ICON_CONTENT_FRAC = 0.70
 
 
 def knock_checkerboard(im: Image.Image) -> Image.Image:
@@ -123,7 +123,7 @@ def build_master() -> Image.Image:
 
 
 def build_home_screen_icon(im: Image.Image, size: int) -> Image.Image:
-    """Icono para «Añadir a pantalla de inicio»: fondo blanco, logo ~64% del lienzo."""
+    """Icono para «Añadir a pantalla de inicio»: fondo blanco, logo ~70% del lienzo."""
     return pad_on_white(im, size, max_content_frac=HOME_ICON_CONTENT_FRAC)
 
 

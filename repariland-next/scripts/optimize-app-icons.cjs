@@ -19,7 +19,7 @@ function resolveSourceIcon() {
 
 async function writePng(base, size, dest) {
   const tmp = `${dest}.tmp`;
-  const contentFrac = 0.64;
+  const contentFrac = 0.70;
   const maxDim = Math.max(1, Math.round(size * contentFrac));
 
   const logo = await base
