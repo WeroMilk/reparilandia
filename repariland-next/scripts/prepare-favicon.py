@@ -56,7 +56,33 @@ def boost_for_browser_tab(im: Image.Image) -> Image.Image:
     return out
 
 
-def trim_and_square(im: Image.Image, margin_frac: float = 0.06) -> Image.Image:
+def pad_on_white(
+    im: Image.Image,
+    size: int,
+    *,
+    vertical_margin_frac: float = 0.13,
+    horizontal_margin_frac: float = 0.09,
+) -> Image.Image:
+    """Centra el logo en un cuadrado blanco con aire arriba y abajo (pantalla de inicio)."""
+    canvas = Image.new("RGBA", (size, size), (255, 255, 255, 255))
+    content = tight_content_bbox(im)
+    cw, ch = content.size
+    if cw == 0 or ch == 0:
+        return canvas
+
+    v_pad = int(round(size * vertical_margin_frac))
+    h_pad = int(round(size * horizontal_margin_frac))
+    avail_w = max(1, size - 2 * h_pad)
+    avail_h = max(1, size - 2 * v_pad)
+    scale = min(avail_w / cw, avail_h / ch)
+    nw = max(1, int(round(cw * scale)))
+    nh = max(1, int(round(ch * scale)))
+    scaled = content.resize((nw, nh), Image.Resampling.LANCZOS)
+    canvas.paste(scaled, ((size - nw) // 2, (size - nh) // 2), scaled)
+    return canvas
+
+
+def trim_and_square(im: Image.Image, margin_frac: float = 0.08) -> Image.Image:
     """Fit logo in a square with a small transparent margin."""
     bbox = im.getbbox()
     if not bbox:
@@ -91,18 +117,25 @@ def build_master() -> Image.Image:
     raw = knock_checkerboard(Image.open(SRC))
     content = tight_content_bbox(raw)
     boosted = boost_for_browser_tab(content)
-    return trim_and_square(boosted, margin_frac=0.06)
+    return trim_and_square(boosted, margin_frac=0.08)
+
+
+def build_home_screen_icon(im: Image.Image, size: int) -> Image.Image:
+    """Icono para «Añadir a pantalla de inicio»: fondo blanco y margen vertical."""
+    return pad_on_white(im, size, vertical_margin_frac=0.13, horizontal_margin_frac=0.09)
 
 
 def main() -> None:
-    master = build_master()
+    if not SRC.exists():
+        raise SystemExit(f"Missing source: {SRC}")
 
-    master.resize((ICON_SIZE, ICON_SIZE), Image.Resampling.LANCZOS).save(
-        OUT_ICON, "PNG", optimize=True
-    )
-    master.resize((APPLE_SIZE, APPLE_SIZE), Image.Resampling.LANCZOS).save(
-        OUT_APPLE, "PNG", optimize=True
-    )
+    raw = knock_checkerboard(Image.open(SRC))
+    content = tight_content_bbox(raw)
+    boosted = boost_for_browser_tab(content)
+    master = trim_and_square(boosted, margin_frac=0.08)
+
+    build_home_screen_icon(boosted, ICON_SIZE).save(OUT_ICON, "PNG", optimize=True)
+    build_home_screen_icon(boosted, APPLE_SIZE).save(OUT_APPLE, "PNG", optimize=True)
 
     favicons = [resize_sharp(master, s) for s in FAVICON_SIZES]
     favicons[-1].save(

@@ -19,11 +19,33 @@ function resolveSourceIcon() {
 
 async function writePng(base, size, dest) {
   const tmp = `${dest}.tmp`;
-  await base
+  const verticalPad = Math.round(size * 0.13);
+  const horizontalPad = Math.round(size * 0.09);
+  const availW = Math.max(1, size - horizontalPad * 2);
+  const availH = Math.max(1, size - verticalPad * 2);
+  const inner = Math.min(availW, availH);
+
+  const logo = await base
     .clone()
-    .resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .resize(inner, inner, {
+      fit: 'contain',
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
+    .png()
+    .toBuffer();
+
+  await sharp({
+    create: {
+      width: size,
+      height: size,
+      channels: 4,
+      background: { r: 255, g: 255, b: 255, alpha: 1 },
+    },
+  })
+    .composite([{ input: logo, gravity: 'center' }])
     .png({ compressionLevel: 9 })
     .toFile(tmp);
+
   fs.renameSync(tmp, dest);
 }
 
