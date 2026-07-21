@@ -19,16 +19,13 @@ function resolveSourceIcon() {
 
 async function writePng(base, size, dest) {
   const tmp = `${dest}.tmp`;
-  const verticalPad = Math.round(size * 0.13);
-  const horizontalPad = Math.round(size * 0.09);
-  const availW = Math.max(1, size - horizontalPad * 2);
-  const availH = Math.max(1, size - verticalPad * 2);
-  const inner = Math.min(availW, availH);
+  const contentFrac = 0.52;
+  const maxDim = Math.max(1, Math.round(size * contentFrac));
 
   const logo = await base
     .clone()
-    .resize(inner, inner, {
-      fit: 'contain',
+    .resize(maxDim, maxDim, {
+      fit: 'inside',
       background: { r: 0, g: 0, b: 0, alpha: 0 },
     })
     .png()

@@ -11,9 +11,15 @@ SRC = ROOT / "public" / "assets" / "favicon-source.png"
 OUT_ICON = ROOT / "src" / "app" / "icon.png"
 OUT_APPLE = ROOT / "src" / "app" / "apple-icon.png"
 OUT_FAVICON = ROOT / "src" / "app" / "favicon.ico"
+OUT_PUBLIC_APPLE = ROOT / "public" / "icons" / "apple-touch-icon.png"
+OUT_PUBLIC_192 = ROOT / "public" / "icons" / "icon-192.png"
+OUT_PUBLIC_512 = ROOT / "public" / "icons" / "icon-512.png"
 ICON_SIZE = 512
 APPLE_SIZE = 180
+PUBLIC_192 = 192
 FAVICON_SIZES = (16, 32, 48)
+# Logo ocupa como máximo este % del lienzo (resto = margen blanco centrado).
+HOME_ICON_CONTENT_FRAC = 0.52
 
 
 def knock_checkerboard(im: Image.Image) -> Image.Image:
@@ -60,21 +66,17 @@ def pad_on_white(
     im: Image.Image,
     size: int,
     *,
-    vertical_margin_frac: float = 0.13,
-    horizontal_margin_frac: float = 0.09,
+    max_content_frac: float = HOME_ICON_CONTENT_FRAC,
 ) -> Image.Image:
-    """Centra el logo en un cuadrado blanco con aire arriba y abajo (pantalla de inicio)."""
+    """Centra el logo en un cuadrado blanco, más pequeño que el lienzo."""
     canvas = Image.new("RGBA", (size, size), (255, 255, 255, 255))
     content = tight_content_bbox(im)
     cw, ch = content.size
     if cw == 0 or ch == 0:
         return canvas
 
-    v_pad = int(round(size * vertical_margin_frac))
-    h_pad = int(round(size * horizontal_margin_frac))
-    avail_w = max(1, size - 2 * h_pad)
-    avail_h = max(1, size - 2 * v_pad)
-    scale = min(avail_w / cw, avail_h / ch)
+    max_dim = max(1, int(round(size * max_content_frac)))
+    scale = min(max_dim / cw, max_dim / ch)
     nw = max(1, int(round(cw * scale)))
     nh = max(1, int(round(ch * scale)))
     scaled = content.resize((nw, nh), Image.Resampling.LANCZOS)
@@ -121,8 +123,8 @@ def build_master() -> Image.Image:
 
 
 def build_home_screen_icon(im: Image.Image, size: int) -> Image.Image:
-    """Icono para «Añadir a pantalla de inicio»: fondo blanco y margen vertical."""
-    return pad_on_white(im, size, vertical_margin_frac=0.13, horizontal_margin_frac=0.09)
+    """Icono para «Añadir a pantalla de inicio»: fondo blanco, logo ~52% del lienzo."""
+    return pad_on_white(im, size, max_content_frac=HOME_ICON_CONTENT_FRAC)
 
 
 def main() -> None:
@@ -137,6 +139,11 @@ def main() -> None:
     build_home_screen_icon(boosted, ICON_SIZE).save(OUT_ICON, "PNG", optimize=True)
     build_home_screen_icon(boosted, APPLE_SIZE).save(OUT_APPLE, "PNG", optimize=True)
 
+    OUT_PUBLIC_APPLE.parent.mkdir(parents=True, exist_ok=True)
+    build_home_screen_icon(boosted, APPLE_SIZE).save(OUT_PUBLIC_APPLE, "PNG", optimize=True)
+    build_home_screen_icon(boosted, PUBLIC_192).save(OUT_PUBLIC_192, "PNG", optimize=True)
+    build_home_screen_icon(boosted, ICON_SIZE).save(OUT_PUBLIC_512, "PNG", optimize=True)
+
     favicons = [resize_sharp(master, s) for s in FAVICON_SIZES]
     favicons[-1].save(
         OUT_FAVICON,
@@ -147,6 +154,9 @@ def main() -> None:
 
     print("Wrote", OUT_ICON.name, OUT_ICON.stat().st_size, "bytes")
     print("Wrote", OUT_APPLE.name, OUT_APPLE.stat().st_size, "bytes")
+    print("Wrote", OUT_PUBLIC_APPLE.relative_to(ROOT), OUT_PUBLIC_APPLE.stat().st_size, "bytes")
+    print("Wrote", OUT_PUBLIC_192.relative_to(ROOT), OUT_PUBLIC_192.stat().st_size, "bytes")
+    print("Wrote", OUT_PUBLIC_512.relative_to(ROOT), OUT_PUBLIC_512.stat().st_size, "bytes")
     print("Wrote", OUT_FAVICON.name, OUT_FAVICON.stat().st_size, "bytes")
 
 

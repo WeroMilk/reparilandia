@@ -25,6 +25,18 @@ export const metadata: Metadata = {
   title: 'Reparilandia | Hmo, Son.',
   description:
     'Desde 1985 reparando lo que otros dan por perdido. Taller y museo de coleccionismo en Hermosillo, Sonora, México.',
+  icons: {
+    icon: [
+      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
+  appleWebApp: {
+    capable: true,
+    title: 'Reparilandia',
+    statusBarStyle: 'black-translucent',
+  },
 };
 
 export const viewport: Viewport = {
