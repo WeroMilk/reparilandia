@@ -155,16 +155,16 @@ function ServicioHeroBanner({
   const [heroFailed, setHeroFailed] = useState(false);
 
   return (
-    <div className="servicios-slide-hero relative flex min-h-0 w-full flex-1 flex-col overflow-visible rounded-[inherit] bg-transparent max-lg:min-h-0 max-lg:flex-1 lg:flex-1 lg:min-h-0 lg:overflow-hidden">
-      <div className="servicios-slide-hero-media relative isolate flex min-h-0 w-full flex-1 flex-col bg-transparent max-lg:min-h-0 max-lg:flex-1 max-lg:items-center max-lg:justify-center lg:min-h-0 lg:flex-1">
+    <div className="servicios-slide-hero relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-[inherit] bg-transparent max-lg:min-h-0 max-lg:flex-1 lg:flex-1 lg:min-h-0 lg:overflow-hidden">
+      <div className="servicios-slide-hero-media relative isolate flex min-h-0 w-full flex-1 flex-col bg-transparent max-lg:min-h-0 max-lg:flex-1 max-lg:items-stretch max-lg:justify-start lg:min-h-0 lg:flex-1">
         {heroFailed ? (
           <ServicioHeroIconFallback icon={fallbackIcon} />
         ) : (
-          <div className="servicios-slide-hero-art relative z-[1] mx-auto flex min-h-0 w-full max-w-[min(100%,38rem)] items-center justify-center isolate rounded-lg bg-transparent px-2 py-0.5 max-lg:min-h-0 max-lg:flex-1 sm:px-2.5 lg:h-full lg:max-w-full lg:flex-1 lg:px-2 lg:py-0">
+          <div className="servicios-slide-hero-art relative z-[1] mx-auto flex min-h-0 w-full max-w-full items-stretch justify-stretch isolate overflow-hidden rounded-lg bg-transparent px-0 py-0 max-lg:min-h-0 max-lg:flex-1 sm:px-0 lg:h-full lg:max-w-full lg:flex-1 lg:px-2 lg:py-0">
             <img
               src={assetUrl(src)}
               alt={alt}
-              className="servicios-slide-hero-img block h-auto w-auto max-h-full max-w-full object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_40px_rgba(0,0,0,0.28)] brightness-[1.04] contrast-[1.04] lg:h-full lg:w-full lg:min-h-0 lg:max-h-full lg:max-w-full"
+              className="servicios-slide-hero-img block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:auto] drop-shadow-[0_14px_40px_rgba(0,0,0,0.28)] brightness-[1.04] contrast-[1.04] lg:h-full lg:w-full lg:min-h-0 lg:max-h-full lg:max-w-full lg:object-contain"
               draggable={false}
               loading={priority ? 'eager' : 'lazy'}
               decoding="async"
@@ -174,7 +174,7 @@ function ServicioHeroBanner({
           </div>
         )}
       </div>
-      <div className="servicio-hero-caption relative z-[2] hidden border-t border-cyan-400/20 bg-transparent px-2 py-1 text-center sm:px-2.5 sm:py-1.5 lg:block">
+      <div className="servicio-hero-caption relative z-[2] max-lg:!hidden border-t border-cyan-400/20 bg-transparent px-2 py-1 text-center sm:px-2.5 sm:py-1.5 hidden lg:!block">
         <p className="font-orbitron text-[12px] font-bold uppercase tracking-[0.18em] text-cyan-100/95 drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:text-[11px] md:text-xs lg:text-sm">
           {desktopTitle}
         </p>
@@ -272,7 +272,7 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
       data-screen="servicios"
     >
       <motion.div
-        className="servicios-mobile-stage servicios-desktop-stage flex min-h-0 w-full flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-1 max-lg:max-h-full max-lg:gap-2 max-lg:overflow-hidden lg:mx-auto lg:mt-0 lg:h-full lg:max-h-full lg:w-full lg:flex-1 lg:max-w-[min(100%,56rem)] lg:gap-2 lg:overflow-hidden xl:gap-2.5"
+        className="servicios-mobile-stage servicios-desktop-stage flex min-h-0 w-full flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-1 max-lg:max-h-full max-lg:gap-1 max-lg:overflow-hidden lg:mx-auto lg:mt-0 lg:h-full lg:max-h-full lg:w-full lg:flex-1 lg:max-w-[min(100%,56rem)] lg:gap-2 lg:overflow-hidden xl:gap-2.5"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
@@ -304,7 +304,7 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
         </motion.div>
 
         <motion.div className="servicios-mobile-content-stack servicios-desktop-main flex min-h-0 w-full min-w-0 flex-col items-center max-lg:min-h-0 max-lg:flex-1 max-lg:justify-start max-lg:overflow-hidden max-lg:px-0 lg:min-h-0 lg:flex-1 lg:items-stretch lg:justify-start lg:gap-2 lg:overflow-hidden">
-        <motion.div className="servicios-mobile-carousel-zone servicios-desktop-carousel-zone flex min-h-0 w-full min-w-0 flex-col items-center justify-center overflow-hidden max-lg:min-h-0 max-lg:w-full max-lg:max-w-[min(100%,22.5rem)] max-lg:flex-none max-lg:justify-start lg:min-h-0 lg:flex-1 lg:items-stretch lg:justify-start lg:overflow-hidden">
+        <motion.div className="servicios-mobile-carousel-zone servicios-desktop-carousel-zone flex min-h-0 w-full min-w-0 flex-col items-center justify-center overflow-hidden max-lg:min-h-0 max-lg:w-full max-lg:max-w-[min(100%,22.5rem)] max-lg:flex-none max-lg:justify-center lg:min-h-0 lg:flex-1 lg:items-stretch lg:justify-start lg:overflow-hidden">
         <motion.div className="servicios-mobile-center-block flex w-full min-h-0 min-w-0 flex-col items-center justify-center max-lg:w-full max-lg:flex-none lg:flex lg:h-full lg:min-h-0 lg:w-full lg:max-w-full lg:flex-1 lg:items-stretch lg:justify-start">
         <div className="servicios-desktop-carousel-shell flex w-full min-h-0 max-lg:contents lg:min-h-0 lg:h-full lg:flex-1 lg:items-stretch lg:justify-center lg:gap-3 lg:px-1">
           <button
@@ -338,10 +338,10 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
                 return (
                   <div
                     key={service.id}
-                    className="servicios-mobile-slide servicios-desktop-slide flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full flex-col gap-0 overflow-hidden px-2.5 py-2 max-lg:min-h-0 max-lg:justify-start max-lg:gap-2 sm:px-3 sm:py-2.5 lg:gap-1 lg:px-4 lg:py-2.5"
+                    className="servicios-mobile-slide servicios-desktop-slide flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full flex-col gap-0 overflow-hidden px-2 py-1.5 max-lg:min-h-0 max-lg:justify-start max-lg:gap-1 sm:px-2.5 sm:py-2 lg:gap-1 lg:px-4 lg:py-2.5"
                   >
                     {service.heroImage ? (
-                      <div className="servicios-mobile-slide-content flex min-h-0 w-full min-w-0 flex-col gap-0 overflow-hidden max-lg:min-h-0 max-lg:flex-1 max-lg:gap-2 lg:max-w-none lg:flex-1 lg:min-h-0 lg:flex-col lg:gap-1">
+                      <div className="servicios-mobile-slide-content flex min-h-0 w-full min-w-0 flex-col gap-0 overflow-hidden max-lg:min-h-0 max-lg:flex-1 max-lg:gap-1 lg:max-w-none lg:flex-1 lg:min-h-0 lg:flex-col lg:gap-1">
                         <ServicioHeroBanner
                           src={service.heroImage}
                           alt={`Equipo Reparilandia — ${service.title}`}
@@ -350,12 +350,15 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
                           fallbackIcon={Icon}
                           priority={service.id === 'carritos-montables'}
                         />
-                        <p className="servicios-slide-desc shrink-0 overflow-x-hidden text-balance px-1 text-center font-space text-[11px] leading-snug text-white/92 max-lg:line-clamp-4 max-lg:overflow-hidden sm:text-[12px] lg:line-clamp-2 lg:text-[13px] xl:text-sm">
+                        <h3 className="servicios-mobile-slide-title shrink-0 px-1 text-center font-orbitron text-[12px] font-bold uppercase tracking-[0.14em] text-cyan-100/95 lg:hidden">
+                          {service.title}
+                        </h3>
+                        <p className="servicios-slide-desc shrink-0 overflow-x-hidden text-balance px-1 text-center font-space text-[11px] leading-snug text-white/92 max-lg:line-clamp-3 max-lg:overflow-hidden sm:text-[12px] lg:line-clamp-2 lg:text-[13px] xl:text-sm">
                           {service.description}
                         </p>
                       </div>
                     ) : (
-                      <div className="servicios-mobile-slide-content flex min-h-0 w-full min-w-0 flex-col gap-0 overflow-hidden max-lg:min-h-0 max-lg:flex-1 max-lg:gap-2 lg:max-w-none lg:flex-1 lg:min-h-0 lg:flex-col lg:gap-1">
+                      <div className="servicios-mobile-slide-content flex min-h-0 w-full min-w-0 flex-col gap-0 overflow-hidden max-lg:min-h-0 max-lg:flex-1 max-lg:gap-1 lg:max-w-none lg:flex-1 lg:min-h-0 lg:flex-col lg:gap-1">
                         <div className="servicios-slide-icon flex min-h-0 flex-col items-center justify-center gap-1 overflow-hidden py-0.5 max-lg:min-h-0 lg:flex-1">
                           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/[0.12] bg-[#12161f] shadow-inner sm:h-12 sm:w-12">
                             <Icon className="h-5 w-5 text-sky-300 sm:h-6 sm:w-6" strokeWidth={1.75} />

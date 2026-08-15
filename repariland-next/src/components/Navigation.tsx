@@ -101,7 +101,7 @@ function DockNav({ currentScreen, onNavigate, onPrev, onNext }: NavigationProps)
             dir="left"
             onClick={onPrev}
             label="Pantalla anterior"
-            className="max-lg:hidden"
+            className="hidden"
           />
 
           <div
@@ -163,7 +163,7 @@ function DockNav({ currentScreen, onNavigate, onPrev, onNext }: NavigationProps)
             dir="right"
             onClick={onNext}
             label="Pantalla siguiente"
-            className="max-lg:hidden"
+            className="hidden"
           />
         </div>
       </div>

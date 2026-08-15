@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
 import CarouselDots from '@/components/CarouselDots';
 import GuaranteePromise from '@/components/GuaranteePromise';
@@ -11,6 +12,7 @@ import { assetUrl } from '@/lib/assetUrl';
 import { useInicioDesktopLayout } from '@/hooks/useInicioDesktopLayout';
 import { useInicioMobileBoxesZone } from '@/hooks/useInicioMobileBoxesZone';
 import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const LOGO = '/assets/logo-reparilandia.png';
 
@@ -45,23 +47,39 @@ const homeCards = [
 
 type HomeBoxAccent = 'green' | 'amber' | 'red';
 
+/** Glow del destino al pulsar la flecha (móvil). */
+const ACCENT_ARROW_GLOW: Record<HomeBoxAccent, string> = {
+  green: 'rgba(106, 219, 122, 0.85)',
+  amber: 'rgba(255, 225, 53, 0.9)',
+  red: 'rgba(255, 90, 90, 0.85)',
+};
+
+const ACCENT_ARROW_COLOR: Record<HomeBoxAccent, string> = {
+  green: '#6ADB7A',
+  amber: '#FFE135',
+  red: '#FF5A5A',
+};
+
 /** Móvil: proporciones por acento; escritorio: rellena el área con object-contain (CSS). */
 const HOME_BOX_IMG_CLASS: Record<
   HomeBoxAccent,
   { mobile: string; desktop: string }
 > = {
   green: {
-    mobile: 'mx-auto block h-auto w-auto max-h-full max-w-full object-contain object-center',
+    mobile:
+      'mx-auto block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:-webkit-optimize-contrast]',
     desktop:
       'inicio-home-card__img pointer-events-none mx-auto block h-auto w-auto max-h-[min(13rem,62cqh)] max-w-[98%] object-contain object-center select-none [image-rendering:auto]',
   },
   amber: {
-    mobile: 'mx-auto block h-auto w-auto max-h-full max-w-full object-contain object-center',
+    mobile:
+      'mx-auto block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:-webkit-optimize-contrast]',
     desktop:
       'inicio-home-card__img pointer-events-none mx-auto block h-auto w-auto max-h-[min(13rem,62cqh)] max-w-[98%] object-contain object-center select-none [image-rendering:auto]',
   },
   red: {
-    mobile: 'mx-auto block h-auto w-auto max-h-full max-w-full object-contain object-center',
+    mobile:
+      'mx-auto block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:-webkit-optimize-contrast]',
     desktop:
       'inicio-home-card__img pointer-events-none mx-auto block h-auto w-auto max-h-[min(13rem,62cqh)] max-w-[98%] object-contain object-center select-none [image-rendering:auto]',
   },
@@ -103,9 +121,10 @@ interface InicioScreenProps {
 }
 
 export default function InicioScreen({ onNavigate, isScreenActive = true }: InicioScreenProps) {
+  const isMobile = useIsMobile();
   const [slideIndex, setSlideIndex] = useState(0);
-  const [emblaRef, emblaApi, scrollTo] = useSmoothEmblaCarousel({
-    loop: true,
+  const [emblaRef, emblaApi, scrollTo, scrollPrev, scrollNext] = useSmoothEmblaCarousel({
+    loop: false,
     axis: 'x',
     align: 'start',
     containScroll: 'trimSnaps',
@@ -113,6 +132,12 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
 
   useInicioMobileBoxesZone(isScreenActive);
   useInicioDesktopLayout(isScreenActive);
+
+  const canGoPrev = slideIndex > 0;
+  const canGoNext = slideIndex < homeCards.length - 1;
+  const prevAccent = canGoPrev ? homeCards[slideIndex - 1].accent : null;
+  const nextAccent = canGoNext ? homeCards[slideIndex + 1].accent : null;
+  const showMobileArrows = isMobile && isScreenActive;
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -213,7 +238,23 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
           animate={{ opacity: 1 }}
           transition={{ delay: 0.06, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="inicio-mobile-center-block flex w-full min-h-0 flex-1 flex-col items-center justify-start overflow-hidden">
+          <div className="inicio-mobile-center-block relative flex w-full min-h-0 flex-1 flex-col items-center justify-start overflow-hidden">
+            {showMobileArrows && prevAccent ? (
+              <InicioMobileSideArrow
+                dir="left"
+                accent={prevAccent}
+                onClick={scrollPrev}
+                label="Destacado anterior"
+              />
+            ) : null}
+            {showMobileArrows && nextAccent ? (
+              <InicioMobileSideArrow
+                dir="right"
+                accent={nextAccent}
+                onClick={scrollNext}
+                label="Destacado siguiente"
+              />
+            ) : null}
             <div
               ref={emblaRef}
               className="embla-fluid inicio-mobile-embla min-h-0 w-full flex-1 overflow-hidden"
@@ -225,7 +266,7 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
                     key={card.img}
                     className="inicio-mobile-slide min-w-0 shrink-0 grow-0 basis-full"
                   >
-                    <div className="inicio-mobile-slide__inner">
+                    <div className="inicio-mobile-slide__inner" data-home-accent={card.accent}>
                       <HomeSpotlightCard
                         img={card.img}
                         caption={card.caption}
@@ -283,6 +324,58 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
 
       <h1 className="sr-only">Reparilandia</h1>
     </MobileScreenLayout>
+  );
+}
+
+function InicioMobileSideArrow({
+  dir,
+  accent,
+  onClick,
+  label,
+}: {
+  dir: 'left' | 'right';
+  accent: HomeBoxAccent;
+  onClick: () => void;
+  label: string;
+}) {
+  const [pressed, setPressed] = useState(false);
+  const color = ACCENT_ARROW_COLOR[accent];
+  const glow = ACCENT_ARROW_GLOW[accent];
+
+  return (
+    <div className="inicio-mobile-side-arrow-slot" data-dir={dir} aria-hidden={false}>
+      <motion.button
+        type="button"
+        aria-label={label}
+        data-pressed={pressed ? 'true' : undefined}
+        onPointerDown={(e) => {
+          e.stopPropagation();
+          setPressed(true);
+        }}
+        onPointerUp={() => setPressed(false)}
+        onPointerCancel={() => setPressed(false)}
+        onPointerLeave={() => setPressed(false)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick();
+        }}
+        className="inicio-mobile-side-arrow"
+        style={
+          {
+            '--inicio-arrow-color': color,
+            '--inicio-arrow-glow': glow,
+          } as CSSProperties
+        }
+        whileTap={{ scale: 0.92 }}
+        transition={{ type: 'spring', stiffness: 480, damping: 32 }}
+      >
+        {dir === 'left' ? (
+          <ChevronLeft className="inicio-mobile-side-arrow__icon" strokeWidth={2} aria-hidden />
+        ) : (
+          <ChevronRight className="inicio-mobile-side-arrow__icon" strokeWidth={2} aria-hidden />
+        )}
+      </motion.button>
+    </div>
   );
 }
 
@@ -347,7 +440,7 @@ function HomeSpotlightCard({
       <img
         src={assetUrl(img)}
         alt=""
-        className={`relative z-[1] pointer-events-none select-none [image-rendering:auto] ${imgTreat}`}
+        className={`relative z-[1] pointer-events-none select-none ${imgTreat}`}
         draggable={false}
         loading="eager"
         decoding="async"
@@ -366,7 +459,7 @@ function HomeSpotlightCard({
       data-home-accent={accent}
       className={`group relative z-[1] inicio-home-card touch-manipulation rounded-2xl border outline-none lg:rounded-xl lg:p-2.5 lg:pt-3 xl:p-3 xl:pt-3.5 ${
         mobileCarousel
-          ? `inicio-home-card--mobile-carousel h-full min-h-0 w-full max-w-full overflow-hidden rounded-xl border p-2 sm:p-2.5 ${CARD_BOX}`
+          ? `inicio-home-card--mobile-carousel h-full min-h-0 w-full max-w-full overflow-hidden rounded-xl border-0 p-1.5 pb-2 sm:p-2 sm:pb-2.5 ${CARD_BOX}`
           : mobileScroll
             ? `inicio-home-card--mobile-stack h-full min-h-0 w-full max-w-full overflow-hidden rounded-xl border p-2 sm:p-2.5 ${CARD_BOX}`
             : `overflow-hidden active:scale-[0.98] ${CARD_BOX} p-2.5 sm:p-3`
@@ -382,12 +475,15 @@ function HomeSpotlightCard({
       <p
         className={`inicio-home-card__caption relative z-[1] shrink-0 text-center font-space font-semibold leading-snug tracking-[0.03em] text-white/95 ${
           mobileLayout
-            ? 'mt-0 px-2 py-1.5 text-[clamp(0.625rem,2.35vw,0.75rem)] leading-snug sm:px-2.5 sm:py-1.5'
+            ? 'mt-0 px-2.5 pb-2.5 pt-1.5 text-[length:var(--inicio-mobile-caption-size,15px)] leading-snug sm:px-3 sm:pb-2.5 sm:pt-1.5'
             : 'mt-1.5 px-1.5 text-[clamp(0.6875rem,2.6vw,0.8125rem)] sm:mt-2 sm:text-xs md:text-[0.8125rem] lg:mt-1 lg:px-1.5 lg:text-[0.6875rem] lg:leading-tight xl:text-xs'
         }`}
       >
         {caption}
       </p>
+      {mobileCarousel ? (
+        <span aria-hidden className="inicio-home-card__bottom-edge" />
+      ) : null}
     </motion.button>
   );
 }

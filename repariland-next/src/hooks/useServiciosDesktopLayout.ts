@@ -165,40 +165,16 @@ export function useServiciosDesktopLayout(enabled: boolean) {
     };
 
     const header = screen.querySelector('.mobile-screen__header');
-    const body = screen.querySelector('.mobile-screen__body');
-    const stage = screen.querySelector('.servicios-desktop-stage');
-    const intro = screen.querySelector('.servicios-desktop-intro');
-    const paginator = screen.querySelector('.servicios-desktop-paginator');
-    const main = screen.querySelector('.servicios-desktop-main');
-    const card = screen.querySelector('.servicios-mobile-card');
-    const heroArt = screen.querySelector('.servicios-slide-hero-art');
-    const iconRow = screen.querySelector('.servicios-icon-row--desktop');
     const navRail = document.querySelector('[data-app-dock] .dock-nav-rail');
     const dock = document.querySelector('[data-app-dock]');
 
     const runMeasure = () => {
       measure(false);
-      requestAnimationFrame(() => {
-        measure(true);
-        requestAnimationFrame(() => measure(true));
-      });
+      requestAnimationFrame(() => measure(true));
     };
 
     return subscribeMobileLayout(runMeasure, {
-      observe: [
-        screen,
-        header,
-        body,
-        stage,
-        intro,
-        paginator,
-        main,
-        card,
-        heroArt,
-        iconRow,
-        navRail,
-        dock,
-      ],
+      observe: [screen, header, navRail, dock],
       mediaQueries: [desktopMq],
     });
   }, [enabled]);

@@ -1,43 +1,74 @@
 /** Throttle de mediciones de layout en móvil (evita jank por ResizeObserver en ráfaga). */
-const LAYOUT_THROTTLE_MS = 96;
+const LAYOUT_THROTTLE_MS = 120;
 
 type LayoutCleanup = () => void;
 
-export function scheduleMobileLayout(run: () => void): void {
-  scheduleMobileLayoutImpl(run);
-}
+const pendingRuns = new Set<() => void>();
 
 let rafId = 0;
 let timeoutId = 0;
-let pendingRun: (() => void) | null = null;
 let lastFlush = 0;
+/** Mientras > 0, se ignoran disparos de ResizeObserver (evita bucles al setear CSS vars). */
+let suppressDepth = 0;
 
-function scheduleMobileLayoutImpl(run: () => void): void {
-  pendingRun = run;
-  if (rafId !== 0) return;
+export function beginMobileLayoutSuppress(): void {
+  suppressDepth += 1;
+}
+
+export function endMobileLayoutSuppress(): void {
+  suppressDepth = Math.max(0, suppressDepth - 1);
+}
+
+export function scheduleMobileLayout(run: () => void): void {
+  if (suppressDepth > 0) return;
+  pendingRuns.add(run);
+  scheduleFlush();
+}
+
+function scheduleFlush(): void {
+  if (rafId !== 0 || timeoutId !== 0) return;
 
   rafId = requestAnimationFrame(() => {
     rafId = 0;
-    const fn = pendingRun;
-    if (!fn) return;
+    if (pendingRuns.size === 0) return;
 
     const elapsed = performance.now() - lastFlush;
     if (elapsed < LAYOUT_THROTTLE_MS) {
-      if (timeoutId) window.clearTimeout(timeoutId);
       timeoutId = window.setTimeout(() => {
         timeoutId = 0;
-        scheduleMobileLayoutImpl(fn);
+        scheduleFlush();
       }, LAYOUT_THROTTLE_MS - elapsed);
       return;
     }
 
     lastFlush = performance.now();
-    pendingRun = null;
-    fn();
+    const batch = [...pendingRuns];
+    pendingRuns.clear();
+    beginMobileLayoutSuppress();
+    try {
+      for (const fn of batch) {
+        try {
+          fn();
+        } catch {
+          /* no tumbar otras mediciones */
+        }
+      }
+    } finally {
+      // Liberar en el siguiente frame para que el RO del propio apply no reentrante.
+      requestAnimationFrame(() => {
+        endMobileLayoutSuppress();
+      });
+    }
   });
 }
 
-export function cancelScheduledMobileLayout(): void {
+/** Cancela una medición concreta; sin argumento limpia el lote pendiente. */
+export function cancelScheduledMobileLayout(run?: () => void): void {
+  if (run) {
+    pendingRuns.delete(run);
+    return;
+  }
+  pendingRuns.clear();
   if (rafId) {
     cancelAnimationFrame(rafId);
     rafId = 0;
@@ -46,7 +77,6 @@ export function cancelScheduledMobileLayout(): void {
     window.clearTimeout(timeoutId);
     timeoutId = 0;
   }
-  pendingRun = null;
 }
 
 export type SubscribeMobileLayoutOptions = {
@@ -71,7 +101,10 @@ export function subscribeMobileLayout(
   const { enabled = true, mediaQueries = [], observe = [], runOnMount = true } = options;
   if (!enabled) return () => {};
 
-  const schedule = () => scheduleMobileLayout(measure);
+  const schedule = () => {
+    if (suppressDepth > 0) return;
+    scheduleMobileLayout(measure);
+  };
 
   if (runOnMount) schedule();
 
@@ -94,6 +127,6 @@ export function subscribeMobileLayout(
     }
     window.removeEventListener('resize', schedule);
     window.visualViewport?.removeEventListener('resize', schedule);
-    cancelScheduledMobileLayout();
+    cancelScheduledMobileLayout(measure);
   };
 }

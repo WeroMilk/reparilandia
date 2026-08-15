@@ -420,23 +420,12 @@ export function useHistoriaMobileFit(enabled: boolean) {
       }
     };
 
-    const carousel = screen.querySelector('.hm-carousel, .historia-mobile-carousel');
-    const body = screen.querySelector('.mobile-screen__body');
     const dock = document.querySelector('[data-app-dock]');
 
-    const cleanup = subscribeMobileLayout(
-      () => {
-        runFit();
-        requestAnimationFrame(() => {
-          runFit();
-          requestAnimationFrame(() => runFit());
-        });
-      },
-      {
-        observe: [screen, body, carousel, dock],
-        mediaQueries: [desktopMq],
-      },
-    );
+    const cleanup = subscribeMobileLayout(() => runFit(), {
+      observe: [screen, dock],
+      mediaQueries: [desktopMq],
+    });
 
     if (document.fonts?.ready) {
       document.fonts.ready.then(() => runFit()).catch(() => {});
