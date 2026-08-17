@@ -2,45 +2,10 @@
 
 import { motion } from 'framer-motion';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
-import { assetUrl } from '@/lib/assetUrl';
 import HistoriaMobileView from '@/components/screens/historia/HistoriaMobileView';
-
-const milestones = [
-  { year: '1985', text: 'Don Jaime abre el taller con una caja de herramientas y un sueño.' },
-  { year: '2000', text: 'Carlos se une al negocio familiar, trayendo visión creativa.' },
-  { year: '2010', text: 'El taller evoluciona: coleccionismo y museo.' },
-  { year: '2026', text: 'Dos generaciones, una pasión por reparar el pasado.' },
-];
-
-const storyPanel2 =
-  'Omar Lugo es el genio técnico del equipo: experto en electrónica, cómputo y mecatrónica, forjado en la experiencia. Ha devuelto la vida a cámaras digitales, tarjetas madre e impresoras 3D; donde otros ven piezas irrecuperables, él ve un reto que merece resolverse.';
-
-const storyPanel3 =
-  'Carlos Díaz, jefe y visionario, encarna la perseverancia de quien no descansa hasta dar con la solución. No se conforma mientras quede una posibilidad por explorar; su saber creció con los años, tejido de la práctica con artículos electrónicos y la tecnología que hoy llega al banco de trabajo.';
-
-const storyPanel4 =
-  'Francisco Medina, administrador del taller, teje el día a día: proveedores, clientes, facturación, cotizaciones y la búsqueda incansable de refacciones. No cesa hasta hallar al proveedor ideal que convierta cada diagnóstico en una solución concreta.';
-
-const storySlides = [
-  {
-    src: '/assets/historia-panel-2.png',
-    alt: 'Omar Lugo, integrante del equipo Reparilandia, pelo largo en ponytail',
-    text: storyPanel2,
-    blendLighten: true,
-  },
-  {
-    src: '/assets/historia-panel-3.png',
-    alt: 'Carlos Díaz, integrante del equipo con sombrero y barba',
-    text: storyPanel3,
-    blendLighten: true,
-  },
-  {
-    src: '/assets/historia-panel-4.png',
-    alt: 'Francisco Medina, integrante del equipo con gafas y playera Reparilandia',
-    text: storyPanel4,
-    blendLighten: true,
-  },
-] as const;
+import HistoriaWorkerStats from '@/components/screens/historia/HistoriaWorkerStats';
+import { assetUrl } from '@/lib/assetUrl';
+import { historiaMilestones, historiaWorkers, type HistoriaWorker } from '@/lib/historiaTeam';
 
 const historiaPanel = 'historia-panel';
 
@@ -99,20 +64,10 @@ function CutoutCharacter({
 }
 
 const storyCardCharacterImg =
-  '!max-w-none w-auto object-contain object-bottom max-h-[min(8.75rem,34vw)] sm:max-h-[min(11.25rem,36vw)] lg:max-h-[14.25rem] xl:max-h-[15rem]';
+  '!max-w-none w-auto object-contain object-bottom max-h-[min(8.75rem,34vw)] sm:max-h-[min(11.25rem,36vw)] lg:max-h-[10.5rem] xl:max-h-[11.25rem]';
 
-function StoryCard({
-  src,
-  alt,
-  text,
-  blendLighten = false,
-}: {
-  src: string;
-  alt: string;
-  text: string;
-  blendLighten?: boolean;
-}) {
-  const imgClass = `${storyCardCharacterImg}${blendLighten ? ' mix-blend-lighten' : ''}`;
+function StoryCard({ worker }: { worker: HistoriaWorker }) {
+  const imgClass = `${storyCardCharacterImg} mix-blend-lighten`;
 
   return (
     <motion.div
@@ -121,16 +76,20 @@ function StoryCard({
       <motion.div className="historia-story-layout relative z-[1] flex min-h-0 min-w-0 flex-col gap-2 lg:flex-1 lg:justify-center lg:gap-1.5">
         <motion.div className={`historia-story-char ${historiaCharacterSpot} lg:shrink-0`}>
           <CutoutCharacter
-            src={src}
-            alt={alt}
+            src={worker.src}
+            alt={worker.alt}
             bare
             align="end"
             className="flex w-full items-end justify-center rounded-none bg-transparent py-0"
             imgClassName={imgClass}
           />
         </motion.div>
-        <p className="story-card-text relative z-[1] min-h-0 overflow-hidden font-space text-xs leading-relaxed text-white/92 sm:text-xs sm:leading-snug md:text-[0.8125rem] md:leading-relaxed lg:shrink-0 lg:line-clamp-[10] lg:text-[0.875rem] xl:text-[0.9375rem] xl:leading-snug">
-          {text}
+        <h3 className="historia-stats__name relative z-[1] shrink-0 text-center font-orbitron text-[0.8125rem] tracking-[0.08em] text-white/96 lg:text-[0.875rem] xl:text-[0.9375rem]">
+          {worker.name}
+        </h3>
+        <HistoriaWorkerStats worker={worker} variant="desktop" />
+        <p className="story-card-text relative z-[1] min-h-0 overflow-hidden text-center font-space text-[0.6875rem] leading-snug text-white/82 sm:text-xs lg:shrink-0 lg:line-clamp-3 lg:text-[0.75rem] xl:text-[0.8125rem] xl:leading-snug">
+          {worker.tagline}
         </p>
       </motion.div>
     </motion.div>
@@ -169,7 +128,7 @@ function TimelinePanel() {
               className="historia-timeline-axis absolute bottom-0.5 left-[0.35rem] top-9 w-0 border-l border-dashed border-cyan-400/45 sm:top-10 lg:top-12 xl:top-[3.25rem]"
               aria-hidden
             />
-            {milestones.map((m, i) => (
+            {historiaMilestones.map((m, i) => (
               <motion.div key={i} className="relative flex min-w-0 items-start gap-2 pl-6 sm:gap-3 sm:pl-7">
                 <span
                   className="absolute left-0 top-1.5 z-[1] h-2 w-2 shrink-0 rounded-full border border-cyan-300/70 bg-[#0b1a1f] shadow-[0_0_10px_rgba(34,211,238,0.35)] sm:top-2 sm:h-2.5 sm:w-2.5"
@@ -205,14 +164,14 @@ export default function HistoriaScreen({ isScreenActive = true }: { isScreenActi
           transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
         >
           <TimelinePanel />
-          {storySlides.map((slide) => (
-            <StoryCard key={slide.src} {...slide} />
+          {historiaWorkers.map((worker) => (
+            <StoryCard key={worker.src} worker={worker} />
           ))}
         </motion.div>
       </motion.div>
 
       <p className="sr-only">
-        Cuatro paneles: línea del tiempo del taller Reparilandia; Omar Lugo, Carlos Díaz y Francisco Medina con historias breves.
+        Cuatro paneles: línea del tiempo del taller Reparilandia; fichas de estadísticas de Omar Lugo, Carlos Díaz y Francisco Medina.
       </p>
     </MobileScreenLayout>
   );

@@ -3,40 +3,14 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import CarouselDots from '@/components/CarouselDots';
+import HistoriaWorkerStats from '@/components/screens/historia/HistoriaWorkerStats';
 import { useHistoriaMobileFit } from '@/hooks/useHistoriaMobileFit';
 import { useHistoriaMobileZone } from '@/hooks/useHistoriaMobileZone';
 import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
 import { assetUrl } from '@/lib/assetUrl';
+import { historiaMilestones, historiaWorkers, type HistoriaWorker } from '@/lib/historiaTeam';
 
-const milestones = [
-  { year: '1985', text: 'Don Jaime abre el taller con una caja de herramientas y un sueño.' },
-  { year: '2000', text: 'Carlos se une al negocio familiar, trayendo visión creativa.' },
-  { year: '2010', text: 'El taller evoluciona: coleccionismo y museo.' },
-  { year: '2026', text: 'Dos generaciones, una pasión por reparar el pasado.' },
-] as const;
-
-const storySlides = [
-  {
-    src: '/assets/historia-panel-2.png',
-    alt: 'Omar Lugo, integrante del equipo Reparilandia, pelo largo en ponytail',
-    name: 'Omar Lugo',
-    text: 'Es el genio técnico del equipo: experto en electrónica, cómputo y mecatrónica, forjado en la experiencia. Ha devuelto la vida a cámaras digitales, tarjetas madre e impresoras 3D; donde otros ven piezas irrecuperables, él ve un reto que merece resolverse.',
-  },
-  {
-    src: '/assets/historia-panel-3.png',
-    alt: 'Carlos Díaz, integrante del equipo con sombrero y barba',
-    name: 'Carlos Díaz',
-    text: 'Jefe y visionario, encarna la perseverancia de quien no descansa hasta dar con la solución. No se conforma mientras quede una posibilidad por explorar; su saber creció con los años, tejido de la práctica con artículos electrónicos y la tecnología que hoy llega al banco de trabajo.',
-  },
-  {
-    src: '/assets/historia-panel-4.png',
-    alt: 'Francisco Medina, integrante del equipo con gafas y playera Reparilandia',
-    name: 'Francisco Medina',
-    text: 'Administrador del taller, teje el día a día: proveedores, clientes, facturación, cotizaciones y la búsqueda incansable de refacciones. No cesa hasta hallar al proveedor ideal que convierta cada diagnóstico en una solución concreta.',
-  },
-] as const;
-
-const SLIDE_COUNT = 1 + storySlides.length;
+const SLIDE_COUNT = 1 + historiaWorkers.length;
 
 function TimelinePanel() {
   return (
@@ -59,11 +33,11 @@ function TimelinePanel() {
 
         <div className="hm-timeline__copy">
           <ol className="historia-timeline-fit-copy hm-timeline__list">
-            {milestones.map((m, index) => (
+            {historiaMilestones.map((m, index) => (
               <li key={m.year} className="hm-timeline__item">
                 <div className="hm-timeline__marker">
                   <span className="hm-timeline__year">{m.year}</span>
-                  {index < milestones.length - 1 ? (
+                  {index < historiaMilestones.length - 1 ? (
                     <span className="hm-timeline__connector" aria-hidden />
                   ) : null}
                 </div>
@@ -77,34 +51,25 @@ function TimelinePanel() {
   );
 }
 
-function StoryPanel({
-  src,
-  alt,
-  name,
-  text,
-}: {
-  src: string;
-  alt: string;
-  name: string;
-  text: string;
-}) {
+function StoryPanel({ worker }: { worker: HistoriaWorker }) {
   return (
     <article className="hm-panel hm-panel--story historia-panel">
       <div className="hm-panel__main hm-story">
         <div className="hm-story__stack">
           <div className="hm-story__figure historia-story-char">
             <img
-              src={assetUrl(src)}
-              alt={alt}
+              src={assetUrl(worker.src)}
+              alt={worker.alt}
               className="hm-story__img mix-blend-lighten"
               draggable={false}
               loading="eager"
               decoding="async"
             />
           </div>
-          <h3 className="hm-story__name">{name}</h3>
+          <h3 className="hm-story__name">{worker.name}</h3>
+          <HistoriaWorkerStats worker={worker} variant="mobile" />
           <div className="hm-story__copy">
-            <p className="historia-story-fit-text hm-story__text">{text}</p>
+            <p className="historia-story-fit-text hm-story__text">{worker.tagline}</p>
           </div>
         </div>
       </div>
@@ -162,15 +127,15 @@ function HistoriaMobileCarousel() {
             >
               <TimelinePanel />
             </div>
-            {storySlides.map((slide) => (
+            {historiaWorkers.map((worker) => (
               <div
-                key={slide.src}
+                key={worker.src}
                 className="hm-slide historia-story-slide flex h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full"
                 role="group"
                 aria-roledescription="diapositiva"
-                aria-label={slide.name}
+                aria-label={worker.name}
               >
-                <StoryPanel {...slide} />
+                <StoryPanel worker={worker} />
               </div>
             ))}
           </div>

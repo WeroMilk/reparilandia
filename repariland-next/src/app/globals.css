@@ -549,11 +549,12 @@
       .inicio-home-card__img {
       width: 100% !important;
       height: 100% !important;
-      max-width: 100% !important;
-      max-height: 100% !important;
-      object-fit: cover !important;
-      object-position: center center !important;
-      transform: scale(1.1) !important;
+      max-width: 90% !important;
+      max-height: 88% !important;
+      margin-inline: auto !important;
+      object-fit: contain !important;
+      object-position: center 36% !important;
+      transform: scale(0.88) !important;
       transform-origin: center center !important;
     }
 
@@ -1174,11 +1175,26 @@
     }
 
     .inicio-screen .inicio-mobile-slide__inner[data-home-accent='amber'] {
+      overflow: hidden;
       border-color: #ffe45a;
+      padding-bottom: 5px;
+      background:
+        radial-gradient(
+          ellipse 90% 80% at 50% 40%,
+          rgba(255, 200, 60, 0.18) 0%,
+          rgba(40, 28, 8, 0.55) 48%,
+          rgba(12, 10, 6, 0.35) 100%
+        );
       box-shadow:
         0 0 0 1px rgba(255, 210, 50, 0.48),
         0 0 16px -2px rgba(255, 210, 50, 0.65),
         0 8px 20px -8px rgba(255, 210, 50, 0.55);
+    }
+
+    .inicio-screen
+      .inicio-mobile-slide__inner[data-home-accent='amber']
+      > button.inicio-home-card.inicio-home-card--mobile-carousel {
+      background: transparent !important;
     }
 
     .inicio-screen .inicio-mobile-slide__inner[data-home-accent='red'] {
@@ -1215,8 +1231,12 @@
       .inicio-mobile-slide__inner[data-home-accent='amber']
       > button
       > .inicio-home-card__bottom-edge {
+      display: block !important;
+      grid-row: 3;
+      height: 4px;
+      z-index: 3;
       background: #ffe45a;
-      box-shadow: 0 0 8px rgba(255, 228, 90, 0.9);
+      box-shadow: 0 0 10px rgba(255, 228, 90, 0.95);
     }
 
     .inicio-screen
@@ -1231,6 +1251,20 @@
     .inicio-screen .inicio-mobile-slide__inner::after {
       content: none;
       display: none;
+    }
+
+    .inicio-screen .inicio-mobile-slide__inner[data-home-accent='amber']::after {
+      content: '' !important;
+      display: block !important;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 4px;
+      z-index: 8;
+      pointer-events: none;
+      background: #ffe45a;
+      box-shadow: 0 0 10px rgba(255, 228, 90, 0.95);
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-slide__inner {
@@ -1344,7 +1378,7 @@
       visibility: visible;
       flex: none;
       margin-top: 0;
-      padding: 0.35rem 0.7rem 0.45rem !important;
+      padding: 0.28rem 0.7rem 0.32rem !important;
       line-height: 1.3;
       font-weight: 600;
       font-size: var(--inicio-mobile-caption-size, 16px) !important;
@@ -1353,6 +1387,13 @@
       min-height: 0;
       box-sizing: border-box;
       text-wrap: balance;
+    }
+
+    .inicio-screen
+      .inicio-mobile-slide__inner[data-home-accent='amber']
+      > button.inicio-home-card
+      .inicio-home-card__caption {
+      padding-bottom: 0.42rem !important;
     }
 
     .inicio-screen .inicio-mobile-slide__inner > button.inicio-home-card .inicio-home-card__art {
@@ -1414,10 +1455,17 @@
       .inicio-mobile-slide__inner
       > button.inicio-home-card[data-home-accent='amber']
       .inicio-home-card__art {
-      align-items: stretch;
-      justify-content: stretch;
+      align-items: center;
+      justify-content: center;
       padding-top: 0;
       padding-bottom: 0;
+      background:
+        radial-gradient(
+          ellipse 78% 70% at 50% 42%,
+          rgba(255, 210, 60, 0.14) 0%,
+          rgba(255, 170, 40, 0.05) 42%,
+          transparent 72%
+        );
     }
 
     .inicio-screen
@@ -1426,11 +1474,12 @@
       .inicio-home-card__img {
       width: 100% !important;
       height: 100% !important;
-      max-width: 100% !important;
-      max-height: 100% !important;
-      object-fit: cover !important;
-      object-position: center center !important;
-      transform: scale(1.1) !important;
+      max-width: 90% !important;
+      max-height: 88% !important;
+      margin-inline: auto !important;
+      object-fit: contain !important;
+      object-position: center 36% !important;
+      transform: scale(0.88) !important;
       transform-origin: center center !important;
     }
 
@@ -1466,7 +1515,7 @@
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-carousel {
       justify-content: flex-start;
       overflow: hidden;
-      padding-bottom: clamp(0.08rem, 0.3dvh, 0.22rem);
+      padding-bottom: clamp(0.28rem, 0.9dvh, 0.5rem);
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-scroll-foot {
@@ -1888,7 +1937,7 @@
       display: flex;
       flex: 0 0 auto;
       width: 100%;
-      max-height: min(44%, var(--hm-story-figure-max-h, 11.5rem), 38dvh);
+      max-height: min(36%, var(--hm-story-figure-max-h, 9.75rem), 30dvh);
       min-height: 0;
       flex-direction: column;
       align-items: center;
@@ -1975,7 +2024,31 @@
     }
 
     .historia-screen[data-historia-tall] .hm-story__figure {
-      max-height: min(46%, var(--hm-story-figure-max-h, 12rem), 40dvh);
+      max-height: min(38%, var(--hm-story-figure-max-h, 10.25rem), 32dvh);
+    }
+
+    .hm-story .historia-stats {
+      width: 100%;
+      max-width: 22.5rem;
+      margin: 0 auto;
+    }
+
+    .hm-story .historia-stats__role {
+      font-size: clamp(0.62rem, 2.5vw, 0.72rem);
+    }
+
+    .hm-story .historia-stats__kpi-value {
+      font-size: clamp(0.95rem, 4.2vw, 1.15rem);
+    }
+
+    .hm-story .historia-stats__kpi-label,
+    .hm-story .historia-stats__skill-label,
+    .hm-story .historia-stats__skill-num {
+      font-size: 0.58rem;
+    }
+
+    .hm-panel--story[data-hm-fitted] .historia-stats__role {
+      font-size: var(--historia-story-role-px, clamp(0.62rem, 2.5vw, 0.72rem));
     }
 
     .hm-carousel__foot {
@@ -4240,20 +4313,29 @@
       .inicio-desktop-boxes
       .inicio-home-card[data-home-accent='amber']
       .inicio-home-card__art {
-      align-items: flex-end;
-      justify-content: flex-end;
-      padding-top: 0.45rem;
+      align-items: center;
+      justify-content: center;
+      padding-top: 0.2rem;
       padding-bottom: 0;
+      background:
+        radial-gradient(
+          ellipse 78% 70% at 50% 42%,
+          rgba(255, 210, 60, 0.14) 0%,
+          rgba(255, 170, 40, 0.05) 42%,
+          transparent 72%
+        );
     }
 
     .inicio-screen
       .inicio-desktop-boxes
       .inicio-home-card[data-home-accent='amber']
       .inicio-home-card__img {
-      object-position: center 94%;
-      max-height: min(15rem, 68cqh, 100%);
-      transform: scale(1.08) translateY(0.5rem);
-      transform-origin: center bottom;
+      object-fit: contain;
+      object-position: center center;
+      max-height: min(12.5rem, 58cqh, 100%);
+      max-width: 88%;
+      transform: scale(0.88);
+      transform-origin: center center;
     }
 
     .inicio-screen[data-inicio-desktop-ready]
@@ -4261,10 +4343,10 @@
       .inicio-home-card[data-home-accent='amber']
       .inicio-home-card__img {
       max-height: min(
-        15rem,
-        calc(var(--inicio-desktop-boxes-height, 12.25rem) * 0.76)
+        12.5rem,
+        calc(var(--inicio-desktop-boxes-height, 12.25rem) * 0.62)
       );
-      transform: scale(1.08) translateY(0.5rem);
+      transform: scale(0.88);
     }
 
     @container screen-body (max-height: 760px) {
@@ -5164,6 +5246,138 @@ select:focus-visible {
   box-shadow:
     0 0 40px -10px rgba(255, 200, 50, 0.38),
     0 0 0 1px rgba(255, 215, 0, 0.22);
+}
+
+.historia-stats {
+  --historia-stat: #67e8f9;
+  --historia-stat-soft: rgba(103, 232, 249, 0.22);
+  display: flex;
+  flex-direction: column;
+  gap: 0.42rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.historia-stats[data-historia-accent='amber'] {
+  --historia-stat: #ffe45a;
+  --historia-stat-soft: rgba(255, 228, 90, 0.22);
+}
+
+.historia-stats[data-historia-accent='rose'] {
+  --historia-stat: #ff7a90;
+  --historia-stat-soft: rgba(255, 122, 144, 0.22);
+}
+
+.historia-stats__role {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-orbitron), Orbitron, sans-serif;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--historia-stat);
+}
+
+.historia-stats__kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.28rem 0.35rem;
+  margin: 0;
+}
+
+.historia-stats__kpi {
+  display: flex;
+  min-width: 0;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 0.08rem;
+  text-align: center;
+}
+
+.historia-stats__kpi-value {
+  margin: 0;
+  font-family: var(--font-orbitron), Orbitron, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+
+.historia-stats__kpi-label {
+  margin: 0;
+  max-width: 100%;
+  font-family: var(--font-space), 'Space Grotesk', sans-serif;
+  font-size: 0.5625rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.historia-stats__skills {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.historia-stats__skill-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.historia-stats__skill-label,
+.historia-stats__skill-num {
+  font-family: var(--font-orbitron), Orbitron, sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.historia-stats__skill-label {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.historia-stats__skill-num {
+  font-variant-numeric: tabular-nums;
+  color: var(--historia-stat);
+}
+
+.historia-stats__track {
+  display: block;
+  width: 100%;
+  height: 0.28rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.historia-stats__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    var(--historia-stat-soft),
+    var(--historia-stat)
+  );
+  box-shadow: 0 0 10px var(--historia-stat-soft);
+}
+
+.historia-story-layout .historia-stats {
+  gap: 0.32rem;
+}
+
+.historia-story-layout .historia-stats__kpi-value {
+  font-size: 0.95rem;
 }
 
 /* Aura luminosa (nube + núcleo de luz), recortada al área de imagen */

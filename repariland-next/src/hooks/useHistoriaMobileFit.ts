@@ -133,9 +133,10 @@ function growScaleToFill(
 function clearStoryPanelInlineStyles(panel: HTMLElement) {
   panel.style.removeProperty('--historia-story-figure-scale');
   panel.style.removeProperty('--historia-story-name-px');
+  panel.style.removeProperty('--historia-story-role-px');
   panel.style.removeProperty('--historia-story-font-px');
   panel.style.removeProperty('--historia-story-line-px');
-  panel.querySelectorAll<HTMLElement>('.historia-story-fit-text, .hm-story__name').forEach((el) => {
+  panel.querySelectorAll<HTMLElement>('.historia-story-fit-text, .hm-story__name, .historia-stats__role').forEach((el) => {
     el.style.removeProperty('font-size');
     el.style.removeProperty('line-height');
     el.style.removeProperty('transform');
@@ -195,6 +196,7 @@ function fitStoryTextFill(panel: HTMLElement, zoneHeight: number): boolean {
   const panelMain = panel.querySelector<HTMLElement>('.hm-panel__main') ?? panel;
   const figureEl = panel.querySelector<HTMLElement>('.hm-story__figure');
   const nameEl = panel.querySelector<HTMLElement>('.hm-story__name');
+  const statsEl = panel.querySelector<HTMLElement>('.hm-stats, .historia-stats');
   const textEl = panel.querySelector<HTMLElement>('.historia-story-fit-text');
   if (!stackEl || !figureEl || !nameEl || !textEl) return false;
 
@@ -212,7 +214,8 @@ function fitStoryTextFill(panel: HTMLElement, zoneHeight: number): boolean {
   const gap =
     parseFloat(stackStyle.rowGap || '0') || parseFloat(stackStyle.gap || '0') || 0;
 
-  const chromeHeights = [figureEl, nameEl].map((el) => {
+  const chromeEls = [figureEl, nameEl, statsEl].filter((el): el is HTMLElement => Boolean(el));
+  const chromeHeights = chromeEls.map((el) => {
     const style = getComputedStyle(el);
     const rect = el.getBoundingClientRect();
     return (
@@ -221,7 +224,7 @@ function fitStoryTextFill(panel: HTMLElement, zoneHeight: number): boolean {
       parseFloat(style.marginBottom || '0')
     );
   });
-  const chrome = chromeHeights.reduce((sum, h) => sum + h, 0) + gap * 2;
+  const chrome = chromeHeights.reduce((sum, h) => sum + h, 0) + gap * chromeEls.length;
 
   const available = Math.max(
     44,
@@ -281,7 +284,7 @@ function fitStoryPanel(panel: HTMLElement, zoneHeight: number): { fits: boolean 
   const imgEl = panel.querySelector<HTMLElement>('.hm-story__img');
   const nameEl = panel.querySelector<HTMLElement>('.hm-story__name');
 
-  const figureMaxPx = Math.round(Math.min(Math.max(zoneHeight * 0.44, 124), 232));
+  const figureMaxPx = Math.round(Math.min(Math.max(zoneHeight * 0.32, 96), 176));
   panel.style.setProperty('--hm-story-figure-max-h', `${figureMaxPx}px`);
 
   if (figureEl && imgEl) fitStoryFigure(panel, figureEl, imgEl);
@@ -330,7 +333,7 @@ function fitTimelinePanel(
 function clearAllPanels(screen: HTMLElement) {
   screen.querySelectorAll<HTMLElement>('.hm-panel').forEach((panel) => {
     clearPanelVars(panel);
-    panel.querySelectorAll<HTMLElement>('.historia-story-fit-text, .hm-story__name').forEach((el) => {
+    panel.querySelectorAll<HTMLElement>('.historia-story-fit-text, .hm-story__name, .historia-stats__role').forEach((el) => {
       el.style.removeProperty('font-size');
       el.style.removeProperty('line-height');
       el.style.removeProperty('transform');

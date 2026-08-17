@@ -73,7 +73,7 @@ const HOME_BOX_IMG_CLASS: Record<
   },
   amber: {
     mobile:
-      'mx-auto block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:-webkit-optimize-contrast]',
+      'mx-auto block h-full w-full max-h-full max-w-full object-contain object-center [image-rendering:-webkit-optimize-contrast]',
     desktop:
       'inicio-home-card__img pointer-events-none mx-auto block h-auto w-auto max-h-[min(13rem,62cqh)] max-w-[98%] object-contain object-center select-none [image-rendering:auto]',
   },
@@ -410,7 +410,9 @@ function HomeSpotlightCard({
     : 'items-center justify-center py-0.5';
 
   const cardChrome =
-    'bg-black ring-1 ring-inset transition-[border-color,box-shadow,ring-color] duration-200';
+    accent === 'amber'
+      ? 'bg-transparent ring-1 ring-inset transition-[border-color,box-shadow,ring-color] duration-200'
+      : 'bg-black ring-1 ring-inset transition-[border-color,box-shadow,ring-color] duration-200';
 
   const glowStage = `home-box-glow home-box-glow--${accent}${
     centerProminent ? ' home-box-glow--center' : ''
@@ -475,7 +477,7 @@ function HomeSpotlightCard({
       <p
         className={`inicio-home-card__caption relative z-[1] shrink-0 text-center font-space font-semibold leading-snug tracking-[0.03em] text-white/95 ${
           mobileLayout
-            ? 'mt-0 px-2.5 pb-2.5 pt-1.5 text-[length:var(--inicio-mobile-caption-size,15px)] leading-snug sm:px-3 sm:pb-2.5 sm:pt-1.5'
+            ? 'mt-0 px-2.5 pb-1.5 pt-1 text-[length:var(--inicio-mobile-caption-size,15px)] leading-snug sm:px-3 sm:pb-1.5 sm:pt-1'
             : 'mt-1.5 px-1.5 text-[clamp(0.6875rem,2.6vw,0.8125rem)] sm:mt-2 sm:text-xs md:text-[0.8125rem] lg:mt-1 lg:px-1.5 lg:text-[0.6875rem] lg:leading-tight xl:text-xs'
         }`}
       >

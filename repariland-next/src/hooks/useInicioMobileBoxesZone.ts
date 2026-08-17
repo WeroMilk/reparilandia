@@ -9,7 +9,7 @@ const CARD_CHROME_PAD_PX = 10;
 const CARD_MIN_HEIGHT_PX = 140;
 const BOTTOM_BOX_MARGIN_PX = 4;
 /** Espacio bajo la tarjeta para que el borde inferior no se recorte. */
-const BORDER_CLEARANCE_PX = 8;
+const BORDER_CLEARANCE_PX = 14;
 const HOVER_HALO_INSET_FILL_PX = 2;
 const TALL_VIEWPORT_MIN_PX = 620;
 const TALL_VIEWPORT_RANGE_PX = 320;
