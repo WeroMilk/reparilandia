@@ -103,7 +103,7 @@ const HOME_BOX_ACCENT: Record<
     frame:
       'border-[rgba(255,238,75,0.4)] ring-[rgba(255,200,50,0.22)] hover:border-[rgba(255,238,90,0.78)] hover:shadow-[0_12px_40px_-20px_rgba(0,0,0,0.65),0_0_32px_-10px_rgba(255,210,50,0.46)] hover:ring-[rgba(255,230,80,0.52)] focus-visible:border-[rgba(255,238,90,0.78)] focus-visible:shadow-[0_12px_40px_-20px_rgba(0,0,0,0.65),0_0_30px_-10px_rgba(255,200,45,0.4)] focus-visible:ring-[rgba(255,230,80,0.48)] active:border-[rgba(255,245,120,0.9)] active:ring-[rgba(255,220,70,0.6)]',
     innerSheen:
-      'bg-[radial-gradient(ellipse_92%_68%_at_50%_32%,rgba(255,238,75,0.14)_0%,rgba(255,185,45,0.08)_34%,rgba(255,140,50,0.03)_48%,transparent_62%)]',
+      'bg-[radial-gradient(ellipse_92%_68%_at_50%_32%,rgba(255,238,75,0.15)_0%,rgba(255,185,45,0.08)_34%,rgba(255,140,50,0.03)_48%,transparent_62%)]',
   },
   red: {
     restShadow:
@@ -410,9 +410,7 @@ function HomeSpotlightCard({
     : 'items-center justify-center py-0.5';
 
   const cardChrome =
-    accent === 'amber'
-      ? 'bg-transparent ring-1 ring-inset transition-[border-color,box-shadow,ring-color] duration-200'
-      : 'bg-black ring-1 ring-inset transition-[border-color,box-shadow,ring-color] duration-200';
+    'bg-black ring-1 ring-inset transition-[border-color,box-shadow,ring-color] duration-200';
 
   const glowStage = `home-box-glow home-box-glow--${accent}${
     centerProminent ? ' home-box-glow--center' : ''

@@ -1175,16 +1175,10 @@
     }
 
     .inicio-screen .inicio-mobile-slide__inner[data-home-accent='amber'] {
-      overflow: hidden;
+      overflow: visible;
       border-color: #ffe45a;
       padding-bottom: 5px;
-      background:
-        radial-gradient(
-          ellipse 90% 80% at 50% 40%,
-          rgba(255, 200, 60, 0.18) 0%,
-          rgba(40, 28, 8, 0.55) 48%,
-          rgba(12, 10, 6, 0.35) 100%
-        );
+      background: #000;
       box-shadow:
         0 0 0 1px rgba(255, 210, 50, 0.48),
         0 0 16px -2px rgba(255, 210, 50, 0.65),
@@ -1194,7 +1188,7 @@
     .inicio-screen
       .inicio-mobile-slide__inner[data-home-accent='amber']
       > button.inicio-home-card.inicio-home-card--mobile-carousel {
-      background: transparent !important;
+      background: #000 !important;
     }
 
     .inicio-screen .inicio-mobile-slide__inner[data-home-accent='red'] {
@@ -1459,13 +1453,25 @@
       justify-content: center;
       padding-top: 0;
       padding-bottom: 0;
-      background:
-        radial-gradient(
-          ellipse 78% 70% at 50% 42%,
-          rgba(255, 210, 60, 0.14) 0%,
-          rgba(255, 170, 40, 0.05) 42%,
-          transparent 72%
-        );
+      background: #000;
+    }
+
+    .inicio-screen
+      .inicio-mobile-slide__inner
+      > button.inicio-home-card[data-home-accent='amber']
+      .home-box-glow--amber::before {
+      width: 16.5rem;
+      height: 14.5rem;
+      opacity: 0.95;
+    }
+
+    .inicio-screen
+      .inicio-mobile-slide__inner
+      > button.inicio-home-card[data-home-accent='amber']
+      .home-box-glow--amber::after {
+      width: 22rem;
+      height: 18rem;
+      opacity: 0.78;
     }
 
     .inicio-screen
@@ -3211,13 +3217,24 @@
       max-width: 100%;
     }
 
+    .noticias-crt-screen .embla-fluid {
+      touch-action: pan-y pinch-zoom;
+    }
+
     .noticias-slide-body {
       min-height: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y pinch-zoom;
+      scrollbar-gutter: stable;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(63, 56, 50, 0.72) rgba(244, 239, 228, 0.4);
     }
 
     .noticias-slide-copy {
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
+      overflow: visible;
     }
 
     .noticias-crt-stand-neck {
@@ -4326,13 +4343,7 @@
       justify-content: center;
       padding-top: 0.2rem;
       padding-bottom: 0;
-      background:
-        radial-gradient(
-          ellipse 78% 70% at 50% 42%,
-          rgba(255, 210, 60, 0.14) 0%,
-          rgba(255, 170, 40, 0.05) 42%,
-          transparent 72%
-        );
+      background: #000;
     }
 
     .inicio-screen
@@ -4948,6 +4959,29 @@
       margin-bottom: 0.125rem;
     }
 
+    .noticias-crt-screen .embla-fluid,
+    .noticias-crt-screen .embla-fluid > .flex,
+    .noticias-crt-screen [role='group'] {
+      height: 100%;
+      min-height: 0;
+    }
+
+    .noticias-slide-body {
+      min-height: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      touch-action: pan-y;
+      scrollbar-gutter: stable;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(63, 56, 50, 0.72) rgba(244, 239, 228, 0.4);
+    }
+
+    .noticias-slide-copy {
+      overflow: visible;
+      display: block;
+    }
+
     .contacto-screen .mobile-screen__body {
       position: relative;
       z-index: 28;
@@ -5463,6 +5497,35 @@ select:focus-visible {
   }
 }
 
+/* Noticias: el texto del periódico se recorre con la rueda del mouse */
+.noticias-slide-body {
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y pinch-zoom;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(63, 56, 50, 0.72) rgba(244, 239, 228, 0.4);
+}
+
+.noticias-slide-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.noticias-slide-body::-webkit-scrollbar-thumb {
+  background: rgba(63, 56, 50, 0.58);
+  border-radius: 999px;
+}
+
+.noticias-slide-body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.noticias-slide-copy {
+  overflow: visible;
+}
+
 /* Aura luminosa (nube + núcleo de luz), recortada al área de imagen */
 .home-box-glow::before,
 .home-box-glow::after {
@@ -5521,27 +5584,45 @@ select:focus-visible {
     radial-gradient(ellipse 45% 40% at 68% 48%, rgba(90, 220, 125, 0.14) 0%, transparent 72%);
 }
 
-/* Amarillo — halo dorado, nube alta */
+/* Amarillo — halo dorado, misma nube que verde/rojo */
 .home-box-glow--amber::before {
-  width: 9.5rem;
-  height: 10.25rem;
-  border-radius: 50% 50% 52% 48% / 44% 56% 46% 54%;
-  transform: translate(-50%, -50%) rotate(-2deg);
+  width: 11.25rem;
+  height: 8.75rem;
+  border-radius: 58% 42% 56% 44% / 50% 50% 54% 46%;
+  transform: translate(-50%, -50%) rotate(-1deg);
+  mix-blend-mode: plus-lighter;
   background:
-    radial-gradient(ellipse 30% 28% at 50% 42%, rgba(255, 252, 230, 0.92) 0%, rgba(255, 235, 140, 0.5) 40%, transparent 70%),
-    radial-gradient(ellipse 38% 42% at 36% 52%, rgba(255, 220, 90, 0.48) 0%, transparent 72%),
-    radial-gradient(ellipse 36% 40% at 66% 48%, rgba(255, 200, 60, 0.4) 0%, transparent 70%),
-    radial-gradient(ellipse 55% 50% at 50% 68%, rgba(255, 180, 50, 0.22) 0%, transparent 76%);
+    radial-gradient(ellipse 28% 26% at 50% 46%, rgba(255, 252, 210, 0.95) 0%, rgba(255, 230, 90, 0.52) 38%, transparent 68%),
+    radial-gradient(ellipse 42% 38% at 30% 56%, rgba(255, 215, 60, 0.55) 0%, transparent 72%),
+    radial-gradient(ellipse 40% 36% at 72% 50%, rgba(255, 200, 40, 0.48) 0%, transparent 70%),
+    radial-gradient(ellipse 75% 65% at 50% 58%, rgba(255, 185, 40, 0.22) 0%, transparent 78%);
 }
 
 .home-box-glow--amber::after {
-  width: 13.25rem;
-  height: 12rem;
-  border-radius: 52% 48% 54% 46% / 48% 52% 50% 50%;
-  transform: translate(-50%, -50%) rotate(1deg);
+  width: 16rem;
+  height: 11.5rem;
+  border-radius: 58% 42% 62% 38% / 50% 50% 52% 48%;
+  transform: translate(-50%, -48%);
+  mix-blend-mode: plus-lighter;
   background:
-    radial-gradient(ellipse 90% 82% at 50% 48%, rgba(255, 225, 100, 0.28) 0%, rgba(255, 190, 55, 0.08) 48%, transparent 76%),
-    radial-gradient(ellipse 40% 38% at 30% 55%, rgba(255, 210, 80, 0.12) 0%, transparent 74%);
+    radial-gradient(ellipse 88% 78% at 48% 52%, rgba(255, 220, 70, 0.38) 0%, rgba(255, 185, 40, 0.14) 42%, transparent 74%),
+    radial-gradient(ellipse 45% 40% at 68% 48%, rgba(255, 210, 60, 0.18) 0%, transparent 72%);
+}
+
+@media (max-width: 1023px) {
+  .inicio-screen .home-box-glow--amber::before {
+    width: 16.5rem;
+    height: 14.5rem;
+    opacity: 0.95;
+    mix-blend-mode: plus-lighter;
+  }
+
+  .inicio-screen .home-box-glow--amber::after {
+    width: 22rem;
+    height: 18rem;
+    opacity: 0.78;
+    mix-blend-mode: plus-lighter;
+  }
 }
 
 /* Rojo — resplandor rosa, nube ancha */
@@ -5598,7 +5679,7 @@ select:focus-visible {
 .group:hover .home-box-glow--amber::after,
 .group:focus-visible .home-box-glow--amber::after,
 .group:active .home-box-glow--amber::after {
-  transform: translate(-50%, -50%) rotate(1deg) scale(1.12);
+  transform: translate(-50%, -48%) rotate(1deg) scale(1.12);
 }
 
 .group:hover .home-box-glow--red::before,

@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { assetUrl } from '@/lib/assetUrl';
 import { useNoticiasMobileZone } from '@/hooks/useNoticiasMobileZone';
 import { useNoticiasMobileCrtSize } from '@/hooks/useNoticiasMobileCrtSize';
@@ -81,12 +82,18 @@ function NewspaperSlide({
           </span>
         </div>
       </header>
-      <div className="noticias-slide-body flex min-h-0 flex-1 flex-col overflow-hidden px-2 py-1.5 sm:px-3 sm:py-2">
-        <h3 className="shrink-0 whitespace-pre-line font-serif text-xs font-black uppercase leading-[1.12] text-zinc-950 max-lg:text-[13px] sm:text-sm">
+      <div
+        className="noticias-slide-body min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-2 py-1.5 sm:px-3 sm:py-2"
+        tabIndex={0}
+        role="region"
+        aria-label="Texto de la noticia"
+        onWheel={(event) => event.stopPropagation()}
+      >
+        <h3 className="whitespace-pre-line font-serif text-xs font-black uppercase leading-[1.12] text-zinc-950 max-lg:text-[13px] sm:text-sm">
           {title}
         </h3>
-        <div className="mt-1 h-px w-full shrink-0 bg-zinc-900/80" aria-hidden />
-        <p className="noticias-slide-copy mt-1.5 min-h-0 flex-1 overflow-y-auto overflow-x-hidden font-serif text-[12px] leading-snug text-zinc-800 max-lg:text-[12px] max-lg:leading-[1.38] sm:text-[14px] sm:leading-relaxed lg:line-clamp-[5] lg:overflow-hidden">
+        <div className="mt-1 h-px w-full bg-zinc-900/80" aria-hidden />
+        <p className="noticias-slide-copy mt-1.5 font-serif text-[12px] leading-snug text-zinc-800 max-lg:text-[12px] max-lg:leading-[1.38] sm:text-[14px] sm:leading-relaxed">
           {body}
         </p>
         {videoUrl && videoLinkLabel ? (
@@ -94,7 +101,7 @@ function NewspaperSlide({
             href={videoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-2 inline-flex max-w-full shrink-0 items-center gap-1 font-serif text-[11px] font-bold uppercase tracking-wide text-red-800 underline decoration-red-800/50 underline-offset-2 transition-colors hover:text-red-950 hover:decoration-red-950 sm:text-[12px]"
+            className="mt-2 inline-flex max-w-full items-center gap-1 font-serif text-[11px] font-bold uppercase tracking-wide text-red-800 underline decoration-red-800/50 underline-offset-2 transition-colors hover:text-red-950 hover:decoration-red-950 sm:text-[12px]"
           >
             <span aria-hidden>▶</span>
             <span className="line-clamp-2">{videoLinkLabel}</span>
@@ -110,13 +117,49 @@ function NewspaperSlide({
 
 export default function NoticiasScreen({ isScreenActive = true }: { isScreenActive?: boolean }) {
   const reduceMotion = useReducedMotion();
+  const isMobile = useIsMobile();
+  const isMobileRef = useRef(isMobile);
+  isMobileRef.current = isMobile;
+  const swipeStartRef = useRef<{ x: number; y: number; pointerId: number } | null>(null);
   useNoticiasMobileZone(isScreenActive);
   useNoticiasMobileCrtSize(isScreenActive);
+  const watchDrag = useCallback((_emblaApi: unknown, event: Event) => {
+    if (isMobileRef.current) return false;
+    const target = event.target;
+    if (!(target instanceof Element)) return true;
+    if (target.closest('a, button')) return false;
+    return true;
+  }, []);
   const [emblaRef, emblaApi, scrollTo, scrollPrev, scrollNext] = useSmoothEmblaCarousel({
     loop: true,
     axis: 'x',
+    watchDrag,
   });
   const [slideIndex, setSlideIndex] = useState(0);
+
+  const onCrtPointerDown = useCallback((event: PointerEvent<HTMLDivElement>) => {
+    if (!isMobileRef.current) return;
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    const target = event.target;
+    if (target instanceof Element && target.closest('a, button')) return;
+    swipeStartRef.current = { x: event.clientX, y: event.clientY, pointerId: event.pointerId };
+  }, []);
+
+  const onCrtPointerEnd = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      const start = swipeStartRef.current;
+      swipeStartRef.current = null;
+      if (!start || start.pointerId !== event.pointerId) return;
+      if (!isMobileRef.current) return;
+      const dx = event.clientX - start.x;
+      const dy = event.clientY - start.y;
+      if (Math.abs(dx) < 48) return;
+      if (Math.abs(dx) <= Math.abs(dy) * 1.2) return;
+      if (dx < 0) scrollNext();
+      else scrollPrev();
+    },
+    [scrollNext, scrollPrev],
+  );
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -187,7 +230,12 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
                         decoding="async"
                       />
                     </motion.div>
-                  <motion.div className="noticias-crt-bezel relative mx-auto flex w-full max-w-full flex-col rounded-[6px] bg-gradient-to-b from-[#e8dfd2] via-[#cfc4b6] to-[#b9aea2] p-[clamp(7px,1.65vw,11px)] pb-[clamp(8px,1.75vw,12px)] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-4px_12px_rgba(0,0,0,0.08),0_14px_28px_rgba(0,0,0,0.42)] ring-2 ring-[#7a7269]/55 max-lg:min-h-0 max-lg:shrink-0 max-lg:flex-none max-lg:p-2 lg:max-w-[42rem] lg:min-h-0 lg:max-h-[min(56cqh,54dvh)] lg:flex-none lg:shrink-0 lg:p-3 lg:pb-3.5">
+                  <motion.div
+                    className="noticias-crt-bezel relative mx-auto flex w-full max-w-full flex-col rounded-[6px] bg-gradient-to-b from-[#e8dfd2] via-[#cfc4b6] to-[#b9aea2] p-[clamp(7px,1.65vw,11px)] pb-[clamp(8px,1.75vw,12px)] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-4px_12px_rgba(0,0,0,0.08),0_14px_28px_rgba(0,0,0,0.42)] ring-2 ring-[#7a7269]/55 max-lg:min-h-0 max-lg:shrink-0 max-lg:flex-none max-lg:p-2 lg:max-w-[42rem] lg:min-h-0 lg:max-h-[min(56cqh,54dvh)] lg:flex-none lg:shrink-0 lg:p-3 lg:pb-3.5"
+                    onPointerDown={onCrtPointerDown}
+                    onPointerUp={onCrtPointerEnd}
+                    onPointerCancel={onCrtPointerEnd}
+                  >
                     <motion.div className="mb-2 flex justify-center gap-1.5 opacity-[0.38]" aria-hidden>
                       {[0, 1, 2, 3, 4].map((i) => (
                         <span key={i} className="h-1 w-6 rounded-full bg-[#3f3a34]" />
@@ -201,11 +249,11 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
                             className="embla-fluid relative h-full w-full overflow-hidden bg-[#cdbfaa]"
                             ref={emblaRef}
                           >
-                            <motion.div className="flex h-full touch-pan-x">
+                            <motion.div className="flex h-full min-h-0 touch-pan-x">
                               {newsItems.map((item) => (
                                 <div
                                   key={item.id}
-                                  className="min-w-0 shrink-0 grow-0 basis-full"
+                                  className="h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full"
                                   role="group"
                                   aria-roledescription="slide"
                                   aria-label={item.title}
