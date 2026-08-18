@@ -64,7 +64,7 @@ function CutoutCharacter({
 }
 
 const storyCardCharacterImg =
-  '!max-w-none w-auto object-contain object-bottom max-h-[min(8.75rem,34vw)] sm:max-h-[min(11.25rem,36vw)] lg:max-h-[10.5rem] xl:max-h-[11.25rem]';
+  '!max-w-none w-auto object-contain object-bottom max-h-[min(8.75rem,34vw)] sm:max-h-[min(11.25rem,36vw)] lg:max-h-[8.75rem] xl:max-h-[9.5rem]';
 
 function StoryCard({ worker }: { worker: HistoriaWorker }) {
   const imgClass = `${storyCardCharacterImg} mix-blend-lighten`;
@@ -73,7 +73,7 @@ function StoryCard({ worker }: { worker: HistoriaWorker }) {
     <motion.div
       className={`relative z-[1] flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl ${historiaPanel} px-3 pb-3 pt-3 sm:px-3.5 sm:pb-3 sm:pt-4 lg:px-4 lg:pb-4 lg:pt-4`}
     >
-      <motion.div className="historia-story-layout relative z-[1] flex min-h-0 min-w-0 flex-col gap-2 lg:flex-1 lg:justify-center lg:gap-1.5">
+      <motion.div className="historia-story-layout relative z-[1] flex min-h-0 min-w-0 flex-col items-center gap-2 text-center lg:flex-1">
         <motion.div className={`historia-story-char ${historiaCharacterSpot} lg:shrink-0`}>
           <CutoutCharacter
             src={worker.src}
@@ -88,7 +88,7 @@ function StoryCard({ worker }: { worker: HistoriaWorker }) {
           {worker.name}
         </h3>
         <HistoriaWorkerStats worker={worker} variant="desktop" />
-        <p className="story-card-text relative z-[1] min-h-0 overflow-hidden text-center font-space text-[0.6875rem] leading-snug text-white/82 sm:text-xs lg:shrink-0 lg:line-clamp-3 lg:text-[0.75rem] xl:text-[0.8125rem] xl:leading-snug">
+        <p className="story-card-text relative z-[1] shrink-0 text-balance text-center font-space text-[0.6875rem] leading-snug text-white/82 sm:text-xs lg:text-[0.75rem] xl:text-[0.8125rem] xl:leading-snug">
           {worker.tagline}
         </p>
       </motion.div>
@@ -115,26 +115,26 @@ function TimelinePanel() {
           />
         </motion.div>
 
-        <motion.div className="historia-timeline-copy relative z-[15] flex min-h-0 min-w-0 flex-1 flex-col justify-center overflow-hidden pt-2 sm:pt-2.5 lg:self-start lg:justify-start lg:min-w-0 lg:flex-1 lg:overflow-hidden lg:pt-5 xl:pt-6">
-          <h3 className="mb-2 flex min-w-0 shrink-0 items-center gap-1.5 font-orbitron text-xs tracking-[0.14em] text-amber-100/95 sm:text-xs md:text-[0.8125rem] lg:mb-1 lg:text-[0.9375rem]">
+        <motion.div className="historia-timeline-copy relative z-[15] flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center overflow-hidden pt-2 text-center sm:pt-2.5 lg:self-center lg:justify-center lg:pt-0">
+          <h3 className="mb-2 flex min-w-0 shrink-0 items-center justify-center gap-1.5 font-orbitron text-xs tracking-[0.14em] text-amber-100/95 sm:text-xs md:text-[0.8125rem] lg:mb-1 lg:text-[0.9375rem]">
             <span
               className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.65)] sm:h-2 sm:w-2 lg:h-2 lg:w-2"
               aria-hidden
             />
             <span className="min-w-0 break-words leading-none">LÍNEA DEL TIEMPO</span>
           </h3>
-          <motion.div className="relative flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-hidden py-0.5 pl-1 pr-0.5 sm:gap-2.5 lg:mt-2 lg:gap-2">
+          <motion.div className="relative flex min-h-0 w-full min-w-0 flex-1 flex-col items-center justify-center gap-2 overflow-hidden py-0.5 sm:gap-2.5 lg:mt-2 lg:gap-2">
             <motion.div
-              className="historia-timeline-axis absolute bottom-0.5 left-[0.35rem] top-9 w-0 border-l border-dashed border-cyan-400/45 sm:top-10 lg:top-12 xl:top-[3.25rem]"
+              className="historia-timeline-axis absolute bottom-0.5 left-1/2 top-8 w-0 -translate-x-1/2 border-l border-dashed border-cyan-400/45 sm:top-9 lg:top-10"
               aria-hidden
             />
             {historiaMilestones.map((m, i) => (
-              <motion.div key={i} className="relative flex min-w-0 items-start gap-2 pl-6 sm:gap-3 sm:pl-7">
+              <motion.div key={i} className="relative z-[1] flex w-full min-w-0 flex-col items-center gap-1 px-1">
                 <span
-                  className="absolute left-0 top-1.5 z-[1] h-2 w-2 shrink-0 rounded-full border border-cyan-300/70 bg-[#0b1a1f] shadow-[0_0_10px_rgba(34,211,238,0.35)] sm:top-2 sm:h-2.5 sm:w-2.5"
+                  className="z-[1] h-2 w-2 shrink-0 rounded-full border border-cyan-300/70 bg-[#0b1a1f] shadow-[0_0_10px_rgba(34,211,238,0.35)] sm:h-2.5 sm:w-2.5"
                   aria-hidden
                 />
-                <motion.div className="min-w-0 flex-1">
+                <motion.div className="min-w-0 w-full">
                   <p className="font-orbitron text-xs font-semibold tabular-nums leading-none tracking-[0.1em] text-cyan-200/95 sm:text-xs md:text-[0.8125rem] lg:text-[0.9375rem]">
                     {m.year}
                   </p>

@@ -284,7 +284,7 @@ function fitStoryPanel(panel: HTMLElement, zoneHeight: number): { fits: boolean 
   const imgEl = panel.querySelector<HTMLElement>('.hm-story__img');
   const nameEl = panel.querySelector<HTMLElement>('.hm-story__name');
 
-  const figureMaxPx = Math.round(Math.min(Math.max(zoneHeight * 0.32, 96), 176));
+  const figureMaxPx = Math.round(Math.min(Math.max(zoneHeight * 0.26, 84), 148));
   panel.style.setProperty('--hm-story-figure-max-h', `${figureMaxPx}px`);
 
   if (figureEl && imgEl) fitStoryFigure(panel, figureEl, imgEl);

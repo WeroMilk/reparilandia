@@ -13,14 +13,14 @@ export default function HistoriaWorkerStats({
   return (
     <div className={root} data-historia-accent={worker.accent}>
       <p className="historia-stats__role">{worker.role}</p>
-      <dl className="historia-stats__kpis">
+      <div className="historia-stats__kpis">
         {worker.kpis.map((kpi) => (
           <div key={kpi.label} className="historia-stats__kpi">
-            <dt className="historia-stats__kpi-label">{kpi.label}</dt>
-            <dd className="historia-stats__kpi-value">{kpi.value}</dd>
+            <span className="historia-stats__kpi-value">{kpi.value}</span>
+            <span className="historia-stats__kpi-label">{kpi.label}</span>
           </div>
         ))}
-      </dl>
+      </div>
       <ul className="historia-stats__skills">
         {worker.skills.map((skill) => (
           <li key={skill.label} className="historia-stats__skill">
