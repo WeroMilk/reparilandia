@@ -66,14 +66,14 @@ function NewspaperSlide({
   videoLinkLabel?: string;
 }) {
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[#f4efe4] text-zinc-900 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]">
-      <header className="shrink-0 border-b-[3px] border-double border-zinc-900 px-2.5 pb-1.5 pt-2 sm:px-3 sm:pt-2.5">
+    <div className="flex h-full min-h-0 flex-col bg-[#f7f1e6] text-zinc-950 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]">
+      <header className="shrink-0 border-b-[3px] border-double border-zinc-900 px-3 pb-1.5 pt-2.5 sm:px-3.5 sm:pt-3">
         <div className="flex items-end justify-between gap-1.5 border-b border-zinc-800/25 pb-1">
           <div className="min-w-0">
-            <p className="font-serif text-[11px] font-semibold uppercase tracking-[0.28em] text-zinc-700 sm:text-[12px]">
+            <p className="font-serif text-[11px] font-semibold uppercase tracking-[0.22em] text-zinc-700 sm:text-[12px]">
               Hermosillo, Sonora
             </p>
-            <h4 className="font-serif text-sm font-black uppercase leading-tight tracking-tight text-zinc-950 max-lg:text-[12px] sm:text-base lg:truncate">
+            <h4 className="noticias-slide-masthead font-serif text-base font-black uppercase leading-tight tracking-tight text-zinc-950 max-lg:text-[0.9375rem] sm:text-lg lg:truncate">
               {masthead}
             </h4>
           </div>
@@ -83,17 +83,17 @@ function NewspaperSlide({
         </div>
       </header>
       <div
-        className="noticias-slide-body min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-2 py-1.5 sm:px-3 sm:py-2"
+        className="noticias-slide-body min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-3 py-2.5 sm:px-3.5 sm:py-3"
         tabIndex={0}
         role="region"
         aria-label="Texto de la noticia"
         onWheel={(event) => event.stopPropagation()}
       >
-        <h3 className="whitespace-pre-line font-serif text-xs font-black uppercase leading-[1.12] text-zinc-950 max-lg:text-[13px] sm:text-sm">
+        <h3 className="noticias-slide-title whitespace-pre-line font-serif text-[1.0625rem] font-black uppercase leading-[1.18] text-zinc-950 max-lg:text-[1.125rem] sm:text-lg">
           {title}
         </h3>
-        <div className="mt-1 h-px w-full bg-zinc-900/80" aria-hidden />
-        <p className="noticias-slide-copy mt-1.5 font-serif text-[12px] leading-snug text-zinc-800 max-lg:text-[12px] max-lg:leading-[1.38] sm:text-[14px] sm:leading-relaxed">
+        <div className="mt-1.5 h-px w-full bg-zinc-900/80" aria-hidden />
+        <p className="noticias-slide-copy mt-2.5 font-serif text-[1rem] font-medium leading-[1.5] text-[#1c1917] max-lg:text-[1.0625rem] max-lg:leading-[1.55] sm:text-[1.0625rem] sm:leading-relaxed">
           {body}
         </p>
         {videoUrl && videoLinkLabel ? (
@@ -101,14 +101,14 @@ function NewspaperSlide({
             href={videoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-2 inline-flex max-w-full items-center gap-1 font-serif text-[11px] font-bold uppercase tracking-wide text-red-800 underline decoration-red-800/50 underline-offset-2 transition-colors hover:text-red-950 hover:decoration-red-950 sm:text-[12px]"
+            className="mt-3 inline-flex max-w-full items-center gap-1 font-serif text-[0.8125rem] font-bold uppercase tracking-wide text-red-800 underline decoration-red-800/50 underline-offset-2 transition-colors hover:text-red-950 hover:decoration-red-950 sm:text-[0.875rem]"
           >
             <span aria-hidden>▶</span>
             <span className="line-clamp-2">{videoLinkLabel}</span>
           </a>
         ) : null}
       </div>
-      <footer className="shrink-0 border-t border-zinc-400/60 bg-[#ebe4d4] px-2.5 py-1 text-center font-serif text-[11px] uppercase tracking-[0.2em] text-zinc-600 sm:px-3 sm:py-1.5 sm:text-[11px]">
+      <footer className="shrink-0 border-t border-zinc-400/60 bg-[#ebe4d4] px-3 py-1.5 text-center font-serif text-[11px] uppercase tracking-[0.18em] text-zinc-700 sm:px-3.5 sm:py-1.5 sm:text-[12px]">
         Taller y museo · Desde 1985
       </footer>
     </div>
@@ -183,11 +183,11 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
     >
       <div className="noticias-mobile-stage-positioner max-lg:flex max-lg:min-h-0 max-lg:w-full max-lg:flex-1 max-lg:flex-col max-lg:items-center lg:contents">
         <motion.div className="noticias-stage noticias-mobile-stage flex min-h-0 w-full max-h-full flex-col items-center max-lg:overflow-visible overflow-hidden overscroll-none px-2 pb-0 max-lg:min-h-0 max-lg:flex-1 max-lg:justify-center max-lg:gap-0 max-lg:pt-0 sm:px-5 lg:h-full lg:flex-1 lg:mt-0.5 lg:justify-start lg:gap-1 lg:translate-x-0 lg:px-6 lg:pt-0 xl:mt-1 xl:translate-x-1 xl:px-8">
-        <motion.div
-          className="noticias-mobile-content relative flex min-h-0 w-full max-w-[min(100%,60rem)] flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-none max-lg:shrink-0 max-lg:justify-start sm:max-w-[62rem] lg:h-full lg:max-h-full lg:flex-none lg:shrink-0 lg:justify-start"
-          initial={false}
-          animate={{ opacity: 1 }}
-        >
+          <motion.div
+            className="noticias-mobile-content relative flex min-h-0 w-full max-w-[min(100%,60rem)] flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-none max-lg:shrink-0 max-lg:justify-start max-lg:overflow-visible sm:max-w-[62rem] lg:h-full lg:max-h-full lg:flex-none lg:shrink-0 lg:justify-start"
+            initial={false}
+            animate={{ opacity: 1 }}
+          >
           <motion.div
             className="noticias-monito pointer-events-none absolute left-[clamp(-6.5rem,-18vw,-2rem)] z-[14] hidden w-[min(58vw,32rem)] items-center justify-center overflow-hidden bg-transparent xl:left-[clamp(-5rem,-14vw,0.25rem)] xl:flex xl:w-[min(56vw,34rem)] xl:-translate-x-2 xl:-translate-y-7"
             animate={reduceMotion ? undefined : { y: [0, -3, 0] }}
@@ -221,14 +221,24 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
                       className="noticias-monito-mobile pointer-events-none lg:hidden"
                       aria-hidden
                     >
+                      <motion.div
+                        className="flex h-full w-full items-end justify-center"
+                        animate={reduceMotion ? undefined : { y: [0, -5, 0] }}
+                        transition={
+                          reduceMotion
+                            ? undefined
+                            : { duration: 3.4, repeat: Infinity, ease: 'easeInOut' }
+                        }
+                      >
                       <img
                         src={assetUrl(MONITO_NOTICIAS)}
                         alt=""
-                        className="noticias-monito-mobile-img block h-auto w-full bg-transparent object-contain object-bottom drop-shadow-[0_18px_36px_rgba(0,0,0,0.42)] [image-rendering:auto]"
+                        className="noticias-monito-mobile-img block h-auto max-h-full w-auto max-w-full bg-transparent object-contain object-bottom drop-shadow-[0_18px_36px_rgba(0,0,0,0.42)] [image-rendering:auto]"
                         draggable={false}
                         loading="eager"
                         decoding="async"
                       />
+                      </motion.div>
                     </motion.div>
                   <motion.div
                     className="noticias-crt-bezel relative mx-auto flex w-full max-w-full flex-col rounded-[6px] bg-gradient-to-b from-[#e8dfd2] via-[#cfc4b6] to-[#b9aea2] p-[clamp(7px,1.65vw,11px)] pb-[clamp(8px,1.75vw,12px)] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-4px_12px_rgba(0,0,0,0.08),0_14px_28px_rgba(0,0,0,0.42)] ring-2 ring-[#7a7269]/55 max-lg:min-h-0 max-lg:shrink-0 max-lg:flex-none max-lg:p-2 lg:max-w-[42rem] lg:min-h-0 lg:max-h-[min(56cqh,54dvh)] lg:flex-none lg:shrink-0 lg:p-3 lg:pb-3.5"
@@ -236,7 +246,7 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
                     onPointerUp={onCrtPointerEnd}
                     onPointerCancel={onCrtPointerEnd}
                   >
-                    <motion.div className="mb-2 flex justify-center gap-1.5 opacity-[0.38]" aria-hidden>
+                    <motion.div className="mb-1.5 flex justify-center gap-1.5 opacity-[0.38] max-lg:mb-1" aria-hidden>
                       {[0, 1, 2, 3, 4].map((i) => (
                         <span key={i} className="h-1 w-6 rounded-full bg-[#3f3a34]" />
                       ))}
@@ -244,7 +254,7 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
 
                     <motion.div className="noticias-crt-inner rounded-[4px] bg-[#141210] p-[6px] shadow-[inset_0_5px_14px_rgba(0,0,0,0.92)] ring-1 ring-black sm:p-[7px]">
                       <motion.div className="relative overflow-hidden rounded-[3px] bg-[#080706] shadow-[inset_0_0_0_4px_rgba(28,25,22,0.96)]">
-                        <motion.div className="noticias-crt-screen relative aspect-[4/3] h-auto w-full min-h-0 shrink-0 overflow-hidden max-lg:aspect-[5/4] max-lg:h-auto max-lg:max-h-none max-lg:min-h-0 max-lg:flex-none lg:aspect-auto lg:h-[min(44cqh,46dvh)] lg:max-h-none lg:flex-none">
+                        <motion.div className="noticias-crt-screen relative aspect-[4/3] h-auto w-full min-h-0 shrink-0 overflow-hidden max-lg:[aspect-ratio:var(--noticias-crt-aspect,1.25)] max-lg:h-auto max-lg:max-h-none max-lg:min-h-0 max-lg:flex-none lg:aspect-auto lg:h-[min(44cqh,46dvh)] lg:max-h-none lg:flex-none">
                           <div
                             className="embla-fluid relative h-full w-full overflow-hidden bg-[#cdbfaa]"
                             ref={emblaRef}
@@ -271,18 +281,18 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
                           </div>
 
                           <motion.div
-                            className="pointer-events-none absolute inset-0 z-[12] shadow-[inset_0_0_52px_rgba(0,0,0,0.62)]"
+                            className="noticias-crt-vignette pointer-events-none absolute inset-0 z-[12] shadow-[inset_0_0_18px_rgba(0,0,0,0.16)] max-lg:shadow-[inset_0_0_10px_rgba(0,0,0,0.1)]"
                             aria-hidden
                           />
                           <motion.div
-                            className="pointer-events-none absolute inset-0 z-[13] opacity-[0.04] bg-[repeating-linear-gradient(180deg,rgba(0,0,0,0.45)_0px,rgba(0,0,0,0.45)_1px,transparent_1px,transparent_3px)]"
+                            className="noticias-crt-scan pointer-events-none absolute inset-0 z-[13] opacity-[0.016] max-lg:opacity-[0.01] bg-[repeating-linear-gradient(180deg,rgba(0,0,0,0.35)_0px,rgba(0,0,0,0.35)_1px,transparent_1px,transparent_4px)]"
                             aria-hidden
                           />
                         </motion.div>
                       </motion.div>
                     </motion.div>
 
-                    <motion.div className="mt-2 flex items-center justify-between border-t border-[#a69f94]/80 px-1 pt-1.5 font-serif text-[9px] font-semibold uppercase tracking-[0.32em] text-[#4d4740] sm:text-[10px]">
+                    <motion.div className="mt-1.5 flex items-center justify-between border-t border-[#a69f94]/80 px-1 pt-1 font-serif text-[9px] font-semibold uppercase tracking-[0.32em] text-[#4d4740] sm:mt-2 sm:pt-1.5 sm:text-[10px]">
                       <span className="truncate">Reparilandia</span>
                       <span className="shrink-0 tabular-nums tracking-[0.28em]">CRT‑1985</span>
                     </motion.div>

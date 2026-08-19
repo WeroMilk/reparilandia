@@ -16,8 +16,12 @@ const nextConfig: NextConfig = {
       fullUrl: false,
     },
   },
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'framer-motion'],
+  },
   images: {
-    qualities: [75, 100],
+    formats: ['image/avif', 'image/webp'],
+    qualities: [75, 82, 100],
     localPatterns: [
       {
         pathname: '/assets/**',

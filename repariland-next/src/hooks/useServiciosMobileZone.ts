@@ -15,37 +15,24 @@ const CARD_MIN_PX = 160;
 /** Reserva realista para título + descripción + CTA. */
 const CARD_FOOTER_FALLBACK_PX = 72;
 const ICON_SIZE_MAX_TALL_PX = 44;
-const TALL_VIEWPORT_MIN_PX = 680;
-const TALL_VIEWPORT_RANGE_PX = 200;
 const TALL_ZONE_MIN_PX = 340;
 const TALL_ZONE_RANGE_PX = 200;
 const TALL_FILL_THRESHOLD = 0.12;
-const SHORT_VIEWPORT_PX = 740;
-const SHORT_VIEWPORT_RANGE_PX = 160;
-const SHORT_ZONE_PX = 520;
-const SHORT_ZONE_RANGE_PX = 140;
+/** Compacto solo en zonas realmente chicas (no el 8 Plus inspect vs Safari). */
+const SHORT_ZONE_PX = 360;
+const SHORT_ZONE_RANGE_PX = 80;
 const COMPACT_THRESHOLD = 0.08;
 const BOTTOM_SAFE_PX = 8;
 const ICON_SIZE_MIN_COMPACT_PX = 24;
 /** Ignorar cambios de 1–2px para no oscilar. */
 const STABLE_EPS_PX = 2;
 
-function mobileTallFillFactor(viewportH: number, zoneHeight: number): number {
-  const byViewport = Math.max(
-    0,
-    Math.min(1, (viewportH - TALL_VIEWPORT_MIN_PX) / TALL_VIEWPORT_RANGE_PX),
-  );
-  const byZone = Math.max(0, Math.min(1, (zoneHeight - TALL_ZONE_MIN_PX) / TALL_ZONE_RANGE_PX));
-  return Math.max(byViewport, byZone);
+function mobileTallFillFactor(_viewportH: number, zoneHeight: number): number {
+  return Math.max(0, Math.min(1, (zoneHeight - TALL_ZONE_MIN_PX) / TALL_ZONE_RANGE_PX));
 }
 
-function mobileCompactFactor(viewportH: number, zoneHeight: number): number {
-  const byViewport = Math.max(
-    0,
-    Math.min(1, (SHORT_VIEWPORT_PX - viewportH) / SHORT_VIEWPORT_RANGE_PX),
-  );
-  const byZone = Math.max(0, Math.min(1, (SHORT_ZONE_PX - zoneHeight) / SHORT_ZONE_RANGE_PX));
-  return Math.max(byViewport, byZone);
+function mobileCompactFactor(_viewportH: number, zoneHeight: number): number {
+  return Math.max(0, Math.min(1, (SHORT_ZONE_PX - zoneHeight) / SHORT_ZONE_RANGE_PX));
 }
 
 function readPxVar(screen: HTMLElement, name: string): number | null {
@@ -162,9 +149,7 @@ export function useServiciosMobileZone(enabled: boolean) {
 
       const isSmallMobile =
         tallFill < TALL_FILL_THRESHOLD &&
-        (compactFill >= COMPACT_THRESHOLD ||
-          viewportH <= SHORT_VIEWPORT_PX ||
-          zoneHeight <= SHORT_ZONE_PX);
+        (compactFill >= COMPACT_THRESHOLD || zoneHeight <= SHORT_ZONE_PX);
 
       if (isSmallMobile) {
         screen.setAttribute('data-servicios-compact-zone', 'true');

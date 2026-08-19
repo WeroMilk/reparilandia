@@ -21,7 +21,7 @@ export function useParticleBudget(): ParticleBudgetState {
         setState({ ready: true, count: 0 });
         return;
       }
-      setState({ ready: true, count: narrow.matches ? 18 : 88 });
+      setState({ ready: true, count: narrow.matches ? 0 : 12 });
     };
 
     sync();

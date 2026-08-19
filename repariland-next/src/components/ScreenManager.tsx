@@ -1,24 +1,26 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { motion, useReducedMotion } from 'framer-motion';
 import InicioScreen from './screens/InicioScreen';
-import HistoriaScreen from './screens/HistoriaScreen';
-import ServiciosScreen from './screens/ServiciosScreen';
-import NoticiasScreen from './screens/NoticiasScreen';
-import ReelsScreen from './screens/ReelsScreen';
-import ContactoScreen from './screens/ContactoScreen';
 import { SCREEN_ORDER } from '@/hooks/useScreenManager';
 import type { ScreenName } from '@/types';
 import { getScreenEnterMotion, MOTION_IOS_EASE_OUT, SCREEN_LAYER_TRANSITION } from '@/lib/motionPresets';
 import { useIsMobile } from '@/hooks/use-mobile';
 
+const HistoriaScreen = dynamic(() => import('./screens/HistoriaScreen'));
+const ServiciosScreen = dynamic(() => import('./screens/ServiciosScreen'));
+const NoticiasScreen = dynamic(() => import('./screens/NoticiasScreen'));
+const ReelsScreen = dynamic(() => import('./screens/ReelsScreen'));
+const ContactoScreen = dynamic(() => import('./screens/ContactoScreen'));
+
 const MOBILE_SCREEN_LAYER_TRANSITION = {
-  opacity: { duration: 0.28, ease: MOTION_IOS_EASE_OUT },
+  opacity: { duration: 0.22, ease: MOTION_IOS_EASE_OUT },
 };
 
-/** Tras cambiar de pestaña en móvil, desmontar la anterior (menos hooks/RO en segundo plano). */
-const MOBILE_UNMOUNT_DELAY_MS = 480;
+/** Tras cambiar de pestaña, desmontar la anterior (menos hooks/RO/imágenes en segundo plano). */
+const UNMOUNT_DELAY_MS = 280;
 
 interface ScreenManagerProps {
   currentScreen: ScreenName;
@@ -75,27 +77,11 @@ export default function ScreenManager({
   }, [currentScreen]);
 
   useEffect(() => {
-    if (reduceMotion) {
-      setMountedScreens(new Set(SCREEN_ORDER));
-      return;
-    }
-    if (isMobile) return;
-    const mountAll = () => setMountedScreens(new Set(SCREEN_ORDER));
-    if (typeof window.requestIdleCallback === 'function') {
-      const id = window.requestIdleCallback(mountAll, { timeout: 1600 });
-      return () => window.cancelIdleCallback(id);
-    }
-    const t = window.setTimeout(mountAll, 600);
-    return () => window.clearTimeout(t);
-  }, [reduceMotion, isMobile]);
-
-  useEffect(() => {
-    if (!isMobile || reduceMotion) return;
     const t = window.setTimeout(() => {
       setMountedScreens(new Set([currentScreen]));
-    }, MOBILE_UNMOUNT_DELAY_MS);
+    }, UNMOUNT_DELAY_MS);
     return () => window.clearTimeout(t);
-  }, [currentScreen, isMobile, reduceMotion]);
+  }, [currentScreen]);
 
   const isScreenEntering = currentScreen !== prevScreenRef.current;
   useEffect(() => {
@@ -109,15 +95,8 @@ export default function ScreenManager({
       : SCREEN_LAYER_TRANSITION;
 
   return (
-    <motion.div
-      className="pointer-events-none relative z-[10] flex h-full min-h-0 w-full flex-1 flex-col"
-      layout={false}
-    >
-      <motion.div
-        className="app-content-max relative flex min-h-0 w-full flex-1 flex-col overflow-hidden"
-        custom={direction}
-        layout={false}
-      >
+    <div className="pointer-events-none relative z-[10] flex h-full min-h-0 w-full flex-1 flex-col">
+      <div className="app-content-max relative flex min-h-0 w-full flex-1 flex-col overflow-hidden">
         {SCREEN_ORDER.filter((screen) => mountedScreens.has(screen)).map((screen) => {
           const active = screen === currentScreen;
           const enterMotion = getScreenEnterMotion(direction, reduceMotion, isMobile);
@@ -140,7 +119,7 @@ export default function ScreenManager({
                 active ? 'z-[2]' : 'z-[1]',
               ].join(' ')}
             >
-              <motion.div className="pointer-events-auto relative flex min-h-0 w-full flex-1 flex-col overflow-hidden">
+              <div className="pointer-events-auto relative flex min-h-0 w-full flex-1 flex-col overflow-hidden">
                 <motion.div
                   className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden"
                   initial={
@@ -153,11 +132,11 @@ export default function ScreenManager({
                 >
                   <ScreenBody screen={screen} onNavigate={onNavigate} isScreenActive={active} />
                 </motion.div>
-              </motion.div>
+              </div>
             </motion.div>
           );
         })}
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

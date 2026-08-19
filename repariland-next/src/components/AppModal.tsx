@@ -65,8 +65,8 @@ export default function AppModal({
   const panelMaxWidth = isMobile ? 'max-w-[min(100%,28rem)]' : 'max-w-[min(94vw,50rem)]';
 
   const panelMaxHeight = isMobile
-    ? 'max-h-[min(88dvh,calc(100dvh-var(--dock-chrome-height)-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-1.25rem))]'
-    : 'max-h-[min(80dvh,calc(100dvh-var(--dock-chrome-height)-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-2.75rem))]';
+    ? 'max-h-[min(88dvh,calc(var(--app-height,100svh)-var(--dock-chrome-height)-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-1.25rem))]'
+    : 'max-h-[min(80dvh,calc(var(--app-height,100svh)-var(--dock-chrome-height)-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-2.75rem))]';
 
   return createPortal(
     <AnimatePresence>

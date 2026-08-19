@@ -1,24 +1,20 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Orbitron, Space_Grotesk } from 'next/font/google';
+import { Orbitron, Space_Grotesk } from 'next/font/google';
 import DevStaleCacheRecovery from '@/components/DevStaleCacheRecovery';
 import './globals.css';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-space',
   display: 'swap',
+  preload: true,
 });
 
 const orbitron = Orbitron({
   subsets: ['latin'],
   variable: '--font-orbitron',
   display: 'swap',
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -45,6 +41,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   viewportFit: 'cover',
   themeColor: '#050508',
+  interactiveWidget: 'resizes-content',
 };
 
 export default function RootLayout({
@@ -55,9 +52,14 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${inter.variable} ${spaceGrotesk.variable} ${orbitron.variable} font-sans antialiased`}
+        className={`${spaceGrotesk.variable} ${orbitron.variable} font-sans antialiased`}
         style={{ backgroundColor: '#050508', color: '#fafafa' }}
       >
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var v=window.visualViewport;var h=Math.round((v&&v.height)||window.innerHeight);var t=Math.round((v&&v.offsetTop)||0);var w=Math.round((v&&v.width)||window.innerWidth);var b=Math.max(0,Math.round(window.innerHeight-t-h));var r=document.documentElement;r.style.setProperty('--app-width',w+'px');r.style.setProperty('--app-height',h+'px');r.style.setProperty('--app-vv-top',t+'px');r.style.setProperty('--app-bottom-inset',b+'px');r.style.setProperty('--mobile-viewport-h',h+'px');}catch(e){}})();`,
+          }}
+        />
         {process.env.NODE_ENV === 'development' ? <DevStaleCacheRecovery /> : null}
         {children}
       </body>

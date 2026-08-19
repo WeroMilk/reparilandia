@@ -60,13 +60,9 @@ function measureFit(
     parseFloat(boxStyle.paddingTop || '0') + parseFloat(boxStyle.paddingBottom || '0');
   const gap = parseFloat(boxStyle.gap || '0') || parseFloat(boxStyle.rowGap || '0');
   const available = Math.max(0, boxRect.height - chrome - padY - gap * Math.max(0, chromeEls.length - 1));
-  const scaleVar = parseFloat(
-    getComputedStyle(fitRoot).getPropertyValue('--contacto-ui-scale') || '1',
-  );
-  const zoom =
-    parseFloat(getComputedStyle(fitRoot).zoom || '1') ||
-    (Number.isFinite(scaleVar) && scaleVar > 0 ? scaleVar : 1);
-  const contentHeight = getFitContentHeight(fitRoot) * zoom;
+  /* getBoundingClientRect ya incluye transform/zoom; no multiplicar de nuevo
+     (Chrome inspect soporta zoom, Safari iOS no: el doble conteo los desalineaba). */
+  const contentHeight = getFitContentHeight(fitRoot);
   return {
     fits: contentHeight <= available + 2,
     contentHeight,

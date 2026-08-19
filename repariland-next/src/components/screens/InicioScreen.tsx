@@ -192,7 +192,7 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
                 width={1024}
                 height={682}
                 priority
-                quality={100}
+                quality={82}
                 placeholder="empty"
                 sizes="(max-width: 1023px) min(96vw, 40rem)"
                 className="inicio-mobile-logo mx-auto block h-auto w-full max-w-[min(98vw,46rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)]"
@@ -219,7 +219,7 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
               width={1024}
               height={682}
               priority
-              quality={100}
+              quality={82}
               placeholder="empty"
               sizes="(max-width: 1023px) min(94vw, 38rem), min(92vw, 62rem)"
               className="inicio-desktop-logo mx-auto block h-auto w-full max-h-[min(26dvh,14.5rem)] max-w-[min(94vw,36rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)] sm:max-h-[min(28dvh,15.5rem)] sm:max-w-[min(94vw,38rem)] md:max-h-[min(29dvh,16.25rem)] md:max-w-[min(92vw,40rem)] lg:max-h-[min(30dvh,18.5rem)] lg:max-w-[min(90vw,54rem)] xl:max-h-[min(32dvh,20.5rem)] xl:max-w-[min(88vw,58rem)]"

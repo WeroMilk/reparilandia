@@ -20,7 +20,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
         space: ['var(--font-space)', 'system-ui', 'sans-serif'],
         orbitron: ['var(--font-orbitron)', 'monospace'],
       },

@@ -8,7 +8,7 @@ interface AppointmentFormProps {
 }
 
 const shell =
-  'appointment-form-shell w-full max-w-2xl mx-auto rounded-2xl sm:rounded-3xl border border-white/10 bg-[rgba(12,12,18,0.96)] backdrop-blur-xl shadow-[0_32px_96px_rgba(0,0,0,0.65)] relative overflow-hidden ring-1 ring-white/[0.07] flex flex-col max-h-[min(88dvh,calc(100dvh-var(--dock-chrome-height)-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-1.5rem))]';
+  'appointment-form-shell w-full max-w-2xl mx-auto rounded-2xl sm:rounded-3xl border border-white/10 bg-[rgba(12,12,18,0.96)] backdrop-blur-xl shadow-[0_32px_96px_rgba(0,0,0,0.65)] relative overflow-hidden ring-1 ring-white/[0.07] flex flex-col max-h-[min(88dvh,calc(var(--app-height,100svh)-var(--dock-chrome-height)-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-1.5rem))]';
 
 const labelClass =
   'block font-space text-white text-[14px] sm:text-xs font-medium mb-1 tracking-wide';
@@ -42,7 +42,7 @@ export default function AppointmentForm({ onClose }: AppointmentFormProps) {
   if (submitted) {
     return (
       <motion.div
-        className="w-full max-w-2xl mx-auto rounded-2xl sm:rounded-3xl border border-white/10 bg-[rgba(12,12,18,0.96)] backdrop-blur-xl shadow-[0_32px_96px_rgba(0,0,0,0.65)] relative overflow-hidden ring-1 ring-white/[0.07] max-h-[calc(100dvh-12px)] flex flex-col items-center justify-center p-6 sm:p-8 text-center"
+        className="w-full max-w-2xl mx-auto rounded-2xl sm:rounded-3xl border border-white/10 bg-[rgba(12,12,18,0.96)] backdrop-blur-xl shadow-[0_32px_96px_rgba(0,0,0,0.65)] relative overflow-hidden ring-1 ring-white/[0.07] max-h-[calc(var(--app-height,100svh)-12px)] flex flex-col items-center justify-center p-6 sm:p-8 text-center"
         initial={{ scale: 0.94, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 320, damping: 28 }}

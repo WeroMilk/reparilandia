@@ -17,11 +17,14 @@ export function beginMobileLayoutSuppress(): void {
 
 export function endMobileLayoutSuppress(): void {
   suppressDepth = Math.max(0, suppressDepth - 1);
+  if (suppressDepth === 0 && pendingRuns.size > 0) {
+    scheduleFlush();
+  }
 }
 
 export function scheduleMobileLayout(run: () => void): void {
-  if (suppressDepth > 0) return;
   pendingRuns.add(run);
+  if (suppressDepth > 0) return;
   scheduleFlush();
 }
 
@@ -102,11 +105,13 @@ export function subscribeMobileLayout(
   if (!enabled) return () => {};
 
   const schedule = () => {
-    if (suppressDepth > 0) return;
     scheduleMobileLayout(measure);
   };
 
-  if (runOnMount) schedule();
+  if (runOnMount) {
+    measure();
+    schedule();
+  }
 
   const ro = new ResizeObserver(schedule);
   for (const el of observe) {
@@ -120,7 +125,41 @@ export function subscribeMobileLayout(
   window.addEventListener('resize', schedule, { passive: true });
   window.visualViewport?.addEventListener('resize', schedule, { passive: true });
 
+  const dock = document.querySelector('[data-app-dock]');
+  const rail = dock?.querySelector('.dock-nav-rail');
+  if (dock) ro.observe(dock);
+  if (rail) ro.observe(rail);
+
+  let mo: MutationObserver | undefined;
+  if (!rail) {
+    mo = new MutationObserver(() => {
+      const liveDock = document.querySelector('[data-app-dock]');
+      const liveRail = liveDock?.querySelector('.dock-nav-rail');
+      if (!liveDock || !liveRail) return;
+      ro.observe(liveDock);
+      ro.observe(liveRail);
+      measure();
+      schedule();
+      mo?.disconnect();
+      mo = undefined;
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+  }
+
+  const late = [
+    window.setTimeout(() => {
+      measure();
+      schedule();
+    }, 50),
+    window.setTimeout(() => {
+      measure();
+      schedule();
+    }, 320),
+  ];
+
   return () => {
+    for (const id of late) window.clearTimeout(id);
+    mo?.disconnect();
     ro.disconnect();
     for (const mq of mediaQueries) {
       mq.removeEventListener('change', onMqChange);

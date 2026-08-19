@@ -38,7 +38,7 @@ export default function FooterLegal() {
               aria-hidden
             />
             <motion.div
-              className={`${legalModalShell} relative z-10 max-h-[min(88dvh,calc(100dvh-var(--dock-chrome-height)-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-5.5rem))] shrink-0 -translate-y-[min(3.25rem,7.5dvh)] sm:-translate-y-[min(3.75rem,8dvh)]`}
+              className={`${legalModalShell} relative z-10 max-h-[min(88dvh,calc(var(--app-height,100svh)-var(--dock-chrome-height)-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-5.5rem))] shrink-0 -translate-y-[min(3.25rem,7.5dvh)] sm:-translate-y-[min(3.75rem,8dvh)]`}
               initial={{ scale: 0.94, y: 20, opacity: 0 }}
               animate={{ scale: 1, y: 0, opacity: 1 }}
               exit={{ scale: 0.94, y: 20, opacity: 0 }}

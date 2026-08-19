@@ -144,7 +144,7 @@ function DockNav({ currentScreen, onNavigate, onPrev, onNext }: NavigationProps)
                   </motion.span>
 
                   <motion.span
-                    className={`pointer-events-none max-w-none whitespace-nowrap px-0.5 text-center font-space text-[clamp(7px,2.1vw,10px)] font-medium uppercase leading-none tracking-[0.02em] sm:text-[clamp(8px,2.35vw,10.5px)] sm:tracking-[0.035em] lg:tracking-[0.04em] ${
+                    className={`pointer-events-none max-w-none whitespace-nowrap px-0.5 text-center font-space text-[clamp(8px,2.4vw,11px)] font-medium uppercase leading-none tracking-[0.02em] sm:text-[clamp(8.5px,2.45vw,11px)] sm:tracking-[0.035em] lg:tracking-[0.04em] ${
                       isActive ? 'text-white' : 'text-white/58'
                     }`}
                     animate={{ opacity: isActive ? 1 : 0.58 }}

@@ -11,13 +11,11 @@ const BOTTOM_BOX_MARGIN_PX = 4;
 /** Espacio bajo la tarjeta para que el borde inferior no se recorte. */
 const BORDER_CLEARANCE_PX = 14;
 const HOVER_HALO_INSET_FILL_PX = 2;
-const TALL_VIEWPORT_MIN_PX = 620;
-const TALL_VIEWPORT_RANGE_PX = 320;
 const TALL_ZONE_MIN_PX = 240;
 const TALL_ZONE_RANGE_PX = 220;
 const TALL_MIN_BOTTOM_PX = 4;
-const SHORT_VIEWPORT_PX = 760;
-const SHORT_BODY_ZONE_PX = 540;
+/** Zona corta: iPhone 8 Plus inspect y Safari real (~428–536) siguen el mismo modo. */
+const SHORT_BODY_ZONE_PX = 580;
 const SLIDE_BASIS_PERCENT = 100;
 const SLIDE_GAP_PX = 0;
 const LOGO_BASE_REM = 6.1;
@@ -29,13 +27,9 @@ const PREFERRED_HERO_MIN_PX = 200;
 const PREFERRED_HERO_MAX_PX = 420;
 const STABLE_EPS_PX = 2;
 
-function mobileTallFillFactor(viewportH: number, zoneSpan: number): number {
-  const byViewport = Math.max(
-    0,
-    Math.min(1, (viewportH - TALL_VIEWPORT_MIN_PX) / TALL_VIEWPORT_RANGE_PX),
-  );
-  const byZone = Math.max(0, Math.min(1, (zoneSpan - TALL_ZONE_MIN_PX) / TALL_ZONE_RANGE_PX));
-  return Math.max(byViewport, byZone);
+function mobileTallFillFactor(_viewportH: number, zoneSpan: number): number {
+  /* Solo zona útil: innerHeight de inspect (736) ≠ Safari real (~628). */
+  return Math.max(0, Math.min(1, (zoneSpan - TALL_ZONE_MIN_PX) / TALL_ZONE_RANGE_PX));
 }
 
 /**
@@ -94,7 +88,6 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       const navRail = document.querySelector<HTMLElement>('[data-app-dock] .dock-nav-rail');
       const dock = document.querySelector<HTMLElement>('[data-app-dock]');
       if (!screen || !topBlock || !navRail) {
-        clearZone(screen);
         return;
       }
 
@@ -111,8 +104,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       // No usar bodyHeight si se estira bajo el dock (provoca recorte del borde/caption).
       let bodyZoneHeight = measuredSpan;
       const tallFill = mobileTallFillFactor(viewportH, bodyZoneHeight);
-      const isCompact =
-        viewportH <= SHORT_VIEWPORT_PX || bodyZoneHeight <= SHORT_BODY_ZONE_PX;
+      const isCompact = bodyZoneHeight <= SHORT_BODY_ZONE_PX;
 
       const bottomMargin = Math.round(
         isCompact ? 2 + tallFill : BOTTOM_BOX_MARGIN_PX + tallFill,
