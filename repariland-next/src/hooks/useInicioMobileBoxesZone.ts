@@ -1,17 +1,20 @@
 import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
-const DOCK_CLEARANCE_PX = 12;
-/** Dots + padding visible; debe cubrir altura real del foot. */
-const CAROUSEL_FOOT_FLOOR_PX = 44;
-/** Gap card → dots (en padding del foot, medible). */
-const FOOT_GAP_PX = 18;
+const DOCK_CLEARANCE_PX = 10;
+/** Solo dots (+padding mínimo); el resto del hueco lo llena el margen flex del foot. */
+const CAROUSEL_FOOT_FLOOR_PX = 28;
+/** Gap card → dots dentro del margen inferior. */
+const FOOT_GAP_PX = 10;
 const CAPTION_RESERVE_PX = 66;
 const CARD_CHROME_PAD_PX = 8;
 const CARD_MIN_HEIGHT_PX = 160;
 /** Hueco bajo la tarjeta dentro del embla para que el borde inferior no se recorte. */
-const BORDER_CLEARANCE_PX = 18;
+const BORDER_CLEARANCE_PX = 12;
 const BOTTOM_EDGE_PX = 6;
+/** Margen inferior mínimo de los rectángulos (zona bajo la card hasta el dock). */
+const CARD_BOTTOM_MARGIN_MIN_PX = 52;
+const CARD_BOTTOM_MARGIN_MAX_PX = 88;
 const HOVER_HALO_INSET_PX = 2;
 const TALL_ZONE_MIN_PX = 240;
 const TALL_ZONE_RANGE_PX = 220;
@@ -117,6 +120,13 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       const cardMaxWidth = Math.round(
         Math.max(288, Math.min(viewportW - edgeGutter * 2 - 4, Math.round(viewportW * 0.96))),
       );
+      /* Margen bajo los rectángulos = banda hasta el dock (lo que marcó el usuario). */
+      const cardBottomMargin = Math.round(
+        Math.min(
+          CARD_BOTTOM_MARGIN_MAX_PX,
+          Math.max(CARD_BOTTOM_MARGIN_MIN_PX, bodyZoneHeight * 0.12 + (isCompact ? 40 : 52)),
+        ),
+      );
 
       const caption = screen.querySelector<HTMLElement>(
         '.inicio-home-card--mobile-carousel .inicio-home-card__caption',
@@ -144,7 +154,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       screen.style.setProperty('--inicio-mobile-guarantee-scale', guaranteeScale.toFixed(3));
       screen.style.setProperty('--inicio-mobile-top-gap', `${topGap}px`);
       screen.style.setProperty('--inicio-mobile-stage-gap', `${stageGap}px`);
-      screen.style.setProperty('--inicio-mobile-bottom-margin', `0px`);
+      screen.style.setProperty('--inicio-mobile-bottom-margin', `${cardBottomMargin}px`);
       screen.style.setProperty('--inicio-mobile-hover-inset', `${hoverInset}px`);
       screen.style.setProperty('--inicio-mobile-foot-gap', `${FOOT_GAP_PX}px`);
       screen.style.setProperty('--inicio-mobile-border-clearance', `${BORDER_CLEARANCE_PX}px`);
@@ -160,9 +170,9 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         );
 
       let topH = measureTopHeight();
-      let footH = measureFootHeight();
+      /* Para dimensionar la card usamos el margen completo (dots viven dentro). */
+      let footH = Math.max(cardBottomMargin, measureFootHeight());
 
-      /* Un solo overhead: stage + top + hover. El gap a dots va en padding del foot (medible). */
       const carouselOverhead = stageGap + topGap + hoverInset * 2;
 
       const availableCard = Math.max(
@@ -213,7 +223,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
           guard += 1;
         }
 
-        footH = measureFootHeight();
+        footH = Math.max(cardBottomMargin, measureFootHeight());
         const availFinal = Math.max(
           CARD_MIN_HEIGHT_PX,
           bodyZoneHeight - topH - footH - carouselOverhead,
@@ -265,6 +275,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       setPx('--inicio-mobile-hero-max-height', heroMaxHeight);
       setPx('--inicio-home-card-caption-reserve', captionReserve);
       setPx('--inicio-mobile-carousel-foot-reserve', footH);
+      setPx('--inicio-mobile-bottom-margin', cardBottomMargin);
       screen.style.setProperty('--inicio-mobile-caption-size', isCompact ? '15px' : '16px');
       screen.style.setProperty('--inicio-mobile-slide-gap', `${SLIDE_GAP_PX}px`);
       screen.style.setProperty('--inicio-mobile-slide-basis', `${SLIDE_BASIS_PERCENT}%`);

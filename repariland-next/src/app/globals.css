@@ -510,7 +510,7 @@
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-boxes,
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-carousel {
-      flex: 0 1 auto !important;
+      flex: 1 1 0 !important;
       min-height: 0;
       height: auto;
       max-height: none;
@@ -519,7 +519,7 @@
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-center-block {
-      flex: 0 1 auto;
+      flex: 1 1 0;
       min-height: 0;
       height: auto;
       max-height: none;
@@ -598,12 +598,13 @@
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-carousel-foot {
       margin-top: 0;
-      flex-shrink: 0;
+      flex: 1 1 auto;
+      min-height: var(--inicio-mobile-bottom-margin, 52px);
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-carousel .inicio-mobile-embla {
       min-height: 0;
-      flex: 0 1 auto;
+      flex: 0 0 auto;
       max-height: var(--inicio-mobile-carousel-track-height, none);
     }
 
@@ -978,15 +979,22 @@
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-carousel {
-      display: grid;
-      grid-template-rows: auto auto;
-      align-content: start;
+      display: flex;
+      flex-direction: column;
+      align-content: stretch;
       row-gap: 0;
       padding-inline: var(--inicio-mobile-edge-gutter, clamp(0.875rem, 4.5vw, 1.375rem));
     }
 
+    .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-carousel {
+      display: flex !important;
+      flex-direction: column;
+      flex: 1 1 0 !important;
+      min-height: 0;
+    }
+
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-carousel .inicio-mobile-embla {
-      flex: 0 1 auto;
+      flex: 0 0 auto;
       height: auto;
       min-height: 0;
       max-height: var(--inicio-mobile-carousel-track-height, 48dvh);
@@ -994,7 +1002,7 @@
       overflow: hidden;
       padding-top: clamp(0.1rem, 0.35dvh, 0.25rem);
       padding-inline: max(0.15rem, calc(var(--inicio-mobile-hover-inset, 0.35rem) * 0.5));
-      padding-bottom: max(12px, var(--inicio-mobile-border-clearance, 16px));
+      padding-bottom: max(10px, var(--inicio-mobile-border-clearance, 12px));
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-carousel .inicio-mobile-embla > div {
@@ -1525,17 +1533,25 @@
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-carousel-foot {
-      padding-top: var(--inicio-mobile-foot-gap, 18px);
-      padding-bottom: 0.45rem;
+      /* Esta banda = margen inferior de los rectángulos hasta el dock */
+      flex: 1 1 auto;
+      min-height: var(--inicio-mobile-bottom-margin, 52px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: var(--inicio-mobile-foot-gap, 10px);
+      padding-bottom: 0.2rem;
       margin-top: 0;
+      box-sizing: border-box;
     }
 
     .inicio-screen .inicio-mobile-carousel-foot {
       flex-shrink: 0;
       width: 100%;
       margin-top: 0;
-      padding-top: var(--inicio-mobile-foot-gap, 18px);
-      padding-bottom: 0.45rem;
+      padding-top: var(--inicio-mobile-foot-gap, 10px);
+      padding-bottom: 0.2rem;
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-boxes,
