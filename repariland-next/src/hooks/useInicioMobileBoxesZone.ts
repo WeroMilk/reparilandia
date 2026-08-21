@@ -3,42 +3,16 @@ import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 import { measureMobileContentZone } from '@/lib/mobileContentZone';
 
 const DOCK_CLEARANCE_PX = 10;
-/** Solo dots; el margen bajo la card debe ser mínimo. */
-const CAROUSEL_FOOT_FLOOR_PX = 22;
-/** Gap card → dots (muy corto; los dots van pegados arriba del rectángulo). */
-const FOOT_GAP_PX = 0;
-const CAPTION_RESERVE_PX = 68;
-const CARD_CHROME_PAD_PX = 6;
-const CARD_MIN_HEIGHT_PX = 210;
-/** Hueco mínimo bajo el borde dentro del embla. */
-const BORDER_CLEARANCE_PX = 6;
+const FOOT_FLOOR_PX = 28;
+const CAPTION_FLOOR_PX = 56;
+const CARD_CHROME_PX = 8;
+const BORDER_CLEARANCE_PX = 4;
 const BOTTOM_EDGE_PX = 3;
-/** Margen inferior de los rectángulos: dots + caption clearance. */
-const CARD_BOTTOM_MARGIN_MIN_PX = 26;
-const CARD_BOTTOM_MARGIN_MAX_PX = 34;
-const HOVER_HALO_INSET_PX = 2;
-const TALL_ZONE_MIN_PX = 240;
-const TALL_ZONE_RANGE_PX = 220;
-/** Compacto solo en zonas realmente cortas. */
-const SHORT_BODY_ZONE_PX = 420;
-const SLIDE_BASIS_PERCENT = 100;
-const SLIDE_GAP_PX = 0;
-const LOGO_BASE_REM = 5.8;
-const LOGO_TALL_BOOST_REM = 1.9;
-const LOGO_COMPACT_CAP_REM = 5.1;
-const PREFERRED_HERO_VH = 0.5;
-const PREFERRED_HERO_MIN_PX = 220;
-const PREFERRED_HERO_MAX_PX = 480;
-const HERO_FLOOR_PX = 180;
 const STABLE_EPS_PX = 2;
 
-function mobileTallFillFactor(zoneSpan: number): number {
-  return Math.max(0, Math.min(1, (zoneSpan - TALL_ZONE_MIN_PX) / TALL_ZONE_RANGE_PX));
-}
-
 /**
- * Zona del carrusel de boxes en Inicio (móvil): rellena entre cabecera y dock
- * con la misma lógica limpia que el layout de escritorio (sin overhead doble).
+ * Inicio móvil: reparte el alto útil del dispositivo (header→dock)
+ * en ritmo + cabecera + card + dots, sin apilar con márgenes negativos.
  */
 export function useInicioMobileBoxesZone(enabled: boolean) {
   useEffect(() => {
@@ -52,34 +26,51 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
 
     const clearZone = (screen: HTMLElement | null) => {
       if (!screen) return;
-      screen.removeAttribute('data-inicio-layout-ready');
-      screen.removeAttribute('data-inicio-fill-zone');
-      screen.removeAttribute('data-inicio-compact-zone');
-      screen.style.removeProperty('--inicio-mobile-boxes-zone-height');
-      screen.style.removeProperty('--inicio-mobile-edge-gutter');
-      screen.style.removeProperty('--inicio-mobile-section-gap');
-      screen.style.removeProperty('--inicio-mobile-card-max-width');
-      screen.style.removeProperty('--inicio-mobile-card-max-height');
-      screen.style.removeProperty('--inicio-mobile-hero-max-height');
-      screen.style.removeProperty('--inicio-home-card-caption-reserve');
-      screen.style.removeProperty('--inicio-mobile-caption-size');
-      screen.style.removeProperty('--inicio-mobile-carousel-foot-reserve');
-      screen.style.removeProperty('--inicio-mobile-carousel-track-height');
-      screen.style.removeProperty('--inicio-mobile-scroll-page-height');
-      screen.style.removeProperty('--inicio-mobile-bottom-margin');
-      screen.style.removeProperty('--inicio-mobile-border-clearance');
-      screen.style.removeProperty('--inicio-mobile-hover-inset');
-      screen.style.removeProperty('--inicio-mobile-slide-gap');
-      screen.style.removeProperty('--inicio-mobile-slide-basis');
-      screen.style.removeProperty('--inicio-mobile-stage-gap');
-      screen.style.removeProperty('--inicio-mobile-logo-max-height');
-      screen.style.removeProperty('--inicio-mobile-body-zone-height');
-      screen.style.removeProperty('--inicio-mobile-block-offset-top');
-      screen.style.removeProperty('--inicio-mobile-block-offset-bottom');
-      screen.style.removeProperty('--inicio-mobile-top-gap');
-      screen.style.removeProperty('--inicio-mobile-slogan-size');
-      screen.style.removeProperty('--inicio-mobile-guarantee-scale');
-      screen.style.removeProperty('--inicio-mobile-foot-gap');
+      [
+        'data-inicio-layout-ready',
+        'data-inicio-fill-zone',
+        'data-inicio-compact-zone',
+      ].forEach((a) => screen.removeAttribute(a));
+      [
+        '--inicio-mobile-boxes-zone-height',
+        '--inicio-mobile-edge-gutter',
+        '--inicio-mobile-section-gap',
+        '--inicio-mobile-card-max-width',
+        '--inicio-mobile-card-max-height',
+        '--inicio-mobile-hero-max-height',
+        '--inicio-home-card-caption-reserve',
+        '--inicio-mobile-caption-size',
+        '--inicio-mobile-carousel-foot-reserve',
+        '--inicio-mobile-carousel-track-height',
+        '--inicio-mobile-scroll-page-height',
+        '--inicio-mobile-bottom-margin',
+        '--inicio-mobile-border-clearance',
+        '--inicio-mobile-hover-inset',
+        '--inicio-mobile-slide-gap',
+        '--inicio-mobile-slide-basis',
+        '--inicio-mobile-stage-gap',
+        '--inicio-mobile-logo-max-height',
+        '--inicio-mobile-body-zone-height',
+        '--inicio-mobile-block-offset-top',
+        '--inicio-mobile-block-offset-bottom',
+        '--inicio-mobile-top-gap',
+        '--inicio-mobile-slogan-size',
+        '--inicio-mobile-guarantee-scale',
+        '--inicio-mobile-foot-gap',
+        '--inicio-mobile-rhythm',
+        '--inicio-mobile-brand-gap',
+        '--inicio-mobile-guarantee-pad-y',
+        '--inicio-mobile-guarantee-pad-x',
+        '--inicio-mobile-guarantee-title-size',
+        '--inicio-mobile-guarantee-lead-size',
+        '--inicio-mobile-guarantee-body-size',
+      ].forEach((p) => screen.style.removeProperty(p));
+    };
+
+    const setPx = (screen: HTMLElement, name: string, value: number) => {
+      const prev = Number.parseFloat(screen.style.getPropertyValue(name));
+      if (Number.isFinite(prev) && Math.abs(prev - value) <= STABLE_EPS_PX) return;
+      screen.style.setProperty(name, `${Math.round(value)}px`);
     };
 
     const measure = (finalPass = false) => {
@@ -88,199 +79,127 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         clearZone(screen);
         return;
       }
-
-      const topBlock = screen?.querySelector<HTMLElement>('.inicio-mobile-top');
-      if (!screen || !topBlock) {
-        return;
-      }
+      if (!screen?.querySelector('.inicio-mobile-top')) return;
 
       const zone = measureMobileContentZone(screen, { dockClearancePx: DOCK_CLEARANCE_PX });
-      if (!zone || zone.zoneHeight < 120) {
-        return;
-      }
+      if (!zone || zone.zoneHeight < 160) return;
 
-      const bodyZoneHeight = zone.zoneHeight;
-      const viewportH = zone.viewportH;
-      const viewportW = zone.viewportW;
-      const tallFill = mobileTallFillFactor(bodyZoneHeight);
-      const isCompact = bodyZoneHeight <= SHORT_BODY_ZONE_PX;
+      const H = zone.zoneHeight;
+      const W = zone.viewportW;
+      /* 0 = teléfono bajo / zona corta → 1 = alto cómodo */
+      const fill = Math.max(0, Math.min(1, (H - 380) / 280));
+      const isCompact = H < 460;
 
-      const stageGap = Math.round(isCompact ? 4 : 6 + tallFill * 2);
-      const topGap = Math.round(isCompact ? 2 : 4 + tallFill);
-      const hoverInset = HOVER_HALO_INSET_PX;
-      const edgeGutter = Math.max(6, Math.min(10, Math.round(viewportW * 0.02)));
-      const sectionGap = FOOT_GAP_PX;
+      /* Ritmo vertical que crece con el teléfono (no gaps de 2–4px). */
+      const rhythm = Math.round(8 + fill * 8);
+      const brandGap = Math.round(4 + fill * 6);
+      const stageGap = rhythm;
+      const topInnerGap = Math.round(6 + fill * 6);
+
+      const edgeGutter = Math.max(8, Math.min(14, Math.round(W * 0.03)));
       const cardMaxWidth = Math.round(
-        Math.max(288, Math.min(viewportW - edgeGutter * 2 - 4, Math.round(viewportW * 0.96))),
-      );
-      /* Margen corto bajo los rectángulos (no expandir hueco vacío). */
-      const cardBottomMargin = Math.round(
-        Math.min(
-          CARD_BOTTOM_MARGIN_MAX_PX,
-          Math.max(CARD_BOTTOM_MARGIN_MIN_PX, isCompact ? 22 : 26),
-        ),
+        Math.max(280, Math.min(W - edgeGutter * 2, Math.round(W * 0.94))),
       );
 
-      const caption = screen.querySelector<HTMLElement>(
-        '.inicio-mobile-slide__inner .inicio-home-card__caption--slide-out, .inicio-home-card--mobile-carousel .inicio-home-card__caption',
-      );
-      const captionHeight = caption
-        ? Math.ceil(caption.getBoundingClientRect().height)
-        : CAPTION_RESERVE_PX;
-      const captionReserve = Math.max(CAPTION_RESERVE_PX, captionHeight + 12 + BOTTOM_EDGE_PX);
+      const logoMaxRem = Number((4.6 + fill * 2.2).toFixed(2));
+      const sloganSizeRem = Number((0.7 + fill * 0.1).toFixed(3));
+      const captionPx = Math.round(14 + fill * 3);
 
-      let logoMaxRem = isCompact
-        ? LOGO_COMPACT_CAP_REM
-        : LOGO_BASE_REM + tallFill * LOGO_TALL_BOOST_REM;
-      let guaranteeScale = isCompact ? 0.86 : 0.92 + tallFill * 0.05;
-      let sloganSizeRem = isCompact ? 0.68 : 0.74 + tallFill * 0.06;
+      const gPadY = Number((0.4 + fill * 0.25).toFixed(3));
+      const gPadX = Number((0.65 + fill * 0.2).toFixed(3));
+      const gTitle = Number((0.625 + fill * 0.05).toFixed(3));
+      const gLead = Number((0.72 + fill * 0.1).toFixed(3));
+      const gBody = Number((0.625 + fill * 0.08).toFixed(3));
 
       screen.setAttribute('data-inicio-fill-zone', 'true');
-      if (isCompact) {
-        screen.setAttribute('data-inicio-compact-zone', 'true');
-      } else {
-        screen.removeAttribute('data-inicio-compact-zone');
-      }
+      if (isCompact) screen.setAttribute('data-inicio-compact-zone', 'true');
+      else screen.removeAttribute('data-inicio-compact-zone');
 
-      screen.style.setProperty('--inicio-mobile-logo-max-height', `${logoMaxRem.toFixed(2)}rem`);
-      screen.style.setProperty('--inicio-mobile-slogan-size', `${sloganSizeRem.toFixed(3)}rem`);
-      screen.style.setProperty('--inicio-mobile-guarantee-scale', guaranteeScale.toFixed(3));
-      screen.style.setProperty('--inicio-mobile-top-gap', `${topGap}px`);
+      screen.style.setProperty('--inicio-mobile-logo-max-height', `${logoMaxRem}rem`);
+      screen.style.setProperty('--inicio-mobile-slogan-size', `${sloganSizeRem}rem`);
+      screen.style.setProperty('--inicio-mobile-rhythm', `${rhythm}px`);
+      screen.style.setProperty('--inicio-mobile-brand-gap', `${brandGap}px`);
       screen.style.setProperty('--inicio-mobile-stage-gap', `${stageGap}px`);
-      screen.style.setProperty('--inicio-mobile-bottom-margin', `${cardBottomMargin}px`);
-      screen.style.setProperty('--inicio-mobile-hover-inset', `${hoverInset}px`);
-      screen.style.setProperty('--inicio-mobile-foot-gap', `${FOOT_GAP_PX}px`);
+      screen.style.setProperty('--inicio-mobile-top-gap', `${topInnerGap}px`);
+      screen.style.setProperty('--inicio-mobile-foot-gap', `${Math.round(4 + fill * 4)}px`);
       screen.style.setProperty('--inicio-mobile-border-clearance', `${BORDER_CLEARANCE_PX}px`);
+      screen.style.setProperty('--inicio-mobile-hover-inset', '2px');
+      screen.style.setProperty('--inicio-mobile-caption-size', `${captionPx}px`);
+      screen.style.setProperty('--inicio-mobile-guarantee-pad-y', `${gPadY}rem`);
+      screen.style.setProperty('--inicio-mobile-guarantee-pad-x', `${gPadX}rem`);
+      screen.style.setProperty('--inicio-mobile-guarantee-title-size', `${gTitle}rem`);
+      screen.style.setProperty('--inicio-mobile-guarantee-lead-size', `${gLead}rem`);
+      screen.style.setProperty('--inicio-mobile-guarantee-body-size', `${gBody}rem`);
+      screen.style.setProperty('--inicio-mobile-slide-gap', '0px');
+      screen.style.setProperty('--inicio-mobile-slide-basis', '100%');
+      screen.style.setProperty('--inicio-mobile-block-offset-top', '0px');
+      screen.style.setProperty('--inicio-mobile-block-offset-bottom', '0px');
+      /* Sin scale: el texto respira con tamaños, no se aplasta. */
+      screen.style.setProperty('--inicio-mobile-guarantee-scale', '1');
 
       const topEl = screen.querySelector<HTMLElement>('.inicio-mobile-top');
       const footEl = screen.querySelector<HTMLElement>('.inicio-mobile-carousel-foot');
-      const measureTopHeight = () =>
-        topEl ? Math.ceil(topEl.getBoundingClientRect().height) : 0;
-      const measureFootHeight = () =>
-        Math.max(
-          CAROUSEL_FOOT_FLOOR_PX,
-          footEl ? Math.ceil(footEl.getBoundingClientRect().height) : 0,
-        );
-
-      let topH = measureTopHeight();
-      /* Para dimensionar la card usamos el margen completo (dots viven dentro). */
-      let footH = Math.max(cardBottomMargin, measureFootHeight());
-
-      const carouselOverhead = stageGap + topGap + hoverInset * 2;
-
-      const availableCard = Math.max(
-        CARD_MIN_HEIGHT_PX,
-        bodyZoneHeight - topH - footH - carouselOverhead,
+      const captionEl = screen.querySelector<HTMLElement>(
+        '.inicio-mobile-slide__inner .inicio-home-card__caption--slide-out',
       );
 
-      const preferredHero = Math.round(
-        Math.min(
-          PREFERRED_HERO_MAX_PX,
-          Math.max(PREFERRED_HERO_MIN_PX, viewportH * PREFERRED_HERO_VH),
-          cardMaxWidth * 0.98,
-        ),
+      const topH = topEl ? Math.ceil(topEl.getBoundingClientRect().height) : 0;
+      const footH = Math.max(
+        FOOT_FLOOR_PX,
+        footEl ? Math.ceil(footEl.getBoundingClientRect().height) : 0,
       );
+      const captionH = captionEl
+        ? Math.ceil(captionEl.getBoundingClientRect().height)
+        : CAPTION_FLOOR_PX;
+      const captionReserve = Math.max(CAPTION_FLOOR_PX, captionH + 10);
 
-      let heroMaxHeight = Math.min(
-        preferredHero,
-        Math.max(PREFERRED_HERO_MIN_PX, availableCard - captionReserve - CARD_CHROME_PAD_PX),
-      );
-      /* Caption siempre cabe: si hace falta, reducir héroe antes que recortar texto. */
-      if (heroMaxHeight + captionReserve + CARD_CHROME_PAD_PX > availableCard) {
-        heroMaxHeight = Math.max(
-          HERO_FLOOR_PX,
-          availableCard - captionReserve - CARD_CHROME_PAD_PX,
-        );
+      const overhead = stageGap + topInnerGap;
+      const availableCard = Math.max(160, H - topH - footH - overhead);
+
+      /* Héroe = lo que queda tras reservar caption; crece en móviles altos. */
+      let heroMax = Math.max(140, availableCard - captionReserve - CARD_CHROME_PX);
+      /* Tope suave ~52% del viewport para no comerse logo+garantía en pantallas altas. */
+      const heroCap = Math.round(Math.min(cardMaxWidth * 1.05, zone.viewportH * 0.52));
+      heroMax = Math.min(heroMax, heroCap);
+      /* En zonas altas, no dejar el héroe demasiado tímido. */
+      if (fill > 0.35) {
+        heroMax = Math.max(heroMax, Math.round(200 + fill * 80));
+        heroMax = Math.min(heroMax, availableCard - captionReserve - CARD_CHROME_PX);
       }
-      let cardMaxHeight = Math.min(
+
+      let cardMax = Math.min(
         availableCard,
-        Math.max(CARD_MIN_HEIGHT_PX, heroMaxHeight + captionReserve + CARD_CHROME_PAD_PX),
+        heroMax + captionReserve + CARD_CHROME_PX,
       );
 
-      if (finalPass) {
-        /* Prioridad: caption visible + héroe con más aire. */
-        let guard = 0;
-        while (guard < 10) {
-          topH = measureTopHeight();
-          const avail = Math.max(
-            CARD_MIN_HEIGHT_PX,
-            bodyZoneHeight - topH - footH - carouselOverhead,
-          );
-          const roomForHero = avail - captionReserve - CARD_CHROME_PAD_PX;
-          if (roomForHero >= PREFERRED_HERO_MIN_PX || logoMaxRem <= 4.2) {
-            heroMaxHeight = Math.min(preferredHero, Math.max(HERO_FLOOR_PX, roomForHero));
-            cardMaxHeight = Math.min(
-              avail,
-              Math.max(CARD_MIN_HEIGHT_PX, heroMaxHeight + captionReserve + CARD_CHROME_PAD_PX),
-            );
-            break;
-          }
-          logoMaxRem = Math.max(4.2, logoMaxRem - 0.35);
-          guaranteeScale = Math.max(0.78, guaranteeScale - 0.035);
-          sloganSizeRem = Math.max(0.6, sloganSizeRem - 0.025);
-          screen.style.setProperty('--inicio-mobile-logo-max-height', `${logoMaxRem.toFixed(2)}rem`);
-          screen.style.setProperty('--inicio-mobile-slogan-size', `${sloganSizeRem.toFixed(3)}rem`);
-          screen.style.setProperty('--inicio-mobile-guarantee-scale', guaranteeScale.toFixed(3));
-          guard += 1;
+      if (finalPass && topH > 0) {
+        /* Si la cabecera se pasó del presupuesto (~34% H), bajar un poco logo. */
+        const topBudget = Math.round(H * (0.3 + fill * 0.06));
+        if (topH > topBudget + 8 && logoMaxRem > 4.4) {
+          const nextLogo = Math.max(4.4, logoMaxRem - 0.45);
+          screen.style.setProperty('--inicio-mobile-logo-max-height', `${nextLogo.toFixed(2)}rem`);
+          const topH2 = topEl ? Math.ceil(topEl.getBoundingClientRect().height) : topH;
+          const avail2 = Math.max(160, H - topH2 - footH - overhead);
+          heroMax = Math.min(heroCap, Math.max(140, avail2 - captionReserve - CARD_CHROME_PX));
+          cardMax = Math.min(avail2, heroMax + captionReserve + CARD_CHROME_PX);
         }
-
-        footH = Math.max(cardBottomMargin, measureFootHeight());
-        const availFinal = Math.max(
-          CARD_MIN_HEIGHT_PX,
-          bodyZoneHeight - topH - footH - carouselOverhead,
-        );
-        heroMaxHeight = Math.min(
-          preferredHero,
-          Math.max(HERO_FLOOR_PX, availFinal - captionReserve - CARD_CHROME_PAD_PX),
-        );
-        cardMaxHeight = Math.min(
-          availFinal,
-          Math.max(CARD_MIN_HEIGHT_PX, heroMaxHeight + captionReserve + CARD_CHROME_PAD_PX),
-        );
-
-        screen.style.setProperty('--inicio-mobile-hero-max-height', `${Math.round(heroMaxHeight)}px`);
-        screen.style.setProperty('--inicio-home-card-caption-reserve', `${Math.round(captionReserve)}px`);
-        const cardEl = screen.querySelector<HTMLElement>('.inicio-mobile-slide__inner');
-        if (cardEl) {
-          const measuredCard = Math.ceil(cardEl.getBoundingClientRect().height);
-          if (measuredCard > 0) {
-            /* No dejar que la card crezca más que el hueco (empujaría dots bajo el dock). */
-            cardMaxHeight = Math.min(availFinal, Math.max(cardMaxHeight, measuredCard + 2));
-          }
-        }
-
-        screen.style.setProperty('--inicio-mobile-block-offset-top', '0px');
-        screen.style.setProperty('--inicio-mobile-block-offset-bottom', '0px');
       }
 
-      const zoneSpan = Math.max(
-        CARD_MIN_HEIGHT_PX,
-        bodyZoneHeight - topH - stageGap - topGap,
-      );
-      /* Track = altura de tarjeta + barra inferior + clearance del embla. */
-      const finalTrack = cardMaxHeight + BOTTOM_EDGE_PX + BORDER_CLEARANCE_PX;
+      const track = cardMax + BOTTOM_EDGE_PX + BORDER_CLEARANCE_PX;
+      const zoneSpan = Math.max(160, H - topH - stageGap);
 
-      const setPx = (name: string, value: number) => {
-        const prev = Number.parseFloat(screen.style.getPropertyValue(name));
-        if (Number.isFinite(prev) && Math.abs(prev - value) <= STABLE_EPS_PX) return;
-        screen.style.setProperty(name, `${Math.round(value)}px`);
-      };
-
-      setPx('--inicio-mobile-boxes-zone-height', zoneSpan);
-      setPx('--inicio-mobile-body-zone-height', bodyZoneHeight);
-      setPx('--inicio-mobile-carousel-track-height', finalTrack);
-      setPx('--inicio-mobile-scroll-page-height', finalTrack);
-      setPx('--inicio-mobile-edge-gutter', edgeGutter);
-      setPx('--inicio-mobile-section-gap', sectionGap);
-      setPx('--inicio-mobile-card-max-width', cardMaxWidth);
-      setPx('--inicio-mobile-card-max-height', cardMaxHeight);
-      setPx('--inicio-mobile-hero-max-height', heroMaxHeight);
-      setPx('--inicio-home-card-caption-reserve', captionReserve);
-      setPx('--inicio-mobile-carousel-foot-reserve', footH);
-      setPx('--inicio-mobile-bottom-margin', cardBottomMargin);
-      screen.style.setProperty('--inicio-mobile-caption-size', isCompact ? '15.5px' : '16.5px');
-      screen.style.setProperty('--inicio-mobile-slide-gap', `${SLIDE_GAP_PX}px`);
-      screen.style.setProperty('--inicio-mobile-slide-basis', `${SLIDE_BASIS_PERCENT}%`);
+      setPx(screen, '--inicio-mobile-body-zone-height', H);
+      setPx(screen, '--inicio-mobile-boxes-zone-height', zoneSpan);
+      setPx(screen, '--inicio-mobile-carousel-track-height', track);
+      setPx(screen, '--inicio-mobile-scroll-page-height', track);
+      setPx(screen, '--inicio-mobile-edge-gutter', edgeGutter);
+      setPx(screen, '--inicio-mobile-section-gap', rhythm);
+      setPx(screen, '--inicio-mobile-card-max-width', cardMaxWidth);
+      setPx(screen, '--inicio-mobile-card-max-height', cardMax);
+      setPx(screen, '--inicio-mobile-hero-max-height', heroMax);
+      setPx(screen, '--inicio-home-card-caption-reserve', captionReserve);
+      setPx(screen, '--inicio-mobile-carousel-foot-reserve', footH);
+      setPx(screen, '--inicio-mobile-bottom-margin', footH);
 
       screen.setAttribute('data-inicio-layout-ready', 'true');
     };

@@ -243,7 +243,7 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
                 draggable={false}
               />
             </div>
-            <p className="inicio-mobile-slogan max-w-xl px-3 font-orbitron text-[clamp(0.6875rem,2.8vw,0.875rem)] font-medium leading-none tracking-[0.14em] text-cyan-100/95 drop-shadow-[0_0_20px_rgba(34,211,238,0.22)] sm:text-sm sm:tracking-[0.22em]">
+            <p className="inicio-mobile-slogan max-w-xl px-3 font-orbitron font-medium leading-none tracking-[0.14em] text-cyan-100/95 drop-shadow-[0_0_20px_rgba(34,211,238,0.22)] sm:tracking-[0.22em]">
               La capital de la reparación
             </p>
           </div>

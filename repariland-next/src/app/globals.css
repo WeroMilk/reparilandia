@@ -504,7 +504,7 @@
       height: 100% !important;
       max-height: 100%;
       justify-content: flex-start;
-      gap: var(--inicio-mobile-stage-gap, clamp(0.2rem, 0.55dvh, 0.45rem));
+      gap: var(--inicio-mobile-stage-gap, clamp(0.5rem, 1.4dvh, 0.85rem));
       margin-top: 0;
       padding-top: 0;
       padding-bottom: var(--inicio-mobile-block-offset-bottom, 0);
@@ -634,60 +634,66 @@
       width: 100%;
       min-height: 0;
       padding-inline: var(--inicio-mobile-edge-gutter, clamp(0.875rem, 4.5vw, 1.375rem));
-      gap: clamp(0.28rem, 0.75dvh, 0.45rem);
+      gap: var(--inicio-mobile-top-gap, clamp(0.45rem, 1.2dvh, 0.75rem));
       box-sizing: border-box;
     }
 
     .inicio-screen .inicio-mobile-brand {
-      gap: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--inicio-mobile-brand-gap, 0.35rem);
       width: 100%;
-      transform: translateY(-0.35rem);
+      transform: none;
     }
 
     .inicio-screen .inicio-mobile-logo-wrap {
       margin-top: 0;
+      margin-bottom: 0;
       width: 100%;
       line-height: 0;
     }
 
     .inicio-screen .inicio-mobile-logo {
       display: block;
-      max-height: min(19.5dvh, 9.25rem);
+      max-height: var(--inicio-mobile-logo-max-height, min(22dvh, 11rem));
       max-width: min(94vw, 38rem);
-      margin-bottom: -0.4rem;
+      margin-bottom: 0;
     }
 
     .inicio-screen .inicio-mobile-slogan {
-      margin-top: -1.15rem;
+      margin-top: 0;
       margin-bottom: 0;
       padding-top: 0;
-      line-height: 1.15;
+      font-size: var(--inicio-mobile-slogan-size, 0.75rem);
+      line-height: 1.2;
     }
 
     .inicio-screen .inicio-mobile-guarantee.guarantee-promise {
       margin-top: 0;
       margin-bottom: 0;
       width: 100%;
-      max-width: var(--inicio-mobile-card-max-width, min(82vw, 17.5rem));
+      max-width: var(--inicio-mobile-card-max-width, min(92vw, 22rem));
       margin-inline: auto;
-      padding: clamp(0.28rem, 0.9dvh, 0.45rem) clamp(0.5rem, 2vw, 0.75rem);
+      padding: var(--inicio-mobile-guarantee-pad-y, 0.5rem) var(--inicio-mobile-guarantee-pad-x, 0.75rem);
       box-sizing: border-box;
+      transform: none;
     }
 
     .inicio-screen .inicio-mobile-guarantee.guarantee-promise .font-orbitron {
-      font-size: clamp(0.625rem, 2.4vw, 0.6875rem);
+      font-size: var(--inicio-mobile-guarantee-title-size, 0.65rem);
       letter-spacing: 0.18em;
     }
 
     .inicio-screen .inicio-mobile-guarantee.guarantee-promise p.font-orbitron.font-semibold {
-      font-size: clamp(0.6875rem, 2.8vw, 0.8125rem);
-      line-height: 1.35;
+      font-size: var(--inicio-mobile-guarantee-lead-size, 0.78rem);
+      line-height: 1.4;
     }
 
     .inicio-screen .inicio-mobile-guarantee.guarantee-promise p.font-space {
-      font-size: clamp(0.625rem, 2.5vw, 0.6875rem);
-      line-height: 1.4;
-      margin-top: 0.35rem;
+      font-size: var(--inicio-mobile-guarantee-body-size, 0.68rem);
+      line-height: 1.45;
+      margin-top: 0.4rem;
     }
 
     .inicio-screen .inicio-mobile-boxes,
@@ -828,28 +834,28 @@
     }
 
     .inicio-screen[data-inicio-layout-ready]:not([data-inicio-fill-zone]) .inicio-mobile-logo {
-      max-height: min(12.5dvh, 6.15rem);
-      margin-bottom: -0.32rem;
+      max-height: min(18dvh, 9rem);
+      margin-bottom: 0;
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-slogan {
-      margin-top: -1rem;
+      margin-top: 0;
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-guarantee.guarantee-promise {
       margin-top: 0;
-      margin-bottom: clamp(0.02rem, 0.2dvh, 0.08rem);
-      padding: clamp(0.22rem, 0.75dvh, 0.38rem) clamp(0.45rem, 1.8vw, 0.65rem);
+      margin-bottom: 0;
+      padding: var(--inicio-mobile-guarantee-pad-y, 0.5rem) var(--inicio-mobile-guarantee-pad-x, 0.75rem);
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-top {
-      gap: clamp(0.2rem, 0.55dvh, 0.35rem);
+      gap: var(--inicio-mobile-top-gap, clamp(0.45rem, 1.2dvh, 0.75rem));
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-guarantee.guarantee-promise p.font-space {
-      margin-top: 0.25rem;
-      font-size: clamp(0.5625rem, 2.2vw, 0.625rem);
-      line-height: 1.32;
+      margin-top: 0.4rem;
+      font-size: var(--inicio-mobile-guarantee-body-size, 0.68rem);
+      line-height: 1.45;
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-center-block {
@@ -1576,7 +1582,7 @@
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-carousel-foot {
-      /* Dots más arriba (cerca del rectángulo) y con aire sobre el dock */
+      /* Dots debajo del rectángulo, con ritmo del dispositivo */
       flex: 0 0 auto;
       min-height: 0;
       height: auto;
@@ -1584,10 +1590,10 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding-top: 0;
-      padding-bottom: 0.35rem;
-      margin-top: -0.55rem;
-      margin-bottom: 0.35rem;
+      padding-top: var(--inicio-mobile-foot-gap, 0.35rem);
+      padding-bottom: 0.25rem;
+      margin-top: 0;
+      margin-bottom: 0;
       box-sizing: border-box;
       position: relative;
       z-index: 2;
@@ -1596,10 +1602,10 @@
     .inicio-screen .inicio-mobile-carousel-foot {
       flex-shrink: 0;
       width: 100%;
-      margin-top: -0.55rem;
-      margin-bottom: 0.35rem;
-      padding-top: 0;
-      padding-bottom: 0.35rem;
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-top: var(--inicio-mobile-foot-gap, 0.35rem);
+      padding-bottom: 0.25rem;
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-boxes,
@@ -1622,15 +1628,15 @@
 
     @container mobile-body (max-height: 700px) {
       .inicio-screen .inicio-mobile-brand {
-        transform: translateY(-0.65rem);
+        transform: none;
       }
 
       .inicio-screen .inicio-mobile-logo {
-        max-height: min(19.5dvh, 9.25rem);
+        max-height: var(--inicio-mobile-logo-max-height, min(20dvh, 10rem));
       }
 
       .inicio-screen .inicio-mobile-slogan {
-        margin-top: -1.35rem;
+        margin-top: 0;
       }
 
       .inicio-screen:not([data-inicio-layout-ready])
@@ -1642,8 +1648,8 @@
       }
 
       .inicio-screen .inicio-mobile-guarantee.guarantee-promise {
-        margin-top: 0.1rem;
-        padding: 0.4rem 0.5rem;
+        margin-top: 0;
+        padding: var(--inicio-mobile-guarantee-pad-y, 0.45rem) var(--inicio-mobile-guarantee-pad-x, 0.65rem);
       }
 
       .inicio-screen .inicio-mobile-boxes {
@@ -1653,15 +1659,15 @@
 
     @container mobile-body (max-height: 600px) {
       .inicio-screen .inicio-mobile-brand {
-        transform: translateY(-0.7rem);
+        transform: none;
       }
 
       .inicio-screen .inicio-mobile-logo {
-        max-height: min(17.5dvh, 8.5rem);
+        max-height: var(--inicio-mobile-logo-max-height, min(18dvh, 9rem));
       }
 
       .inicio-screen .inicio-mobile-slogan {
-        margin-top: -1.25rem;
+        margin-top: 0;
       }
 
       .inicio-screen
@@ -4083,11 +4089,7 @@
   }
 
   @media (max-width: 1023px) {
-    /* iOS: mismo layout que Android; solo asegurar dots visibles sobre el dock. */
     html[data-ios-safari-chrome='1'] .inicio-screen .inicio-mobile-carousel-foot {
-      margin-top: -0.55rem;
-      margin-bottom: 0.35rem;
-      padding-bottom: 0.35rem;
       position: relative;
       z-index: 2;
     }
