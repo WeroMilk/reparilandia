@@ -1,20 +1,20 @@
 import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
-const DOCK_CLEARANCE_PX = 10;
-/** Solo dots (+padding mínimo); el resto del hueco lo llena el margen flex del foot. */
-const CAROUSEL_FOOT_FLOOR_PX = 28;
-/** Gap card → dots dentro del margen inferior. */
-const FOOT_GAP_PX = 10;
-const CAPTION_RESERVE_PX = 66;
+const DOCK_CLEARANCE_PX = 8;
+/** Solo dots; el margen bajo la card debe ser mínimo. */
+const CAROUSEL_FOOT_FLOOR_PX = 22;
+/** Gap card → dots (muy corto). */
+const FOOT_GAP_PX = 4;
+const CAPTION_RESERVE_PX = 62;
 const CARD_CHROME_PAD_PX = 8;
 const CARD_MIN_HEIGHT_PX = 160;
-/** Hueco bajo la tarjeta dentro del embla para que el borde inferior no se recorte. */
-const BORDER_CLEARANCE_PX = 12;
-const BOTTOM_EDGE_PX = 6;
-/** Margen inferior mínimo de los rectángulos (zona bajo la card hasta el dock). */
-const CARD_BOTTOM_MARGIN_MIN_PX = 52;
-const CARD_BOTTOM_MARGIN_MAX_PX = 88;
+/** Hueco mínimo bajo el borde dentro del embla. */
+const BORDER_CLEARANCE_PX = 6;
+const BOTTOM_EDGE_PX = 3;
+/** Margen inferior de los rectángulos: corto (solo dots + respiración). */
+const CARD_BOTTOM_MARGIN_MIN_PX = 22;
+const CARD_BOTTOM_MARGIN_MAX_PX = 30;
 const HOVER_HALO_INSET_PX = 2;
 const TALL_ZONE_MIN_PX = 240;
 const TALL_ZONE_RANGE_PX = 220;
@@ -25,9 +25,9 @@ const SLIDE_GAP_PX = 0;
 const LOGO_BASE_REM = 5.9;
 const LOGO_TALL_BOOST_REM = 2.0;
 const LOGO_COMPACT_CAP_REM = 5.1;
-const PREFERRED_HERO_VH = 0.46;
-const PREFERRED_HERO_MIN_PX = 230;
-const PREFERRED_HERO_MAX_PX = 440;
+const PREFERRED_HERO_VH = 0.5;
+const PREFERRED_HERO_MIN_PX = 250;
+const PREFERRED_HERO_MAX_PX = 480;
 const STABLE_EPS_PX = 2;
 
 function mobileTallFillFactor(zoneSpan: number): number {
@@ -120,11 +120,11 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       const cardMaxWidth = Math.round(
         Math.max(288, Math.min(viewportW - edgeGutter * 2 - 4, Math.round(viewportW * 0.96))),
       );
-      /* Margen bajo los rectángulos = banda hasta el dock (lo que marcó el usuario). */
+      /* Margen corto bajo los rectángulos (no expandir hueco vacío). */
       const cardBottomMargin = Math.round(
         Math.min(
           CARD_BOTTOM_MARGIN_MAX_PX,
-          Math.max(CARD_BOTTOM_MARGIN_MIN_PX, bodyZoneHeight * 0.12 + (isCompact ? 40 : 52)),
+          Math.max(CARD_BOTTOM_MARGIN_MIN_PX, isCompact ? 22 : 26),
         ),
       );
 
