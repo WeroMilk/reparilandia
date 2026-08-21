@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
-const DOCK_CLEARANCE_PX = 12;
+const DOCK_CLEARANCE_PX = 8;
 
 /**
  * Altura de la zona útil en Contacto (móvil): entre cabecera y rail de 6 botones.

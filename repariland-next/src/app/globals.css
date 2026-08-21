@@ -410,8 +410,8 @@
 
     /* Contacto — tarjeta centrada entre título y rail (useContactoMobileZone) */
     .contacto-screen .mobile-screen__header {
-      padding-top: clamp(0.25rem, 1dvh, 0.5rem);
-      padding-bottom: 0.25rem;
+      padding-top: clamp(0.18rem, 0.75dvh, 0.4rem);
+      padding-bottom: 0.15rem;
     }
 
     .contacto-screen .screen-page-header {
@@ -438,8 +438,8 @@
       height: var(--contacto-mobile-zone-height);
       max-height: var(--contacto-mobile-zone-height);
       min-height: 0;
-      padding-inline: max(0.5rem, env(safe-area-inset-left, 0px));
-      padding-block: 0.0625rem 0.125rem;
+      padding-inline: max(0.4rem, env(safe-area-inset-left, 0px));
+      padding-block: 0;
     }
 
     /* Inicio — móvil: sin margen negativo (evita que el dock tape el borde inferior de los boxes) */
@@ -3346,7 +3346,7 @@
 
     .contacto-screen[data-contacto-layout-ready] .contacto-mobile-card,
     .contacto-screen[data-contacto-layout-ready] .contacto-mobile-message {
-      padding: clamp(0.5rem, 1.1dvh, 0.7rem);
+      padding: clamp(0.4rem, 0.95dvh, 0.58rem);
     }
 
     .contacto-screen[data-contacto-layout-ready] .contacto-mobile-card-body.contacto-mobile-fit-root {
@@ -3360,7 +3360,7 @@
       min-height: 0;
       max-height: 100%;
       height: 100%;
-      gap: clamp(0.35rem, 0.8dvh, 0.55rem);
+      gap: clamp(0.28rem, 0.65dvh, 0.42rem);
       overflow: hidden;
     }
 
@@ -3375,12 +3375,9 @@
       flex: unset;
       min-height: 0;
       max-height: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior-y: contain;
+      overflow: hidden;
       justify-content: flex-start;
-      gap: var(--contacto-mobile-section-gap, clamp(0.45rem, 1dvh, 0.7rem));
+      gap: var(--contacto-mobile-section-gap, clamp(0.35rem, 0.85dvh, 0.55rem));
     }
 
     .contacto-screen[data-contacto-layout-ready] .contacto-mobile-sections > section {
@@ -3427,8 +3424,8 @@
 
     .contacto-screen[data-contacto-fit-ready]:not([data-contacto-scroll-fallback])
       .contacto-mobile-sections {
-      justify-content: flex-start;
-      overflow-y: auto;
+      justify-content: space-evenly;
+      overflow: hidden;
     }
 
     .contacto-screen[data-contacto-fit-ready]:not([data-contacto-scroll-fallback])
@@ -3440,26 +3437,26 @@
     }
 
     .contacto-screen[data-contacto-layout-ready] .contacto-mobile-fit-root section {
-      padding: clamp(0.65rem, 1.4dvh, 0.9rem) clamp(0.65rem, 2.2vw, 0.9rem);
+      padding: clamp(0.5rem, 1.15dvh, 0.72rem) clamp(0.55rem, 2vw, 0.78rem);
     }
 
     .contacto-screen[data-contacto-layout-ready] .contacto-mobile-section-title {
-      font-size: clamp(0.75rem, 3.25vw, 0.875rem);
-      line-height: 1.25;
-      margin-bottom: 0.4rem;
+      font-size: clamp(0.7rem, 3.05vw, 0.8125rem);
+      line-height: 1.2;
+      margin-bottom: 0.28rem;
       flex-shrink: 0;
     }
 
     .contacto-screen[data-contacto-layout-ready] .contacto-mobile-body-text,
     .contacto-screen[data-contacto-layout-ready] .contacto-mobile-link {
-      font-size: clamp(0.8125rem, 3.55vw, 0.9375rem);
-      line-height: 1.42;
+      font-size: clamp(0.75rem, 3.25vw, 0.875rem);
+      line-height: 1.35;
     }
 
     .contacto-screen[data-contacto-layout-ready] .contacto-mobile-phone-row,
     .contacto-screen[data-contacto-layout-ready] .contacto-mobile-phone-list {
-      font-size: clamp(0.8125rem, 3.45vw, 0.9375rem);
-      line-height: 1.38;
+      font-size: clamp(0.75rem, 3.2vw, 0.875rem);
+      line-height: 1.32;
     }
 
     .contacto-screen[data-contacto-layout-ready] .contacto-mobile-label {
@@ -3479,15 +3476,15 @@
     .contacto-screen[data-contacto-fit-ready] .contacto-mobile-actions {
       margin-top: 0;
       flex: 0 0 auto;
-      padding-top: clamp(0.3rem, 0.65dvh, 0.45rem);
-      gap: clamp(0.28rem, 0.6dvh, 0.4rem);
+      padding-top: clamp(0.22rem, 0.5dvh, 0.35rem);
+      gap: clamp(0.22rem, 0.5dvh, 0.32rem);
     }
 
     .contacto-screen[data-contacto-fit-ready] .contacto-mobile-whatsapp-btn,
     .contacto-screen[data-contacto-fit-ready] .contacto-mobile-message-btn {
-      min-height: clamp(38px, 7.2dvh, 44px);
-      padding-top: 0.45rem;
-      padding-bottom: 0.45rem;
+      min-height: clamp(36px, 6.4dvh, 42px);
+      padding-top: 0.38rem;
+      padding-bottom: 0.38rem;
     }
 
     .contacto-mobile-wrap {
@@ -3560,8 +3557,7 @@
 
     .contacto-screen[data-contacto-fit-ready]:not([data-contacto-scroll-fallback])
       .contacto-mobile-sections {
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      overflow: hidden;
     }
 
     .contacto-screen[data-contacto-scroll-fallback] .contacto-mobile-message-scroll {

@@ -148,8 +148,8 @@ function ContactoMobileCard({ onOpenMessage }: { onOpenMessage: () => void }) {
         className={`contacto-mobile-card ${panelOpaque} flex h-full min-h-0 w-full max-h-full flex-col overflow-hidden overflow-x-hidden p-2 sm:p-2.5 max-lg:flex-1 max-lg:p-2.5`}
       >
         <div className="contacto-mobile-fit-root contacto-mobile-card-body grid min-h-0 min-w-0 flex-1 grid-rows-[auto_minmax(0,1fr)_auto] gap-2 overflow-hidden">
-        <div className="contacto-mobile-social flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-white/[0.07] pb-2">
-          <span className="contacto-mobile-label font-space text-[12px] uppercase tracking-[0.16em] text-white/55">Síguenos</span>
+        <div className="contacto-mobile-social flex shrink-0 flex-wrap items-center justify-between gap-1.5 border-b border-white/[0.07] pb-1.5">
+          <span className="contacto-mobile-label font-space text-[11px] uppercase tracking-[0.16em] text-white/55">Síguenos</span>
           <motion.div className="flex flex-wrap gap-1.5">
             <a href={facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className={socialBtn}>
               <Facebook className="h-5 w-5" />
@@ -172,7 +172,7 @@ function ContactoMobileCard({ onOpenMessage }: { onOpenMessage: () => void }) {
             <a href={`mailto:${email}`} className="contacto-mobile-link break-all font-space text-xs text-sky-200/95 hover:underline">
               {email}
             </a>
-            <motion.div className="contacto-mobile-phone-list mt-1.5 space-y-1 border-t border-white/[0.08] pt-1.5">
+            <motion.div className="contacto-mobile-phone-list mt-1 space-y-0.5 border-t border-white/[0.08] pt-1">
               <motion.div className="contacto-mobile-phone-row flex items-center justify-center gap-1.5 text-[12px] text-white/88">
                 <Phone className="h-3.5 w-3.5 text-hologram-gold" />
                 <a href={`tel:${telefonoTel}`} className="font-space text-sky-200/95 hover:underline">
@@ -209,7 +209,7 @@ function ContactoMobileCard({ onOpenMessage }: { onOpenMessage: () => void }) {
               href={googleMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-1.5 inline-flex min-h-[36px] w-full items-center justify-center gap-1.5 rounded-md border border-sky-400/30 bg-sky-500/15 px-2 py-1.5 font-space text-xs font-semibold text-sky-100/95 touch-manipulation"
+              className="mt-1 inline-flex min-h-[34px] w-full items-center justify-center gap-1.5 rounded-md border border-sky-400/30 bg-sky-500/15 px-2 py-1.5 font-space text-xs font-semibold text-sky-100/95 touch-manipulation"
             >
               <ExternalLink className="h-4 w-4" />
               Abrir en Google Maps

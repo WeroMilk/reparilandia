@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
-const MIN_SCALE = 0.78;
+const MIN_SCALE = 0.72;
 const SCALE_STEP = 0.025;
 function getMaxScale(zoneHeight: number, viewportWidth: number, showMessage: boolean): number {
   if (showMessage) {
@@ -10,12 +10,12 @@ function getMaxScale(zoneHeight: number, viewportWidth: number, showMessage: boo
     if (zoneHeight >= 400) return 1;
     return 0.94;
   }
-  if (zoneHeight >= 640 || viewportWidth >= 430) return 1.32;
-  if (zoneHeight >= 580 || viewportWidth >= 400) return 1.24;
-  if (zoneHeight >= 520) return 1.16;
-  if (zoneHeight >= 460) return 1.08;
-  if (zoneHeight >= 400) return 1.02;
-  return 0.94;
+  if (zoneHeight >= 640 || viewportWidth >= 430) return 1.22;
+  if (zoneHeight >= 580 || viewportWidth >= 400) return 1.14;
+  if (zoneHeight >= 520) return 1.08;
+  if (zoneHeight >= 460) return 1.02;
+  if (zoneHeight >= 400) return 0.96;
+  return 0.9;
 }
 
 function getFitContentHeight(fitRoot: HTMLElement): number {
@@ -158,7 +158,7 @@ export function useContactoMobileFit(showMessage: boolean, enabled: boolean) {
       const measureChrome = showMessage ? chromeEls : [socialEl, actionsEl].filter(Boolean) as HTMLElement[];
 
       const maxScale = getMaxScale(zoneHeight, viewportWidth, showMessage);
-      const growCap = Math.round((maxScale + (showMessage ? 0.12 : 0.28)) * 1000) / 1000;
+      const growCap = Math.round((maxScale + (showMessage ? 0.12 : 0.16)) * 1000) / 1000;
       let scale = maxScale;
 
       applyScale(screen, scaleTarget, scale);
@@ -170,7 +170,7 @@ export function useContactoMobileFit(showMessage: boolean, enabled: boolean) {
         measure = measureFit(measureContainer, scaleTarget, measureChrome);
       }
 
-      const growTarget = showMessage ? 0.96 : 0.98;
+      const growTarget = showMessage ? 0.96 : 0.94;
       while (
         measure.fits &&
         measure.contentHeight < measure.available * growTarget &&
@@ -184,25 +184,42 @@ export function useContactoMobileFit(showMessage: boolean, enabled: boolean) {
         measure = trial;
       }
 
-      const slack = Math.max(0, measure.available - measure.contentHeight);
-      const sectionGap = Math.round(
-        Math.min(22, Math.max(5, slack * 0.42 + (showMessage ? 4 : 6))),
-      );
+      /* Huecos entre secciones: crescer solo si sigue cabiendo (evita forzar scroll). */
+      let sectionGap = showMessage ? 8 : 6;
+      if (measure.fits) {
+        const slack = Math.max(0, measure.available - measure.contentHeight);
+        sectionGap = Math.round(
+          Math.min(showMessage ? 16 : 12, Math.max(4, slack * 0.28 + (showMessage ? 4 : 4))),
+        );
+      }
       screen.style.setProperty('--contacto-mobile-section-gap', `${sectionGap}px`);
       screen.style.setProperty(
         '--contacto-mobile-actions-gap',
-        `${Math.min(12, Math.max(4, sectionGap))}px`,
+        `${Math.min(10, Math.max(3, Math.round(sectionGap * 0.7)))}px`,
       );
       screen.style.setProperty(
         '--contacto-mobile-actions-pad-top',
-        `${Math.min(16, Math.max(6, sectionGap + 2))}px`,
+        `${Math.min(12, Math.max(4, sectionGap))}px`,
       );
+
+      measure = measureFit(measureContainer, scaleTarget, measureChrome);
+      while (!measure.fits && sectionGap > 4) {
+        sectionGap = Math.max(4, sectionGap - 2);
+        screen.style.setProperty('--contacto-mobile-section-gap', `${sectionGap}px`);
+        measure = measureFit(measureContainer, scaleTarget, measureChrome);
+      }
+
+      while (!measure.fits && scale > MIN_SCALE + 0.001) {
+        scale = Math.max(MIN_SCALE, Math.round((scale - SCALE_STEP) * 1000) / 1000);
+        applyScale(screen, scaleTarget, scale);
+        measure = measureFit(measureContainer, scaleTarget, measureChrome);
+      }
 
       if (actionsEl) {
         const actionsBand = Math.ceil(actionsEl.getBoundingClientRect().height);
         screen.style.setProperty(
           '--contacto-mobile-actions-band',
-          `${Math.max(92, actionsBand)}px`,
+          `${Math.max(84, actionsBand)}px`,
         );
       } else {
         screen.style.removeProperty('--contacto-mobile-actions-band');
@@ -210,7 +227,8 @@ export function useContactoMobileFit(showMessage: boolean, enabled: boolean) {
 
       screen.setAttribute('data-contacto-fit-ready', 'true');
 
-      if (measure.fits) {
+      /* En la tarjeta de datos, preferir clip al scroll interno. */
+      if (measure.fits || !showMessage) {
         screen.removeAttribute('data-contacto-scroll-fallback');
       } else {
         screen.setAttribute('data-contacto-scroll-fallback', 'true');
