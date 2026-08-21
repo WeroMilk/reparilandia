@@ -143,6 +143,7 @@ function ServicioHeroBanner({
   titleLabel,
   fallbackIcon,
   priority,
+  serviceId,
 }: {
   src: string;
   alt: string;
@@ -150,26 +151,37 @@ function ServicioHeroBanner({
   titleLabel?: string;
   fallbackIcon: ElementType;
   priority?: boolean;
+  serviceId?: string;
 }) {
   const desktopTitle = titleLabel ?? caption;
   const [heroFailed, setHeroFailed] = useState(false);
+  const needsTightCenter =
+    serviceId === 'laptops' ||
+    serviceId === 'pc-escritorio' ||
+    serviceId === 'juguetes' ||
+    serviceId === 'diagnostico';
 
   return (
-    <div className="servicios-slide-hero relative flex w-full flex-col overflow-hidden rounded-lg bg-[#0a0c12] max-lg:min-h-[10.5rem] lg:min-h-0 lg:flex-1 lg:overflow-hidden">
+    <div
+      className="servicios-slide-hero relative flex w-full flex-col overflow-hidden rounded-lg bg-[#0a0c12] max-lg:min-h-[10.5rem] lg:min-h-0 lg:flex-1 lg:overflow-hidden"
+      data-servicio-hero={serviceId}
+      data-hero-tight-center={needsTightCenter ? 'true' : undefined}
+    >
       <div className="servicios-slide-hero-media relative isolate flex min-h-0 w-full flex-1 items-center justify-center bg-transparent">
         {heroFailed ? (
           <ServicioHeroIconFallback icon={fallbackIcon} />
         ) : (
-          <div className="servicios-slide-hero-art relative z-[1] mx-auto h-full w-full min-h-[10.5rem] overflow-hidden rounded-lg lg:min-h-0">
+          <div className="servicios-slide-hero-art relative z-[1] flex h-full w-full min-h-[10.5rem] items-center justify-center overflow-hidden rounded-lg px-1 lg:min-h-0 lg:px-2">
             <Image
               src={assetUrl(src)}
               alt={alt}
-              fill
-              quality={82}
+              width={840}
+              height={543}
+              quality={85}
               priority={priority}
               loading={priority ? undefined : 'lazy'}
               sizes="(max-width: 1023px) min(92vw, 22rem), min(42vw, 36rem)"
-              className="servicios-slide-hero-img !object-contain object-center"
+              className="servicios-slide-hero-img mx-auto block h-auto max-h-full w-auto max-w-full object-contain object-center"
               draggable={false}
               onError={() => setHeroFailed(true)}
             />
@@ -374,6 +386,7 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
                           caption={service.heroCaption ?? service.title}
                           titleLabel={service.title}
                           fallbackIcon={Icon}
+                          serviceId={service.id}
                           priority={
                             service.id === 'carritos-montables' ||
                             service.id === 'laptops' ||
