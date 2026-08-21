@@ -5702,10 +5702,26 @@ select:focus-visible {
   transform: translate(-50%, -50%);
   contain: paint;
   mix-blend-mode: screen;
-  transition:
-    opacity 0.38s ease,
-    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 0.38s ease;
+  transition: none;
+}
+
+@media (max-width: 1023px) {
+  .inicio-mobile-carousel .home-box-glow::before,
+  .inicio-mobile-carousel .home-box-glow::after {
+    /* Menos blur = menos jank al deslizar en iPhone */
+    filter: none !important;
+    opacity: 0.55;
+  }
+
+  .inicio-mobile-carousel .inicio-mobile-slide {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .inicio-mobile-carousel .inicio-mobile-embla > .flex {
+    transform: translateZ(0);
+  }
 }
 
 .home-box-glow::before {

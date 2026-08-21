@@ -12,6 +12,7 @@ import { useInicioDesktopLayout } from '@/hooks/useInicioDesktopLayout';
 import { useInicioMobileBoxesZone } from '@/hooks/useInicioMobileBoxesZone';
 import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
 import { useIsAppMobile } from '@/hooks/use-mobile';
+import { EMBLA_FAST_DURATION_MOBILE } from '@/lib/motionPresets';
 
 const LOGO = '/assets/logo-reparilandia.webp';
 
@@ -130,6 +131,8 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
     dragFree: false,
     skipSnaps: false,
     watchDrag: true,
+    duration: EMBLA_FAST_DURATION_MOBILE,
+    dragThreshold: 8,
   });
 
   useInicioMobileBoxesZone(isScreenActive && isMobile === true);
@@ -184,7 +187,7 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
     });
     observer.observe(screen, {
       attributes: true,
-      attributeFilter: ['data-inicio-layout-ready', 'data-inicio-fill-zone', 'data-inicio-compact-zone'],
+      attributeFilter: ['data-inicio-layout-ready'],
     });
     const onResize = () => reinit(false);
     window.addEventListener('resize', onResize, { passive: true });
@@ -277,12 +280,7 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
 
         {/* Móvil: carrusel horizontal — un box completo (imagen + leyenda) por slide */}
         {showMobile ? (
-        <motion.div
-          className="inicio-mobile-boxes inicio-mobile-carousel flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-1"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.06, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
-        >
+        <div className="inicio-mobile-boxes inicio-mobile-carousel flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-1">
           <div className="inicio-mobile-center-block relative flex w-full min-h-0 flex-1 flex-col items-center justify-start overflow-hidden">
             {showMobileArrows && prevAccent ? (
               <InicioMobileSideArrow
@@ -336,7 +334,7 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
               className="inicio-mobile-dots"
             />
           </div>
-        </motion.div>
+        </div>
         ) : null}
 
         {/* Escritorio: garantía + 3 boxes anclados al dock */}
@@ -465,7 +463,7 @@ function HomeSpotlightCard({
     : 'items-center justify-center py-0.5';
 
   const cardChrome =
-    'bg-black ring-1 ring-inset transition-[border-color,box-shadow,ring-color] duration-200';
+    'bg-black ring-1 ring-inset';
 
   const glowStage = `home-box-glow home-box-glow--${accent}${
     centerProminent ? ' home-box-glow--center' : ''

@@ -91,8 +91,11 @@ export const panelSwapVariants = {
   }),
 };
 
-/** Duración base del scroll Embla (más alto = más fluido al deslizar). */
-export const EMBLA_SMOOTH_DURATION = 32;
+/** Duración base del scroll Embla (más alto = animación más larga). */
+export const EMBLA_SMOOTH_DURATION = 28;
 
-/** Móvil: scroll más corto = menos trabajo por frame al soltar el dedo. */
-export const EMBLA_SMOOTH_DURATION_MOBILE = 24;
+/** Móvil: settle corto para que el gesto se sienta inmediato. */
+export const EMBLA_SMOOTH_DURATION_MOBILE = 14;
+
+/** Inicio / gestos rápidos: snap casi nativo. */
+export const EMBLA_FAST_DURATION_MOBILE = 10;
