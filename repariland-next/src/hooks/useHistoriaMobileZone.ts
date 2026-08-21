@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
+import { measureMobileContentZone } from '@/lib/mobileContentZone';
+
+const DOCK_CLEARANCE_PX = 10;
 
 /**
- * Altura de la zona útil en Historia (móvil): entre cabecera y rail de 6 botones.
+ * Altura de la zona útil en Historia (móvil): entre cabecera y dock.
  */
 export function useHistoriaMobileZone(enabled: boolean) {
   useEffect(() => {
@@ -23,28 +26,15 @@ export function useHistoriaMobileZone(enabled: boolean) {
         return;
       }
 
-      const header = screen.querySelector<HTMLElement>('.mobile-screen__header');
-      const navRail = document.querySelector<HTMLElement>('[data-app-dock] .dock-nav-rail');
-      if (!header || !navRail) {
+      const zone = measureMobileContentZone(screen, { dockClearancePx: DOCK_CLEARANCE_PX });
+      if (!zone || zone.zoneHeight < 120) {
         screen.removeAttribute('data-historia-layout-ready');
-        screen.style.removeProperty('--historia-mobile-zone-height');
-        screen.style.removeProperty('--historia-mobile-nav-height');
         return;
       }
 
-      const headerBottom = header.getBoundingClientRect().bottom;
-      const navTop = navRail.getBoundingClientRect().top;
-      const dock = document.querySelector<HTMLElement>('[data-app-dock]');
-      const dockTop = dock?.getBoundingClientRect().top ?? navTop;
-      const vv = window.visualViewport;
-      const visibleBottom =
-        vv != null ? vv.offsetTop + vv.height : window.innerHeight;
-      const zoneBottom = Math.min(navTop, dockTop, visibleBottom) - 12;
-      const height = Math.max(0, Math.round(zoneBottom - headerBottom));
+      const navHeight = Math.round(Math.min(Math.max(60, zone.zoneHeight * 0.12), 76));
 
-      const navHeight = Math.round(Math.min(Math.max(60, height * 0.12), 76));
-
-      screen.style.setProperty('--historia-mobile-zone-height', `${height}px`);
+      screen.style.setProperty('--historia-mobile-zone-height', `${zone.zoneHeight}px`);
       screen.style.setProperty('--historia-mobile-nav-height', `${navHeight}px`);
       screen.style.setProperty('--historia-mobile-panel-gap', '0.35rem');
       screen.setAttribute('data-historia-layout-ready', 'true');

@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
+import { measureMobileContentZone } from '@/lib/mobileContentZone';
 
-const DOCK_CLEARANCE_PX = 18;
+const DOCK_CLEARANCE_PX = 10;
 /** Solo dots; el margen bajo la card debe ser mínimo. */
 const CAROUSEL_FOOT_FLOOR_PX = 22;
 /** Gap card → dots (muy corto; los dots van pegados arriba del rectángulo). */
@@ -18,17 +19,17 @@ const CARD_BOTTOM_MARGIN_MAX_PX = 34;
 const HOVER_HALO_INSET_PX = 2;
 const TALL_ZONE_MIN_PX = 240;
 const TALL_ZONE_RANGE_PX = 220;
-/** Compacto solo en zonas realmente cortas (Safari iPhone ~400–480). */
-const SHORT_BODY_ZONE_PX = 480;
+/** Compacto solo en zonas realmente cortas. */
+const SHORT_BODY_ZONE_PX = 420;
 const SLIDE_BASIS_PERCENT = 100;
 const SLIDE_GAP_PX = 0;
-const LOGO_BASE_REM = 5.6;
-const LOGO_TALL_BOOST_REM = 1.8;
-const LOGO_COMPACT_CAP_REM = 4.9;
-const PREFERRED_HERO_VH = 0.48;
-const PREFERRED_HERO_MIN_PX = 200;
-const PREFERRED_HERO_MAX_PX = 460;
-const HERO_FLOOR_PX = 168;
+const LOGO_BASE_REM = 5.8;
+const LOGO_TALL_BOOST_REM = 1.9;
+const LOGO_COMPACT_CAP_REM = 5.1;
+const PREFERRED_HERO_VH = 0.5;
+const PREFERRED_HERO_MIN_PX = 220;
+const PREFERRED_HERO_MAX_PX = 480;
+const HERO_FLOOR_PX = 180;
 const STABLE_EPS_PX = 2;
 
 function mobileTallFillFactor(zoneSpan: number): number {
@@ -89,28 +90,18 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       }
 
       const topBlock = screen?.querySelector<HTMLElement>('.inicio-mobile-top');
-      const header = screen?.querySelector<HTMLElement>('.mobile-screen__header');
-      const navRail = document.querySelector<HTMLElement>('[data-app-dock] .dock-nav-rail');
-      const dock = document.querySelector<HTMLElement>('[data-app-dock]');
-      if (!screen || !topBlock || !navRail) {
+      if (!screen || !topBlock) {
         return;
       }
 
-      const navRect = navRail.getBoundingClientRect();
-      if (navRect.height <= 0 || navRect.top >= window.innerHeight) {
+      const zone = measureMobileContentZone(screen, { dockClearancePx: DOCK_CLEARANCE_PX });
+      if (!zone || zone.zoneHeight < 120) {
         return;
       }
 
-      const headerBottom = header?.getBoundingClientRect().bottom ?? topBlock.getBoundingClientRect().top;
-      const navTop = navRect.top;
-      const dockTop = dock?.getBoundingClientRect().top ?? navTop;
-      const vv = window.visualViewport;
-      const visibleBottom = vv != null ? vv.offsetTop + vv.height : window.innerHeight;
-      /* dockTop ya sube con --app-bottom-inset (barra URL iPhone). */
-      const visibleNavTop = Math.min(navTop, dockTop, visibleBottom) - DOCK_CLEARANCE_PX;
-      const bodyZoneHeight = Math.max(0, Math.round(visibleNavTop - headerBottom));
-      const viewportH = Math.round(vv != null ? vv.height : window.innerHeight);
-      const viewportW = Math.round(vv != null ? vv.width : window.innerWidth);
+      const bodyZoneHeight = zone.zoneHeight;
+      const viewportH = zone.viewportH;
+      const viewportW = zone.viewportW;
       const tallFill = mobileTallFillFactor(bodyZoneHeight);
       const isCompact = bodyZoneHeight <= SHORT_BODY_ZONE_PX;
 
@@ -141,15 +132,8 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       let logoMaxRem = isCompact
         ? LOGO_COMPACT_CAP_REM
         : LOGO_BASE_REM + tallFill * LOGO_TALL_BOOST_REM;
-      let guaranteeScale = isCompact ? 0.84 : 0.9 + tallFill * 0.06;
-      let sloganSizeRem = isCompact ? 0.66 : 0.72 + tallFill * 0.06;
-
-      /* Safari URL: compactar un poco el bloque superior, sin aplastar el héroe. */
-      if (document.documentElement.dataset.iosSafariChrome === '1') {
-        logoMaxRem = Math.min(logoMaxRem, 4.85);
-        guaranteeScale = Math.min(guaranteeScale, 0.84);
-        sloganSizeRem = Math.min(sloganSizeRem, 0.66);
-      }
+      let guaranteeScale = isCompact ? 0.86 : 0.92 + tallFill * 0.05;
+      let sloganSizeRem = isCompact ? 0.68 : 0.74 + tallFill * 0.06;
 
       screen.setAttribute('data-inicio-fill-zone', 'true');
       if (isCompact) {

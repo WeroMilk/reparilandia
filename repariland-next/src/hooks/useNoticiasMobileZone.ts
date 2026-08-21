@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
+import { measureMobileContentZone } from '@/lib/mobileContentZone';
+
+const DOCK_CLEARANCE_PX = 10;
 
 /**
- * Altura de la zona útil en Noticias (móvil): entre cabecera y rail de 6 botones.
+ * Altura de la zona útil en Noticias (móvil): entre cabecera y dock.
  */
 export function useNoticiasMobileZone(enabled: boolean) {
   useEffect(() => {
@@ -34,23 +37,13 @@ export function useNoticiasMobileZone(enabled: boolean) {
           return;
         }
 
-        const header = live.querySelector<HTMLElement>('.mobile-screen__header');
-        const navRail = document.querySelector<HTMLElement>('[data-app-dock] .dock-nav-rail');
-        if (!header || !navRail) {
+        const zone = measureMobileContentZone(live, { dockClearancePx: DOCK_CLEARANCE_PX });
+        if (!zone || zone.zoneHeight < 120) {
+          live.removeAttribute('data-noticias-layout-ready');
           return;
         }
 
-        const headerBottom = header.getBoundingClientRect().bottom;
-        const navTop = navRail.getBoundingClientRect().top;
-        const dock = document.querySelector<HTMLElement>('[data-app-dock]');
-        const dockTop = dock?.getBoundingClientRect().top ?? navTop;
-        const vv = window.visualViewport;
-        const visibleBottom =
-          vv != null ? vv.offsetTop + vv.height : window.innerHeight;
-        const zoneBottom = Math.min(navTop, dockTop, visibleBottom);
-        const height = Math.max(0, Math.round(zoneBottom - headerBottom));
-
-        live.style.setProperty('--noticias-mobile-zone-height', `${height}px`);
+        live.style.setProperty('--noticias-mobile-zone-height', `${zone.zoneHeight}px`);
         live.setAttribute('data-noticias-layout-ready', 'true');
       };
 

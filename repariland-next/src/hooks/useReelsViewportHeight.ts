@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
+import { measureMobileContentZone } from '@/lib/mobileContentZone';
 
 /** Marco vertical de referencia (estilo móvil / TikTok). */
 const DESIGN_FRAME_W = 448;
 const DESIGN_FRAME_H = 800;
-const DOCK_CLEARANCE_PX = 12;
+const DOCK_CLEARANCE_PX = 10;
 
 /**
  * Mide la zona útil del feed entre cabecera REELS y el dock.
@@ -28,28 +29,22 @@ export function useReelsViewportHeight(enabled: boolean) {
     };
 
     const measure = () => {
-      const header = screen.querySelector<HTMLElement>('.reels-screen__header');
-      const navRail = document.querySelector<HTMLElement>('[data-app-dock] .dock-nav-rail');
       const frame = screen.querySelector<HTMLElement>('.reels-screen__frame');
-      if (!header || !navRail || !frame) {
+      const zone = measureMobileContentZone(screen, {
+        dockClearancePx: DOCK_CLEARANCE_PX,
+        headerSelector: '.reels-screen__header',
+      });
+      if (!zone || !frame) {
         clear();
         return;
       }
 
-      const headerBottom = header.getBoundingClientRect().bottom;
-      const navTop = navRail.getBoundingClientRect().top;
-      const vv = window.visualViewport;
-      const visibleBottom =
-        vv != null ? vv.offsetTop + vv.height : window.innerHeight;
-      const zoneBottom = Math.min(navTop, visibleBottom) - DOCK_CLEARANCE_PX;
-      const bodyHeight = Math.max(0, Math.round(zoneBottom - headerBottom));
-
-      screen.style.setProperty('--reels-body-height', `${bodyHeight}px`);
+      screen.style.setProperty('--reels-body-height', `${zone.zoneHeight}px`);
       screen.setAttribute('data-reels-layout-ready', 'true');
 
       if (desktopMq.matches) {
         const screenTop = screen.getBoundingClientRect().top;
-        const zoneHeight = Math.max(0, Math.round(zoneBottom - screenTop));
+        const zoneHeight = Math.max(0, Math.round(zone.zoneBottom - screenTop));
         const zoneWidth = Math.max(0, Math.round(screen.getBoundingClientRect().width));
         const scale = Math.min(1, zoneWidth / DESIGN_FRAME_W, zoneHeight / DESIGN_FRAME_H);
         const scaleRounded = Math.round(scale * 1000) / 1000;

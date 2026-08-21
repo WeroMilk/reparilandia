@@ -248,7 +248,7 @@
       --dock-footer-height: 3.15rem;
       --dock-chrome-height: calc(var(--dock-nav-height) + var(--dock-footer-height));
       --dock-reserve: var(--dock-chrome-height);
-      --dock-bottom-nudge: 12px;
+      --dock-bottom-nudge: 0px;
       --mobile-viewport-h: var(--app-height, 100svh);
       --screen-header-pad: clamp(0.4rem, 1.4svh, 0.65rem);
     }
@@ -4083,30 +4083,13 @@
   }
 
   @media (max-width: 1023px) {
+    /* iOS: mismo layout que Android; solo asegurar dots visibles sobre el dock. */
     html[data-ios-safari-chrome='1'] .inicio-screen .inicio-mobile-carousel-foot {
-      margin-top: -0.7rem;
-      margin-bottom: 0.45rem;
-      padding-bottom: 0.4rem;
+      margin-top: -0.55rem;
+      margin-bottom: 0.35rem;
+      padding-bottom: 0.35rem;
       position: relative;
       z-index: 2;
-    }
-
-    html[data-ios-safari-chrome='1'] .inicio-screen .inicio-mobile-logo {
-      max-height: min(var(--inicio-mobile-logo-max-height, 4.85rem), 4.75rem);
-    }
-
-    html[data-ios-safari-chrome='1'] .inicio-screen .inicio-mobile-guarantee {
-      transform: scale(var(--inicio-mobile-guarantee-scale, 0.84));
-      transform-origin: top center;
-    }
-
-    html[data-ios-safari-chrome='1']
-      .inicio-screen
-      .inicio-home-card__caption--slide-out {
-      font-size: 0.875rem !important;
-      min-height: 2.75rem;
-      padding-top: 0.45rem !important;
-      padding-bottom: 0.55rem !important;
     }
   }
 

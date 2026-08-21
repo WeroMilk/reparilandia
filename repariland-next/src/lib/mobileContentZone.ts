@@ -1,7 +1,6 @@
 /**
  * Medición única de la zona útil móvil (header → dock).
- * Usa visualViewport como Safari real; Chrome inspect suele reportar más alto
- * porque no resta el chrome del navegador — por eso alineamos todo a VV.
+ * Misma fuente que el shell (--app-height / visualViewport) para iOS ≈ Android.
  */
 export type MobileContentZone = {
   zoneHeight: number;
@@ -11,12 +10,20 @@ export type MobileContentZone = {
   viewportW: number;
 };
 
+function readCssPx(name: string): number {
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  if (!raw) return NaN;
+  const n = Number.parseFloat(raw);
+  return Number.isFinite(n) ? n : NaN;
+}
+
 export function measureMobileContentZone(
   screen: HTMLElement,
-  options?: { dockClearancePx?: number },
+  options?: { dockClearancePx?: number; headerSelector?: string },
 ): MobileContentZone | null {
   const dockClearancePx = options?.dockClearancePx ?? 8;
-  const header = screen.querySelector<HTMLElement>('.mobile-screen__header');
+  const headerSelector = options?.headerSelector ?? '.mobile-screen__header';
+  const header = screen.querySelector<HTMLElement>(headerSelector);
   const navRail = document.querySelector<HTMLElement>('[data-app-dock] .dock-nav-rail');
   const dock = document.querySelector<HTMLElement>('[data-app-dock]');
   if (!header || !navRail) return null;
@@ -29,25 +36,28 @@ export function measureMobileContentZone(
   const dockTop = dock?.getBoundingClientRect().top ?? navTop;
   const vv = window.visualViewport;
 
-  /* Preferir --app-height (lock VV) cuando exista: misma fuente que el shell. */
-  const appHRaw = getComputedStyle(document.documentElement).getPropertyValue('--app-height').trim();
-  const appH = appHRaw.endsWith('px') ? Number.parseFloat(appHRaw) : NaN;
-  const vvBottom =
-    vv != null
-      ? vv.offsetTop + vv.height
-      : Number.isFinite(appH)
-        ? appH
+  const appH = readCssPx('--app-height');
+  const appTop = readCssPx('--app-vv-top');
+  const shellBottom =
+    Number.isFinite(appH) && appH > 0
+      ? (Number.isFinite(appTop) ? appTop : 0) + appH
+      : vv != null
+        ? vv.offsetTop + vv.height
         : window.innerHeight;
 
-  /* dockTop ya refleja el lift por --app-bottom-inset / Safari URL. */
-  const zoneBottom = Math.min(navTop, dockTop, vvBottom) - dockClearancePx;
+  const vvBottom = vv != null ? vv.offsetTop + vv.height : shellBottom;
+  const visibleBottom = Math.min(shellBottom, vvBottom);
+
+  const zoneBottom = Math.min(navTop, dockTop, visibleBottom) - dockClearancePx;
   const zoneHeight = Math.max(0, Math.round(zoneBottom - headerBottom));
 
   return {
     zoneHeight,
     headerBottom,
     zoneBottom,
-    viewportH: Math.round(vv?.height ?? (Number.isFinite(appH) ? appH : window.innerHeight)),
+    viewportH: Math.round(
+      Number.isFinite(appH) && appH > 0 ? appH : (vv?.height ?? window.innerHeight),
+    ),
     viewportW: Math.round(vv?.width ?? window.innerWidth),
   };
 }

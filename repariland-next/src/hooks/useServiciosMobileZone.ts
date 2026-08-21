@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 import { measureMobileContentZone } from '@/lib/mobileContentZone';
 
-const DOCK_CLEARANCE_PX = 6;
+const DOCK_CLEARANCE_PX = 10;
 const ICON_STACK_GAP_PX = 6;
 const ICON_SIZE_MIN_PX = 26;
 const ICON_SIZE_MAX_PX = 40;

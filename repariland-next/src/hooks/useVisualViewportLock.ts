@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 
 /**
- * Ancla la app al viewport visible. En iPhone Safari la URL inferior no debe
- * tapar captions ni el dock: si el chrome solapa, encogemos el shell.
+ * Ancla la app al visualViewport (misma base que Android/Chrome).
+ * En iOS Safari solo compensamos cuando la URL inferior solapa de verdad;
+ * no forzamos ~50px extra que aplastan todas las pantallas.
  */
 function isIosSafari(): boolean {
   if (typeof navigator === 'undefined') return false;
@@ -30,9 +31,11 @@ function syncDockReserve(): void {
   if (!dock) return;
   const h = Math.ceil(dock.getBoundingClientRect().height);
   if (h < 40) return;
-  /* Solo reserva de padding; no mutar --dock-chrome-height (rompe el layout). */
   root.style.setProperty('--dock-reserve', `${h}px`);
 }
+
+/** Reserva corta solo si el VV no deja hueco bajo el área visible. */
+const IOS_OVERLAY_DOCK_LIFT_PX = 36;
 
 export function applyVisualViewportLock(): void {
   const root = document.documentElement;
@@ -47,14 +50,16 @@ export function applyVisualViewportLock(): void {
   let safariBottomChrome = 0;
 
   if (isIosSafari() && !isStandaloneDisplay()) {
-    /* Tab/URL bar inferior típica ~50px. Si VV no la resta, encogemos el shell. */
-    const overlay = reportedInset < 24;
-    safariBottomChrome = Math.max(reportedInset, 50);
-    if (overlay) {
-      height = Math.max(300, vvHeight - safariBottomChrome);
-      bottomInset = safariBottomChrome;
+    const overlaysBottom = reportedInset < 8;
+    if (overlaysBottom) {
+      /* URL solapa el bottom: sube el dock y encoge el shell la misma cantidad. */
+      safariBottomChrome = IOS_OVERLAY_DOCK_LIFT_PX;
+      bottomInset = IOS_OVERLAY_DOCK_LIFT_PX;
+      height = Math.max(300, vvHeight - IOS_OVERLAY_DOCK_LIFT_PX);
     } else {
-      bottomInset = Math.max(reportedInset, safariBottomChrome);
+      /* VV ya reporta el hueco (como Android): confiar en reportedInset. */
+      safariBottomChrome = 0;
+      bottomInset = reportedInset;
     }
   }
 
