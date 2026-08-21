@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { ElementType } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
 import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
 import {
@@ -165,13 +164,13 @@ function ServicioHeroBanner({
             <Image
               src={assetUrl(src)}
               alt={alt}
-              width={840}
-              height={543}
-              quality={75}
+              width={720}
+              height={466}
+              quality={70}
               priority={priority}
               loading={priority ? undefined : 'lazy'}
-              sizes="(max-width: 1023px) min(94vw, 28rem), min(42vw, 36rem)"
-              className="servicios-slide-hero-img block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:auto] drop-shadow-[0_14px_40px_rgba(0,0,0,0.28)] brightness-[1.04] contrast-[1.04] lg:h-full lg:w-full lg:min-h-0 lg:max-h-full lg:max-w-full lg:object-contain"
+              sizes="(max-width: 1023px) min(92vw, 22rem), min(42vw, 36rem)"
+              className="servicios-slide-hero-img block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:auto] lg:h-full lg:w-full lg:min-h-0 lg:max-h-full lg:max-w-full lg:object-contain lg:drop-shadow-[0_14px_40px_rgba(0,0,0,0.28)] lg:brightness-[1.04] lg:contrast-[1.04]"
               draggable={false}
               onError={() => setHeroFailed(true)}
             />
@@ -190,7 +189,7 @@ function ServicioHeroBanner({
 const SERVICIOS_ICON_ROW_FIRST = 6;
 
 function servicioIconButtonClass(active: boolean) {
-  return `servicios-icon-btn flex shrink-0 items-center justify-center rounded-lg border bg-[#12161f] transition-all touch-manipulation active:scale-95 lg:h-[4.75rem] lg:w-[4.75rem] lg:rounded-xl ${
+  return `servicios-icon-btn flex shrink-0 items-center justify-center rounded-lg border bg-[#12161f] transition-[border-color,opacity,box-shadow] touch-manipulation active:scale-95 lg:h-[4.75rem] lg:w-[4.75rem] lg:rounded-xl ${
     active
       ? 'border-cyan-400/55 ring-2 ring-cyan-400/35 shadow-[0_0_14px_rgba(34,211,238,0.25)]'
       : 'border-white/[0.1] opacity-80 hover:opacity-100'
@@ -198,10 +197,10 @@ function servicioIconButtonClass(active: boolean) {
 }
 
 const carouselArrowInlineClass =
-  'mobile-carousel-arrow flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/18 bg-black/50 text-white/95 shadow-lg backdrop-blur-md hover:bg-black/68 touch-manipulation';
+  'mobile-carousel-arrow flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/18 bg-black/55 text-white/95 shadow-lg hover:bg-black/68 touch-manipulation';
 
 const carouselArrowClass =
-  'mobile-carousel-arrow absolute top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/18 bg-black/50 text-white/95 shadow-lg backdrop-blur-md hover:bg-black/68 touch-manipulation lg:h-10 lg:w-10';
+  'mobile-carousel-arrow absolute top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/18 bg-black/55 text-white/95 shadow-lg hover:bg-black/68 touch-manipulation lg:h-10 lg:w-10';
 
 export default function ServiciosScreen({ isScreenActive = true }: { isScreenActive?: boolean }) {
   const [quoteService, setQuoteService] = useState<string | null>(null);
@@ -231,8 +230,12 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
     const screen = document.querySelector('[data-screen="servicios"]');
     if (!screen) return;
 
+    let timer = 0;
     const reinit = () => {
-      requestAnimationFrame(() => emblaApi.reInit());
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        requestAnimationFrame(() => emblaApi.reInit());
+      }, 80);
     };
 
     const observer = new MutationObserver(reinit);
@@ -241,10 +244,11 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
       attributeFilter: ['data-servicios-desktop-ready', 'data-servicios-layout-ready'],
     });
 
-    window.addEventListener('resize', reinit);
+    window.addEventListener('resize', reinit, { passive: true });
     reinit();
 
     return () => {
+      window.clearTimeout(timer);
       observer.disconnect();
       window.removeEventListener('resize', reinit);
     };
@@ -275,28 +279,26 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
       className="servicios-screen"
       data-screen="servicios"
     >
-      <motion.div
+      <div
         className="servicios-mobile-stage servicios-desktop-stage flex min-h-0 w-full flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-1 max-lg:max-h-full max-lg:gap-1 max-lg:overflow-hidden lg:mx-auto lg:mt-0 lg:h-full lg:max-h-full lg:w-full lg:flex-1 lg:max-w-[min(100%,56rem)] lg:gap-2 lg:overflow-hidden xl:gap-2.5"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
       >
-        <motion.div className="servicios-mobile-intro flex w-full shrink-0 flex-col items-center max-lg:flex lg:hidden">
-          <motion.div className="servicios-mobile-top flex w-full shrink-0 flex-col items-center px-1">
+        <div className="servicios-mobile-intro flex w-full shrink-0 flex-col items-center max-lg:flex lg:hidden">
+          <div className="servicios-mobile-top flex w-full shrink-0 flex-col items-center px-1">
             <p className="servicios-mobile-decanos inline-flex min-h-[36px] items-center justify-center rounded-lg border border-amber-400/45 bg-amber-500/12 px-2.5 py-1 text-center font-orbitron text-[12px] font-semibold uppercase tracking-wide text-amber-100 shadow-[0_0_16px_rgba(255,215,0,0.08)] sm:min-h-[38px] sm:px-3 sm:py-1.5 sm:text-xs">
               DECANOS EN LA REPARACIÓN
             </p>
-          </motion.div>
+          </div>
           <div className="servicios-mobile-spacer" aria-hidden />
-          <motion.div className="servicios-mobile-guarantee-wrap flex w-full shrink-0 flex-col items-center px-1">
+          <div className="servicios-mobile-guarantee-wrap flex w-full shrink-0 flex-col items-center px-1">
           <GuaranteePromise
             variant="compact"
             compactMessage="nos hacemos cargo de todo. (Aplica restricciones)."
             className="servicios-mobile-guarantee w-full max-w-md sm:max-w-lg"
           />
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
-        <motion.div className="servicios-desktop-intro hidden shrink-0 flex-col items-center gap-2 px-1 lg:flex">
+        <div className="servicios-desktop-intro hidden shrink-0 flex-col items-center gap-2 px-1 lg:flex">
           <p className="servicios-desktop-decanos inline-flex min-h-[40px] items-center justify-center rounded-xl border border-amber-400/45 bg-amber-500/12 px-3.5 py-1.5 text-center font-orbitron text-xs font-semibold uppercase tracking-wide text-amber-100 shadow-[0_0_16px_rgba(255,215,0,0.08)]">
             DECANOS EN LA REPARACIÓN
           </p>
@@ -305,11 +307,11 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
             compactMessage="nos hacemos cargo de todo. (Aplica restricciones)."
             className="w-full max-w-md sm:max-w-lg"
           />
-        </motion.div>
+        </div>
 
-        <motion.div className="servicios-mobile-content-stack servicios-desktop-main flex min-h-0 w-full min-w-0 flex-col items-center max-lg:min-h-0 max-lg:flex-1 max-lg:justify-start max-lg:overflow-hidden max-lg:px-0 lg:min-h-0 lg:flex-1 lg:items-stretch lg:justify-start lg:gap-2 lg:overflow-hidden">
-        <motion.div className="servicios-mobile-carousel-zone servicios-desktop-carousel-zone flex min-h-0 w-full min-w-0 flex-col items-center justify-center overflow-hidden max-lg:min-h-0 max-lg:w-full max-lg:max-w-[min(100%,22.5rem)] max-lg:flex-none max-lg:justify-center lg:min-h-0 lg:flex-1 lg:items-stretch lg:justify-start lg:overflow-hidden">
-        <motion.div className="servicios-mobile-center-block flex w-full min-h-0 min-w-0 flex-col items-center justify-center max-lg:w-full max-lg:flex-none lg:flex lg:h-full lg:min-h-0 lg:w-full lg:max-w-full lg:flex-1 lg:items-stretch lg:justify-start">
+        <div className="servicios-mobile-content-stack servicios-desktop-main flex min-h-0 w-full min-w-0 flex-col items-center max-lg:min-h-0 max-lg:flex-1 max-lg:justify-start max-lg:overflow-hidden max-lg:px-0 lg:min-h-0 lg:flex-1 lg:items-stretch lg:justify-start lg:gap-2 lg:overflow-hidden">
+        <div className="servicios-mobile-carousel-zone servicios-desktop-carousel-zone flex min-h-0 w-full min-w-0 flex-col items-center justify-center overflow-hidden max-lg:min-h-0 max-lg:w-full max-lg:max-w-[min(100%,22.5rem)] max-lg:flex-none max-lg:justify-center lg:min-h-0 lg:flex-1 lg:items-stretch lg:justify-start lg:overflow-hidden">
+        <div className="servicios-mobile-center-block flex w-full min-h-0 min-w-0 flex-col items-center justify-center max-lg:w-full max-lg:flex-none lg:flex lg:h-full lg:min-h-0 lg:w-full lg:max-w-full lg:flex-1 lg:items-stretch lg:justify-start">
         <div className="servicios-desktop-carousel-shell flex w-full min-h-0 max-lg:contents lg:min-h-0 lg:h-full lg:flex-1 lg:items-stretch lg:justify-center lg:gap-3 lg:px-1">
           <button
             type="button"
@@ -319,11 +321,8 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
           >
             <ChevronLeft className="h-5 w-5" strokeWidth={2} />
           </button>
-        <motion.div
+        <div
           className="servicios-mobile-card relative mx-auto flex min-h-0 w-full max-w-[min(100%,52rem)] flex-col overflow-hidden rounded-2xl border border-cyan-400/55 bg-hologram-darker shadow-none ring-1 ring-inset ring-cyan-400/28 max-lg:flex-none lg:min-h-0 lg:w-full lg:min-w-0 lg:max-w-[min(100%,42rem)] lg:flex-1 lg:border-cyan-400/60 lg:shadow-[0_0_56px_-6px_rgba(34,211,238,0.52),0_0_22px_-2px_rgba(34,211,238,0.32)] lg:ring-cyan-400/32"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.08 }}
         >
           <button type="button" aria-label="Servicio anterior" onClick={scrollPrev} className={`${carouselArrowClass} left-2 lg:hidden`}>
             <ChevronLeft className="h-5 w-5" strokeWidth={2} />
@@ -389,7 +388,7 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
               })}
             </div>
           </div>
-        </motion.div>
+        </div>
           <button
             type="button"
             aria-label="Servicio siguiente"
@@ -399,11 +398,11 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
             <ChevronRight className="h-5 w-5" strokeWidth={2} />
           </button>
         </div>
-        </motion.div>
-        </motion.div>
+        </div>
+        </div>
 
-        <motion.div className="servicios-mobile-paginator servicios-desktop-paginator servicios-paginator-block flex w-full shrink-0 flex-col items-center gap-0 max-lg:max-w-[min(100%,22.5rem)] max-lg:pb-0 max-lg:pt-0 lg:shrink-0 lg:gap-2 lg:pb-0">
-          <motion.div className="servicios-mobile-icon-grid servicios-desktop-icon-grid flex shrink-0 flex-col items-center px-1 pb-0 lg:px-0 lg:pb-0">
+        <div className="servicios-mobile-paginator servicios-desktop-paginator servicios-paginator-block flex w-full shrink-0 flex-col items-center gap-0 max-lg:max-w-[min(100%,22.5rem)] max-lg:pb-0 max-lg:pt-0 lg:shrink-0 lg:gap-2 lg:pb-0">
+          <div className="servicios-mobile-icon-grid servicios-desktop-icon-grid flex shrink-0 flex-col items-center px-1 pb-0 lg:px-0 lg:pb-0">
             <div
               className="servicios-icon-row servicios-icon-row--desktop hidden w-full max-w-full lg:flex"
               role="group"
@@ -421,7 +420,7 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
                 )}
               </div>
             </div>
-          </motion.div>
+          </div>
 
           <CarouselDots
             count={services.length}
@@ -429,9 +428,9 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
             onSelect={scrollTo}
             className="servicios-mobile-dots servicios-carousel-dots flex shrink-0"
           />
-        </motion.div>
-        </motion.div>
-      </motion.div>
+        </div>
+        </div>
+      </div>
 
       <AppModal
         open={Boolean(quoteService)}

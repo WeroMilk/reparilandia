@@ -37,14 +37,13 @@ export function useVisualViewportLock() {
     window.addEventListener('resize', schedule, { passive: true });
     window.addEventListener('orientationchange', schedule);
     visualViewport?.addEventListener('resize', schedule, { passive: true });
-    visualViewport?.addEventListener('scroll', schedule, { passive: true });
+    /* No escuchar VV scroll: en Safari dispara recálculos constantes y retrasa Servicios. */
 
     return () => {
       if (raf !== 0) window.cancelAnimationFrame(raf);
       window.removeEventListener('resize', schedule);
       window.removeEventListener('orientationchange', schedule);
       visualViewport?.removeEventListener('resize', schedule);
-      visualViewport?.removeEventListener('scroll', schedule);
     };
   }, []);
 }

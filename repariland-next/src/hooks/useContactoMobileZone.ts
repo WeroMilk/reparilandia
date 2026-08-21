@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
+import { measureMobileContentZone } from '@/lib/mobileContentZone';
 
-const DOCK_CLEARANCE_PX = 8;
+const DOCK_CLEARANCE_PX = 6;
 
 /**
  * Altura de la zona útil en Contacto (móvil): entre cabecera y rail de 6 botones.
+ * Misma medición VV que Safari real (no el alto “lleno” de Chrome inspect).
  */
 export function useContactoMobileZone(enabled: boolean) {
   useEffect(() => {
@@ -20,37 +22,24 @@ export function useContactoMobileZone(enabled: boolean) {
     const measure = () => {
       if (desktopMq.matches) {
         screen.removeAttribute('data-contacto-layout-ready');
+        screen.removeAttribute('data-contacto-compact-zone');
         screen.style.removeProperty('--contacto-mobile-zone-height');
         return;
       }
 
-      const header = screen.querySelector<HTMLElement>('.mobile-screen__header');
-      const navRail = document.querySelector<HTMLElement>('[data-app-dock] .dock-nav-rail');
-      const dock = document.querySelector<HTMLElement>('[data-app-dock]');
-      if (!header || !navRail) {
+      const zone = measureMobileContentZone(screen, { dockClearancePx: DOCK_CLEARANCE_PX });
+      if (!zone || zone.zoneHeight < 120) {
         screen.removeAttribute('data-contacto-layout-ready');
-        screen.style.removeProperty('--contacto-mobile-zone-height');
         return;
       }
 
-      const navRect = navRail.getBoundingClientRect();
-      if (navRect.height <= 0 || navRect.top >= window.innerHeight) {
-        return;
-      }
-
-      const headerBottom = header.getBoundingClientRect().bottom;
-      const navTop = navRect.top;
-      const dockTop = dock?.getBoundingClientRect().top ?? navTop;
-      const vv = window.visualViewport;
-      const visibleBottom =
-        vv != null ? vv.offsetTop + vv.height : window.innerHeight;
-      const height = Math.max(
-        0,
-        Math.round(Math.min(navTop, dockTop, visibleBottom) - DOCK_CLEARANCE_PX - headerBottom),
-      );
-
-      screen.style.setProperty('--contacto-mobile-zone-height', `${height}px`);
+      screen.style.setProperty('--contacto-mobile-zone-height', `${zone.zoneHeight}px`);
       screen.setAttribute('data-contacto-layout-ready', 'true');
+      if (zone.zoneHeight < 480) {
+        screen.setAttribute('data-contacto-compact-zone', 'true');
+      } else {
+        screen.removeAttribute('data-contacto-compact-zone');
+      }
     };
 
     const header = screen.querySelector('.mobile-screen__header');

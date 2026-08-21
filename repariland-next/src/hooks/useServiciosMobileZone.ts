@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
+import { measureMobileContentZone } from '@/lib/mobileContentZone';
 
-const DOCK_CLEARANCE_PX = 10;
+const DOCK_CLEARANCE_PX = 6;
 const ICON_STACK_GAP_PX = 6;
 const ICON_SIZE_MIN_PX = 26;
 const ICON_SIZE_MAX_PX = 40;
@@ -111,22 +112,12 @@ export function useServiciosMobileZone(enabled: boolean) {
     };
 
     const measureZoneSpan = () => {
-      const header = screen.querySelector<HTMLElement>('.mobile-screen__header');
-      const navRail = document.querySelector<HTMLElement>('[data-app-dock] .dock-nav-rail');
-      const dock = document.querySelector<HTMLElement>('[data-app-dock]');
-      if (!header || !navRail) return null;
-
-      const headerBottom = header.getBoundingClientRect().bottom;
-      const navTop = navRail.getBoundingClientRect().top;
-      const dockTop = dock?.getBoundingClientRect().top ?? navTop;
-      const vv = window.visualViewport;
-      const visibleBottom = vv != null ? vv.offsetTop + vv.height : window.innerHeight;
-      const visibleNavTop = Math.min(navTop, dockTop, visibleBottom) - DOCK_CLEARANCE_PX;
-      const zoneHeight = Math.max(0, Math.round(visibleNavTop - headerBottom));
+      const zone = measureMobileContentZone(screen, { dockClearancePx: DOCK_CLEARANCE_PX });
+      if (!zone) return null;
       return {
-        zoneHeight,
-        viewportH: Math.round(vv?.height ?? window.innerHeight),
-        viewportW: Math.round(vv?.width ?? window.innerWidth),
+        zoneHeight: zone.zoneHeight,
+        viewportH: zone.viewportH,
+        viewportW: zone.viewportW,
       };
     };
 
