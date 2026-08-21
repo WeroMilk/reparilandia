@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
-const DOCK_CLEARANCE_PX = 8;
+const DOCK_CLEARANCE_PX = 12;
 /** Solo dots; el margen bajo la card debe ser mínimo. */
 const CAROUSEL_FOOT_FLOOR_PX = 22;
 /** Gap card → dots (muy corto). */
@@ -105,6 +105,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       const dockTop = dock?.getBoundingClientRect().top ?? navTop;
       const vv = window.visualViewport;
       const visibleBottom = vv != null ? vv.offsetTop + vv.height : window.innerHeight;
+      /* dockTop ya sube con --app-bottom-inset (barra URL iPhone). */
       const visibleNavTop = Math.min(navTop, dockTop, visibleBottom) - DOCK_CLEARANCE_PX;
       const bodyZoneHeight = Math.max(0, Math.round(visibleNavTop - headerBottom));
       const viewportH = Math.round(vv != null ? vv.height : window.innerHeight);

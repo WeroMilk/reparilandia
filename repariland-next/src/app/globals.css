@@ -16,6 +16,7 @@
     --app-height: 100svh;
     --app-vv-top: 0px;
     --app-bottom-inset: 0px;
+    --safari-bottom-chrome: 0px;
 
     /* Tokens nativos macOS / iOS */
     --chrome-blur: 24px;
@@ -4041,8 +4042,24 @@
     }
   }
 
+  @media (max-width: 1023px) {
+    html[data-ios-safari-chrome='1'] .inicio-screen .inicio-mobile-carousel-foot {
+      padding-bottom: 0.15rem;
+    }
+
+    html[data-ios-safari-chrome='1'] .inicio-screen[data-inicio-layout-ready] .inicio-mobile-slide__inner {
+      margin-bottom: 0;
+    }
+
+    html[data-ios-safari-chrome='1'] .inicio-screen .inicio-mobile-logo {
+      max-height: min(var(--inicio-mobile-logo-max-height, 5.1rem), 4.6rem);
+    }
+  }
+
   .pb-dock-reserve {
-    padding-bottom: calc(var(--dock-reserve) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(
+      var(--dock-reserve) + max(env(safe-area-inset-bottom, 0px), var(--app-bottom-inset, 0px))
+    );
   }
 
   .dock-chrome {

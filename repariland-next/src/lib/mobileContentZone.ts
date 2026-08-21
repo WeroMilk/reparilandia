@@ -39,6 +39,7 @@ export function measureMobileContentZone(
         ? appH
         : window.innerHeight;
 
+  /* dockTop ya refleja el lift por --app-bottom-inset / Safari URL. */
   const zoneBottom = Math.min(navTop, dockTop, vvBottom) - dockClearancePx;
   const zoneHeight = Math.max(0, Math.round(zoneBottom - headerBottom));
 

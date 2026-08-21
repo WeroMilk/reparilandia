@@ -85,7 +85,7 @@ export default function RootLayout({
       >
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var v=window.visualViewport;var h=Math.round((v&&v.height)||window.innerHeight);var t=Math.round((v&&v.offsetTop)||0);var w=Math.round((v&&v.width)||window.innerWidth);var b=Math.max(0,Math.round(window.innerHeight-t-h));var r=document.documentElement;r.style.setProperty('--app-width',w+'px');r.style.setProperty('--app-height',h+'px');r.style.setProperty('--app-vv-top',t+'px');r.style.setProperty('--app-bottom-inset',b+'px');r.style.setProperty('--mobile-viewport-h',h+'px');}catch(e){}})();`,
+            __html: `(function(){try{var v=window.visualViewport;var h=Math.round((v&&v.height)||window.innerHeight);var t=Math.round((v&&v.offsetTop)||0);var w=Math.round((v&&v.width)||window.innerWidth);var b=Math.max(0,Math.round(window.innerHeight-t-h));var ua=navigator.userAgent||'';var ios=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);var safari=ios&&/WebKit/i.test(ua)&&!/CriOS|FxiOS|EdgiOS|OPiOS/i.test(ua);var stand=window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches||!!navigator.standalone;var chrome=0;if(safari&&!stand){chrome=Math.max(b,48);b=Math.max(b,chrome);}var r=document.documentElement;r.style.setProperty('--app-width',w+'px');r.style.setProperty('--app-height',h+'px');r.style.setProperty('--app-vv-top',t+'px');r.style.setProperty('--app-bottom-inset',b+'px');r.style.setProperty('--safari-bottom-chrome',chrome+'px');r.style.setProperty('--mobile-viewport-h',h+'px');if(chrome>0)r.dataset.iosSafariChrome='1';}catch(e){}})();`,
           }}
         />
         {process.env.NODE_ENV === 'development' ? <DevStaleCacheRecovery /> : null}
