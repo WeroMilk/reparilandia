@@ -1,12 +1,11 @@
-import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { useCallback, useEffect, useState } from 'react';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { assetUrl } from '@/lib/assetUrl';
 import { useNoticiasMobileZone } from '@/hooks/useNoticiasMobileZone';
 import { useNoticiasMobileCrtSize } from '@/hooks/useNoticiasMobileCrtSize';
+import { EMBLA_FAST_DURATION_MOBILE } from '@/lib/motionPresets';
 
 type NewsItem = {
   id: string;
@@ -116,50 +115,29 @@ function NewspaperSlide({
 }
 
 export default function NoticiasScreen({ isScreenActive = true }: { isScreenActive?: boolean }) {
-  const reduceMotion = useReducedMotion();
-  const isMobile = useIsMobile();
-  const isMobileRef = useRef(isMobile);
-  isMobileRef.current = isMobile;
-  const swipeStartRef = useRef<{ x: number; y: number; pointerId: number } | null>(null);
   useNoticiasMobileZone(isScreenActive);
   useNoticiasMobileCrtSize(isScreenActive);
+
   const watchDrag = useCallback((_emblaApi: unknown, event: Event) => {
-    if (isMobileRef.current) return false;
     const target = event.target;
     if (!(target instanceof Element)) return true;
     if (target.closest('a, button')) return false;
+    /* El texto puede hacer scroll vertical; Embla solo toma el gesto horizontal. */
     return true;
   }, []);
+
   const [emblaRef, emblaApi, scrollTo, scrollPrev, scrollNext] = useSmoothEmblaCarousel({
     loop: true,
     axis: 'x',
+    align: 'start',
+    containScroll: 'trimSnaps',
+    dragFree: false,
+    skipSnaps: false,
     watchDrag,
+    duration: EMBLA_FAST_DURATION_MOBILE,
+    dragThreshold: 8,
   });
   const [slideIndex, setSlideIndex] = useState(0);
-
-  const onCrtPointerDown = useCallback((event: PointerEvent<HTMLDivElement>) => {
-    if (!isMobileRef.current) return;
-    if (event.pointerType === 'mouse' && event.button !== 0) return;
-    const target = event.target;
-    if (target instanceof Element && target.closest('a, button')) return;
-    swipeStartRef.current = { x: event.clientX, y: event.clientY, pointerId: event.pointerId };
-  }, []);
-
-  const onCrtPointerEnd = useCallback(
-    (event: PointerEvent<HTMLDivElement>) => {
-      const start = swipeStartRef.current;
-      swipeStartRef.current = null;
-      if (!start || start.pointerId !== event.pointerId) return;
-      if (!isMobileRef.current) return;
-      const dx = event.clientX - start.x;
-      const dy = event.clientY - start.y;
-      if (Math.abs(dx) < 48) return;
-      if (Math.abs(dx) <= Math.abs(dy) * 1.2) return;
-      if (dx < 0) scrollNext();
-      else scrollPrev();
-    },
-    [scrollNext, scrollPrev],
-  );
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -173,6 +151,48 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
     };
   }, [emblaApi]);
 
+  useEffect(() => {
+    if (!emblaApi || !isScreenActive) return;
+    const screen = document.querySelector('[data-screen="noticias"]');
+    if (!screen) return;
+
+    let timer = 0;
+    let didInit = false;
+
+    const reinit = (force = false) => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        requestAnimationFrame(() => {
+          try {
+            const engine = emblaApi.internalEngine();
+            if (engine?.dragHandler?.pointerDown?.()) return;
+          } catch {
+            /* ignore */
+          }
+          emblaApi.reInit();
+          didInit = true;
+        });
+      }, force ? 40 : 180);
+    };
+
+    const observer = new MutationObserver(() => {
+      if (screen.hasAttribute('data-noticias-layout-ready') && !didInit) reinit(true);
+    });
+    observer.observe(screen, {
+      attributes: true,
+      attributeFilter: ['data-noticias-layout-ready'],
+    });
+    const onResize = () => reinit(false);
+    window.addEventListener('resize', onResize, { passive: true });
+    if (screen.hasAttribute('data-noticias-layout-ready')) reinit(true);
+
+    return () => {
+      window.clearTimeout(timer);
+      observer.disconnect();
+      window.removeEventListener('resize', onResize);
+    };
+  }, [emblaApi, isScreenActive]);
+
   return (
     <MobileScreenLayout
       title="NOTICIAS"
@@ -182,164 +202,145 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
       data-screen="noticias"
     >
       <div className="noticias-mobile-stage-positioner max-lg:flex max-lg:min-h-0 max-lg:w-full max-lg:flex-1 max-lg:flex-col max-lg:items-center lg:contents">
-        <motion.div className="noticias-stage noticias-mobile-stage flex min-h-0 w-full max-h-full flex-col items-center max-lg:overflow-visible overflow-hidden overscroll-none px-2 pb-0 max-lg:min-h-0 max-lg:flex-1 max-lg:justify-center max-lg:gap-0 max-lg:pt-0 sm:px-5 lg:h-full lg:flex-1 lg:mt-0.5 lg:justify-start lg:gap-1 lg:translate-x-0 lg:px-6 lg:pt-0 xl:mt-1 xl:translate-x-1 xl:px-8">
-          <motion.div
-            className="noticias-mobile-content relative flex min-h-0 w-full max-w-[min(100%,60rem)] flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-none max-lg:shrink-0 max-lg:justify-start max-lg:overflow-visible sm:max-w-[62rem] lg:h-full lg:max-h-full lg:flex-none lg:shrink-0 lg:justify-start"
-            initial={false}
-            animate={{ opacity: 1 }}
-          >
-          <motion.div
-            className="noticias-monito pointer-events-none absolute left-[clamp(-6.5rem,-18vw,-2rem)] z-[14] hidden w-[min(58vw,32rem)] items-center justify-center overflow-hidden bg-transparent xl:left-[clamp(-5rem,-14vw,0.25rem)] xl:flex xl:w-[min(56vw,34rem)] xl:-translate-x-2 xl:-translate-y-7"
-            animate={reduceMotion ? undefined : { y: [0, -3, 0] }}
-            transition={reduceMotion ? undefined : { duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <img
-              src={assetUrl(MONITO_NOTICIAS)}
-              alt="Personaje leyendo el periódico junto a una nave LEGO espacial"
-              className="block h-auto max-h-full w-full bg-transparent object-contain object-center drop-shadow-[0_20px_40px_rgba(0,0,0,0.35)] [image-rendering:auto]"
-              draggable={false}
-              loading="lazy"
-              decoding="async"
-            />
-          </motion.div>
+        <div className="noticias-stage noticias-mobile-stage flex min-h-0 w-full max-h-full flex-col items-center max-lg:overflow-visible overflow-hidden overscroll-none px-2 pb-0 max-lg:min-h-0 max-lg:flex-1 max-lg:justify-center max-lg:gap-0 max-lg:pt-0 sm:px-5 lg:h-full lg:flex-1 lg:mt-0.5 lg:justify-start lg:gap-1 lg:translate-x-0 lg:px-6 lg:pt-0 xl:mt-1 xl:translate-x-1 xl:px-8">
+          <div className="noticias-mobile-content relative flex min-h-0 w-full max-w-[min(100%,60rem)] flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-none max-lg:shrink-0 max-lg:justify-start max-lg:overflow-visible sm:max-w-[62rem] lg:h-full lg:max-h-full lg:flex-none lg:shrink-0 lg:justify-start">
+            <div
+              className="noticias-monito pointer-events-none absolute left-[clamp(-6.5rem,-18vw,-2rem)] z-[14] hidden w-[min(58vw,32rem)] items-center justify-center overflow-hidden bg-transparent xl:left-[clamp(-5rem,-14vw,0.25rem)] xl:flex xl:w-[min(56vw,34rem)] xl:-translate-x-2 xl:-translate-y-7"
+              aria-hidden
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={assetUrl(MONITO_NOTICIAS)}
+                alt="Personaje leyendo el periódico junto a una nave LEGO espacial"
+                className="block h-auto max-h-full w-full bg-transparent object-contain object-center [image-rendering:auto]"
+                draggable={false}
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
 
-          <motion.div className="noticias-mobile-monitor-col relative z-[18] flex min-h-0 w-full max-w-full flex-col items-center max-lg:overflow-visible overflow-hidden max-lg:min-h-0 max-lg:flex-none max-lg:shrink-0 max-lg:items-center max-lg:justify-start lg:h-full lg:flex-1 lg:justify-start lg:translate-y-11 xl:translate-y-14">
-            <motion.div className="flex w-full max-w-[44rem] flex-col items-center max-lg:ml-0 lg:ml-[clamp(7.5rem,18vw,12.5rem)] xl:max-w-[46rem] xl:-translate-x-1">
-              <motion.div className="noticias-mobile-crt-row flex w-full items-center max-lg:justify-center max-lg:gap-0 lg:justify-center gap-3 sm:gap-3.5 lg:-translate-x-1.5 xl:-translate-x-2">
-                <button
-                  type="button"
-                  aria-label="Noticia anterior"
-                  onClick={scrollPrev}
-                  className="mobile-carousel-arrow z-30 hidden h-12 w-12 shrink-0 self-center items-center justify-center rounded-md border-2 border-[#4a433c] bg-[#ebe3d3] text-[#1c1917] shadow-[3px_4px_0_#3f3832] transition-[transform,box-shadow] touch-manipulation hover:bg-[#ddd5c6] active:translate-x-px active:translate-y-px active:shadow-[2px_3px_0_#3f3832] lg:flex lg:h-14 lg:w-14"
-                >
-                  <ChevronLeft className="h-6 w-6 max-lg:h-5 max-lg:w-5 lg:h-7 lg:w-7" strokeWidth={2.25} />
-                </button>
-
-                <motion.div className="noticias-mobile-crt-wrap relative flex min-h-0 min-w-0 w-full max-w-full flex-col items-center max-lg:overflow-visible overflow-hidden max-lg:flex-none max-lg:shrink-0 max-lg:justify-start lg:flex-1 lg:justify-center">
-                  <motion.div className="noticias-crt-monitor-unit relative w-full max-w-full">
-                    <motion.div
-                      className="noticias-monito-mobile pointer-events-none lg:hidden"
-                      aria-hidden
-                    >
-                      <motion.div
-                        className="flex h-full w-full items-end justify-center"
-                        animate={reduceMotion ? undefined : { y: [0, -5, 0] }}
-                        transition={
-                          reduceMotion
-                            ? undefined
-                            : { duration: 3.4, repeat: Infinity, ease: 'easeInOut' }
-                        }
-                      >
-                      <img
-                        src={assetUrl(MONITO_NOTICIAS)}
-                        alt=""
-                        className="noticias-monito-mobile-img block h-auto max-h-full w-auto max-w-full bg-transparent object-contain object-bottom drop-shadow-[0_18px_36px_rgba(0,0,0,0.42)] [image-rendering:auto]"
-                        draggable={false}
-                        loading="lazy"
-                        decoding="async"
-                      />
-                      </motion.div>
-                    </motion.div>
-                  <motion.div
-                    className="noticias-crt-bezel relative mx-auto flex w-full max-w-full flex-col rounded-[6px] bg-gradient-to-b from-[#e8dfd2] via-[#cfc4b6] to-[#b9aea2] p-[clamp(7px,1.65vw,11px)] pb-[clamp(8px,1.75vw,12px)] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-4px_12px_rgba(0,0,0,0.08),0_14px_28px_rgba(0,0,0,0.42)] ring-2 ring-[#7a7269]/55 max-lg:min-h-0 max-lg:shrink-0 max-lg:flex-none max-lg:p-2 lg:max-w-[42rem] lg:min-h-0 lg:max-h-[min(56cqh,54dvh)] lg:flex-none lg:shrink-0 lg:p-3 lg:pb-3.5"
-                    onPointerDown={onCrtPointerDown}
-                    onPointerUp={onCrtPointerEnd}
-                    onPointerCancel={onCrtPointerEnd}
+            <div className="noticias-mobile-monitor-col relative z-[18] flex min-h-0 w-full max-w-full flex-col items-center max-lg:overflow-visible overflow-hidden max-lg:min-h-0 max-lg:flex-none max-lg:shrink-0 max-lg:items-center max-lg:justify-start lg:h-full lg:flex-1 lg:justify-start lg:translate-y-11 xl:translate-y-14">
+              <div className="flex w-full max-w-[44rem] flex-col items-center max-lg:ml-0 lg:ml-[clamp(7.5rem,18vw,12.5rem)] xl:max-w-[46rem] xl:-translate-x-1">
+                <div className="noticias-mobile-crt-row flex w-full items-center max-lg:justify-center max-lg:gap-0 lg:justify-center gap-3 sm:gap-3.5 lg:-translate-x-1.5 xl:-translate-x-2">
+                  <button
+                    type="button"
+                    aria-label="Noticia anterior"
+                    onClick={scrollPrev}
+                    className="mobile-carousel-arrow z-30 hidden h-12 w-12 shrink-0 self-center items-center justify-center rounded-md border-2 border-[#4a433c] bg-[#ebe3d3] text-[#1c1917] shadow-[3px_4px_0_#3f3832] touch-manipulation hover:bg-[#ddd5c6] active:translate-x-px active:translate-y-px active:shadow-[2px_3px_0_#3f3832] lg:flex lg:h-14 lg:w-14"
                   >
-                    <motion.div className="mb-1.5 flex justify-center gap-1.5 opacity-[0.38] max-lg:mb-1" aria-hidden>
-                      {[0, 1, 2, 3, 4].map((i) => (
-                        <span key={i} className="h-1 w-6 rounded-full bg-[#3f3a34]" />
-                      ))}
-                    </motion.div>
+                    <ChevronLeft className="h-6 w-6 max-lg:h-5 max-lg:w-5 lg:h-7 lg:w-7" strokeWidth={2.25} />
+                  </button>
 
-                    <motion.div className="noticias-crt-inner rounded-[4px] bg-[#141210] p-[6px] shadow-[inset_0_5px_14px_rgba(0,0,0,0.92)] ring-1 ring-black sm:p-[7px]">
-                      <motion.div className="relative overflow-hidden rounded-[3px] bg-[#080706] shadow-[inset_0_0_0_4px_rgba(28,25,22,0.96)]">
-                        <motion.div className="noticias-crt-screen relative aspect-[4/3] h-auto w-full min-h-0 shrink-0 overflow-hidden max-lg:[aspect-ratio:var(--noticias-crt-aspect,1.25)] max-lg:h-auto max-lg:max-h-none max-lg:min-h-0 max-lg:flex-none lg:aspect-auto lg:h-[min(44cqh,46dvh)] lg:max-h-none lg:flex-none">
-                          <div
-                            className="embla-fluid relative h-full w-full overflow-hidden bg-[#cdbfaa]"
-                            ref={emblaRef}
-                          >
-                            <motion.div className="flex h-full min-h-0 touch-pan-x">
-                              {newsItems.map((item) => (
-                                <div
-                                  key={item.id}
-                                  className="h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full"
-                                  role="group"
-                                  aria-roledescription="slide"
-                                  aria-label={item.title}
-                                >
-                                  <NewspaperSlide
-                                    masthead={item.masthead}
-                                    title={item.title}
-                                    body={item.body}
-                                    videoUrl={item.videoUrl}
-                                    videoLinkLabel={item.videoLinkLabel}
-                                  />
+                  <div className="noticias-mobile-crt-wrap relative flex min-h-0 min-w-0 w-full max-w-full flex-col items-center max-lg:overflow-visible overflow-hidden max-lg:flex-none max-lg:shrink-0 max-lg:justify-start lg:flex-1 lg:justify-center">
+                    <div className="noticias-crt-monitor-unit relative w-full max-w-full">
+                      <div className="noticias-monito-mobile pointer-events-none lg:hidden" aria-hidden>
+                        <div className="flex h-full w-full items-end justify-center">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={assetUrl(MONITO_NOTICIAS)}
+                            alt=""
+                            className="noticias-monito-mobile-img block h-auto max-h-full w-auto max-w-full bg-transparent object-contain object-bottom [image-rendering:auto]"
+                            draggable={false}
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                      </div>
+                      <div className="noticias-crt-bezel relative mx-auto flex w-full max-w-full flex-col rounded-[6px] bg-gradient-to-b from-[#e8dfd2] via-[#cfc4b6] to-[#b9aea2] p-[clamp(7px,1.65vw,11px)] pb-[clamp(8px,1.75vw,12px)] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-4px_12px_rgba(0,0,0,0.08),0_14px_28px_rgba(0,0,0,0.42)] ring-2 ring-[#7a7269]/55 max-lg:min-h-0 max-lg:shrink-0 max-lg:flex-none max-lg:p-2 lg:max-w-[42rem] lg:min-h-0 lg:max-h-[min(56cqh,54dvh)] lg:flex-none lg:shrink-0 lg:p-3 lg:pb-3.5">
+                        <div className="mb-1.5 flex justify-center gap-1.5 opacity-[0.38] max-lg:mb-1" aria-hidden>
+                          {[0, 1, 2, 3, 4].map((i) => (
+                            <span key={i} className="h-1 w-6 rounded-full bg-[#3f3a34]" />
+                          ))}
+                        </div>
+
+                        <div className="noticias-crt-inner rounded-[4px] bg-[#141210] p-[6px] shadow-[inset_0_5px_14px_rgba(0,0,0,0.92)] ring-1 ring-black sm:p-[7px]">
+                          <div className="relative overflow-hidden rounded-[3px] bg-[#080706] shadow-[inset_0_0_0_4px_rgba(28,25,22,0.96)]">
+                            <div className="noticias-crt-screen relative aspect-[4/3] h-auto w-full min-h-0 shrink-0 overflow-hidden max-lg:[aspect-ratio:var(--noticias-crt-aspect,1.25)] max-lg:h-auto max-lg:max-h-none max-lg:min-h-0 max-lg:flex-none lg:aspect-auto lg:h-[min(44cqh,46dvh)] lg:max-h-none lg:flex-none">
+                              <div
+                                className="embla-fluid relative h-full w-full overflow-hidden bg-[#cdbfaa]"
+                                ref={emblaRef}
+                              >
+                                <div className="flex h-full min-h-0 touch-pan-x will-change-transform">
+                                  {newsItems.map((item) => (
+                                    <div
+                                      key={item.id}
+                                      className="h-full min-h-0 min-w-0 shrink-0 grow-0 basis-full"
+                                      role="group"
+                                      aria-roledescription="slide"
+                                      aria-label={item.title}
+                                    >
+                                      <NewspaperSlide
+                                        masthead={item.masthead}
+                                        title={item.title}
+                                        body={item.body}
+                                        videoUrl={item.videoUrl}
+                                        videoLinkLabel={item.videoLinkLabel}
+                                      />
+                                    </div>
+                                  ))}
                                 </div>
-                              ))}
-                            </motion.div>
+                              </div>
+
+                              <div
+                                className="noticias-crt-vignette pointer-events-none absolute inset-0 z-[12] shadow-[inset_0_0_18px_rgba(0,0,0,0.16)] max-lg:shadow-[inset_0_0_10px_rgba(0,0,0,0.1)]"
+                                aria-hidden
+                              />
+                              <div
+                                className="noticias-crt-scan pointer-events-none absolute inset-0 z-[13] opacity-[0.016] max-lg:opacity-0 bg-[repeating-linear-gradient(180deg,rgba(0,0,0,0.35)_0px,rgba(0,0,0,0.35)_1px,transparent_1px,transparent_4px)]"
+                                aria-hidden
+                              />
+                            </div>
                           </div>
+                        </div>
 
-                          <motion.div
-                            className="noticias-crt-vignette pointer-events-none absolute inset-0 z-[12] shadow-[inset_0_0_18px_rgba(0,0,0,0.16)] max-lg:shadow-[inset_0_0_10px_rgba(0,0,0,0.1)]"
-                            aria-hidden
+                        <div className="mt-1.5 flex items-center justify-between border-t border-[#a69f94]/80 px-1 pt-1 font-serif text-[9px] font-semibold uppercase tracking-[0.32em] text-[#4d4740] sm:mt-2 sm:pt-1.5 sm:text-[10px]">
+                          <span className="truncate">Reparilandia</span>
+                          <span className="shrink-0 tabular-nums tracking-[0.28em]">CRT‑1985</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="noticias-mobile-crt-foot relative mx-auto mt-0 flex w-full max-w-[42rem] flex-col items-center px-1">
+                      <div
+                        className="noticias-crt-stand-neck h-9 max-lg:h-[clamp(1.65rem,4.5dvh,2.35rem)] max-lg:w-[92%] w-[88%] max-w-[36rem] bg-gradient-to-b from-[#a39b92] via-[#8f877e] to-[#6e6760] shadow-[inset_0_2px_4px_rgba(255,255,255,0.22),inset_0_-3px_8px_rgba(0,0,0,0.38)] [clip-path:polygon(7%_0,93%_0,100%_100%,0_100%)] lg:h-11"
+                        aria-hidden
+                      />
+                      <div
+                        className="-mt-px h-3 w-[94%] max-w-[36rem] rounded-b-md bg-gradient-to-b from-[#4a4540] to-[#2f2c28] shadow-[0_8px_18px_rgba(0,0,0,0.55)] ring-1 ring-black/45"
+                        aria-hidden
+                      />
+                      <div className="noticias-mobile-dots mt-1.5 flex justify-center gap-2 max-lg:max-h-[1.25rem]">
+                        {newsItems.map((item, i) => (
+                          <button
+                            key={item.id}
+                            type="button"
+                            aria-label={`Ver noticia: ${item.title}`}
+                            aria-current={i === slideIndex ? 'true' : undefined}
+                            onClick={() => scrollTo(i)}
+                            className={`h-3 rounded-full touch-manipulation active:scale-95 ${
+                              i === slideIndex
+                                ? 'w-7 bg-amber-400 shadow-[0_0_14px_rgba(251,191,36,0.62)] ring-1 ring-amber-900/35'
+                                : 'w-2.5 bg-[#5c4f3d] ring-1 ring-black/30 hover:bg-[#6d5e49]'
+                            }`}
                           />
-                          <motion.div
-                            className="noticias-crt-scan pointer-events-none absolute inset-0 z-[13] opacity-[0.016] max-lg:opacity-[0.01] bg-[repeating-linear-gradient(180deg,rgba(0,0,0,0.35)_0px,rgba(0,0,0,0.35)_1px,transparent_1px,transparent_4px)]"
-                            aria-hidden
-                          />
-                        </motion.div>
-                      </motion.div>
-                    </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
 
-                    <motion.div className="mt-1.5 flex items-center justify-between border-t border-[#a69f94]/80 px-1 pt-1 font-serif text-[9px] font-semibold uppercase tracking-[0.32em] text-[#4d4740] sm:mt-2 sm:pt-1.5 sm:text-[10px]">
-                      <span className="truncate">Reparilandia</span>
-                      <span className="shrink-0 tabular-nums tracking-[0.28em]">CRT‑1985</span>
-                    </motion.div>
-                  </motion.div>
-                  </motion.div>
-
-                  <motion.div className="noticias-mobile-crt-foot relative mx-auto mt-0 flex w-full max-w-[42rem] flex-col items-center px-1">
-                    <motion.div
-                      className="noticias-crt-stand-neck h-9 max-lg:h-[clamp(1.65rem,4.5dvh,2.35rem)] max-lg:w-[92%] w-[88%] max-w-[36rem] bg-gradient-to-b from-[#a39b92] via-[#8f877e] to-[#6e6760] shadow-[inset_0_2px_4px_rgba(255,255,255,0.22),inset_0_-3px_8px_rgba(0,0,0,0.38)] [clip-path:polygon(7%_0,93%_0,100%_100%,0_100%)] lg:h-11"
-                      aria-hidden
-                    />
-                    <motion.div
-                      className="-mt-px h-3 w-[94%] max-w-[36rem] rounded-b-md bg-gradient-to-b from-[#4a4540] to-[#2f2c28] shadow-[0_8px_18px_rgba(0,0,0,0.55)] ring-1 ring-black/45"
-                      aria-hidden
-                    />
-                    <motion.div className="noticias-mobile-dots mt-1.5 flex justify-center gap-2 max-lg:max-h-[1.25rem]">
-                      {newsItems.map((_, i) => (
-                        <button
-                          key={newsItems[i]?.id ?? i}
-                          type="button"
-                          aria-label={`Ver noticia: ${newsItems[i]?.title ?? i + 1}`}
-                          aria-current={i === slideIndex ? 'true' : undefined}
-                          onClick={() => scrollTo(i)}
-                          className={`h-3 rounded-full transition-all duration-300 touch-manipulation active:scale-95 ${
-                            i === slideIndex
-                              ? 'w-7 bg-amber-400 shadow-[0_0_14px_rgba(251,191,36,0.62)] ring-1 ring-amber-900/35'
-                              : 'w-2.5 bg-[#5c4f3d] ring-1 ring-black/30 hover:bg-[#6d5e49]'
-                          }`}
-                        />
-                      ))}
-                    </motion.div>
-                  </motion.div>
-                </motion.div>
-
-                <button
-                  type="button"
-                  aria-label="Noticia siguiente"
-                  onClick={scrollNext}
-                  className="mobile-carousel-arrow z-30 hidden h-12 w-12 shrink-0 self-center items-center justify-center rounded-md border-2 border-[#4a433c] bg-[#ebe3d3] text-[#1c1917] shadow-[3px_4px_0_#3f3832] transition-[transform,box-shadow] touch-manipulation hover:bg-[#ddd5c6] active:translate-x-px active:translate-y-px active:shadow-[2px_3px_0_#3f3832] lg:flex lg:h-14 lg:w-14"
-                >
-                  <ChevronRight className="h-6 w-6 max-lg:h-5 max-lg:w-5 lg:h-7 lg:w-7" strokeWidth={2.25} />
-                </button>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        </motion.div>
-        </motion.div>
+                  <button
+                    type="button"
+                    aria-label="Noticia siguiente"
+                    onClick={scrollNext}
+                    className="mobile-carousel-arrow z-30 hidden h-12 w-12 shrink-0 self-center items-center justify-center rounded-md border-2 border-[#4a433c] bg-[#ebe3d3] text-[#1c1917] shadow-[3px_4px_0_#3f3832] touch-manipulation hover:bg-[#ddd5c6] active:translate-x-px active:translate-y-px active:shadow-[2px_3px_0_#3f3832] lg:flex lg:h-14 lg:w-14"
+                  >
+                    <ChevronRight className="h-6 w-6 max-lg:h-5 max-lg:w-5 lg:h-7 lg:w-7" strokeWidth={2.25} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <p className="noticias-mobile-swipe-hint pointer-events-none mx-auto max-w-[22rem] shrink-0 px-3 text-center font-space text-[0.6875rem] font-medium uppercase leading-snug tracking-[0.14em] text-cyan-200/88 lg:hidden">
           DESLIZA PARA VER MÁS NOTICIAS
