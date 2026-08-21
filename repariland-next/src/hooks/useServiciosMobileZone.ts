@@ -194,7 +194,7 @@ export function useServiciosMobileZone(enabled: boolean) {
         CARD_MIN_PX,
         zoneHeight - introHeight - paginatorHeight - stageGapPx - iconStackGap - BOTTOM_SAFE_PX,
       );
-      const heroMax = Math.max(120, cardMax - CARD_FOOTER_FALLBACK_PX);
+      const heroMax = Math.max(168, Math.min(cardMax - CARD_FOOTER_FALLBACK_PX, Math.round(cardMax * 0.62)));
 
       let changed = false;
       changed = setPxVarIfChanged(screen, '--servicios-mobile-zone-height', zoneHeight) || changed;

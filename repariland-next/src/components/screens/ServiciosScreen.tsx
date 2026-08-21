@@ -155,22 +155,21 @@ function ServicioHeroBanner({
   const [heroFailed, setHeroFailed] = useState(false);
 
   return (
-    <div className="servicios-slide-hero relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-[inherit] bg-transparent max-lg:min-h-0 max-lg:flex-1 lg:flex-1 lg:min-h-0 lg:overflow-hidden">
-      <div className="servicios-slide-hero-media relative isolate flex min-h-0 w-full flex-1 flex-col bg-transparent max-lg:min-h-0 max-lg:flex-1 max-lg:items-stretch max-lg:justify-start lg:min-h-0 lg:flex-1">
+    <div className="servicios-slide-hero relative flex w-full flex-col overflow-hidden rounded-lg bg-[#0a0c12] max-lg:min-h-[10.5rem] lg:min-h-0 lg:flex-1 lg:overflow-hidden">
+      <div className="servicios-slide-hero-media relative isolate min-h-0 w-full flex-1 bg-transparent">
         {heroFailed ? (
           <ServicioHeroIconFallback icon={fallbackIcon} />
         ) : (
-          <div className="servicios-slide-hero-art relative z-[1] mx-auto flex min-h-0 w-full max-w-full items-stretch justify-stretch isolate overflow-hidden rounded-lg bg-transparent px-0 py-0 max-lg:min-h-0 max-lg:flex-1 sm:px-0 lg:h-full lg:max-w-full lg:flex-1 lg:px-2 lg:py-0">
+          <div className="servicios-slide-hero-art relative z-[1] h-full w-full min-h-[10.5rem] overflow-hidden rounded-lg lg:min-h-0">
             <Image
               src={assetUrl(src)}
               alt={alt}
-              width={720}
-              height={466}
-              quality={70}
+              fill
+              quality={82}
               priority={priority}
               loading={priority ? undefined : 'lazy'}
               sizes="(max-width: 1023px) min(92vw, 22rem), min(42vw, 36rem)"
-              className="servicios-slide-hero-img block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:auto] lg:h-full lg:w-full lg:min-h-0 lg:max-h-full lg:max-w-full lg:object-contain lg:drop-shadow-[0_14px_40px_rgba(0,0,0,0.28)] lg:brightness-[1.04] lg:contrast-[1.04]"
+              className="servicios-slide-hero-img object-cover object-center"
               draggable={false}
               onError={() => setHeroFailed(true)}
             />
@@ -207,6 +206,11 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
   const [emblaRef, emblaApi, scrollTo, scrollPrev, scrollNext] = useSmoothEmblaCarousel({
     loop: true,
     axis: 'x',
+    align: 'start',
+    containScroll: 'trimSnaps',
+    dragFree: false,
+    skipSnaps: false,
+    watchDrag: true,
   });
   const [slideIndex, setSlideIndex] = useState(0);
 
@@ -226,33 +230,52 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
   }, [emblaApi]);
 
   useEffect(() => {
-    if (!emblaApi) return;
+    if (!emblaApi || !isScreenActive) return;
     const screen = document.querySelector('[data-screen="servicios"]');
     if (!screen) return;
 
     let timer = 0;
+    let lastReady = screen.getAttribute('data-servicios-layout-ready');
+
     const reinit = () => {
       window.clearTimeout(timer);
       timer = window.setTimeout(() => {
-        requestAnimationFrame(() => emblaApi.reInit());
-      }, 80);
+        requestAnimationFrame(() => {
+          /* Evita reInit a mitad del gesto (desalineación). */
+          try {
+            const engine = emblaApi.internalEngine();
+            if (engine?.dragHandler?.pointerDown?.()) return;
+          } catch {
+            /* ignore */
+          }
+          emblaApi.reInit();
+        });
+      }, 120);
     };
 
-    const observer = new MutationObserver(reinit);
+    const observer = new MutationObserver(() => {
+      const ready = screen.getAttribute('data-servicios-layout-ready');
+      const desktopReady = screen.getAttribute('data-servicios-desktop-ready');
+      if (ready !== lastReady || desktopReady != null) {
+        lastReady = ready;
+        reinit();
+      }
+    });
     observer.observe(screen, {
       attributes: true,
       attributeFilter: ['data-servicios-desktop-ready', 'data-servicios-layout-ready'],
     });
 
-    window.addEventListener('resize', reinit, { passive: true });
+    const onResize = () => reinit();
+    window.addEventListener('resize', onResize, { passive: true });
     reinit();
 
     return () => {
       window.clearTimeout(timer);
       observer.disconnect();
-      window.removeEventListener('resize', reinit);
+      window.removeEventListener('resize', onResize);
     };
-  }, [emblaApi]);
+  }, [emblaApi, isScreenActive]);
 
   const renderServiceIconButton = (service: Service, index: number) => {
     const Icon = iconMap[service.icon] || Wrench;
@@ -335,7 +358,7 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
             ref={emblaRef}
             className="embla-fluid servicios-mobile-embla min-h-0 overflow-hidden max-lg:min-h-0 max-lg:flex-1 lg:flex-1"
           >
-            <div className="flex min-h-0 touch-pan-x max-lg:h-full lg:h-full">
+            <div className="flex min-h-0 touch-pan-x will-change-transform max-lg:h-full lg:h-full">
               {services.map((service) => {
                 const Icon = iconMap[service.icon] || Wrench;
                 return (
@@ -351,7 +374,11 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
                           caption={service.heroCaption ?? service.title}
                           titleLabel={service.title}
                           fallbackIcon={Icon}
-                          priority={service.id === 'carritos-montables'}
+                          priority={
+                            service.id === 'carritos-montables' ||
+                            service.id === 'laptops' ||
+                            service.id === 'pc-escritorio'
+                          }
                         />
                         <h3 className="servicios-mobile-slide-title shrink-0 px-1 text-center font-orbitron text-[12px] font-bold uppercase tracking-[0.14em] text-cyan-100/95 lg:hidden">
                           {service.title}

@@ -2586,14 +2586,26 @@
       max-height: none;
       height: 100%;
       width: 100%;
-      display: flex;
-      flex-direction: column;
+      display: block;
+      overflow: hidden;
+      touch-action: pan-y pinch-zoom;
     }
 
-    .servicios-screen[data-servicios-layout-ready] .servicios-mobile-embla > .flex,
-    .servicios-screen[data-servicios-layout-ready] .servicios-mobile-embla > .flex > div {
+    .servicios-screen[data-servicios-layout-ready] .servicios-mobile-embla > .flex {
+      display: flex;
       height: 100%;
-      min-height: 0;
+      min-height: 100%;
+      align-items: stretch;
+    }
+
+    .servicios-screen[data-servicios-layout-ready] .servicios-mobile-embla > .flex > .servicios-mobile-slide {
+      height: 100%;
+      min-height: 100%;
+      max-height: 100%;
+      flex: 0 0 100%;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
     }
 
     .servicios-screen .servicios-mobile-embla {
@@ -2601,10 +2613,10 @@
       min-height: 0;
       width: 100%;
       height: auto;
+      overflow: hidden;
     }
 
-    .servicios-screen .servicios-mobile-embla > .flex,
-    .servicios-screen .servicios-mobile-embla > .flex > div {
+    .servicios-screen .servicios-mobile-embla > .flex {
       height: auto;
       min-height: 0;
     }
@@ -2615,8 +2627,8 @@
 
     .servicios-screen .servicios-mobile-slide {
       display: grid;
-      grid-template-rows: auto auto;
-      align-content: start;
+      grid-template-rows: minmax(0, 1fr) auto;
+      align-content: stretch;
       align-items: stretch;
       gap: clamp(0.3rem, 0.9dvh, 0.45rem);
       height: auto;
@@ -2636,11 +2648,11 @@
     .servicios-screen .servicios-mobile-slide-content {
       display: flex;
       grid-row: 1;
-      flex: 0 0 auto;
+      flex: 1 1 auto;
       flex-direction: column;
       min-height: 0;
       max-height: none;
-      overflow: visible;
+      overflow: hidden;
       gap: 0.3rem;
     }
 
@@ -2658,42 +2670,44 @@
     }
 
     .servicios-screen .servicios-slide-hero {
-      flex: 1 1 0;
-      min-height: 0;
+      flex: 1 1 auto;
+      min-height: 10.5rem;
       max-height: none;
       display: flex;
       flex-direction: column;
       align-items: stretch;
       justify-content: flex-start;
       overflow: hidden;
+      position: relative;
     }
 
     .servicios-screen[data-servicios-layout-ready] .servicios-slide-hero {
       flex: 1 1 0;
-      min-height: 0;
-      max-height: var(--servicios-mobile-hero-max-height, none);
+      min-height: 10.5rem;
+      height: auto;
+      max-height: var(--servicios-mobile-hero-max-height, 14rem);
       width: 100%;
       overflow: hidden;
     }
 
     .servicios-screen:not([data-servicios-layout-ready]) .servicios-slide-hero {
+      min-height: 10.5rem;
       max-height: min(48dvh, 18rem);
     }
 
+    .servicios-screen .servicios-slide-hero-art {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 10.5rem;
+    }
+
     .servicios-screen .servicios-slide-hero-img {
-      width: 100% !important;
-      height: 100% !important;
-      max-width: 100% !important;
-      max-height: 100% !important;
       object-fit: cover !important;
       object-position: center center !important;
-      margin-inline: auto;
-      filter: none !important;
-      -webkit-filter: none !important;
     }
 
     .servicios-screen:not([data-servicios-layout-ready]) .servicios-slide-hero-img {
-      max-height: min(100%, 12.5rem, 42cqh) !important;
       object-fit: cover !important;
     }
 
@@ -2704,10 +2718,8 @@
       max-height: 100%;
       width: 100%;
       height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: flex-start;
+      display: block;
+      position: relative;
     }
 
     .servicios-screen[data-servicios-layout-ready] .servicios-slide-hero > .servicio-hero-caption {
@@ -2721,13 +2733,8 @@
     }
 
     .servicios-screen[data-servicios-layout-ready] .servicios-slide-hero-img {
-      width: 100% !important;
-      height: 100% !important;
-      max-width: 100% !important;
-      max-height: 100% !important;
       object-fit: cover !important;
       object-position: center center !important;
-      margin-inline: auto;
     }
 
     .servicios-screen .servicios-slide-desc {
@@ -4941,34 +4948,27 @@
       min-height: 0;
       width: 100%;
       max-height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: stretch;
+      display: block;
+      position: relative;
     }
 
     .servicios-screen[data-servicios-desktop-ready] .servicios-slide-hero-art {
+      position: relative;
       flex: 1 1 0;
-      min-height: 0;
+      min-height: 8rem;
       width: 100%;
       max-width: none;
+      height: 100%;
       max-height: min(
         100%,
         var(--servicios-desktop-hero-art-height, var(--servicios-desktop-hero-max-height, 12rem))
       );
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: block;
       padding: clamp(0.1rem, 0.35vh, 0.25rem) clamp(0.35rem, 0.9vw, 0.65rem);
       box-sizing: border-box;
     }
 
     .servicios-screen[data-servicios-desktop-ready] .servicios-slide-hero-img {
-      width: 100% !important;
-      height: 100% !important;
-      max-width: 100% !important;
-      max-height: 100% !important;
-      min-height: 0;
       object-fit: contain !important;
       object-position: center center !important;
     }
@@ -4985,7 +4985,7 @@
 
     .servicios-screen[data-servicios-desktop-ready] .servicios-slide-hero {
       flex: 1 1 0;
-      min-height: 0;
+      min-height: 10rem;
       max-height: none;
       width: 100%;
       overflow: hidden;
@@ -6095,7 +6095,8 @@ select:focus-visible {
 
   .embla-fluid > .flex,
   .embla-fluid .flex.h-full.touch-pan-x,
-  .embla-fluid .flex.h-full.min-h-0.touch-pan-x {
+  .embla-fluid .flex.h-full.min-h-0.touch-pan-x,
+  .embla-fluid .will-change-transform {
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
   }
