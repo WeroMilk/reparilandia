@@ -2,38 +2,37 @@ import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
 const DOCK_CLEARANCE_PX = 12;
-const CAROUSEL_FOOT_FLOOR_PX = 26;
-const CAROUSEL_ROW_GAP_PX = 4;
-const CAPTION_RESERVE_PX = 44;
-const CARD_CHROME_PAD_PX = 10;
-const CARD_MIN_HEIGHT_PX = 140;
-const BOTTOM_BOX_MARGIN_PX = 4;
-/** Espacio bajo la tarjeta para que el borde inferior no se recorte. */
-const BORDER_CLEARANCE_PX = 14;
-const HOVER_HALO_INSET_FILL_PX = 2;
+/** Dots + padding visible; debe cubrir altura real del foot. */
+const CAROUSEL_FOOT_FLOOR_PX = 40;
+/** Gap card → dots (en padding del foot, medible). */
+const FOOT_GAP_PX = 14;
+const CAPTION_RESERVE_PX = 54;
+const CARD_CHROME_PAD_PX = 8;
+const CARD_MIN_HEIGHT_PX = 160;
+/** Hueco mínimo bajo la tarjeta dentro del embla (no sumar otra vez al track). */
+const BORDER_CLEARANCE_PX = 8;
+const HOVER_HALO_INSET_PX = 2;
 const TALL_ZONE_MIN_PX = 240;
 const TALL_ZONE_RANGE_PX = 220;
-const TALL_MIN_BOTTOM_PX = 4;
-/** Zona corta: iPhone 8 Plus inspect y Safari real (~428–536) siguen el mismo modo. */
-const SHORT_BODY_ZONE_PX = 580;
+/** Compacto solo en zonas realmente cortas (Safari iPhone ~400–480). */
+const SHORT_BODY_ZONE_PX = 500;
 const SLIDE_BASIS_PERCENT = 100;
 const SLIDE_GAP_PX = 0;
-const LOGO_BASE_REM = 6.1;
-const LOGO_TALL_BOOST_REM = 2.2;
-const LOGO_COMPACT_CAP_REM = 4.85;
-/** Imagen más grande: usa el alto disponible sin tope artificial bajo. */
-const PREFERRED_HERO_VH = 0.48;
-const PREFERRED_HERO_MIN_PX = 200;
-const PREFERRED_HERO_MAX_PX = 420;
+const LOGO_BASE_REM = 5.9;
+const LOGO_TALL_BOOST_REM = 2.0;
+const LOGO_COMPACT_CAP_REM = 5.1;
+const PREFERRED_HERO_VH = 0.46;
+const PREFERRED_HERO_MIN_PX = 230;
+const PREFERRED_HERO_MAX_PX = 440;
 const STABLE_EPS_PX = 2;
 
-function mobileTallFillFactor(_viewportH: number, zoneSpan: number): number {
-  /* Solo zona útil: innerHeight de inspect (736) ≠ Safari real (~628). */
+function mobileTallFillFactor(zoneSpan: number): number {
   return Math.max(0, Math.min(1, (zoneSpan - TALL_ZONE_MIN_PX) / TALL_ZONE_RANGE_PX));
 }
 
 /**
- * Zona del carrusel de boxes en Inicio (móvil): rellena entre cabecera y dock en pantallas altas.
+ * Zona del carrusel de boxes en Inicio (móvil): rellena entre cabecera y dock
+ * con la misma lógica limpia que el layout de escritorio (sin overhead doble).
  */
 export function useInicioMobileBoxesZone(enabled: boolean) {
   useEffect(() => {
@@ -74,6 +73,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       screen.style.removeProperty('--inicio-mobile-top-gap');
       screen.style.removeProperty('--inicio-mobile-slogan-size');
       screen.style.removeProperty('--inicio-mobile-guarantee-scale');
+      screen.style.removeProperty('--inicio-mobile-foot-gap');
     };
 
     const measure = (finalPass = false) => {
@@ -91,38 +91,30 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         return;
       }
 
+      const navRect = navRail.getBoundingClientRect();
+      if (navRect.height <= 0 || navRect.top >= window.innerHeight) {
+        return;
+      }
+
       const headerBottom = header?.getBoundingClientRect().bottom ?? topBlock.getBoundingClientRect().top;
-      const navTop = navRail.getBoundingClientRect().top;
+      const navTop = navRect.top;
       const dockTop = dock?.getBoundingClientRect().top ?? navTop;
       const vv = window.visualViewport;
-      const visibleBottom =
-        vv != null ? vv.offsetTop + vv.height : window.innerHeight;
+      const visibleBottom = vv != null ? vv.offsetTop + vv.height : window.innerHeight;
       const visibleNavTop = Math.min(navTop, dockTop, visibleBottom) - DOCK_CLEARANCE_PX;
-      const measuredSpan = Math.max(0, Math.round(visibleNavTop - headerBottom));
+      const bodyZoneHeight = Math.max(0, Math.round(visibleNavTop - headerBottom));
       const viewportH = Math.round(vv != null ? vv.height : window.innerHeight);
       const viewportW = Math.round(vv != null ? vv.width : window.innerWidth);
-      // No usar bodyHeight si se estira bajo el dock (provoca recorte del borde/caption).
-      let bodyZoneHeight = measuredSpan;
-      const tallFill = mobileTallFillFactor(viewportH, bodyZoneHeight);
+      const tallFill = mobileTallFillFactor(bodyZoneHeight);
       const isCompact = bodyZoneHeight <= SHORT_BODY_ZONE_PX;
 
-      const bottomMargin = Math.round(
-        isCompact ? 2 + tallFill : BOTTOM_BOX_MARGIN_PX + tallFill,
-      );
-      const stageGap = Math.round(isCompact ? 2 + tallFill : 2 + tallFill * 2);
-      const topGap = Math.round(isCompact ? 0 : 1 + tallFill);
-      const hoverInset = HOVER_HALO_INSET_FILL_PX;
-
+      const stageGap = Math.round(isCompact ? 4 : 6 + tallFill * 2);
+      const topGap = Math.round(isCompact ? 2 : 4 + tallFill);
+      const hoverInset = HOVER_HALO_INSET_PX;
       const edgeGutter = Math.max(6, Math.min(10, Math.round(viewportW * 0.02)));
-      const sectionGap = Math.max(4, Math.min(8, Math.round(viewportW * 0.016 + tallFill * 2)));
+      const sectionGap = FOOT_GAP_PX;
       const cardMaxWidth = Math.round(
         Math.max(288, Math.min(viewportW - edgeGutter * 2 - 4, Math.round(viewportW * 0.96))),
-      );
-
-      const scrollFoot = screen.querySelector<HTMLElement>('.inicio-mobile-carousel-foot');
-      const footHeight = Math.max(
-        CAROUSEL_FOOT_FLOOR_PX,
-        scrollFoot ? Math.ceil(scrollFoot.getBoundingClientRect().height) : 0,
       );
 
       const caption = screen.querySelector<HTMLElement>(
@@ -131,13 +123,13 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       const captionHeight = caption
         ? Math.ceil(caption.getBoundingClientRect().height)
         : CAPTION_RESERVE_PX;
-      const captionReserve = Math.max(CAPTION_RESERVE_PX, captionHeight + 4);
+      const captionReserve = Math.max(CAPTION_RESERVE_PX, captionHeight + 8);
 
       let logoMaxRem = isCompact
         ? LOGO_COMPACT_CAP_REM
         : LOGO_BASE_REM + tallFill * LOGO_TALL_BOOST_REM;
-      let guaranteeScale = isCompact ? 0.82 : 0.88 + tallFill * 0.08;
-      let sloganSizeRem = isCompact ? 0.64 : 0.7 + tallFill * 0.1;
+      let guaranteeScale = isCompact ? 0.86 : 0.9 + tallFill * 0.06;
+      let sloganSizeRem = isCompact ? 0.66 : 0.72 + tallFill * 0.08;
 
       screen.setAttribute('data-inicio-fill-zone', 'true');
       if (isCompact) {
@@ -151,8 +143,10 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       screen.style.setProperty('--inicio-mobile-guarantee-scale', guaranteeScale.toFixed(3));
       screen.style.setProperty('--inicio-mobile-top-gap', `${topGap}px`);
       screen.style.setProperty('--inicio-mobile-stage-gap', `${stageGap}px`);
-      screen.style.setProperty('--inicio-mobile-bottom-margin', `${bottomMargin}px`);
+      screen.style.setProperty('--inicio-mobile-bottom-margin', `0px`);
       screen.style.setProperty('--inicio-mobile-hover-inset', `${hoverInset}px`);
+      screen.style.setProperty('--inicio-mobile-foot-gap', `${FOOT_GAP_PX}px`);
+      screen.style.setProperty('--inicio-mobile-border-clearance', `${BORDER_CLEARANCE_PX}px`);
 
       const topEl = screen.querySelector<HTMLElement>('.inicio-mobile-top');
       const footEl = screen.querySelector<HTMLElement>('.inicio-mobile-carousel-foot');
@@ -161,33 +155,25 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       const measureFootHeight = () =>
         Math.max(
           CAROUSEL_FOOT_FLOOR_PX,
-          footEl ? Math.ceil(footEl.getBoundingClientRect().height) : footHeight,
+          footEl ? Math.ceil(footEl.getBoundingClientRect().height) : 0,
         );
 
       let topH = measureTopHeight();
       let footH = measureFootHeight();
 
-      const carouselOverhead =
-        stageGap +
-        topGap +
-        TALL_MIN_BOTTOM_PX +
-        hoverInset * 2 +
-        bottomMargin +
-        CAROUSEL_ROW_GAP_PX +
-        BORDER_CLEARANCE_PX;
+      /* Un solo overhead: stage + top + hover. El gap a dots va en padding del foot (medible). */
+      const carouselOverhead = stageGap + topGap + hoverInset * 2;
 
-      // Espacio máximo disponible para el rectángulo (imagen + texto + borde).
       const availableCard = Math.max(
         CARD_MIN_HEIGHT_PX,
         bodyZoneHeight - topH - footH - carouselOverhead,
       );
 
-      // Hero: prioriza llenar el alto disponible (como Servicios), con tope razonable.
       const preferredHero = Math.round(
         Math.min(
           PREFERRED_HERO_MAX_PX,
           Math.max(PREFERRED_HERO_MIN_PX, viewportH * PREFERRED_HERO_VH),
-          cardMaxWidth * 0.95,
+          cardMaxWidth * 0.98,
         ),
       );
 
@@ -203,13 +189,13 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       if (finalPass) {
         const heroTarget = Math.min(
           preferredHero,
-          Math.max(PREFERRED_HERO_MIN_PX + 24, Math.round(viewportH * 0.42)),
+          Math.max(PREFERRED_HERO_MIN_PX + 16, Math.round(viewportH * 0.44)),
         );
         let guard = 0;
-        while (heroMaxHeight < heroTarget && logoMaxRem > 4.0 && guard < 8) {
-          logoMaxRem = Math.max(4.0, logoMaxRem - 0.55);
-          guaranteeScale = Math.max(0.72, guaranteeScale - 0.055);
-          sloganSizeRem = Math.max(0.58, sloganSizeRem - 0.035);
+        while (heroMaxHeight < heroTarget && logoMaxRem > 4.2 && guard < 8) {
+          logoMaxRem = Math.max(4.2, logoMaxRem - 0.45);
+          guaranteeScale = Math.max(0.78, guaranteeScale - 0.04);
+          sloganSizeRem = Math.max(0.6, sloganSizeRem - 0.03);
           screen.style.setProperty('--inicio-mobile-logo-max-height', `${logoMaxRem.toFixed(2)}rem`);
           screen.style.setProperty('--inicio-mobile-slogan-size', `${sloganSizeRem.toFixed(3)}rem`);
           screen.style.setProperty('--inicio-mobile-guarantee-scale', guaranteeScale.toFixed(3));
@@ -240,12 +226,9 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
           Math.max(CARD_MIN_HEIGHT_PX, heroMaxHeight + captionReserve + CARD_CHROME_PAD_PX),
         );
 
-        // Aplicar hero primero y medir la tarjeta real (incluye marco inferior).
         screen.style.setProperty('--inicio-mobile-hero-max-height', `${Math.round(heroMaxHeight)}px`);
         screen.style.setProperty('--inicio-home-card-caption-reserve', `${Math.round(captionReserve)}px`);
-        const cardEl = screen.querySelector<HTMLElement>(
-          '.inicio-mobile-slide__inner',
-        );
+        const cardEl = screen.querySelector<HTMLElement>('.inicio-mobile-slide__inner');
         if (cardEl) {
           const measuredCard = Math.ceil(cardEl.getBoundingClientRect().height);
           if (measuredCard > 0) {
@@ -254,15 +237,15 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         }
 
         screen.style.setProperty('--inicio-mobile-block-offset-top', '0px');
-        screen.style.setProperty('--inicio-mobile-block-offset-bottom', `${TALL_MIN_BOTTOM_PX}px`);
+        screen.style.setProperty('--inicio-mobile-block-offset-bottom', '0px');
       }
 
       const zoneSpan = Math.max(
         CARD_MIN_HEIGHT_PX,
-        bodyZoneHeight - topH - stageGap - topGap - TALL_MIN_BOTTOM_PX,
+        bodyZoneHeight - topH - stageGap - topGap,
       );
-      // Track ≈ tarjeta + hueco mínimo (sin sumar clearance dos veces).
-      const finalTrack = cardMaxHeight + Math.max(bottomMargin, BORDER_CLEARANCE_PX);
+      /* Track = altura de tarjeta; el clearance va solo como padding del embla. */
+      const finalTrack = cardMaxHeight + BORDER_CLEARANCE_PX;
 
       const setPx = (name: string, value: number) => {
         const prev = Number.parseFloat(screen.style.getPropertyValue(name));
@@ -281,11 +264,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       setPx('--inicio-mobile-hero-max-height', heroMaxHeight);
       setPx('--inicio-home-card-caption-reserve', captionReserve);
       setPx('--inicio-mobile-carousel-foot-reserve', footH);
-      setPx('--inicio-mobile-border-clearance', BORDER_CLEARANCE_PX);
-      screen.style.setProperty(
-        '--inicio-mobile-caption-size',
-        isCompact ? '15px' : '16px',
-      );
+      screen.style.setProperty('--inicio-mobile-caption-size', isCompact ? '15px' : '16px');
       screen.style.setProperty('--inicio-mobile-slide-gap', `${SLIDE_GAP_PX}px`);
       screen.style.setProperty('--inicio-mobile-slide-basis', `${SLIDE_BASIS_PERCENT}%`);
 

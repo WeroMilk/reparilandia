@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
+const DOCK_CLEARANCE_PX = 12;
+
 /**
  * Altura de la zona útil en Contacto (móvil): entre cabecera y rail de 6 botones.
  */
@@ -24,20 +26,27 @@ export function useContactoMobileZone(enabled: boolean) {
 
       const header = screen.querySelector<HTMLElement>('.mobile-screen__header');
       const navRail = document.querySelector<HTMLElement>('[data-app-dock] .dock-nav-rail');
+      const dock = document.querySelector<HTMLElement>('[data-app-dock]');
       if (!header || !navRail) {
         screen.removeAttribute('data-contacto-layout-ready');
         screen.style.removeProperty('--contacto-mobile-zone-height');
         return;
       }
 
+      const navRect = navRail.getBoundingClientRect();
+      if (navRect.height <= 0 || navRect.top >= window.innerHeight) {
+        return;
+      }
+
       const headerBottom = header.getBoundingClientRect().bottom;
-      const navTop = navRail.getBoundingClientRect().top;
+      const navTop = navRect.top;
+      const dockTop = dock?.getBoundingClientRect().top ?? navTop;
       const vv = window.visualViewport;
       const visibleBottom =
         vv != null ? vv.offsetTop + vv.height : window.innerHeight;
       const height = Math.max(
         0,
-        Math.round(Math.min(navTop, visibleBottom) - headerBottom),
+        Math.round(Math.min(navTop, dockTop, visibleBottom) - DOCK_CLEARANCE_PX - headerBottom),
       );
 
       screen.style.setProperty('--contacto-mobile-zone-height', `${height}px`);

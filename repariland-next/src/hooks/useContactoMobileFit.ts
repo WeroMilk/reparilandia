@@ -202,7 +202,7 @@ export function useContactoMobileFit(showMessage: boolean, enabled: boolean) {
         const actionsBand = Math.ceil(actionsEl.getBoundingClientRect().height);
         screen.style.setProperty(
           '--contacto-mobile-actions-band',
-          `${Math.max(104, actionsBand)}px`,
+          `${Math.max(92, actionsBand)}px`,
         );
       } else {
         screen.style.removeProperty('--contacto-mobile-actions-band');
