@@ -12,6 +12,7 @@ import { useDockGeometricCapture } from './hooks/useDockGeometricCapture';
 import { usePreloadScreenAssets } from './hooks/usePreloadScreenAssets';
 import { useVisualViewportLock } from './hooks/useVisualViewportLock';
 import { useIsAppMobile } from './hooks/use-mobile';
+import { preloadCriticalInicioAssets } from './lib/screenAssets';
 
 const LaserPortal = dynamic(() => import('./components/LaserPortal'), { ssr: false });
 
@@ -26,6 +27,10 @@ export default function App() {
 
   const hideBootScreen = useCallback(() => {
     setBootScreenVisible(false);
+  }, []);
+
+  useEffect(() => {
+    preloadCriticalInicioAssets();
   }, []);
 
   useDockGeometricCapture(bootDone && dockReady, { navigateTo, goNext, goPrev });

@@ -54,13 +54,13 @@ const innerSection =
   'rounded-lg border border-white/[0.1] bg-[#0f0f16] p-2 sm:p-1 lg:px-1.5 lg:py-1';
 
 const innerSectionMobile =
-  'rounded-xl border border-white/[0.08] bg-[#12121a] p-2.5 max-lg:py-2.5 max-lg:px-3.5';
+  'rounded-xl border border-white/[0.1] bg-[#12121a] p-3.5 max-lg:py-3 max-lg:px-3.5 overflow-hidden';
 
 const socialBtn =
-  'flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-white/80 transition-colors hover:border-cyan-400/35 hover:bg-white/[0.1] hover:text-cyan-100 touch-manipulation active:scale-95 lg:h-9 lg:w-9';
+  'flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-white/80 transition-colors hover:border-cyan-400/35 hover:bg-white/[0.1] hover:text-cyan-100 touch-manipulation active:scale-95 lg:h-9 lg:w-9';
 
-const MONITO_SOMBRERO = '/assets/contacto-monito-izq-busto.png';
-const ILUSTRACION_CONTACTO = '/assets/contacto-ilustracion-recuerdos.png';
+const MONITO_SOMBRERO = '/assets/contacto-monito-izq-busto.webp';
+const ILUSTRACION_CONTACTO = '/assets/contacto-ilustracion-recuerdos.webp';
 
 function getWhatsAppUrl() {
   const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || CONTACT.whatsappWa;
@@ -147,32 +147,32 @@ function ContactoMobileCard({ onOpenMessage }: { onOpenMessage: () => void }) {
       <motion.div
         className={`contacto-mobile-card ${panelOpaque} flex h-full min-h-0 w-full max-h-full flex-col overflow-hidden overflow-x-hidden p-2 sm:p-2.5 max-lg:flex-1 max-lg:p-2.5`}
       >
-        <div className="contacto-mobile-fit-root contacto-mobile-card-body grid min-h-0 min-w-0 flex-1 grid-rows-[auto_minmax(0,1fr)_auto] gap-1 overflow-hidden">
-        <div className="contacto-mobile-social flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-white/[0.07] pb-1">
+        <div className="contacto-mobile-fit-root contacto-mobile-card-body grid min-h-0 min-w-0 flex-1 grid-rows-[auto_minmax(0,1fr)_auto] gap-2 overflow-hidden">
+        <div className="contacto-mobile-social flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-white/[0.07] pb-2">
           <span className="contacto-mobile-label font-space text-[12px] uppercase tracking-[0.16em] text-white/55">Síguenos</span>
-          <motion.div className="flex flex-wrap gap-1">
+          <motion.div className="flex flex-wrap gap-1.5">
             <a href={facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className={socialBtn}>
-              <Facebook className="h-4 w-4" />
+              <Facebook className="h-5 w-5" />
             </a>
             <a href={instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className={socialBtn}>
-              <Instagram className="h-4 w-4" />
+              <Instagram className="h-5 w-5" />
             </a>
             <a href={youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className={socialBtn}>
-              <Youtube className="h-4 w-4" />
+              <Youtube className="h-5 w-5" />
             </a>
           </motion.div>
         </div>
 
-        <div className="contacto-mobile-sections mt-0 flex min-h-0 min-w-0 flex-col justify-evenly gap-[var(--contacto-mobile-section-gap,0.4rem)]">
-          <section className={`${innerSectionMobile} flex min-h-0 min-w-0 flex-1 flex-col justify-center`}>
-            <motion.div className="contacto-mobile-section-title mb-1 flex items-center justify-center gap-1.5 font-orbitron text-[12px] tracking-[0.12em] text-cyan-100/95">
-              <Mail className="h-3 w-3 text-hologram-cyan" />
+        <div className="contacto-mobile-sections mt-0 flex min-h-0 min-w-0 flex-col justify-start gap-[var(--contacto-mobile-section-gap,0.55rem)]">
+          <section className={`${innerSectionMobile} flex min-h-0 min-w-0 flex-col justify-start`}>
+            <motion.div className="contacto-mobile-section-title mb-1.5 flex items-center justify-center gap-1.5 font-orbitron text-[12px] tracking-[0.12em] text-cyan-100/95">
+              <Mail className="h-3.5 w-3.5 text-hologram-cyan" />
               CORREO
             </motion.div>
             <a href={`mailto:${email}`} className="contacto-mobile-link break-all font-space text-xs text-sky-200/95 hover:underline">
               {email}
             </a>
-            <motion.div className="contacto-mobile-phone-list mt-1 space-y-0.5 border-t border-white/[0.08] pt-1">
+            <motion.div className="contacto-mobile-phone-list mt-1.5 space-y-1 border-t border-white/[0.08] pt-1.5">
               <motion.div className="contacto-mobile-phone-row flex items-center justify-center gap-1.5 text-[12px] text-white/88">
                 <Phone className="h-3.5 w-3.5 text-hologram-gold" />
                 <a href={`tel:${telefonoTel}`} className="font-space text-sky-200/95 hover:underline">
@@ -199,9 +199,9 @@ function ContactoMobileCard({ onOpenMessage }: { onOpenMessage: () => void }) {
             </motion.div>
           </section>
 
-          <section className={`${innerSectionMobile} flex min-h-0 min-w-0 flex-1 flex-col justify-center`}>
-            <motion.div className="contacto-mobile-section-title mb-1 flex items-center justify-center gap-1.5 font-orbitron text-[12px] tracking-[0.12em] text-amber-100/95">
-              <MapPin className="h-3 w-3 text-amber-200/90" />
+          <section className={`${innerSectionMobile} flex min-h-0 min-w-0 flex-col justify-start`}>
+            <motion.div className="contacto-mobile-section-title mb-1.5 flex items-center justify-center gap-1.5 font-orbitron text-[12px] tracking-[0.12em] text-amber-100/95">
+              <MapPin className="h-3.5 w-3.5 text-amber-200/90" />
               DIRECCIÓN
             </motion.div>
             <p className="contacto-mobile-body-text font-space text-xs leading-relaxed text-white/90">{workshopAddress}</p>
@@ -209,16 +209,16 @@ function ContactoMobileCard({ onOpenMessage }: { onOpenMessage: () => void }) {
               href={googleMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-1 inline-flex min-h-[36px] w-full items-center justify-center gap-1.5 rounded-md border border-sky-400/30 bg-sky-500/15 px-2 py-1 font-space text-xs font-semibold text-sky-100/95 touch-manipulation"
+              className="mt-1.5 inline-flex min-h-[36px] w-full items-center justify-center gap-1.5 rounded-md border border-sky-400/30 bg-sky-500/15 px-2 py-1.5 font-space text-xs font-semibold text-sky-100/95 touch-manipulation"
             >
               <ExternalLink className="h-4 w-4" />
               Abrir en Google Maps
             </a>
           </section>
 
-          <section className={`${innerSectionMobile} flex min-h-0 min-w-0 flex-1 flex-col justify-center`}>
-            <motion.div className="contacto-mobile-section-title mb-1 flex items-center justify-center gap-1.5 font-orbitron text-[12px] tracking-[0.12em] text-emerald-100/95">
-              <Clock className="h-3 w-3 text-emerald-300/90" />
+          <section className={`${innerSectionMobile} flex min-h-0 min-w-0 flex-col justify-start`}>
+            <motion.div className="contacto-mobile-section-title mb-1.5 flex items-center justify-center gap-1.5 font-orbitron text-[12px] tracking-[0.12em] text-emerald-100/95">
+              <Clock className="h-3.5 w-3.5 text-emerald-300/90" />
               HORARIO
             </motion.div>
             <p className="contacto-mobile-body-text font-space text-[12px] leading-snug text-white/88">
@@ -227,12 +227,12 @@ function ContactoMobileCard({ onOpenMessage }: { onOpenMessage: () => void }) {
           </section>
         </div>
 
-        <div className="contacto-mobile-actions flex shrink-0 flex-col gap-[var(--contacto-mobile-actions-gap,0.4rem)] border-t border-white/[0.1] pt-[var(--contacto-mobile-actions-pad-top,0.45rem)]">
+        <div className="contacto-mobile-actions flex shrink-0 flex-col gap-[var(--contacto-mobile-actions-gap,0.35rem)] border-t border-white/[0.1] pt-[var(--contacto-mobile-actions-pad-top,0.4rem)]">
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="contacto-mobile-whatsapp-btn flex min-h-[44px] w-full items-center justify-center gap-2 rounded-2xl border border-emerald-400/35 bg-gradient-to-r from-emerald-500/35 to-teal-600/25 font-space text-[13px] font-semibold uppercase tracking-[0.06em] text-emerald-50 touch-manipulation active:scale-[0.98]"
+            className="contacto-mobile-whatsapp-btn flex min-h-[42px] w-full items-center justify-center gap-2 rounded-2xl border border-emerald-400/35 bg-gradient-to-r from-emerald-500/35 to-teal-600/25 font-space text-[13px] font-semibold uppercase tracking-[0.06em] text-emerald-50 touch-manipulation active:scale-[0.98]"
           >
             <MessageCircle className="h-4 w-4 shrink-0" />
             WhatsApp
@@ -240,7 +240,7 @@ function ContactoMobileCard({ onOpenMessage }: { onOpenMessage: () => void }) {
           <motion.button
             type="button"
             onClick={onOpenMessage}
-            className="contacto-mobile-message-btn flex min-h-[44px] w-full items-center justify-center gap-2 rounded-2xl border border-sky-400/35 bg-sky-500/18 font-space text-[13px] font-semibold uppercase tracking-[0.06em] text-sky-100/95 touch-manipulation active:scale-[0.98]"
+            className="contacto-mobile-message-btn flex min-h-[42px] w-full items-center justify-center gap-2 rounded-2xl border border-sky-400/35 bg-sky-500/18 font-space text-[13px] font-semibold uppercase tracking-[0.06em] text-sky-100/95 touch-manipulation active:scale-[0.98]"
             whileTap={{ scale: 0.99 }}
           >
             <Send className="h-4 w-4 shrink-0" />
@@ -304,7 +304,7 @@ export default function ContactoScreen({ isScreenActive = true }: { isScreenActi
                     alt=""
                     className="contacto-monito-bust pointer-events-none select-none [image-rendering:auto]"
                     draggable={false}
-                    loading="eager"
+                    loading="lazy"
                     decoding="async"
                   />
                   <motion.div

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { ElementType } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
 import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
@@ -34,7 +35,7 @@ const services: Service[] = [
     title: 'CARRITOS MONTABLES',
     description:
       'Diagnóstico, refacciones, batería, cableado y puesta a punto de carritos montables para niños.',
-    heroImage: '/assets/hero-carritos-montables-taller.png',
+    heroImage: '/assets/hero-carritos-montables-taller.webp',
     heroCaption: 'Reparamos carritos montables',
     quoteCta: 'Cotizar servicio',
   },
@@ -43,70 +44,70 @@ const services: Service[] = [
     icon: 'laptop',
     title: 'LAPTOPS',
     description: 'Hardware, pantalla, teclado, batería, limpieza y optimización.',
-    heroImage: '/assets/hero-servicio-laptops.png',
+    heroImage: '/assets/hero-servicio-laptops.webp',
   },
   {
     id: 'pc-escritorio',
     icon: 'monitor',
     title: 'PC ESCRITORIO',
     description: 'Mantenimiento, ensamblaje, upgrades y refrigeración.',
-    heroImage: '/assets/hero-servicio-pc.png',
+    heroImage: '/assets/hero-servicio-pc.webp',
   },
   {
     id: 'consolas',
     icon: 'gamepad',
     title: 'CONSOLAS',
     description: 'De Atari a PS5: lector óptico, HDMI, sobrecalentamiento y consolas con fallo de sistema.',
-    heroImage: '/assets/hero-servicio-consolas.png',
+    heroImage: '/assets/hero-servicio-consolas.webp',
   },
   {
     id: 'juguetes',
     icon: 'toy',
     title: 'JUGUETES',
     description: 'Electrónicos, robótica, trenes y piezas con historia.',
-    heroImage: '/assets/hero-servicio-juguetes.png',
+    heroImage: '/assets/hero-servicio-juguetes.webp',
   },
   {
     id: 'diagnostico',
     icon: 'stethoscope',
     title: 'DIAGNÓSTICO',
     description: 'Evaluación profesional y presupuesto sin compromiso.',
-    heroImage: '/assets/hero-servicio-diagnostico.png',
+    heroImage: '/assets/hero-servicio-diagnostico.webp',
   },
   {
     id: 'impresoras',
     icon: 'printer',
     title: 'IMPRESORAS',
     description: 'Inkjet, láser y multifuncionales: cabezales, alimentación, firmware y mantenimiento.',
-    heroImage: '/assets/hero-servicio-impresoras.png',
+    heroImage: '/assets/hero-servicio-impresoras.webp',
   },
   {
     id: 'camaras',
     icon: 'camera',
     title: 'CÁMARAS FOTOGRÁFICAS',
     description: 'Réflex, compactas y digitales: obturador, lente, sensor, flash y conectividad.',
-    heroImage: '/assets/hero-servicio-camaras.png',
+    heroImage: '/assets/hero-servicio-camaras.webp',
   },
   {
     id: 'cafeteras',
     icon: 'coffee',
     title: 'CAFETERAS',
     description: 'Express, goteo y cápsulas: bombas, resistencias, circuitos y calibración.',
-    heroImage: '/assets/hero-servicio-cafeteras.png',
+    heroImage: '/assets/hero-servicio-cafeteras.webp',
   },
   {
     id: 'aspiradoras',
     icon: 'vacuum',
     title: 'ASPIRADORAS',
     description: 'Domésticas e industriales: motor, succión, cableado y sistemas electrónicos.',
-    heroImage: '/assets/hero-servicio-aspiradoras.png',
+    heroImage: '/assets/hero-servicio-aspiradoras.webp',
   },
   {
     id: 'otros',
     icon: 'more',
     title: 'OTROS',
     description: 'Audio, proyectores, electrodomésticos y tecnología retro con historia.',
-    heroImage: '/assets/hero-servicio-otros.png',
+    heroImage: '/assets/hero-servicio-otros.webp',
   },
 ];
 
@@ -161,14 +162,17 @@ function ServicioHeroBanner({
           <ServicioHeroIconFallback icon={fallbackIcon} />
         ) : (
           <div className="servicios-slide-hero-art relative z-[1] mx-auto flex min-h-0 w-full max-w-full items-stretch justify-stretch isolate overflow-hidden rounded-lg bg-transparent px-0 py-0 max-lg:min-h-0 max-lg:flex-1 sm:px-0 lg:h-full lg:max-w-full lg:flex-1 lg:px-2 lg:py-0">
-            <img
+            <Image
               src={assetUrl(src)}
               alt={alt}
+              width={840}
+              height={543}
+              quality={75}
+              priority={priority}
+              loading={priority ? undefined : 'lazy'}
+              sizes="(max-width: 1023px) min(94vw, 28rem), min(42vw, 36rem)"
               className="servicios-slide-hero-img block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:auto] drop-shadow-[0_14px_40px_rgba(0,0,0,0.28)] brightness-[1.04] contrast-[1.04] lg:h-full lg:w-full lg:min-h-0 lg:max-h-full lg:max-w-full lg:object-contain"
               draggable={false}
-              loading={priority ? 'eager' : 'lazy'}
-              decoding="async"
-              fetchPriority={priority ? 'high' : 'auto'}
               onError={() => setHeroFailed(true)}
             />
           </div>

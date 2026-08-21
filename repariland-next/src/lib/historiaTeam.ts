@@ -30,7 +30,7 @@ export const historiaMilestones = [
 
 export const historiaWorkers: readonly HistoriaWorker[] = [
   {
-    src: '/assets/historia-panel-2.png',
+    src: '/assets/historia-panel-2.webp',
     alt: 'Omar Lugo, integrante del equipo Reparilandia, pelo largo en ponytail',
     name: 'Omar Lugo',
     role: 'Recuperación crítica',
@@ -49,7 +49,7 @@ export const historiaWorkers: readonly HistoriaWorker[] = [
       'Especialista en rescatar equipos que otros dan por perdidos: cámaras, tarjetas madre e impresoras 3D.',
   },
   {
-    src: '/assets/historia-panel-3.png',
+    src: '/assets/historia-panel-3.webp',
     alt: 'Carlos Díaz, integrante del equipo con sombrero y barba',
     name: 'Carlos Díaz',
     role: 'Dirección general',
@@ -68,7 +68,7 @@ export const historiaWorkers: readonly HistoriaWorker[] = [
       'Cabeza de Reparilandia: define el rumbo del taller y no cierra un caso mientras quede una vía por explorar.',
   },
   {
-    src: '/assets/historia-panel-4.png',
+    src: '/assets/historia-panel-4.webp',
     alt: 'Francisco Medina, integrante del equipo con gafas y playera Reparilandia',
     name: 'Francisco Medina',
     role: 'Abastecimiento y cotización',

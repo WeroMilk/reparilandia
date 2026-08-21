@@ -12,13 +12,13 @@ import { assetUrl } from '@/lib/assetUrl';
 import { useInicioDesktopLayout } from '@/hooks/useInicioDesktopLayout';
 import { useInicioMobileBoxesZone } from '@/hooks/useInicioMobileBoxesZone';
 import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsAppMobile } from '@/hooks/use-mobile';
 
-const LOGO = '/assets/logo-reparilandia.png';
+const LOGO = '/assets/logo-reparilandia.webp';
 
-const IMG_CARRITOS = '/assets/home-box-carritos.png';
-const IMG_SERVICIO = '/assets/home-box-servicio.png';
-const IMG_NOVEDADES = '/assets/home-box-novedades.png';
+const IMG_CARRITOS = '/assets/home-box-carritos.webp';
+const IMG_SERVICIO = '/assets/home-box-servicio.webp';
+const IMG_NOVEDADES = '/assets/home-box-novedades.webp';
 
 const CARD_BOX =
   'flex h-full min-h-0 w-full max-h-full flex-col lg:min-h-0 lg:max-h-full';
@@ -73,7 +73,7 @@ const HOME_BOX_IMG_CLASS: Record<
   },
   amber: {
     mobile:
-      'mx-auto block h-full w-full max-h-full max-w-full object-contain object-center [image-rendering:-webkit-optimize-contrast]',
+      'mx-auto block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:-webkit-optimize-contrast]',
     desktop:
       'inicio-home-card__img pointer-events-none mx-auto block h-auto w-auto max-h-[min(13rem,62cqh)] max-w-[98%] object-contain object-center select-none [image-rendering:auto]',
   },
@@ -121,7 +121,7 @@ interface InicioScreenProps {
 }
 
 export default function InicioScreen({ onNavigate, isScreenActive = true }: InicioScreenProps) {
-  const isMobile = useIsMobile();
+  const isMobile = useIsAppMobile();
   const [slideIndex, setSlideIndex] = useState(0);
   const [emblaRef, emblaApi, scrollTo, scrollPrev, scrollNext] = useSmoothEmblaCarousel({
     loop: false,
@@ -130,14 +130,16 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
     containScroll: 'trimSnaps',
   });
 
-  useInicioMobileBoxesZone(isScreenActive);
-  useInicioDesktopLayout(isScreenActive);
+  useInicioMobileBoxesZone(isScreenActive && isMobile === true);
+  useInicioDesktopLayout(isScreenActive && isMobile === false);
 
   const canGoPrev = slideIndex > 0;
   const canGoNext = slideIndex < homeCards.length - 1;
   const prevAccent = canGoPrev ? homeCards[slideIndex - 1].accent : null;
   const nextAccent = canGoNext ? homeCards[slideIndex + 1].accent : null;
-  const showMobileArrows = isMobile && isScreenActive;
+  const showMobile = isMobile === true;
+  const showDesktop = isMobile === false;
+  const showMobileArrows = showMobile && isScreenActive;
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -177,9 +179,10 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
   return (
     <MobileScreenLayout title="INICIO" className="inicio-screen" data-screen="inicio">
       <motion.div className="inicio-mobile-stage relative flex min-h-0 flex-1 flex-col overflow-hidden max-lg:min-h-0 max-lg:gap-0.5 max-lg:overflow-hidden max-lg:pb-0 lg:min-h-0 lg:flex-1 lg:flex-col lg:justify-start lg:gap-0 lg:overflow-visible lg:pb-0">
-        {/* Móvil: logo → eslogan → garantía con huecos; escritorio sin cambios */}
+        {/* Móvil: logo → eslogan → garantía con huecos */}
+        {showMobile ? (
         <motion.div
-          className="inicio-mobile-top relative z-10 flex w-full shrink-0 flex-col items-center text-center lg:hidden"
+          className="inicio-mobile-top relative z-10 flex w-full shrink-0 flex-col items-center text-center"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
@@ -189,12 +192,12 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
               <Image
                 src={assetUrl(LOGO)}
                 alt="Reparilandia"
-                width={1024}
-                height={682}
+                width={960}
+                height={639}
                 priority
-                quality={82}
+                quality={75}
                 placeholder="empty"
-                sizes="(max-width: 1023px) min(96vw, 40rem)"
+                sizes="min(96vw, 40rem)"
                 className="inicio-mobile-logo mx-auto block h-auto w-full max-w-[min(98vw,46rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)]"
                 draggable={false}
               />
@@ -205,9 +208,11 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
           </div>
           <GuaranteePromise className="inicio-mobile-guarantee w-full" />
         </motion.div>
+        ) : null}
 
+        {showDesktop ? (
         <motion.div
-          className="inicio-mobile-hero inicio-desktop-hero relative z-10 hidden w-full shrink-0 flex-col items-center gap-1 px-1 text-center sm:px-2 lg:flex lg:max-h-none lg:gap-2 lg:pt-0 xl:gap-2.5"
+          className="inicio-mobile-hero inicio-desktop-hero relative z-10 flex w-full shrink-0 flex-col items-center gap-1 px-1 text-center sm:px-2 lg:max-h-none lg:gap-2 lg:pt-0 xl:gap-2.5"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
@@ -216,12 +221,12 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
             <Image
               src={assetUrl(LOGO)}
               alt="Reparilandia"
-              width={1024}
-              height={682}
+              width={960}
+              height={639}
               priority
-              quality={82}
+              quality={75}
               placeholder="empty"
-              sizes="(max-width: 1023px) min(94vw, 38rem), min(92vw, 62rem)"
+              sizes="min(92vw, 62rem)"
               className="inicio-desktop-logo mx-auto block h-auto w-full max-h-[min(26dvh,14.5rem)] max-w-[min(94vw,36rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)] sm:max-h-[min(28dvh,15.5rem)] sm:max-w-[min(94vw,38rem)] md:max-h-[min(29dvh,16.25rem)] md:max-w-[min(92vw,40rem)] lg:max-h-[min(30dvh,18.5rem)] lg:max-w-[min(90vw,54rem)] xl:max-h-[min(32dvh,20.5rem)] xl:max-w-[min(88vw,58rem)]"
               draggable={false}
             />
@@ -230,10 +235,12 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
             </p>
           </div>
         </motion.div>
+        ) : null}
 
         {/* Móvil: carrusel horizontal — un box completo (imagen + leyenda) por slide */}
+        {showMobile ? (
         <motion.div
-          className="inicio-mobile-boxes inicio-mobile-carousel flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-1 lg:hidden"
+          className="inicio-mobile-boxes inicio-mobile-carousel flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-1"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.06, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
@@ -261,7 +268,7 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
               aria-label="Destacados Reparilandia"
             >
               <div className="flex h-full min-h-0 touch-pan-x">
-                {homeCards.map((card) => (
+                {homeCards.map((card, index) => (
                   <div
                     key={card.img}
                     className="inicio-mobile-slide min-w-0 shrink-0 grow-0 basis-full"
@@ -274,6 +281,7 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
                         accent={card.accent}
                         centerProminent={card.centerProminent}
                         mobileCarousel
+                        priority={index === 0}
                       />
                     </div>
                   </div>
@@ -290,10 +298,12 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
             />
           </div>
         </motion.div>
+        ) : null}
 
         {/* Escritorio: garantía + 3 boxes anclados al dock */}
+        {showDesktop ? (
         <motion.div
-          className="inicio-desktop-even hidden min-h-0 w-full flex-col items-center justify-start gap-2 overflow-visible lg:flex lg:min-h-0 lg:flex-1 lg:gap-3 xl:gap-4"
+          className="inicio-desktop-even flex min-h-0 w-full flex-col items-center justify-start gap-2 overflow-visible lg:min-h-0 lg:flex-1 lg:gap-3 xl:gap-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.04, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
@@ -315,11 +325,13 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
                   onClick={() => onNavigate(card.screen)}
                   accent={card.accent}
                   centerProminent={card.centerProminent}
+                  priority
                 />
               </motion.div>
             ))}
           </motion.div>
         </motion.div>
+        ) : null}
       </motion.div>
 
       <h1 className="sr-only">Reparilandia</h1>
@@ -388,6 +400,7 @@ function HomeSpotlightCard({
   cropLegs = false,
   mobileScroll = false,
   mobileCarousel = false,
+  priority = false,
 }: {
   img: string;
   caption: string;
@@ -397,9 +410,12 @@ function HomeSpotlightCard({
   cropLegs?: boolean;
   mobileScroll?: boolean;
   mobileCarousel?: boolean;
+  priority?: boolean;
 }) {
   const styles = HOME_BOX_ACCENT[accent];
   const mobileLayout = mobileCarousel || mobileScroll;
+  const imgW = accent === 'amber' ? 900 : 900;
+  const imgH = accent === 'amber' ? 600 : 580;
 
   const imgTreat = mobileLayout
     ? `inicio-home-card__img ${HOME_BOX_IMG_CLASS[accent].mobile}`
@@ -422,29 +438,35 @@ function HomeSpotlightCard({
     <motion.div
       className={`relative mx-auto overflow-hidden rounded-lg ${imageShell} ${glowStage}`}
     >
-      <img
+      <Image
         src={assetUrl(img)}
         alt=""
+        width={imgW}
+        height={imgH}
+        quality={75}
+        priority={priority}
+        loading={priority ? undefined : 'lazy'}
+        sizes={mobileLayout ? 'min(92vw, 28rem)' : 'min(30vw, 22rem)'}
         className="relative z-[1] pointer-events-none absolute left-1/2 top-0 block h-[138%] w-auto max-w-[96%] -translate-x-1/2 select-none object-cover object-top"
         style={{ objectPosition: 'center 14%' }}
         draggable={false}
-        loading="eager"
-        decoding="async"
-        fetchPriority="high"
       />
     </motion.div>
   ) : (
     <motion.div
       className={`relative isolate flex rounded-xl overflow-hidden ${imageShell} ${wrapAlign} ${glowStage}`}
     >
-      <img
+      <Image
         src={assetUrl(img)}
         alt=""
+        width={imgW}
+        height={imgH}
+        quality={75}
+        priority={priority}
+        loading={priority ? undefined : 'lazy'}
+        sizes={mobileLayout ? 'min(92vw, 28rem)' : 'min(30vw, 22rem)'}
         className={`relative z-[1] pointer-events-none select-none ${imgTreat}`}
         draggable={false}
-        loading="eager"
-        decoding="async"
-        fetchPriority="high"
       />
     </motion.div>
   );
@@ -475,7 +497,7 @@ function HomeSpotlightCard({
       <p
         className={`inicio-home-card__caption relative z-[1] shrink-0 text-center font-space font-semibold leading-snug tracking-[0.03em] text-white/95 ${
           mobileLayout
-            ? 'mt-0 px-2.5 pb-1.5 pt-1 text-[length:var(--inicio-mobile-caption-size,15px)] leading-snug sm:px-3 sm:pb-1.5 sm:pt-1'
+            ? 'mt-0 px-2.5 pb-2.5 pt-1.5 text-[length:var(--inicio-mobile-caption-size,15px)] leading-snug sm:px-3 sm:pb-2.5 sm:pt-1.5'
             : 'mt-1.5 px-1.5 text-[clamp(0.6875rem,2.6vw,0.8125rem)] sm:mt-2 sm:text-xs md:text-[0.8125rem] lg:mt-1 lg:px-1.5 lg:text-[0.6875rem] lg:leading-tight xl:text-xs'
         }`}
       >

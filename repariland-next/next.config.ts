@@ -21,7 +21,10 @@ const nextConfig: NextConfig = {
   },
   images: {
     formats: ['image/avif', 'image/webp'],
-    qualities: [75, 82, 100],
+    qualities: [75, 82, 90, 100],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [96, 128, 256, 384, 640],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     localPatterns: [
       {
         pathname: '/assets/**',
@@ -29,11 +32,32 @@ const nextConfig: NextConfig = {
     ],
   },
   async headers() {
-    if (process.env.NODE_ENV !== 'development') return [];
+    if (process.env.NODE_ENV === 'development') {
+      return [
+        {
+          source: '/:path*',
+          headers: [{ key: 'Cache-Control', value: 'no-store, must-revalidate' }],
+        },
+      ];
+    }
     return [
       {
-        source: '/:path*',
-        headers: [{ key: 'Cache-Control', value: 'no-store, must-revalidate' }],
+        source: '/assets/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/icons/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
       },
     ];
   },

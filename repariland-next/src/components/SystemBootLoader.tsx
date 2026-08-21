@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const BOOT_MS = 640;
-const EXIT_MS = 240;
+const BOOT_MS = 320;
+const EXIT_MS = 160;
 
 interface SystemBootLoaderProps {
   onExitComplete: () => void;

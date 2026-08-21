@@ -50,7 +50,7 @@ const newsItems: NewsItem[] = [
   },
 ];
 
-const MONITO_NOTICIAS = '/assets/noticias-monito-nave.png';
+const MONITO_NOTICIAS = '/assets/noticias-monito-nave.webp';
 
 function NewspaperSlide({
   masthead,
@@ -198,7 +198,7 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
               alt="Personaje leyendo el periódico junto a una nave LEGO espacial"
               className="block h-auto max-h-full w-full bg-transparent object-contain object-center drop-shadow-[0_20px_40px_rgba(0,0,0,0.35)] [image-rendering:auto]"
               draggable={false}
-              loading="eager"
+              loading="lazy"
               decoding="async"
             />
           </motion.div>
@@ -235,7 +235,7 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
                         alt=""
                         className="noticias-monito-mobile-img block h-auto max-h-full w-auto max-w-full bg-transparent object-contain object-bottom drop-shadow-[0_18px_36px_rgba(0,0,0,0.42)] [image-rendering:auto]"
                         draggable={false}
-                        loading="eager"
+                        loading="lazy"
                         decoding="async"
                       />
                       </motion.div>

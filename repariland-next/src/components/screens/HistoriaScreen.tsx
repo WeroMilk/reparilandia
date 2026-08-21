@@ -56,7 +56,7 @@ function CutoutCharacter({
         alt={alt}
         className={`pointer-events-none h-auto w-auto select-none object-contain [image-rendering:auto] ${imgTreat} ${imgClassName || 'max-w-full'}`}
         draggable={false}
-        loading="eager"
+        loading="lazy"
         decoding="async"
       />
     </motion.div>
@@ -106,11 +106,11 @@ function TimelinePanel() {
           className={`historia-et-col relative z-[8] flex shrink-0 items-end justify-center overflow-visible px-0 pt-0 max-lg:overflow-visible lg:h-full lg:min-h-0 lg:flex-none lg:items-center lg:justify-center lg:overflow-hidden lg:px-1 w-full h-[min(20vh,10rem)] sm:h-[min(28vh,13rem)] lg:w-[48%] lg:max-w-none`}
         >
           <img
-            src={assetUrl('/assets/historia-linea-tiempo.png')}
+            src={assetUrl('/assets/historia-linea-tiempo.webp')}
             alt="E.T. con playera Reparilandia"
             className="historia-et-img relative z-[12] pointer-events-none mb-4 block h-auto min-h-[4.25rem] w-full min-w-[3.75rem] max-h-full max-w-full select-none object-contain object-bottom brightness-[1.14] contrast-[1.08] saturate-[1.05] [image-rendering:auto] origin-bottom max-lg:origin-bottom lg:mx-auto lg:mb-0 lg:min-h-0 lg:min-w-0 lg:max-h-none lg:origin-center lg:object-center lg:-translate-y-4 lg:scale-[2.52] xl:-translate-y-5 xl:scale-[2.74]"
             draggable={false}
-            loading="eager"
+            loading="lazy"
             decoding="async"
           />
         </motion.div>

@@ -14,7 +14,7 @@ const orbitron = Orbitron({
   subsets: ['latin'],
   variable: '--font-orbitron',
   display: 'swap',
-  preload: true,
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -51,6 +51,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <head>
+        <link
+          rel="preload"
+          as="image"
+          href="/assets/logo-reparilandia.webp?v=31"
+          type="image/webp"
+          fetchPriority="high"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/assets/home-box-carritos.webp?v=31"
+          type="image/webp"
+          fetchPriority="high"
+        />
+      </head>
       <body
         className={`${spaceGrotesk.variable} ${orbitron.variable} font-sans antialiased`}
         style={{ backgroundColor: '#050508', color: '#fafafa' }}

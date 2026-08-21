@@ -3,20 +3,27 @@ import type { ScreenName } from '@/types';
 
 const SCREEN_ASSET_MAP: Record<ScreenName, readonly string[]> = {
   inicio: [
-    '/assets/logo-reparilandia.png',
-    '/assets/home-box-carritos.png',
-    '/assets/home-box-servicio.png',
-    '/assets/home-box-novedades.png',
+    '/assets/logo-reparilandia.webp',
+    '/assets/home-box-carritos.webp',
+    '/assets/home-box-servicio.webp',
+    '/assets/home-box-novedades.webp',
   ],
   historia: [
-    '/assets/historia-linea-tiempo.png',
-    '/assets/historia-panel-2.png',
-    '/assets/historia-panel-3.png',
-    '/assets/historia-panel-4.png',
+    '/assets/historia-linea-tiempo.webp',
+    '/assets/historia-panel-2.webp',
+    '/assets/historia-panel-3.webp',
+    '/assets/historia-panel-4.webp',
   ],
-  servicios: ['/assets/hero-carritos-montables-taller.png'],
-  noticias: ['/assets/noticias-monito-nave.png'],
-  contacto: ['/assets/contacto-monito-izq-busto.png', '/assets/contacto-ilustracion-recuerdos.png'],
+  servicios: [
+    '/assets/hero-carritos-montables-taller.webp',
+    '/assets/hero-servicio-laptops.webp',
+    '/assets/hero-servicio-pc.webp',
+  ],
+  noticias: ['/assets/noticias-monito-nave.webp'],
+  contacto: [
+    '/assets/contacto-monito-izq-busto.webp',
+    '/assets/contacto-ilustracion-recuerdos.webp',
+  ],
   reels: [],
 };
 
@@ -36,4 +43,9 @@ function preloadPaths(paths: readonly string[]): void {
 
 export function preloadScreenAssets(screen: ScreenName = 'inicio'): void {
   preloadPaths(SCREEN_ASSET_MAP[screen] ?? []);
+}
+
+/** Precarga inmediata de Inicio (sin esperar idle). */
+export function preloadCriticalInicioAssets(): void {
+  preloadPaths(SCREEN_ASSET_MAP.inicio);
 }

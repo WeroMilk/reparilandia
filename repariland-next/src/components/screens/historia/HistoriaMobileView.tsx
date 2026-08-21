@@ -22,7 +22,7 @@ function TimelinePanel() {
       <div className="hm-panel__main hm-timeline">
         <div className="hm-timeline__et historia-et-col" aria-hidden>
           <img
-            src={assetUrl('/assets/historia-linea-tiempo.png')}
+            src={assetUrl('/assets/historia-linea-tiempo.webp')}
             alt=""
             className="hm-timeline__et-img historia-et-img"
             draggable={false}
@@ -62,7 +62,7 @@ function StoryPanel({ worker }: { worker: HistoriaWorker }) {
               alt={worker.alt}
               className="hm-story__img mix-blend-lighten"
               draggable={false}
-              loading="eager"
+              loading="lazy"
               decoding="async"
             />
           </div>

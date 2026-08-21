@@ -11,6 +11,7 @@
     "dev:3004": "node scripts/dev-clean.cjs",
     "dev:3012": "next dev -p 3012",
     "icons:optimize": "python scripts/prepare-favicon.py",
+    "assets:optimize": "node scripts/optimize-public-assets.cjs",
     "dev:turbo": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
