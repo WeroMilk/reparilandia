@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
-const DOCK_CLEARANCE_PX = 8;
+const DOCK_CLEARANCE_PX = 18;
 /** Solo dots; el margen bajo la card debe ser mínimo. */
 const CAROUSEL_FOOT_FLOOR_PX = 22;
-/** Gap card → dots (muy corto). */
-const FOOT_GAP_PX = 4;
+/** Gap card → dots (muy corto; los dots van pegados arriba del rectángulo). */
+const FOOT_GAP_PX = 0;
 const CAPTION_RESERVE_PX = 68;
 const CARD_CHROME_PAD_PX = 6;
 const CARD_MIN_HEIGHT_PX = 210;

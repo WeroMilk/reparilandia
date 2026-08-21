@@ -232,6 +232,7 @@
     --dock-footer-height: 2.375rem;
     --dock-chrome-height: calc(var(--dock-nav-height) + var(--dock-footer-height));
     --dock-reserve: var(--dock-chrome-height);
+    --dock-bottom-nudge: 0px;
     --screen-header-pad: clamp(0.375rem, 1.25dvh, 0.625rem);
   }
 
@@ -247,6 +248,7 @@
       --dock-footer-height: 3.15rem;
       --dock-chrome-height: calc(var(--dock-nav-height) + var(--dock-footer-height));
       --dock-reserve: var(--dock-chrome-height);
+      --dock-bottom-nudge: 12px;
       --mobile-viewport-h: var(--app-height, 100svh);
       --screen-header-pad: clamp(0.4rem, 1.4svh, 0.65rem);
     }
@@ -1574,7 +1576,7 @@
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-carousel-foot {
-      /* Margen corto: solo dots pegados al borde inferior del rectángulo */
+      /* Dots más arriba (cerca del rectángulo) y con aire sobre el dock */
       flex: 0 0 auto;
       min-height: 0;
       height: auto;
@@ -1582,18 +1584,22 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding-top: var(--inicio-mobile-foot-gap, 4px);
-      padding-bottom: 0.1rem;
-      margin-top: 0;
+      padding-top: 0;
+      padding-bottom: 0.35rem;
+      margin-top: -0.55rem;
+      margin-bottom: 0.35rem;
       box-sizing: border-box;
+      position: relative;
+      z-index: 2;
     }
 
     .inicio-screen .inicio-mobile-carousel-foot {
       flex-shrink: 0;
       width: 100%;
-      margin-top: 0;
-      padding-top: var(--inicio-mobile-foot-gap, 4px);
-      padding-bottom: 0.1rem;
+      margin-top: -0.55rem;
+      margin-bottom: 0.35rem;
+      padding-top: 0;
+      padding-bottom: 0.35rem;
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-boxes,
@@ -4078,7 +4084,9 @@
 
   @media (max-width: 1023px) {
     html[data-ios-safari-chrome='1'] .inicio-screen .inicio-mobile-carousel-foot {
-      padding-bottom: 0.2rem;
+      margin-top: -0.7rem;
+      margin-bottom: 0.45rem;
+      padding-bottom: 0.4rem;
       position: relative;
       z-index: 2;
     }

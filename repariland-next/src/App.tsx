@@ -103,7 +103,7 @@ export default function App() {
             className="pointer-events-auto fixed inset-x-0 isolate flex justify-center px-2 lg:px-6 xl:px-10"
             style={{
               bottom:
-                'max(var(--app-bottom-inset, 0px), var(--safari-bottom-chrome, 0px), env(safe-area-inset-bottom, 0px))',
+                'max(0px, calc(max(var(--app-bottom-inset, 0px), var(--safari-bottom-chrome, 0px), env(safe-area-inset-bottom, 0px)) - var(--dock-bottom-nudge, 0px)))',
             }}
           >
             <AppDock
