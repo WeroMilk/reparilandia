@@ -67,19 +67,19 @@ const HOME_BOX_IMG_CLASS: Record<
 > = {
   green: {
     mobile:
-      'mx-auto block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:-webkit-optimize-contrast]',
+      'mx-auto block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:auto]',
     desktop:
       'inicio-home-card__img pointer-events-none mx-auto block h-auto w-auto max-h-[min(13rem,62cqh)] max-w-[98%] object-contain object-center select-none [image-rendering:auto]',
   },
   amber: {
     mobile:
-      'mx-auto block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:-webkit-optimize-contrast]',
+      'mx-auto block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:auto]',
     desktop:
       'inicio-home-card__img pointer-events-none mx-auto block h-auto w-auto max-h-[min(13rem,62cqh)] max-w-[98%] object-contain object-center select-none [image-rendering:auto]',
   },
   red: {
     mobile:
-      'mx-auto block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:-webkit-optimize-contrast]',
+      'mx-auto block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:auto]',
     desktop:
       'inicio-home-card__img pointer-events-none mx-auto block h-auto w-auto max-h-[min(13rem,62cqh)] max-w-[98%] object-contain object-center select-none [image-rendering:auto]',
   },
@@ -192,12 +192,12 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
               <Image
                 src={assetUrl(LOGO)}
                 alt="Reparilandia"
-                width={960}
-                height={639}
+                width={1024}
+                height={682}
                 priority
-                quality={75}
+                quality={90}
                 placeholder="empty"
-                sizes="min(96vw, 40rem)"
+                sizes="(max-width: 1023px) 96vw, 40rem"
                 className="inicio-mobile-logo mx-auto block h-auto w-full max-w-[min(98vw,46rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)]"
                 draggable={false}
               />
@@ -221,10 +221,10 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
             <Image
               src={assetUrl(LOGO)}
               alt="Reparilandia"
-              width={960}
-              height={639}
+              width={1024}
+              height={682}
               priority
-              quality={75}
+              quality={90}
               placeholder="empty"
               sizes="min(92vw, 62rem)"
               className="inicio-desktop-logo mx-auto block h-auto w-full max-h-[min(26dvh,14.5rem)] max-w-[min(94vw,36rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)] sm:max-h-[min(28dvh,15.5rem)] sm:max-w-[min(94vw,38rem)] md:max-h-[min(29dvh,16.25rem)] md:max-w-[min(92vw,40rem)] lg:max-h-[min(30dvh,18.5rem)] lg:max-w-[min(90vw,54rem)] xl:max-h-[min(32dvh,20.5rem)] xl:max-w-[min(88vw,58rem)]"
@@ -414,8 +414,8 @@ function HomeSpotlightCard({
 }) {
   const styles = HOME_BOX_ACCENT[accent];
   const mobileLayout = mobileCarousel || mobileScroll;
-  const imgW = accent === 'amber' ? 900 : 900;
-  const imgH = accent === 'amber' ? 600 : 580;
+  const imgW = 1400;
+  const imgH = accent === 'amber' ? 933 : 660;
 
   const imgTreat = mobileLayout
     ? `inicio-home-card__img ${HOME_BOX_IMG_CLASS[accent].mobile}`
@@ -443,10 +443,10 @@ function HomeSpotlightCard({
         alt=""
         width={imgW}
         height={imgH}
-        quality={75}
+        quality={90}
         priority={priority}
         loading={priority ? undefined : 'lazy'}
-        sizes={mobileLayout ? 'min(92vw, 28rem)' : 'min(30vw, 22rem)'}
+        sizes={mobileLayout ? '(max-width: 1023px) 94vw, 420px' : 'min(30vw, 22rem)'}
         className="relative z-[1] pointer-events-none absolute left-1/2 top-0 block h-[138%] w-auto max-w-[96%] -translate-x-1/2 select-none object-cover object-top"
         style={{ objectPosition: 'center 14%' }}
         draggable={false}
@@ -461,10 +461,10 @@ function HomeSpotlightCard({
         alt=""
         width={imgW}
         height={imgH}
-        quality={75}
+        quality={90}
         priority={priority}
         loading={priority ? undefined : 'lazy'}
-        sizes={mobileLayout ? 'min(92vw, 28rem)' : 'min(30vw, 22rem)'}
+        sizes={mobileLayout ? '(max-width: 1023px) 94vw, 420px' : 'min(30vw, 22rem)'}
         className={`relative z-[1] pointer-events-none select-none ${imgTreat}`}
         draggable={false}
       />

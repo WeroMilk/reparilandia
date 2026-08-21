@@ -562,7 +562,7 @@
       height: 100% !important;
       max-height: 100% !important;
       object-fit: cover !important;
-      transform: scale(1.32) !important;
+      transform: none !important;
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready]
@@ -576,7 +576,7 @@
       margin-inline: auto !important;
       object-fit: cover !important;
       object-position: center 28% !important;
-      transform: scale(1.22) !important;
+      transform: none !important;
       transform-origin: center center !important;
     }
 
@@ -1447,10 +1447,10 @@
       max-height: 100% !important;
       object-fit: cover !important;
       object-position: center center;
-      transform: scale(1.32) !important;
-      transform-origin: center center;
-      image-rendering: -webkit-optimize-contrast;
-      image-rendering: high-quality;
+      transform: none !important;
+      image-rendering: auto;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
     }
 
     .inicio-screen
@@ -1459,7 +1459,7 @@
       .inicio-home-card__img {
       max-height: 100% !important;
       object-position: center 42%;
-      transform: scale(1.38) !important;
+      transform: none !important;
       transform-origin: center center;
     }
 
@@ -1503,7 +1503,7 @@
       margin-inline: auto !important;
       object-fit: cover !important;
       object-position: center 28% !important;
-      transform: scale(1.22) !important;
+      transform: none !important;
       transform-origin: center center !important;
     }
 
@@ -1513,7 +1513,7 @@
       .inicio-home-card__img {
       max-height: 100% !important;
       object-position: center 40%;
-      transform: scale(1.36) !important;
+      transform: none !important;
       transform-origin: center center;
     }
 
@@ -1605,7 +1605,7 @@
         > button.inicio-home-card[data-home-accent='green']
         .inicio-home-card__img {
         max-height: 100% !important;
-        transform: scale(1.3) !important;
+        transform: none !important;
       }
 
       .inicio-screen .inicio-mobile-guarantee.guarantee-promise p.font-space {
