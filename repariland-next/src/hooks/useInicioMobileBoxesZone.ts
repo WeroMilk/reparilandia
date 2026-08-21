@@ -3,14 +3,14 @@ import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
 const DOCK_CLEARANCE_PX = 12;
 /** Dots + padding visible; debe cubrir altura real del foot. */
-const CAROUSEL_FOOT_FLOOR_PX = 40;
+const CAROUSEL_FOOT_FLOOR_PX = 44;
 /** Gap card → dots (en padding del foot, medible). */
-const FOOT_GAP_PX = 14;
-const CAPTION_RESERVE_PX = 54;
+const FOOT_GAP_PX = 18;
+const CAPTION_RESERVE_PX = 58;
 const CARD_CHROME_PAD_PX = 8;
 const CARD_MIN_HEIGHT_PX = 160;
-/** Hueco mínimo bajo la tarjeta dentro del embla (no sumar otra vez al track). */
-const BORDER_CLEARANCE_PX = 8;
+/** Hueco bajo la tarjeta dentro del embla para que el borde inferior no se recorte. */
+const BORDER_CLEARANCE_PX = 16;
 const HOVER_HALO_INSET_PX = 2;
 const TALL_ZONE_MIN_PX = 240;
 const TALL_ZONE_RANGE_PX = 220;
