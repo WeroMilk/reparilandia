@@ -1178,12 +1178,13 @@
       max-height: none;
       min-height: 0;
       margin-inline: auto;
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.4rem;
       padding: 0;
       box-sizing: border-box;
       border-radius: 0.65rem;
       border-style: solid;
       border-width: 3px;
+      border-bottom-width: 3px;
       overflow: hidden;
       background: #000;
     }
@@ -1191,6 +1192,7 @@
     .inicio-screen .inicio-mobile-slide__inner[data-home-accent='green'] {
       border-color: #8dff82;
       box-shadow:
+        inset 0 -6px 0 0 #8dff82,
         0 0 0 1px rgba(90, 255, 120, 0.45),
         0 0 16px -2px rgba(100, 255, 120, 0.65),
         0 8px 20px -8px rgba(100, 255, 120, 0.55);
@@ -1202,6 +1204,7 @@
       padding-bottom: 0;
       background: #000;
       box-shadow:
+        inset 0 -6px 0 0 #ffe45a,
         0 0 0 1px rgba(255, 210, 50, 0.48),
         0 0 16px -2px rgba(255, 210, 50, 0.65),
         0 8px 20px -8px rgba(255, 210, 50, 0.55);
@@ -1216,56 +1219,48 @@
     .inicio-screen .inicio-mobile-slide__inner[data-home-accent='red'] {
       border-color: #ff7a90;
       box-shadow:
+        inset 0 -6px 0 0 #ff7a90,
         0 0 0 1px rgba(255, 80, 105, 0.5),
         0 0 16px -2px rgba(255, 80, 105, 0.65),
         0 8px 20px -8px rgba(255, 80, 105, 0.55);
     }
 
-    /* Barra inferior en flujo: siempre visible bajo el caption */
-    .inicio-screen
-      .inicio-mobile-slide__inner
-      > button.inicio-home-card.inicio-home-card--mobile-carousel
-      > .inicio-home-card__bottom-edge {
-      grid-row: 3;
+    /* Línea inferior fija del marco (hermana del botón: no la recorta overflow del card) */
+    .inicio-screen .inicio-mobile-slide__bottom-edge {
       display: block !important;
+      flex: 0 0 6px;
       width: 100%;
-      height: 5px;
-      min-height: 5px;
+      height: 6px;
+      min-height: 6px;
       margin: 0;
-      flex-shrink: 0;
-      border-radius: 0;
-      position: relative;
-      z-index: 5;
+      padding: 0;
+      border: 0;
       pointer-events: none;
+      position: relative;
+      z-index: 6;
     }
 
-    .inicio-screen
-      .inicio-mobile-slide__inner[data-home-accent='green']
-      > button
-      > .inicio-home-card__bottom-edge {
+    .inicio-screen .inicio-mobile-slide__inner[data-home-accent='green'] > .inicio-mobile-slide__bottom-edge {
       background: #8dff82;
-      box-shadow: 0 0 10px rgba(141, 255, 130, 1);
+      box-shadow: 0 0 12px rgba(141, 255, 130, 1);
     }
 
-    .inicio-screen
-      .inicio-mobile-slide__inner[data-home-accent='amber']
-      > button
-      > .inicio-home-card__bottom-edge {
-      display: block !important;
-      grid-row: 3;
-      height: 5px;
-      min-height: 5px;
-      z-index: 5;
+    .inicio-screen .inicio-mobile-slide__inner[data-home-accent='amber'] > .inicio-mobile-slide__bottom-edge {
       background: #ffe45a;
       box-shadow: 0 0 12px rgba(255, 228, 90, 1);
     }
 
-    .inicio-screen
-      .inicio-mobile-slide__inner[data-home-accent='red']
-      > button
-      > .inicio-home-card__bottom-edge {
+    .inicio-screen .inicio-mobile-slide__inner[data-home-accent='red'] > .inicio-mobile-slide__bottom-edge {
       background: #ff7a90;
-      box-shadow: 0 0 10px rgba(255, 122, 144, 1);
+      box-shadow: 0 0 12px rgba(255, 122, 144, 1);
+    }
+
+    /* Legacy: ya no usamos la barra dentro del botón */
+    .inicio-screen
+      .inicio-mobile-slide__inner
+      > button.inicio-home-card.inicio-home-card--mobile-carousel
+      > .inicio-home-card__bottom-edge {
+      display: none !important;
     }
 
     /* Quitar ::after externo que se recortaba / solapaba el caption */
@@ -1287,8 +1282,8 @@
 
     .inicio-screen .inicio-mobile-slide__inner > button.inicio-home-card.inicio-home-card--mobile-carousel {
       display: grid;
-      grid-template-rows: auto auto 5px;
-      flex: 0 0 auto;
+      grid-template-rows: auto auto;
+      flex: 1 1 auto;
       width: 100%;
       min-height: 0;
       height: auto;
@@ -1300,11 +1295,12 @@
       border-style: solid;
       border-width: 0 !important;
       border-color: transparent !important;
-      border-radius: calc(0.65rem - 2px);
+      border-radius: calc(0.65rem - 2px) calc(0.65rem - 2px) 0 0;
       --tw-ring-shadow: 0 0 #0000;
       --tw-ring-offset-shadow: 0 0 #0000;
       box-shadow: none !important;
       background: #000;
+      padding-bottom: 0 !important;
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-slide__inner > button.inicio-home-card {
@@ -1391,7 +1387,7 @@
       flex: none;
       margin-top: 0;
       margin-bottom: 0;
-      padding: 0.35rem 0.75rem 0.35rem !important;
+      padding: 0.4rem 0.75rem 0.7rem !important;
       line-height: 1.3;
       font-weight: 600;
       font-size: var(--inicio-mobile-caption-size, 16px) !important;
@@ -1408,7 +1404,7 @@
       .inicio-mobile-slide__inner[data-home-accent='amber']
       > button.inicio-home-card
       .inicio-home-card__caption {
-      padding-bottom: 0.35rem !important;
+      padding-bottom: 0.7rem !important;
     }
 
     .inicio-screen .inicio-mobile-slide__inner > button.inicio-home-card .inicio-home-card__art {

@@ -283,6 +283,7 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
                         mobileCarousel
                         priority={index === 0}
                       />
+                      <span aria-hidden className="inicio-mobile-slide__bottom-edge" />
                     </div>
                   </div>
                 ))}
@@ -480,8 +481,8 @@ function HomeSpotlightCard({
       transition={{ type: 'spring', stiffness: 420, damping: 32 }}
       data-home-accent={accent}
       className={`group relative z-[1] inicio-home-card touch-manipulation rounded-2xl border outline-none lg:rounded-xl lg:p-2.5 lg:pt-3 xl:p-3 xl:pt-3.5 ${
-        mobileCarousel
-          ? `inicio-home-card--mobile-carousel h-full min-h-0 w-full max-w-full overflow-hidden rounded-xl border-0 p-1.5 pb-2 sm:p-2 sm:pb-2.5 ${CARD_BOX}`
+          mobileCarousel
+          ? `inicio-home-card--mobile-carousel h-auto min-h-0 w-full max-w-full overflow-hidden rounded-xl border-0 p-1.5 pb-0 sm:p-2 sm:pb-0 ${CARD_BOX}`
           : mobileScroll
             ? `inicio-home-card--mobile-stack h-full min-h-0 w-full max-w-full overflow-hidden rounded-xl border p-2 sm:p-2.5 ${CARD_BOX}`
             : `overflow-hidden active:scale-[0.98] ${CARD_BOX} p-2.5 sm:p-3`
@@ -497,15 +498,12 @@ function HomeSpotlightCard({
       <p
         className={`inicio-home-card__caption relative z-[1] shrink-0 text-center font-space font-semibold leading-snug tracking-[0.03em] text-white/95 ${
           mobileLayout
-            ? 'mt-0 px-2.5 pb-1.5 pt-1.5 text-[length:var(--inicio-mobile-caption-size,15px)] leading-snug sm:px-3 sm:pb-1.5 sm:pt-1.5'
+            ? 'mt-0 px-2.5 pb-2 pt-1.5 text-[length:var(--inicio-mobile-caption-size,15px)] leading-snug sm:px-3 sm:pb-2 sm:pt-1.5'
             : 'mt-1.5 px-1.5 text-[clamp(0.6875rem,2.6vw,0.8125rem)] sm:mt-2 sm:text-xs md:text-[0.8125rem] lg:mt-1 lg:px-1.5 lg:text-[0.6875rem] lg:leading-tight xl:text-xs'
         }`}
       >
         {caption}
       </p>
-      {mobileCarousel ? (
-        <span aria-hidden className="inicio-home-card__bottom-edge block h-[5px] w-full shrink-0" />
-      ) : null}
     </motion.button>
   );
 }

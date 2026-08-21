@@ -6,11 +6,12 @@ const DOCK_CLEARANCE_PX = 12;
 const CAROUSEL_FOOT_FLOOR_PX = 44;
 /** Gap card → dots (en padding del foot, medible). */
 const FOOT_GAP_PX = 18;
-const CAPTION_RESERVE_PX = 58;
+const CAPTION_RESERVE_PX = 66;
 const CARD_CHROME_PAD_PX = 8;
 const CARD_MIN_HEIGHT_PX = 160;
 /** Hueco bajo la tarjeta dentro del embla para que el borde inferior no se recorte. */
-const BORDER_CLEARANCE_PX = 16;
+const BORDER_CLEARANCE_PX = 18;
+const BOTTOM_EDGE_PX = 6;
 const HOVER_HALO_INSET_PX = 2;
 const TALL_ZONE_MIN_PX = 240;
 const TALL_ZONE_RANGE_PX = 220;
@@ -123,7 +124,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       const captionHeight = caption
         ? Math.ceil(caption.getBoundingClientRect().height)
         : CAPTION_RESERVE_PX;
-      const captionReserve = Math.max(CAPTION_RESERVE_PX, captionHeight + 8);
+      const captionReserve = Math.max(CAPTION_RESERVE_PX, captionHeight + 12 + BOTTOM_EDGE_PX);
 
       let logoMaxRem = isCompact
         ? LOGO_COMPACT_CAP_REM
@@ -244,8 +245,8 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         CARD_MIN_HEIGHT_PX,
         bodyZoneHeight - topH - stageGap - topGap,
       );
-      /* Track = altura de tarjeta; el clearance va solo como padding del embla. */
-      const finalTrack = cardMaxHeight + BORDER_CLEARANCE_PX;
+      /* Track = altura de tarjeta + barra inferior + clearance del embla. */
+      const finalTrack = cardMaxHeight + BOTTOM_EDGE_PX + BORDER_CLEARANCE_PX;
 
       const setPx = (name: string, value: number) => {
         const prev = Number.parseFloat(screen.style.getPropertyValue(name));
