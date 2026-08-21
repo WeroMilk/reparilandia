@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
 /**
- * Ancla la app al viewport visible. En iPhone Safari la URL inferior puede
- * tapar el dock/captions: reservamos --safari-bottom-chrome en el padding.
+ * Ancla la app al viewport visible. En iPhone Safari la URL inferior no debe
+ * tapar captions ni el dock: si el chrome solapa, encogemos el shell.
  */
 function isIosSafari(): boolean {
   if (typeof navigator === 'undefined') return false;
@@ -22,27 +22,50 @@ function isStandaloneDisplay(): boolean {
   return Boolean(mq || legacy);
 }
 
+function syncDockReserve(): void {
+  const root = document.documentElement;
+  const dock =
+    document.querySelector<HTMLElement>('[data-app-dock] .dock-chrome') ??
+    document.querySelector<HTMLElement>('[data-app-dock]');
+  if (!dock) return;
+  const h = Math.ceil(dock.getBoundingClientRect().height);
+  if (h < 40) return;
+  /* Solo reserva de padding; no mutar --dock-chrome-height (rompe el layout). */
+  root.style.setProperty('--dock-reserve', `${h}px`);
+}
+
 export function applyVisualViewportLock(): void {
   const root = document.documentElement;
   const vv = window.visualViewport;
   const width = Math.round(vv?.width ?? window.innerWidth);
   const offsetTop = Math.round(vv?.offsetTop ?? 0);
-  const height = Math.round(vv?.height ?? window.innerHeight);
-  const bottomInset = Math.max(0, Math.round(window.innerHeight - offsetTop - height));
+  const vvHeight = Math.round(vv?.height ?? window.innerHeight);
+  const reportedInset = Math.max(0, Math.round(window.innerHeight - offsetTop - vvHeight));
 
+  let height = vvHeight;
+  let bottomInset = reportedInset;
   let safariBottomChrome = 0;
+
   if (isIosSafari() && !isStandaloneDisplay()) {
-    /* Reserva mínima para la barra URL / tab bar inferior (~44–56px). */
-    safariBottomChrome = Math.max(bottomInset, 48);
+    /* Tab/URL bar inferior típica ~50px. Si VV no la resta, encogemos el shell. */
+    const overlay = reportedInset < 24;
+    safariBottomChrome = Math.max(reportedInset, 50);
+    if (overlay) {
+      height = Math.max(300, vvHeight - safariBottomChrome);
+      bottomInset = safariBottomChrome;
+    } else {
+      bottomInset = Math.max(reportedInset, safariBottomChrome);
+    }
   }
 
   root.style.setProperty('--app-width', `${width}px`);
   root.style.setProperty('--app-height', `${height}px`);
   root.style.setProperty('--app-vv-top', `${offsetTop}px`);
-  root.style.setProperty('--app-bottom-inset', `${Math.max(bottomInset, safariBottomChrome)}px`);
+  root.style.setProperty('--app-bottom-inset', `${bottomInset}px`);
   root.style.setProperty('--safari-bottom-chrome', `${safariBottomChrome}px`);
   root.style.setProperty('--mobile-viewport-h', `${height}px`);
   root.dataset.iosSafariChrome = safariBottomChrome > 0 ? '1' : '0';
+  syncDockReserve();
 }
 
 export function useVisualViewportLock() {
@@ -70,6 +93,13 @@ export function useVisualViewportLock() {
     visualViewport?.addEventListener('resize', schedule, { passive: true });
     visualViewport?.addEventListener('scroll', onVvScroll, { passive: true });
 
+    const dock = document.querySelector('[data-app-dock]');
+    const ro =
+      typeof ResizeObserver !== 'undefined' && dock
+        ? new ResizeObserver(() => schedule())
+        : null;
+    if (dock && ro) ro.observe(dock);
+
     return () => {
       if (raf !== 0) window.cancelAnimationFrame(raf);
       window.clearTimeout(scrollTimer);
@@ -77,6 +107,7 @@ export function useVisualViewportLock() {
       window.removeEventListener('orientationchange', schedule);
       visualViewport?.removeEventListener('resize', schedule);
       visualViewport?.removeEventListener('scroll', onVvScroll);
+      ro?.disconnect();
     };
   }, []);
 }

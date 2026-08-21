@@ -317,8 +317,15 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
                         accent={card.accent}
                         centerProminent={card.centerProminent}
                         mobileCarousel
+                        hideCaption
                         priority
                       />
+                      <p
+                        className="inicio-home-card__caption inicio-home-card__caption--slide-out relative z-[1] shrink-0 cursor-pointer text-center font-space font-semibold leading-snug tracking-[0.03em] text-white/95"
+                        onClick={() => onNavigate(card.screen)}
+                      >
+                        {card.caption}
+                      </p>
                       <span aria-hidden className="inicio-mobile-slide__bottom-edge" />
                     </div>
                   </div>
@@ -437,6 +444,7 @@ function HomeSpotlightCard({
   cropLegs = false,
   mobileScroll = false,
   mobileCarousel = false,
+  hideCaption = false,
   priority = false,
 }: {
   img: string;
@@ -447,6 +455,8 @@ function HomeSpotlightCard({
   cropLegs?: boolean;
   mobileScroll?: boolean;
   mobileCarousel?: boolean;
+  /** En carrusel móvil el caption vive fuera del botón (evita clip iOS). */
+  hideCaption?: boolean;
   priority?: boolean;
 }) {
   const styles = HOME_BOX_ACCENT[accent];
@@ -511,6 +521,7 @@ function HomeSpotlightCard({
       type="button"
       onClick={onClick}
       data-home-accent={accent}
+      aria-label={hideCaption ? caption : undefined}
       className={`group relative z-[1] inicio-home-card touch-manipulation rounded-2xl border outline-none active:scale-[0.99] lg:rounded-xl lg:p-2.5 lg:pt-3 xl:p-3 xl:pt-3.5 ${
           mobileCarousel
           ? `inicio-home-card--mobile-carousel h-auto min-h-0 w-full max-w-full overflow-hidden rounded-xl border-0 p-1.5 pb-0 sm:p-2 sm:pb-0 ${CARD_BOX}`
@@ -526,15 +537,17 @@ function HomeSpotlightCard({
       <div className="inicio-home-card__body relative z-[1] flex min-h-0 flex-1 flex-col overflow-hidden px-0.5 pt-1 sm:pt-1.5 lg:pt-2">
         {imageArea}
       </div>
-      <p
-        className={`inicio-home-card__caption relative z-[1] shrink-0 text-center font-space font-semibold leading-snug tracking-[0.03em] text-white/95 ${
-          mobileLayout
-            ? 'mt-0 px-2.5 pb-2 pt-1.5 text-[length:var(--inicio-mobile-caption-size,15px)] leading-snug sm:px-3 sm:pb-2 sm:pt-1.5'
-            : 'mt-1.5 px-1.5 text-[clamp(0.6875rem,2.6vw,0.8125rem)] sm:mt-2 sm:text-xs md:text-[0.8125rem] lg:mt-1 lg:px-1.5 lg:text-[0.6875rem] lg:leading-tight xl:text-xs'
-        }`}
-      >
-        {caption}
-      </p>
+      {!hideCaption ? (
+        <p
+          className={`inicio-home-card__caption relative z-[1] shrink-0 text-center font-space font-semibold leading-snug tracking-[0.03em] text-white/95 ${
+            mobileLayout
+              ? 'mt-0 px-2.5 pb-2 pt-1.5 text-[length:var(--inicio-mobile-caption-size,15px)] leading-snug sm:px-3 sm:pb-2 sm:pt-1.5'
+              : 'mt-1.5 px-1.5 text-[clamp(0.6875rem,2.6vw,0.8125rem)] sm:mt-2 sm:text-xs md:text-[0.8125rem] lg:mt-1 lg:px-1.5 lg:text-[0.6875rem] lg:leading-tight xl:text-xs'
+          }`}
+        >
+          {caption}
+        </p>
+      ) : null}
     </button>
   );
 }

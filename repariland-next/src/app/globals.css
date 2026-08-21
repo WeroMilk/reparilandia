@@ -1185,7 +1185,7 @@
       max-width: min(100%, var(--inicio-mobile-card-max-width, 94vw));
       width: min(100%, var(--inicio-mobile-card-max-width, 94vw));
       height: auto;
-      max-height: none;
+      max-height: var(--inicio-mobile-card-max-height, none);
       min-height: 0;
       margin-inline: auto;
       margin-bottom: 0.15rem;
@@ -1287,17 +1287,17 @@
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-slide__inner {
       min-height: 0;
       height: auto;
-      max-height: none;
+      max-height: var(--inicio-mobile-card-max-height, none);
     }
 
     .inicio-screen .inicio-mobile-slide__inner > button.inicio-home-card.inicio-home-card--mobile-carousel {
-      display: grid;
-      grid-template-rows: auto auto;
+      display: flex;
+      flex-direction: column;
       flex: 1 1 auto;
       width: 100%;
       min-height: 0;
       height: auto;
-      max-height: none;
+      max-height: var(--inicio-mobile-hero-max-height, 42dvh);
       margin: 0;
       overflow: hidden;
       transform-origin: center center;
@@ -1313,13 +1313,47 @@
       padding-bottom: 0 !important;
     }
 
+    .inicio-screen
+      .inicio-mobile-slide__inner
+      > button.inicio-home-card.inicio-home-card--mobile-carousel
+      .inicio-home-card__body {
+      min-height: 0;
+      flex: 1 1 auto;
+      height: 100%;
+      max-height: 100%;
+      overflow: hidden;
+    }
+
+    .inicio-screen .inicio-mobile-slide__inner > .inicio-home-card__caption--slide-out {
+      flex: 0 0 auto !important;
+      flex-shrink: 0 !important;
+      display: block;
+      visibility: visible;
+      margin: 0;
+      padding: 0.4rem 0.75rem 0.55rem !important;
+      min-height: 2.75rem;
+      max-height: none !important;
+      overflow: visible !important;
+      line-height: 1.25 !important;
+      font-weight: 600;
+      font-size: var(--inicio-mobile-caption-size, 15px) !important;
+      letter-spacing: 0.02em;
+      text-align: center;
+      text-wrap: balance;
+      white-space: normal;
+      box-sizing: border-box;
+      z-index: 2;
+      background: #000;
+      color: rgba(255, 255, 255, 0.95);
+    }
+
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-slide__inner > button.inicio-home-card {
-      flex: 0 0 auto;
+      flex: 1 1 auto;
       min-height: 0;
       height: auto;
       width: 100%;
       max-width: 100%;
-      max-height: none;
+      max-height: var(--inicio-mobile-hero-max-height, 42dvh);
       margin-inline: auto;
       overflow: hidden;
       border-width: 0 !important;
@@ -4044,22 +4078,32 @@
 
   @media (max-width: 1023px) {
     html[data-ios-safari-chrome='1'] .inicio-screen .inicio-mobile-carousel-foot {
-      padding-bottom: 0.15rem;
-    }
-
-    html[data-ios-safari-chrome='1'] .inicio-screen[data-inicio-layout-ready] .inicio-mobile-slide__inner {
-      margin-bottom: 0;
+      padding-bottom: 0.2rem;
+      position: relative;
+      z-index: 2;
     }
 
     html[data-ios-safari-chrome='1'] .inicio-screen .inicio-mobile-logo {
-      max-height: min(var(--inicio-mobile-logo-max-height, 5.1rem), 4.6rem);
+      max-height: min(var(--inicio-mobile-logo-max-height, 4.2rem), 4rem);
+    }
+
+    html[data-ios-safari-chrome='1'] .inicio-screen .inicio-mobile-guarantee {
+      transform: scale(var(--inicio-mobile-guarantee-scale, 0.76));
+      transform-origin: top center;
+    }
+
+    html[data-ios-safari-chrome='1']
+      .inicio-screen
+      .inicio-home-card__caption--slide-out {
+      font-size: 0.8125rem !important;
+      min-height: 2.5rem;
+      padding-bottom: 0.45rem !important;
     }
   }
 
   .pb-dock-reserve {
-    padding-bottom: calc(
-      var(--dock-reserve) + max(env(safe-area-inset-bottom, 0px), var(--app-bottom-inset, 0px))
-    );
+    /* Solo altura real del dock (medida en JS). El lift Safari va en --app-bottom-inset. */
+    padding-bottom: var(--dock-reserve);
   }
 
   .dock-chrome {
