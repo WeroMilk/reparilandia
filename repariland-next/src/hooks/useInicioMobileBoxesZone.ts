@@ -1,33 +1,34 @@
 import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
-const DOCK_CLEARANCE_PX = 12;
+const DOCK_CLEARANCE_PX = 8;
 /** Solo dots; el margen bajo la card debe ser mínimo. */
 const CAROUSEL_FOOT_FLOOR_PX = 22;
 /** Gap card → dots (muy corto). */
 const FOOT_GAP_PX = 4;
-const CAPTION_RESERVE_PX = 72;
-const CARD_CHROME_PAD_PX = 8;
-const CARD_MIN_HEIGHT_PX = 180;
+const CAPTION_RESERVE_PX = 68;
+const CARD_CHROME_PAD_PX = 6;
+const CARD_MIN_HEIGHT_PX = 210;
 /** Hueco mínimo bajo el borde dentro del embla. */
 const BORDER_CLEARANCE_PX = 6;
 const BOTTOM_EDGE_PX = 3;
 /** Margen inferior de los rectángulos: dots + caption clearance. */
-const CARD_BOTTOM_MARGIN_MIN_PX = 28;
-const CARD_BOTTOM_MARGIN_MAX_PX = 36;
+const CARD_BOTTOM_MARGIN_MIN_PX = 26;
+const CARD_BOTTOM_MARGIN_MAX_PX = 34;
 const HOVER_HALO_INSET_PX = 2;
 const TALL_ZONE_MIN_PX = 240;
 const TALL_ZONE_RANGE_PX = 220;
 /** Compacto solo en zonas realmente cortas (Safari iPhone ~400–480). */
-const SHORT_BODY_ZONE_PX = 520;
+const SHORT_BODY_ZONE_PX = 480;
 const SLIDE_BASIS_PERCENT = 100;
 const SLIDE_GAP_PX = 0;
-const LOGO_BASE_REM = 5.2;
-const LOGO_TALL_BOOST_REM = 1.6;
-const LOGO_COMPACT_CAP_REM = 4.4;
-const PREFERRED_HERO_VH = 0.42;
-const PREFERRED_HERO_MIN_PX = 160;
-const PREFERRED_HERO_MAX_PX = 420;
+const LOGO_BASE_REM = 5.6;
+const LOGO_TALL_BOOST_REM = 1.8;
+const LOGO_COMPACT_CAP_REM = 4.9;
+const PREFERRED_HERO_VH = 0.48;
+const PREFERRED_HERO_MIN_PX = 200;
+const PREFERRED_HERO_MAX_PX = 460;
+const HERO_FLOOR_PX = 168;
 const STABLE_EPS_PX = 2;
 
 function mobileTallFillFactor(zoneSpan: number): number {
@@ -140,14 +141,14 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       let logoMaxRem = isCompact
         ? LOGO_COMPACT_CAP_REM
         : LOGO_BASE_REM + tallFill * LOGO_TALL_BOOST_REM;
-      let guaranteeScale = isCompact ? 0.78 : 0.86 + tallFill * 0.06;
-      let sloganSizeRem = isCompact ? 0.62 : 0.7 + tallFill * 0.06;
+      let guaranteeScale = isCompact ? 0.84 : 0.9 + tallFill * 0.06;
+      let sloganSizeRem = isCompact ? 0.66 : 0.72 + tallFill * 0.06;
 
-      /* Safari URL: compactar más el bloque superior para dejar sitio al caption. */
+      /* Safari URL: compactar un poco el bloque superior, sin aplastar el héroe. */
       if (document.documentElement.dataset.iosSafariChrome === '1') {
-        logoMaxRem = Math.min(logoMaxRem, 4.2);
-        guaranteeScale = Math.min(guaranteeScale, 0.76);
-        sloganSizeRem = Math.min(sloganSizeRem, 0.6);
+        logoMaxRem = Math.min(logoMaxRem, 4.85);
+        guaranteeScale = Math.min(guaranteeScale, 0.84);
+        sloganSizeRem = Math.min(sloganSizeRem, 0.66);
       }
 
       screen.setAttribute('data-inicio-fill-zone', 'true');
@@ -203,7 +204,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       /* Caption siempre cabe: si hace falta, reducir héroe antes que recortar texto. */
       if (heroMaxHeight + captionReserve + CARD_CHROME_PAD_PX > availableCard) {
         heroMaxHeight = Math.max(
-          120,
+          HERO_FLOOR_PX,
           availableCard - captionReserve - CARD_CHROME_PAD_PX,
         );
       }
@@ -213,7 +214,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       );
 
       if (finalPass) {
-        /* Prioridad: caption visible. Solo crecer héroe si cabe tras caption. */
+        /* Prioridad: caption visible + héroe con más aire. */
         let guard = 0;
         while (guard < 10) {
           topH = measureTopHeight();
@@ -222,17 +223,17 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
             bodyZoneHeight - topH - footH - carouselOverhead,
           );
           const roomForHero = avail - captionReserve - CARD_CHROME_PAD_PX;
-          if (roomForHero >= PREFERRED_HERO_MIN_PX || logoMaxRem <= 3.8) {
-            heroMaxHeight = Math.min(preferredHero, Math.max(120, roomForHero));
+          if (roomForHero >= PREFERRED_HERO_MIN_PX || logoMaxRem <= 4.2) {
+            heroMaxHeight = Math.min(preferredHero, Math.max(HERO_FLOOR_PX, roomForHero));
             cardMaxHeight = Math.min(
               avail,
               Math.max(CARD_MIN_HEIGHT_PX, heroMaxHeight + captionReserve + CARD_CHROME_PAD_PX),
             );
             break;
           }
-          logoMaxRem = Math.max(3.8, logoMaxRem - 0.4);
-          guaranteeScale = Math.max(0.7, guaranteeScale - 0.04);
-          sloganSizeRem = Math.max(0.55, sloganSizeRem - 0.03);
+          logoMaxRem = Math.max(4.2, logoMaxRem - 0.35);
+          guaranteeScale = Math.max(0.78, guaranteeScale - 0.035);
+          sloganSizeRem = Math.max(0.6, sloganSizeRem - 0.025);
           screen.style.setProperty('--inicio-mobile-logo-max-height', `${logoMaxRem.toFixed(2)}rem`);
           screen.style.setProperty('--inicio-mobile-slogan-size', `${sloganSizeRem.toFixed(3)}rem`);
           screen.style.setProperty('--inicio-mobile-guarantee-scale', guaranteeScale.toFixed(3));
@@ -246,7 +247,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         );
         heroMaxHeight = Math.min(
           preferredHero,
-          Math.max(120, availFinal - captionReserve - CARD_CHROME_PAD_PX),
+          Math.max(HERO_FLOOR_PX, availFinal - captionReserve - CARD_CHROME_PAD_PX),
         );
         cardMaxHeight = Math.min(
           availFinal,
@@ -293,7 +294,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       setPx('--inicio-home-card-caption-reserve', captionReserve);
       setPx('--inicio-mobile-carousel-foot-reserve', footH);
       setPx('--inicio-mobile-bottom-margin', cardBottomMargin);
-      screen.style.setProperty('--inicio-mobile-caption-size', isCompact ? '15px' : '16px');
+      screen.style.setProperty('--inicio-mobile-caption-size', isCompact ? '15.5px' : '16.5px');
       screen.style.setProperty('--inicio-mobile-slide-gap', `${SLIDE_GAP_PX}px`);
       screen.style.setProperty('--inicio-mobile-slide-basis', `${SLIDE_BASIS_PERCENT}%`);
 
