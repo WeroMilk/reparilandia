@@ -1,16 +1,18 @@
 /**
- * Tras `npm run build` en repariland-next, copia .next y public a la raíz del repo.
- * Vercel despliega desde la raíz: los symlinks rompen /api/* (chunks 500).
+ * Tras `npm run build` en repariland-next, copia .next, public y src a la raíz del repo.
+ * Vercel despliega desde la raíz: sin src el NFT falla (ENOENT en /src/lib/...).
  */
 const fs = require('fs');
 const path = require('path');
 
 const repoRoot = path.join(__dirname, '..');
 const appDir = path.join(repoRoot, 'repariland-next');
-const nextSrc = path.join(appDir, '.next');
-const publicSrc = path.join(appDir, 'public');
-const nextDest = path.join(repoRoot, '.next');
-const publicDest = path.join(repoRoot, 'public');
+
+const COPIES = [
+  { src: path.join(appDir, '.next'), dest: path.join(repoRoot, '.next'), label: 'repariland-next/.next' },
+  { src: path.join(appDir, 'public'), dest: path.join(repoRoot, 'public'), label: 'repariland-next/public' },
+  { src: path.join(appDir, 'src'), dest: path.join(repoRoot, 'src'), label: 'repariland-next/src' },
+];
 
 function copyDir(src, dest, label) {
   if (!fs.existsSync(src)) {
@@ -22,6 +24,7 @@ function copyDir(src, dest, label) {
   console.log('[vercel-sync]', label, '→', path.relative(repoRoot, dest));
 }
 
-copyDir(nextSrc, nextDest, 'repariland-next/.next');
-copyDir(publicSrc, publicDest, 'repariland-next/public');
+for (const item of COPIES) {
+  copyDir(item.src, item.dest, item.label);
+}
 console.log('[vercel-sync] Listo.');
