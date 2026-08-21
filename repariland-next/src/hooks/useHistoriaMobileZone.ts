@@ -39,7 +39,7 @@ export function useHistoriaMobileZone(enabled: boolean) {
       const vv = window.visualViewport;
       const visibleBottom =
         vv != null ? vv.offsetTop + vv.height : window.innerHeight;
-      const zoneBottom = Math.min(navTop, dockTop, visibleBottom);
+      const zoneBottom = Math.min(navTop, dockTop, visibleBottom) - 12;
       const height = Math.max(0, Math.round(zoneBottom - headerBottom));
 
       const navHeight = Math.round(Math.min(Math.max(60, height * 0.12), 76));

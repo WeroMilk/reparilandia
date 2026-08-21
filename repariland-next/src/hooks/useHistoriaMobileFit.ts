@@ -3,7 +3,7 @@ import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
 const MIN_SCALE = 0.88;
 const SCALE_STEP = 0.02;
-const STORY_FONT_MIN_PX = 11;
+const STORY_FONT_MIN_PX = 10;
 const FILL_RATIO = 0.98;
 
 function getTimelineMaxScale(zoneHeight: number, viewportWidth: number): number {
@@ -151,22 +151,23 @@ function fitStoryFigure(panel: HTMLElement, figureEl: HTMLElement, imgEl: HTMLEl
   panel.style.removeProperty('--historia-story-figure-scale');
 
   const figRect = figureEl.getBoundingClientRect();
-  const imgSlotH = Math.max(48, figRect.height - 2);
+  const imgSlotH = Math.max(40, figRect.height - 2);
 
   const imgRect = imgEl.getBoundingClientRect();
   if (imgSlotH < 8 || imgRect.height < 8) {
-    setPanelVar(panel, '--historia-story-figure-scale', '1.35');
+    setPanelVar(panel, '--historia-story-figure-scale', '1');
     return;
   }
 
-  const scaleByH = (imgSlotH * 0.96) / imgRect.height;
-  const scaleByW = (figRect.width * 0.96) / imgRect.width;
-  const scale = Math.min(3.4, Math.max(1.05, Math.min(scaleByH, scaleByW)));
+  const scaleByH = (imgSlotH * 0.98) / imgRect.height;
+  const scaleByW = (figRect.width * 0.98) / imgRect.width;
+  /* Sin upscale agresivo: evita que la figura se salga y empuje el texto fuera. */
+  const scale = Math.min(1.08, Math.max(0.92, Math.min(scaleByH, scaleByW)));
   setPanelVar(panel, '--historia-story-figure-scale', String(Math.round(scale * 1000) / 1000));
 }
 
 function fitStoryName(panel: HTMLElement, nameEl: HTMLElement, zoneHeight: number) {
-  const size = Math.min(26, Math.max(16, Math.round(14 + zoneHeight * 0.027)));
+  const size = Math.min(22, Math.max(15, Math.round(13 + zoneHeight * 0.022)));
   nameEl.style.fontSize = `${size}px`;
   setPanelVar(panel, '--historia-story-name-px', `${size}px`);
 }
@@ -177,20 +178,39 @@ function fillStoryLineHeight(
   available: number,
   fontPx: number,
 ) {
-  textEl.style.lineHeight = '1.32';
+  textEl.style.lineHeight = '1.28';
   const contentHeight = textEl.scrollHeight;
   if (contentHeight >= available * FILL_RATIO - 1) return;
 
-  const lh = parseFloat(getComputedStyle(textEl).lineHeight) || fontPx * 1.32;
+  const lh = parseFloat(getComputedStyle(textEl).lineHeight) || fontPx * 1.28;
   const lines = Math.max(1, Math.ceil(contentHeight / lh));
   const targetLh = (available * FILL_RATIO) / lines;
-  const maxLh = fontPx * 1.5;
+  const maxLh = fontPx * 1.42;
   const nextLh = Math.min(maxLh, Math.max(lh, targetLh));
   textEl.style.lineHeight = `${nextLh.toFixed(2)}px`;
   setPanelVar(panel, '--historia-story-line-px', `${nextLh.toFixed(2)}px`);
 }
 
-/** Escala el párrafo al hueco del bloque centrado (caricatura + nombre + texto). */
+function measureStoryStackFit(panel: HTMLElement): { fits: boolean; available: number; contentHeight: number } {
+  const panelMain = panel.querySelector<HTMLElement>('.hm-panel__main') ?? panel;
+  const stackEl = panel.querySelector<HTMLElement>('.hm-story__stack');
+  if (!stackEl) return { fits: false, available: 0, contentHeight: 0 };
+
+  const mainRect = panelMain.getBoundingClientRect();
+  const mainStyle = getComputedStyle(panelMain);
+  const padY =
+    parseFloat(mainStyle.paddingTop || '0') + parseFloat(mainStyle.paddingBottom || '0');
+  const available = Math.max(0, mainRect.height - padY);
+  const contentHeight = stackEl.scrollHeight;
+
+  return {
+    fits: contentHeight <= available + 3,
+    available,
+    contentHeight,
+  };
+}
+
+/** Escala el párrafo al hueco restante debajo de figura + nombre + stats. */
 function fitStoryTextFill(panel: HTMLElement, zoneHeight: number): boolean {
   const stackEl = panel.querySelector<HTMLElement>('.hm-story__stack');
   const panelMain = panel.querySelector<HTMLElement>('.hm-panel__main') ?? panel;
@@ -224,20 +244,16 @@ function fitStoryTextFill(panel: HTMLElement, zoneHeight: number): boolean {
       parseFloat(style.marginBottom || '0')
     );
   });
-  const chrome = chromeHeights.reduce((sum, h) => sum + h, 0) + gap * chromeEls.length;
+  const chrome = chromeHeights.reduce((sum, h) => sum + h, 0) + gap * Math.max(0, chromeEls.length);
 
   const available = Math.max(
-    44,
-    panelMain.getBoundingClientRect().height - panelPadY - stackPadY - chrome - 4,
+    36,
+    panelMain.getBoundingClientRect().height - panelPadY - stackPadY - chrome - 6,
   );
 
   const hiCap = Math.min(
-    28,
-    Math.max(
-      13,
-      Math.round(available / 4.1),
-      Math.round(12 + zoneHeight * 0.03),
-    ),
+    18,
+    Math.max(12, Math.round(available / 5.2), Math.round(11 + zoneHeight * 0.022)),
   );
   let lo = STORY_FONT_MIN_PX;
   let hi = hiCap;
@@ -246,7 +262,7 @@ function fitStoryTextFill(panel: HTMLElement, zoneHeight: number): boolean {
   while (lo <= hi) {
     const mid = Math.round((lo + hi) / 2);
     textEl.style.fontSize = `${mid}px`;
-    textEl.style.lineHeight = '1.32';
+    textEl.style.lineHeight = '1.28';
     if (textEl.scrollHeight <= available + 2) {
       best = mid;
       lo = mid + 1;
@@ -256,42 +272,58 @@ function fitStoryTextFill(panel: HTMLElement, zoneHeight: number): boolean {
   }
 
   textEl.style.fontSize = `${best}px`;
-  let contentHeight = textEl.scrollHeight;
-  let fits = contentHeight <= available + 2;
-
-  while (fits && contentHeight < available * FILL_RATIO && best < hiCap) {
-    const trial = best + 1;
-    textEl.style.fontSize = `${trial}px`;
-    textEl.style.lineHeight = '1.32';
-    const trialHeight = textEl.scrollHeight;
-    if (trialHeight > available + 2) break;
-    best = trial;
-    contentHeight = trialHeight;
-  }
-
-  textEl.style.fontSize = `${best}px`;
   fillStoryLineHeight(panel, textEl, available, best);
   setPanelVar(panel, '--historia-story-font-px', `${best}px`);
 
   return textEl.scrollHeight <= available + 2;
 }
 
-/** Maximiza caricatura, nombre y texto dentro del box centrado. */
+/** Maximiza caricatura, nombre y texto dentro del box centrado sin scroll. */
 function fitStoryPanel(panel: HTMLElement, zoneHeight: number): { fits: boolean } {
   clearStoryPanelInlineStyles(panel);
 
   const figureEl = panel.querySelector<HTMLElement>('.hm-story__figure');
   const imgEl = panel.querySelector<HTMLElement>('.hm-story__img');
   const nameEl = panel.querySelector<HTMLElement>('.hm-story__name');
+  const roleEl = panel.querySelector<HTMLElement>('.historia-stats__role');
 
-  const figureMaxPx = Math.round(Math.min(Math.max(zoneHeight * 0.26, 84), 148));
+  let figureMaxPx = Math.round(Math.min(Math.max(zoneHeight * 0.22, 72), 120));
+  const figureMinPx = 56;
+
   panel.style.setProperty('--hm-story-figure-max-h', `${figureMaxPx}px`);
-
-  if (figureEl && imgEl) fitStoryFigure(panel, figureEl, imgEl);
   if (nameEl) fitStoryName(panel, nameEl, zoneHeight);
+  if (roleEl) {
+    const rolePx = Math.min(11, Math.max(9, Math.round(8.5 + zoneHeight * 0.006)));
+    roleEl.style.fontSize = `${rolePx}px`;
+    setPanelVar(panel, '--historia-story-role-px', `${rolePx}px`);
+  }
+  if (figureEl && imgEl) fitStoryFigure(panel, figureEl, imgEl);
 
-  const fits = fitStoryTextFill(panel, zoneHeight);
-  return { fits };
+  let fits = fitStoryTextFill(panel, zoneHeight);
+  let stackFit = measureStoryStackFit(panel);
+
+  /* Si el bloque completo no cabe, reduce la figura hasta que entre el texto. */
+  let guard = 0;
+  while ((!fits || !stackFit.fits) && figureMaxPx > figureMinPx && guard < 10) {
+    figureMaxPx = Math.max(figureMinPx, figureMaxPx - 8);
+    panel.style.setProperty('--hm-story-figure-max-h', `${figureMaxPx}px`);
+    if (figureEl && imgEl) fitStoryFigure(panel, figureEl, imgEl);
+    fits = fitStoryTextFill(panel, zoneHeight);
+    stackFit = measureStoryStackFit(panel);
+    guard += 1;
+  }
+
+  /* Último recurso: bajar un poco el nombre. */
+  if ((!fits || !stackFit.fits) && nameEl) {
+    const current = parseFloat(getComputedStyle(nameEl).fontSize) || 16;
+    const next = Math.max(14, current - 2);
+    nameEl.style.fontSize = `${next}px`;
+    setPanelVar(panel, '--historia-story-name-px', `${next}px`);
+    fits = fitStoryTextFill(panel, zoneHeight);
+    stackFit = measureStoryStackFit(panel);
+  }
+
+  return { fits: fits && stackFit.fits };
 }
 
 function fitTimelineTitle(panel: HTMLElement, titleEl: HTMLElement, zoneHeight: number) {
