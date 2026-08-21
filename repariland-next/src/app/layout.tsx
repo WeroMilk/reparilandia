@@ -55,16 +55,28 @@ export default function RootLayout({
         <link
           rel="preload"
           as="image"
-          href="/assets/logo-reparilandia.webp?v=32"
+          href="/assets/logo-reparilandia.webp?v=37"
           type="image/webp"
           fetchPriority="high"
         />
         <link
           rel="preload"
           as="image"
-          href="/assets/home-box-carritos.webp?v=32"
+          href="/assets/home-box-carritos.webp?v=37"
           type="image/webp"
           fetchPriority="high"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/assets/home-box-servicio.webp?v=37"
+          type="image/webp"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/assets/home-box-novedades.webp?v=37"
+          type="image/webp"
         />
       </head>
       <body

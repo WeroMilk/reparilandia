@@ -1442,24 +1442,28 @@
       .inicio-mobile-slide__inner
       > button.inicio-home-card[data-home-accent='green']
       .inicio-home-card__art {
-      align-items: stretch;
-      justify-content: stretch;
+      align-items: center;
+      justify-content: center;
     }
 
     .inicio-screen .inicio-mobile-slide__inner > button.inicio-home-card .inicio-home-card__img {
       position: relative;
       z-index: 1;
       display: block;
-      width: 100% !important;
-      height: 100% !important;
-      max-width: 100%;
+      width: auto !important;
+      height: auto !important;
+      max-width: 100% !important;
       max-height: 100% !important;
-      object-fit: cover !important;
-      object-position: center center;
+      margin-inline: auto;
+      object-fit: contain !important;
+      object-position: center center !important;
       transform: none !important;
       image-rendering: auto;
       -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
     }
 
     .inicio-screen
@@ -1467,7 +1471,7 @@
       > button.inicio-home-card[data-home-accent='green']
       .inicio-home-card__img {
       max-height: 100% !important;
-      object-position: center 42%;
+      object-position: center center !important;
       transform: none !important;
       transform-origin: center center;
     }
@@ -1505,15 +1509,15 @@
       .inicio-mobile-slide__inner
       > button.inicio-home-card[data-home-accent='amber']
       .inicio-home-card__img {
-      width: 100% !important;
-      height: 100% !important;
+      width: auto !important;
+      height: auto !important;
       max-width: 100% !important;
       max-height: 100% !important;
       margin-inline: auto !important;
-      object-fit: cover !important;
-      object-position: center 28% !important;
+      object-fit: contain !important;
+      object-position: center center !important;
       transform: none !important;
-      transform-origin: center center !important;
+      transform-origin: center center;
     }
 
     .inicio-screen
@@ -1521,7 +1525,8 @@
       > button.inicio-home-card[data-home-accent='red']
       .inicio-home-card__img {
       max-height: 100% !important;
-      object-position: center 40%;
+      object-fit: contain !important;
+      object-position: center center !important;
       transform: none !important;
       transform-origin: center center;
     }

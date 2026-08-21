@@ -2,7 +2,6 @@
 
 import { useEffect, useState, type CSSProperties } from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
 import CarouselDots from '@/components/CarouselDots';
@@ -67,19 +66,19 @@ const HOME_BOX_IMG_CLASS: Record<
 > = {
   green: {
     mobile:
-      'mx-auto block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:auto]',
+      'mx-auto block h-auto max-h-full w-auto max-w-full object-contain object-center [image-rendering:auto]',
     desktop:
       'inicio-home-card__img pointer-events-none mx-auto block h-auto w-auto max-h-[min(13rem,62cqh)] max-w-[98%] object-contain object-center select-none [image-rendering:auto]',
   },
   amber: {
     mobile:
-      'mx-auto block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:auto]',
+      'mx-auto block h-auto max-h-full w-auto max-w-full object-contain object-center [image-rendering:auto]',
     desktop:
       'inicio-home-card__img pointer-events-none mx-auto block h-auto w-auto max-h-[min(13rem,62cqh)] max-w-[98%] object-contain object-center select-none [image-rendering:auto]',
   },
   red: {
     mobile:
-      'mx-auto block h-full w-full max-h-full max-w-full object-cover object-center [image-rendering:auto]',
+      'mx-auto block h-auto max-h-full w-auto max-w-full object-contain object-center [image-rendering:auto]',
     desktop:
       'inicio-home-card__img pointer-events-none mx-auto block h-auto w-auto max-h-[min(13rem,62cqh)] max-w-[98%] object-contain object-center select-none [image-rendering:auto]',
   },
@@ -128,6 +127,9 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
     axis: 'x',
     align: 'start',
     containScroll: 'trimSnaps',
+    dragFree: false,
+    skipSnaps: false,
+    watchDrag: true,
   });
 
   useInicioMobileBoxesZone(isScreenActive && isMobile === true);
@@ -154,27 +156,63 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
   }, [emblaApi]);
 
   useEffect(() => {
-    if (!emblaApi) return;
+    if (!emblaApi || !isScreenActive) return;
     const screen = document.querySelector('[data-screen="inicio"]');
     if (!screen) return;
 
-    const reinit = () => {
-      requestAnimationFrame(() => emblaApi.reInit());
+    let timer = 0;
+    let didInit = false;
+
+    const reinit = (force = false) => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        requestAnimationFrame(() => {
+          try {
+            const engine = emblaApi.internalEngine();
+            if (engine?.dragHandler?.pointerDown?.()) return;
+          } catch {
+            /* ignore */
+          }
+          emblaApi.reInit();
+          didInit = true;
+        });
+      }, force ? 40 : 160);
     };
 
-    const observer = new MutationObserver(reinit);
+    const observer = new MutationObserver(() => {
+      if (screen.hasAttribute('data-inicio-layout-ready') && !didInit) reinit(true);
+    });
     observer.observe(screen, {
       attributes: true,
       attributeFilter: ['data-inicio-layout-ready', 'data-inicio-fill-zone', 'data-inicio-compact-zone'],
     });
-    window.addEventListener('resize', reinit);
-    reinit();
+    const onResize = () => reinit(false);
+    window.addEventListener('resize', onResize, { passive: true });
+    if (screen.hasAttribute('data-inicio-layout-ready')) reinit(true);
 
     return () => {
+      window.clearTimeout(timer);
       observer.disconnect();
-      window.removeEventListener('resize', reinit);
+      window.removeEventListener('resize', onResize);
     };
-  }, [emblaApi]);
+  }, [emblaApi, isScreenActive]);
+
+  useEffect(() => {
+    if (!isScreenActive || typeof window === 'undefined') return;
+    const run = () => {
+      [LOGO, IMG_CARRITOS, IMG_SERVICIO, IMG_NOVEDADES].forEach((src) => {
+        const img = new window.Image();
+        img.decoding = 'async';
+        img.src = assetUrl(src);
+      });
+    };
+    const ric = window.requestIdleCallback?.(run, { timeout: 800 });
+    if (ric == null) {
+      const t = window.setTimeout(run, 120);
+      return () => window.clearTimeout(t);
+    }
+    return () => window.cancelIdleCallback?.(ric);
+  }, [isScreenActive]);
 
   return (
     <MobileScreenLayout title="INICIO" className="inicio-screen" data-screen="inicio">
@@ -189,15 +227,15 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
         >
           <div className="inicio-mobile-brand flex w-full flex-col items-center">
             <div className="inicio-mobile-logo-wrap w-full">
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element -- static webp; Next optimizer rejects ?v= cache bust */}
+              <img
                 src={assetUrl(LOGO)}
                 alt="Reparilandia"
                 width={1024}
                 height={682}
-                priority
-                quality={90}
-                placeholder="empty"
-                sizes="(max-width: 1023px) 96vw, 40rem"
+                decoding="async"
+                loading="eager"
+                fetchPriority="high"
                 className="inicio-mobile-logo mx-auto block h-auto w-full max-w-[min(98vw,46rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)]"
                 draggable={false}
               />
@@ -218,15 +256,15 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
           transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="inicio-desktop-brand flex w-full flex-col items-center lg:gap-1 xl:gap-1.5">
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element -- static webp; Next optimizer rejects ?v= cache bust */}
+            <img
               src={assetUrl(LOGO)}
               alt="Reparilandia"
               width={1024}
               height={682}
-              priority
-              quality={90}
-              placeholder="empty"
-              sizes="min(92vw, 62rem)"
+              decoding="async"
+              loading="eager"
+              fetchPriority="high"
               className="inicio-desktop-logo mx-auto block h-auto w-full max-h-[min(26dvh,14.5rem)] max-w-[min(94vw,36rem)] bg-transparent object-contain object-center [image-rendering:auto] drop-shadow-[0_14px_48px_rgba(0,0,0,0.45)] sm:max-h-[min(28dvh,15.5rem)] sm:max-w-[min(94vw,38rem)] md:max-h-[min(29dvh,16.25rem)] md:max-w-[min(92vw,40rem)] lg:max-h-[min(30dvh,18.5rem)] lg:max-w-[min(90vw,54rem)] xl:max-h-[min(32dvh,20.5rem)] xl:max-w-[min(88vw,58rem)]"
               draggable={false}
             />
@@ -267,8 +305,8 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
               className="embla-fluid inicio-mobile-embla min-h-0 w-full flex-1 overflow-hidden"
               aria-label="Destacados Reparilandia"
             >
-              <div className="flex h-full min-h-0 touch-pan-x">
-                {homeCards.map((card, index) => (
+              <div className="flex h-full min-h-0 touch-pan-x will-change-transform">
+                {homeCards.map((card) => (
                   <div
                     key={card.img}
                     className="inicio-mobile-slide min-w-0 shrink-0 grow-0 basis-full"
@@ -281,7 +319,7 @@ export default function InicioScreen({ onNavigate, isScreenActive = true }: Inic
                         accent={card.accent}
                         centerProminent={card.centerProminent}
                         mobileCarousel
-                        priority={index === 0}
+                        priority
                       />
                       <span aria-hidden className="inicio-mobile-slide__bottom-edge" />
                     </div>
@@ -436,51 +474,46 @@ function HomeSpotlightCard({
   const imageShell = 'inicio-home-card__art min-h-0 w-full flex-1';
 
   const imageArea = cropLegs ? (
-    <motion.div
-      className={`relative mx-auto overflow-hidden rounded-lg ${imageShell} ${glowStage}`}
-    >
-      <Image
+    <div className={`relative mx-auto overflow-hidden rounded-lg ${imageShell} ${glowStage}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element -- static webp; Next optimizer rejects ?v= cache bust */}
+      <img
         src={assetUrl(img)}
         alt=""
         width={imgW}
         height={imgH}
-        quality={90}
-        priority={priority}
-        loading={priority ? undefined : 'lazy'}
-        sizes={mobileLayout ? '(max-width: 1023px) 94vw, 420px' : 'min(30vw, 22rem)'}
+        decoding="async"
+        loading={priority ? 'eager' : 'lazy'}
+        fetchPriority={priority ? 'high' : 'auto'}
         className="relative z-[1] pointer-events-none absolute left-1/2 top-0 block h-[138%] w-auto max-w-[96%] -translate-x-1/2 select-none object-cover object-top"
         style={{ objectPosition: 'center 14%' }}
         draggable={false}
       />
-    </motion.div>
+    </div>
   ) : (
-    <motion.div
+    <div
       className={`relative isolate flex rounded-xl overflow-hidden ${imageShell} ${wrapAlign} ${glowStage}`}
     >
-      <Image
+      {/* eslint-disable-next-line @next/next/no-img-element -- static webp; Next optimizer rejects ?v= cache bust */}
+      <img
         src={assetUrl(img)}
         alt=""
         width={imgW}
         height={imgH}
-        quality={90}
-        priority={priority}
-        loading={priority ? undefined : 'lazy'}
-        sizes={mobileLayout ? '(max-width: 1023px) 94vw, 420px' : 'min(30vw, 22rem)'}
+        decoding="async"
+        loading={priority ? 'eager' : 'lazy'}
+        fetchPriority={priority ? 'high' : 'auto'}
         className={`relative z-[1] pointer-events-none select-none ${imgTreat}`}
         draggable={false}
       />
-    </motion.div>
+    </div>
   );
 
   return (
-    <motion.button
+    <button
       type="button"
       onClick={onClick}
-      whileHover={{ scale: mobileLayout ? 1.02 : 1.012 }}
-      whileTap={{ scale: mobileLayout ? 0.985 : 0.992 }}
-      transition={{ type: 'spring', stiffness: 420, damping: 32 }}
       data-home-accent={accent}
-      className={`group relative z-[1] inicio-home-card touch-manipulation rounded-2xl border outline-none lg:rounded-xl lg:p-2.5 lg:pt-3 xl:p-3 xl:pt-3.5 ${
+      className={`group relative z-[1] inicio-home-card touch-manipulation rounded-2xl border outline-none active:scale-[0.99] lg:rounded-xl lg:p-2.5 lg:pt-3 xl:p-3 xl:pt-3.5 ${
           mobileCarousel
           ? `inicio-home-card--mobile-carousel h-auto min-h-0 w-full max-w-full overflow-hidden rounded-xl border-0 p-1.5 pb-0 sm:p-2 sm:pb-0 ${CARD_BOX}`
           : mobileScroll
@@ -492,9 +525,9 @@ function HomeSpotlightCard({
         aria-hidden
         className={`pointer-events-none absolute inset-0 z-0 rounded-2xl opacity-[0.52] ${styles.innerSheen}`}
       />
-      <motion.div className="inicio-home-card__body relative z-[1] flex min-h-0 flex-1 flex-col overflow-hidden px-0.5 pt-1 sm:pt-1.5 lg:pt-2">
+      <div className="inicio-home-card__body relative z-[1] flex min-h-0 flex-1 flex-col overflow-hidden px-0.5 pt-1 sm:pt-1.5 lg:pt-2">
         {imageArea}
-      </motion.div>
+      </div>
       <p
         className={`inicio-home-card__caption relative z-[1] shrink-0 text-center font-space font-semibold leading-snug tracking-[0.03em] text-white/95 ${
           mobileLayout
@@ -504,6 +537,6 @@ function HomeSpotlightCard({
       >
         {caption}
       </p>
-    </motion.button>
+    </button>
   );
 }
