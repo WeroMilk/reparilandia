@@ -597,7 +597,7 @@
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-carousel-foot {
-      margin-top: 0.25rem;
+      margin-top: clamp(0.7rem, 2dvh, 1.1rem);
       flex-shrink: 0;
     }
 
@@ -1521,26 +1521,27 @@
       width: 100%;
       max-width: var(--inicio-mobile-card-max-width, min(82vw, 17.5rem));
       margin-inline: auto;
-      margin-top: 0.25rem;
+      margin-top: clamp(0.65rem, 1.8dvh, 1rem);
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-carousel-foot {
-      padding-top: clamp(0.12rem, 0.4dvh, 0.28rem);
-      padding-bottom: clamp(0.05rem, 0.2dvh, 0.12rem);
+      padding-top: clamp(0.35rem, 1dvh, 0.55rem);
+      padding-bottom: clamp(0.2rem, 0.7dvh, 0.4rem);
+      margin-top: clamp(0.7rem, 2dvh, 1.1rem);
     }
 
     .inicio-screen .inicio-mobile-carousel-foot {
       flex-shrink: 0;
       width: 100%;
-      padding-top: clamp(0.2rem, 0.65dvh, 0.4rem);
-      padding-bottom: clamp(0.15rem, 0.55dvh, 0.3rem);
+      padding-top: clamp(0.45rem, 1.2dvh, 0.7rem);
+      padding-bottom: clamp(0.25rem, 0.8dvh, 0.45rem);
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-boxes,
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-carousel {
       justify-content: flex-start;
       overflow: hidden;
-      padding-bottom: clamp(0.28rem, 0.9dvh, 0.5rem);
+      padding-bottom: clamp(0.35rem, 1.1dvh, 0.65rem);
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-scroll-foot {
@@ -1549,7 +1550,9 @@
 
     .inicio-screen .inicio-mobile-dots {
       margin: 0;
-      padding: 0;
+      padding: 0.15rem 0 0.2rem;
+      position: relative;
+      z-index: 2;
     }
 
     @container mobile-body (max-height: 700px) {

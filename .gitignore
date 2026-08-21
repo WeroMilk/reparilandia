@@ -10,3 +10,4 @@ node_modules/
 
 # Cursor debug (sesiones locales, no van al deploy)
 .cursor/debug-*.log
+.vercel
