@@ -163,8 +163,8 @@ function ContactoMobileCard({ onOpenMessage }: { onOpenMessage: () => void }) {
           </motion.div>
         </div>
 
-        <div className="contacto-mobile-sections mt-0 flex min-h-0 min-w-0 flex-col justify-start gap-[var(--contacto-mobile-section-gap,0.55rem)]">
-          <section className={`${innerSectionMobile} flex min-h-0 min-w-0 flex-col justify-start`}>
+        <div className="contacto-mobile-sections mt-0 flex min-h-0 min-w-0 flex-1 flex-col justify-stretch gap-[var(--contacto-mobile-section-gap,0.5rem)]">
+          <section className={`${innerSectionMobile} flex min-h-0 min-w-0 flex-1 flex-col justify-center`}>
             <motion.div className="contacto-mobile-section-title mb-1.5 flex items-center justify-center gap-1.5 font-orbitron text-[12px] tracking-[0.12em] text-cyan-100/95">
               <Mail className="h-3.5 w-3.5 text-hologram-cyan" />
               CORREO
@@ -199,7 +199,7 @@ function ContactoMobileCard({ onOpenMessage }: { onOpenMessage: () => void }) {
             </motion.div>
           </section>
 
-          <section className={`${innerSectionMobile} flex min-h-0 min-w-0 flex-col justify-start`}>
+          <section className={`${innerSectionMobile} flex min-h-0 min-w-0 flex-1 flex-col justify-center`}>
             <motion.div className="contacto-mobile-section-title mb-1.5 flex items-center justify-center gap-1.5 font-orbitron text-[12px] tracking-[0.12em] text-amber-100/95">
               <MapPin className="h-3.5 w-3.5 text-amber-200/90" />
               DIRECCIÓN
@@ -216,7 +216,7 @@ function ContactoMobileCard({ onOpenMessage }: { onOpenMessage: () => void }) {
             </a>
           </section>
 
-          <section className={`${innerSectionMobile} flex min-h-0 min-w-0 flex-col justify-start`}>
+          <section className={`${innerSectionMobile} flex min-h-0 min-w-0 flex-1 flex-col justify-center`}>
             <motion.div className="contacto-mobile-section-title mb-1.5 flex items-center justify-center gap-1.5 font-orbitron text-[12px] tracking-[0.12em] text-emerald-100/95">
               <Clock className="h-3.5 w-3.5 text-emerald-300/90" />
               HORARIO

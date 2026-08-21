@@ -159,38 +159,39 @@ export function useContactoMobileFit(showMessage: boolean, enabled: boolean) {
 
       const maxScale = getMaxScale(zoneHeight, viewportWidth, showMessage);
       const growCap = Math.round((maxScale + (showMessage ? 0.12 : 0.16)) * 1000) / 1000;
-      let scale = maxScale;
+
+      /* Tarjeta de datos: sin scale/transform — las secciones flex llenan el hueco. */
+      let scale = showMessage ? maxScale : 1;
 
       applyScale(screen, scaleTarget, scale);
       let measure = measureFit(measureContainer, scaleTarget, measureChrome);
 
-      while (!measure.fits && scale > MIN_SCALE + 0.001) {
-        scale = Math.max(MIN_SCALE, Math.round((scale - SCALE_STEP) * 1000) / 1000);
-        applyScale(screen, scaleTarget, scale);
-        measure = measureFit(measureContainer, scaleTarget, measureChrome);
+      if (showMessage) {
+        while (!measure.fits && scale > MIN_SCALE + 0.001) {
+          scale = Math.max(MIN_SCALE, Math.round((scale - SCALE_STEP) * 1000) / 1000);
+          applyScale(screen, scaleTarget, scale);
+          measure = measureFit(measureContainer, scaleTarget, measureChrome);
+        }
+
+        const growTarget = 0.96;
+        while (
+          measure.fits &&
+          measure.contentHeight < measure.available * growTarget &&
+          scale < growCap - 0.001
+        ) {
+          const next = Math.round((scale + SCALE_STEP) * 1000) / 1000;
+          applyScale(screen, scaleTarget, next);
+          const trial = measureFit(measureContainer, scaleTarget, measureChrome);
+          if (!trial.fits || trial.contentHeight > measure.available + 2) break;
+          scale = next;
+          measure = trial;
+        }
       }
 
-      const growTarget = showMessage ? 0.96 : 0.94;
-      while (
-        measure.fits &&
-        measure.contentHeight < measure.available * growTarget &&
-        scale < growCap - 0.001
-      ) {
-        const next = Math.round((scale + SCALE_STEP) * 1000) / 1000;
-        applyScale(screen, scaleTarget, next);
-        const trial = measureFit(measureContainer, scaleTarget, measureChrome);
-        if (!trial.fits || trial.contentHeight > measure.available + 2) break;
-        scale = next;
-        measure = trial;
-      }
-
-      /* Huecos entre secciones: crescer solo si sigue cabiendo (evita forzar scroll). */
-      let sectionGap = showMessage ? 8 : 6;
-      if (measure.fits) {
+      let sectionGap = showMessage ? 8 : 8;
+      if (showMessage && measure.fits) {
         const slack = Math.max(0, measure.available - measure.contentHeight);
-        sectionGap = Math.round(
-          Math.min(showMessage ? 16 : 12, Math.max(4, slack * 0.28 + (showMessage ? 4 : 4))),
-        );
+        sectionGap = Math.round(Math.min(16, Math.max(4, slack * 0.28 + 4)));
       }
       screen.style.setProperty('--contacto-mobile-section-gap', `${sectionGap}px`);
       screen.style.setProperty(
@@ -202,17 +203,19 @@ export function useContactoMobileFit(showMessage: boolean, enabled: boolean) {
         `${Math.min(12, Math.max(4, sectionGap))}px`,
       );
 
-      measure = measureFit(measureContainer, scaleTarget, measureChrome);
-      while (!measure.fits && sectionGap > 4) {
-        sectionGap = Math.max(4, sectionGap - 2);
-        screen.style.setProperty('--contacto-mobile-section-gap', `${sectionGap}px`);
+      if (showMessage) {
         measure = measureFit(measureContainer, scaleTarget, measureChrome);
-      }
+        while (!measure.fits && sectionGap > 4) {
+          sectionGap = Math.max(4, sectionGap - 2);
+          screen.style.setProperty('--contacto-mobile-section-gap', `${sectionGap}px`);
+          measure = measureFit(measureContainer, scaleTarget, measureChrome);
+        }
 
-      while (!measure.fits && scale > MIN_SCALE + 0.001) {
-        scale = Math.max(MIN_SCALE, Math.round((scale - SCALE_STEP) * 1000) / 1000);
-        applyScale(screen, scaleTarget, scale);
-        measure = measureFit(measureContainer, scaleTarget, measureChrome);
+        while (!measure.fits && scale > MIN_SCALE + 0.001) {
+          scale = Math.max(MIN_SCALE, Math.round((scale - SCALE_STEP) * 1000) / 1000);
+          applyScale(screen, scaleTarget, scale);
+          measure = measureFit(measureContainer, scaleTarget, measureChrome);
+        }
       }
 
       if (actionsEl) {
@@ -227,7 +230,6 @@ export function useContactoMobileFit(showMessage: boolean, enabled: boolean) {
 
       screen.setAttribute('data-contacto-fit-ready', 'true');
 
-      /* En la tarjeta de datos, preferir clip al scroll interno. */
       if (measure.fits || !showMessage) {
         screen.removeAttribute('data-contacto-scroll-fallback');
       } else {
