@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import type { ElementType } from 'react';
-import Image from 'next/image';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
 import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
 import {
@@ -123,25 +122,11 @@ const iconMap: Record<string, ElementType> = {
   more: MoreHorizontal,
 };
 
-function ServicioHeroIconFallback({ icon: Icon }: { icon: ElementType }) {
-  return (
-    <div
-      className="flex min-h-[6rem] w-full flex-col items-center justify-center gap-2 py-3 sm:min-h-[7rem] md:min-h-[7.75rem]"
-      aria-hidden
-    >
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/[0.12] bg-[#12161f] shadow-inner sm:h-16 sm:w-16">
-        <Icon className="h-7 w-7 text-sky-300 sm:h-8 sm:w-8" strokeWidth={1.75} />
-      </div>
-    </div>
-  );
-}
-
 function ServicioHeroBanner({
   src,
   alt,
   caption,
   titleLabel,
-  fallbackIcon,
   priority,
   serviceId,
 }: {
@@ -149,44 +134,31 @@ function ServicioHeroBanner({
   alt: string;
   caption: string;
   titleLabel?: string;
-  fallbackIcon: ElementType;
   priority?: boolean;
   serviceId?: string;
 }) {
   const desktopTitle = titleLabel ?? caption;
-  const [heroFailed, setHeroFailed] = useState(false);
-  const needsTightCenter =
-    serviceId === 'laptops' ||
-    serviceId === 'pc-escritorio' ||
-    serviceId === 'juguetes' ||
-    serviceId === 'diagnostico';
 
   return (
     <div
       className="servicios-slide-hero relative flex w-full flex-col overflow-hidden rounded-lg bg-[#0a0c12] max-lg:min-h-[10.5rem] lg:min-h-0 lg:flex-1 lg:overflow-hidden"
       data-servicio-hero={serviceId}
-      data-hero-tight-center={needsTightCenter ? 'true' : undefined}
     >
-      <div className="servicios-slide-hero-media relative isolate flex min-h-0 w-full flex-1 items-center justify-center bg-transparent">
-        {heroFailed ? (
-          <ServicioHeroIconFallback icon={fallbackIcon} />
-        ) : (
-          <div className="servicios-slide-hero-art relative z-[1] flex h-full w-full min-h-[10.5rem] items-center justify-center overflow-hidden rounded-lg px-1 lg:min-h-0 lg:px-2">
-            <Image
-              src={assetUrl(src)}
-              alt={alt}
-              width={840}
-              height={543}
-              quality={85}
-              priority={priority}
-              loading={priority ? undefined : 'lazy'}
-              sizes="(max-width: 1023px) min(92vw, 22rem), min(42vw, 36rem)"
-              className="servicios-slide-hero-img mx-auto block h-auto max-h-full w-auto max-w-full object-contain object-center"
-              draggable={false}
-              onError={() => setHeroFailed(true)}
-            />
-          </div>
-        )}
+      <div className="servicios-slide-hero-media relative isolate flex min-h-0 w-full flex-1 items-center justify-center">
+        <div className="servicios-slide-hero-art relative z-[1] flex h-full w-full min-h-[10.5rem] items-center justify-center overflow-hidden rounded-lg px-1.5 lg:min-h-0 lg:px-2">
+          {/* eslint-disable-next-line @next/next/no-img-element -- static webp heroes; avoid optimizer quality/search rejects */}
+          <img
+            src={assetUrl(src)}
+            alt={alt}
+            width={840}
+            height={543}
+            decoding="async"
+            loading={priority ? 'eager' : 'lazy'}
+            fetchPriority={priority ? 'high' : 'auto'}
+            className="servicios-slide-hero-img mx-auto block h-auto max-h-full w-auto max-w-full object-contain object-center select-none"
+            draggable={false}
+          />
+        </div>
       </div>
       <div className="servicio-hero-caption relative z-[2] max-lg:!hidden border-t border-cyan-400/20 bg-transparent px-2 py-1 text-center sm:px-2.5 sm:py-1.5 hidden lg:!block">
         <p className="font-orbitron text-[12px] font-bold uppercase tracking-[0.18em] text-cyan-100/95 drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)] sm:text-[11px] md:text-xs lg:text-sm">
@@ -247,13 +219,12 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
     if (!screen) return;
 
     let timer = 0;
-    let lastReady = screen.getAttribute('data-servicios-layout-ready');
+    let didInit = false;
 
-    const reinit = () => {
+    const reinit = (force = false) => {
       window.clearTimeout(timer);
       timer = window.setTimeout(() => {
         requestAnimationFrame(() => {
-          /* Evita reInit a mitad del gesto (desalineación). */
           try {
             const engine = emblaApi.internalEngine();
             if (engine?.dragHandler?.pointerDown?.()) return;
@@ -261,26 +232,24 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
             /* ignore */
           }
           emblaApi.reInit();
+          didInit = true;
         });
-      }, 120);
+      }, force ? 40 : 160);
     };
 
     const observer = new MutationObserver(() => {
-      const ready = screen.getAttribute('data-servicios-layout-ready');
-      const desktopReady = screen.getAttribute('data-servicios-desktop-ready');
-      if (ready !== lastReady || desktopReady != null) {
-        lastReady = ready;
-        reinit();
-      }
+      const ready = screen.hasAttribute('data-servicios-layout-ready');
+      const desktopReady = screen.hasAttribute('data-servicios-desktop-ready');
+      if ((ready || desktopReady) && !didInit) reinit(true);
     });
     observer.observe(screen, {
       attributes: true,
       attributeFilter: ['data-servicios-desktop-ready', 'data-servicios-layout-ready'],
     });
 
-    const onResize = () => reinit();
+    const onResize = () => reinit(false);
     window.addEventListener('resize', onResize, { passive: true });
-    reinit();
+    if (screen.hasAttribute('data-servicios-layout-ready')) reinit(true);
 
     return () => {
       window.clearTimeout(timer);
@@ -288,6 +257,25 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
       window.removeEventListener('resize', onResize);
     };
   }, [emblaApi, isScreenActive]);
+
+  /* Precarga heroes en idle para que el swipe no espere red. */
+  useEffect(() => {
+    if (!isScreenActive || typeof window === 'undefined') return;
+    const run = () => {
+      services.forEach((service) => {
+        if (!service.heroImage) return;
+        const img = new window.Image();
+        img.decoding = 'async';
+        img.src = assetUrl(service.heroImage);
+      });
+    };
+    const ric = window.requestIdleCallback?.(run, { timeout: 1200 });
+    if (ric == null) {
+      const t = window.setTimeout(run, 280);
+      return () => window.clearTimeout(t);
+    }
+    return () => window.cancelIdleCallback?.(ric);
+  }, [isScreenActive]);
 
   const renderServiceIconButton = (service: Service, index: number) => {
     const Icon = iconMap[service.icon] || Wrench;
@@ -385,12 +373,13 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
                           alt={`Equipo Reparilandia — ${service.title}`}
                           caption={service.heroCaption ?? service.title}
                           titleLabel={service.title}
-                          fallbackIcon={Icon}
                           serviceId={service.id}
                           priority={
                             service.id === 'carritos-montables' ||
                             service.id === 'laptops' ||
-                            service.id === 'pc-escritorio'
+                            service.id === 'pc-escritorio' ||
+                            service.id === 'consolas' ||
+                            service.id === 'juguetes'
                           }
                         />
                         <h3 className="servicios-mobile-slide-title shrink-0 px-1 text-center font-orbitron text-[12px] font-bold uppercase tracking-[0.14em] text-cyan-100/95 lg:hidden">

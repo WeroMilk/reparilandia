@@ -4,7 +4,7 @@ export function assetUrl(path: string): string {
   const version =
     (typeof process !== 'undefined' &&
       process.env.NEXT_PUBLIC_ASSET_VERSION?.trim()) ||
-    '35';
+    '36';
   const sep = path.includes('?') ? '&' : '?';
   return `${path}${sep}v=${version}`;
 }

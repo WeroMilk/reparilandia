@@ -95,4 +95,4 @@ export const panelSwapVariants = {
 export const EMBLA_SMOOTH_DURATION = 32;
 
 /** Móvil: scroll más corto = menos trabajo por frame al soltar el dedo. */
-export const EMBLA_SMOOTH_DURATION_MOBILE = 18;
+export const EMBLA_SMOOTH_DURATION_MOBILE = 22;

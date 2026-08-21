@@ -21,13 +21,18 @@ const nextConfig: NextConfig = {
   },
   images: {
     formats: ['image/avif', 'image/webp'],
-    qualities: [75, 82, 90, 100],
+    qualities: [70, 75, 82, 85, 90, 100],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [96, 128, 256, 384, 640],
     minimumCacheTTL: 60 * 60 * 24 * 30,
     localPatterns: [
       {
         pathname: '/assets/**',
+        search: '?v=*',
+      },
+      {
+        pathname: '/icons/**',
+        search: '?v=*',
       },
     ],
   },
