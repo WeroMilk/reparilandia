@@ -507,7 +507,7 @@
       gap: var(--inicio-mobile-stage-gap, clamp(0.5rem, 1.4dvh, 0.85rem));
       margin-top: 0;
       padding-top: 0;
-      padding-bottom: var(--inicio-mobile-block-offset-bottom, 0);
+      padding-bottom: 0;
       overflow: hidden;
     }
 
@@ -517,7 +517,9 @@
       min-height: 0;
       height: auto;
       max-height: none;
-      justify-content: flex-start;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
       padding-bottom: 0;
     }
 
@@ -526,8 +528,26 @@
       min-height: 0;
       height: auto;
       max-height: none;
-      justify-content: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
       align-items: center;
+    }
+
+    .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-embla {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-carousel-foot {
+      margin-top: 0;
+      margin-bottom: 0;
+      flex: 0 0 auto;
+      min-height: 0;
+      height: auto;
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready]
@@ -1664,9 +1684,14 @@
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-boxes,
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-carousel {
-      justify-content: flex-start;
       overflow: hidden;
-      padding-bottom: 0.25rem;
+      padding-bottom: 0.15rem;
+    }
+
+    .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-boxes,
+    .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-carousel {
+      justify-content: flex-end;
+      padding-bottom: 0;
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-scroll-foot {

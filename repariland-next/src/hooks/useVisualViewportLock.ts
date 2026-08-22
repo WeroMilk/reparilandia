@@ -34,8 +34,8 @@ function syncDockReserve(): void {
   root.style.setProperty('--dock-reserve', `${h}px`);
 }
 
-/** Reserva corta solo si el VV no deja hueco bajo el área visible. */
-const IOS_OVERLAY_DOCK_LIFT_PX = 36;
+/** Lift del dock si la URL solapa; no encogemos el shell (eso sube todo el diseño). */
+const IOS_OVERLAY_DOCK_LIFT_PX = 28;
 
 export function applyVisualViewportLock(): void {
   const root = document.documentElement;
@@ -52,12 +52,11 @@ export function applyVisualViewportLock(): void {
   if (isIosSafari() && !isStandaloneDisplay()) {
     const overlaysBottom = reportedInset < 8;
     if (overlaysBottom) {
-      /* URL solapa el bottom: sube el dock y encoge el shell la misma cantidad. */
+      /* Solo sube el dock sobre la URL; el contenido sigue usando todo el alto VV. */
       safariBottomChrome = IOS_OVERLAY_DOCK_LIFT_PX;
       bottomInset = IOS_OVERLAY_DOCK_LIFT_PX;
-      height = Math.max(300, vvHeight - IOS_OVERLAY_DOCK_LIFT_PX);
+      height = vvHeight;
     } else {
-      /* VV ya reporta el hueco (como Android): confiar en reportedInset. */
       safariBottomChrome = 0;
       bottomInset = reportedInset;
     }

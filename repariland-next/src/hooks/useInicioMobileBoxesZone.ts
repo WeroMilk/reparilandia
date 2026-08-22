@@ -3,15 +3,12 @@ import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 import { measureMobileContentZone } from '@/lib/mobileContentZone';
 
 /**
- * Diseño UX Inicio (móvil) — calibrado con iPhone 8 Plus (~414×736, zona útil ~340–420)
- * y escala a Pro/Max.
- *
- * Jerarquía: marca → confianza breve → RECTÁNGULO (foto+caption) → dots.
- * El héroe es el protagonista (~48–56% de la zona).
+ * Inicio móvil: llena el alto útil de arriba a abajo (sin hueco vacío bajo la card
+ * que empuja el diseño “hacia arriba”). Calibrado para iPhone 8 Plus.
  */
-const DOCK_CLEARANCE_PX = 8;
-const FOOT_FLOOR_PX = 26;
-const CAPTION_FLOOR_PX = 48;
+const DOCK_CLEARANCE_PX = 6;
+const FOOT_FLOOR_PX = 24;
+const CAPTION_FLOOR_PX = 46;
 const CARD_CHROME_PX = 6;
 const BORDER_CLEARANCE_PX = 4;
 const BOTTOM_EDGE_PX = 3;
@@ -20,8 +17,8 @@ const STABLE_EPS_PX = 2;
 type Density = 'tight' | 'cozy' | 'roomy';
 
 function densityFor(zoneH: number): Density {
-  if (zoneH < 400) return 'tight'; /* 8 Plus / SE con Safari chrome */
-  if (zoneH < 520) return 'cozy';
+  if (zoneH < 420) return 'tight';
+  if (zoneH < 540) return 'cozy';
   return 'roomy';
 }
 
@@ -88,46 +85,45 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
     const applyDensityTokens = (screen: HTMLElement, density: Density, W: number) => {
       const edgeGutter = density === 'tight' ? 10 : density === 'cozy' ? 12 : 14;
       const cardMaxWidth = Math.round(
-        Math.min(W - edgeGutter * 2, Math.round(W * (density === 'tight' ? 0.92 : 0.94))),
+        Math.min(W - edgeGutter * 2, Math.round(W * (density === 'tight' ? 0.93 : 0.94))),
       );
 
       if (density === 'tight') {
-        /* iPhone 8 Plus: marca chica, confianza corta, héroe grande */
-        screen.style.setProperty('--inicio-mobile-logo-max-height', '3.65rem');
+        screen.style.setProperty('--inicio-mobile-logo-max-height', '3.5rem');
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.625rem');
-        screen.style.setProperty('--inicio-mobile-stage-gap', '6px');
-        screen.style.setProperty('--inicio-mobile-top-gap', '5px');
+        screen.style.setProperty('--inicio-mobile-stage-gap', '5px');
+        screen.style.setProperty('--inicio-mobile-top-gap', '4px');
         screen.style.setProperty('--inicio-mobile-brand-gap', '2px');
-        screen.style.setProperty('--inicio-mobile-foot-gap', '4px');
+        screen.style.setProperty('--inicio-mobile-foot-gap', '3px');
         screen.style.setProperty('--inicio-mobile-caption-size', '13px');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.35rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.32rem');
         screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.55rem');
         screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.5625rem');
         screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.6875rem');
         screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.625rem');
       } else if (density === 'cozy') {
-        screen.style.setProperty('--inicio-mobile-logo-max-height', '4.75rem');
+        screen.style.setProperty('--inicio-mobile-logo-max-height', '4.6rem');
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.7rem');
         screen.style.setProperty('--inicio-mobile-stage-gap', '8px');
-        screen.style.setProperty('--inicio-mobile-top-gap', '7px');
+        screen.style.setProperty('--inicio-mobile-top-gap', '6px');
         screen.style.setProperty('--inicio-mobile-brand-gap', '4px');
-        screen.style.setProperty('--inicio-mobile-foot-gap', '6px');
+        screen.style.setProperty('--inicio-mobile-foot-gap', '5px');
         screen.style.setProperty('--inicio-mobile-caption-size', '14px');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.45rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.42rem');
         screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.7rem');
         screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.6rem');
         screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.75rem');
         screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.65rem');
       } else {
-        screen.style.setProperty('--inicio-mobile-logo-max-height', '6rem');
+        screen.style.setProperty('--inicio-mobile-logo-max-height', '5.75rem');
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.78rem');
-        screen.style.setProperty('--inicio-mobile-stage-gap', '12px');
-        screen.style.setProperty('--inicio-mobile-top-gap', '10px');
+        screen.style.setProperty('--inicio-mobile-stage-gap', '10px');
+        screen.style.setProperty('--inicio-mobile-top-gap', '8px');
         screen.style.setProperty('--inicio-mobile-brand-gap', '6px');
-        screen.style.setProperty('--inicio-mobile-foot-gap', '8px');
+        screen.style.setProperty('--inicio-mobile-foot-gap', '6px');
         screen.style.setProperty('--inicio-mobile-caption-size', '15px');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.55rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.85rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.5rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.8rem');
         screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.65rem');
         screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.8125rem');
         screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.7rem');
@@ -140,7 +136,10 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       screen.style.setProperty('--inicio-mobile-guarantee-scale', '1');
       screen.style.setProperty('--inicio-mobile-block-offset-top', '0px');
       screen.style.setProperty('--inicio-mobile-block-offset-bottom', '0px');
-      screen.style.setProperty('--inicio-mobile-rhythm', screen.style.getPropertyValue('--inicio-mobile-stage-gap'));
+      screen.style.setProperty(
+        '--inicio-mobile-rhythm',
+        screen.style.getPropertyValue('--inicio-mobile-stage-gap'),
+      );
 
       return { edgeGutter, cardMaxWidth };
     };
@@ -173,8 +172,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         '.inicio-mobile-slide__inner .inicio-home-card__caption--slide-out',
       );
 
-      const stageGap = Number.parseFloat(screen.style.getPropertyValue('--inicio-mobile-stage-gap')) || 8;
-      const topInnerGap = Number.parseFloat(screen.style.getPropertyValue('--inicio-mobile-top-gap')) || 6;
+      const stageGap = Number.parseFloat(screen.style.getPropertyValue('--inicio-mobile-stage-gap')) || 6;
 
       let topH = topEl ? Math.ceil(topEl.getBoundingClientRect().height) : 0;
       const footH = Math.max(
@@ -185,42 +183,36 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         ? Math.ceil(captionEl.getBoundingClientRect().height)
         : CAPTION_FLOOR_PX;
       const captionReserve = Math.max(
-        density === 'tight' ? 44 : CAPTION_FLOOR_PX,
-        captionH + (density === 'tight' ? 6 : 10),
+        density === 'tight' ? 42 : CAPTION_FLOOR_PX,
+        captionH + (density === 'tight' ? 4 : 8),
       );
 
-      /* Presupuesto: el héroe debe ser el bloque dominante. */
-      const heroShare = density === 'tight' ? 0.52 : density === 'cozy' ? 0.48 : 0.46;
-      const topBudgetShare = density === 'tight' ? 0.28 : density === 'cozy' ? 0.32 : 0.34;
-      const overhead = stageGap + 2;
-      const topBudget = Math.round(H * topBudgetShare);
-
-      if (finalPass && topEl && topH > topBudget + 6) {
-        /* Recortar logo un poco más si la cabecera se come al héroe. */
-        const logoNow = Number.parseFloat(screen.style.getPropertyValue('--inicio-mobile-logo-max-height')) || 4;
-        const nextLogo = Math.max(density === 'tight' ? 3.1 : 3.8, logoNow - 0.4);
-        screen.style.setProperty('--inicio-mobile-logo-max-height', `${nextLogo.toFixed(2)}rem`);
+      /* Cabecera acotada para dejar el resto al rectángulo (baja el diseño). */
+      const topBudget = Math.round(H * (density === 'tight' ? 0.26 : density === 'cozy' ? 0.3 : 0.32));
+      if (finalPass && topEl && topH > topBudget + 4) {
+        const logoNow =
+          Number.parseFloat(screen.style.getPropertyValue('--inicio-mobile-logo-max-height')) || 3.5;
+        const floor = density === 'tight' ? 2.95 : 3.6;
+        screen.style.setProperty(
+          '--inicio-mobile-logo-max-height',
+          `${Math.max(floor, logoNow - 0.35).toFixed(2)}rem`,
+        );
         topH = Math.ceil(topEl.getBoundingClientRect().height);
       }
 
-      const availableCard = Math.max(150, H - topH - footH - overhead);
-      const targetHero = Math.round(H * heroShare);
-      const roomForHero = Math.max(120, availableCard - captionReserve - CARD_CHROME_PX);
-      const heroFloor = density === 'tight' ? 155 : 175;
-      let heroMax = Math.min(
-        roomForHero,
-        Math.max(targetHero, heroFloor),
-        Math.round(cardMaxWidth * (density === 'tight' ? 0.78 : 0.88)),
-      );
-      heroMax = Math.max(120, Math.min(heroMax, roomForHero));
+      const overhead = stageGap + 2;
+      const availableCard = Math.max(160, H - topH - footH - overhead);
 
-      const cardMax = Math.min(
-        availableCard,
-        heroMax + captionReserve + CARD_CHROME_PX,
-      );
+      /*
+       * CLAVE UX: la card USA todo el hueco sobrante (no deja vacío bajo el héroe).
+       * Eso evita que logo+garantía queden “arriba” con un pozo negro hasta el dock.
+       */
+      const roomForHero = Math.max(130, availableCard - captionReserve - CARD_CHROME_PX);
+      const heroMax = Math.min(roomForHero, Math.round(cardMaxWidth * 1.05));
+      const cardMax = Math.min(availableCard, heroMax + captionReserve + CARD_CHROME_PX);
 
-      const track = cardMax + BOTTOM_EDGE_PX + BORDER_CLEARANCE_PX;
-      const zoneSpan = Math.max(150, H - topH - stageGap);
+      const track = Math.max(cardMax + BOTTOM_EDGE_PX + BORDER_CLEARANCE_PX, availableCard);
+      const zoneSpan = Math.max(160, H - topH - stageGap);
 
       setPx(screen, '--inicio-mobile-body-zone-height', H);
       setPx(screen, '--inicio-mobile-boxes-zone-height', zoneSpan);
@@ -235,7 +227,6 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       setPx(screen, '--inicio-mobile-carousel-foot-reserve', footH);
       setPx(screen, '--inicio-mobile-bottom-margin', footH);
 
-      void topInnerGap;
       screen.setAttribute('data-inicio-layout-ready', 'true');
     };
 
