@@ -3,11 +3,13 @@ import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 import { measureMobileContentZone } from '@/lib/mobileContentZone';
 
 /**
- * Inicio móvil: llena el alto útil de arriba a abajo (sin hueco vacío bajo la card
- * que empuja el diseño “hacia arriba”). Calibrado para iPhone 8 Plus.
+ * Inicio móvil:
+ * - Zona útil = header → tope del dock (los circulos no tapan fotos/dots).
+ * - El hueco entre Garantía y el rectángulo se usa para ESTIRAR la card.
+ * - Dots quedan justo bajo la card, sobre el dock.
  */
-const DOCK_CLEARANCE_PX = 6;
-const FOOT_FLOOR_PX = 24;
+const DOCK_CLEARANCE_PX = 14;
+const FOOT_FLOOR_PX = 28;
 const CAPTION_FLOOR_PX = 46;
 const CARD_CHROME_PX = 6;
 const BORDER_CLEARANCE_PX = 4;
@@ -91,10 +93,10 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       if (density === 'tight') {
         screen.style.setProperty('--inicio-mobile-logo-max-height', '3.5rem');
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.625rem');
-        screen.style.setProperty('--inicio-mobile-stage-gap', '5px');
+        screen.style.setProperty('--inicio-mobile-stage-gap', '4px');
         screen.style.setProperty('--inicio-mobile-top-gap', '4px');
         screen.style.setProperty('--inicio-mobile-brand-gap', '2px');
-        screen.style.setProperty('--inicio-mobile-foot-gap', '3px');
+        screen.style.setProperty('--inicio-mobile-foot-gap', '4px');
         screen.style.setProperty('--inicio-mobile-caption-size', '13px');
         screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.32rem');
         screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.55rem');
@@ -104,7 +106,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       } else if (density === 'cozy') {
         screen.style.setProperty('--inicio-mobile-logo-max-height', '4.6rem');
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.7rem');
-        screen.style.setProperty('--inicio-mobile-stage-gap', '8px');
+        screen.style.setProperty('--inicio-mobile-stage-gap', '6px');
         screen.style.setProperty('--inicio-mobile-top-gap', '6px');
         screen.style.setProperty('--inicio-mobile-brand-gap', '4px');
         screen.style.setProperty('--inicio-mobile-foot-gap', '5px');
@@ -117,7 +119,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       } else {
         screen.style.setProperty('--inicio-mobile-logo-max-height', '5.75rem');
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.78rem');
-        screen.style.setProperty('--inicio-mobile-stage-gap', '10px');
+        screen.style.setProperty('--inicio-mobile-stage-gap', '8px');
         screen.style.setProperty('--inicio-mobile-top-gap', '8px');
         screen.style.setProperty('--inicio-mobile-brand-gap', '6px');
         screen.style.setProperty('--inicio-mobile-foot-gap', '6px');
@@ -152,6 +154,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       }
       if (!screen?.querySelector('.inicio-mobile-top')) return;
 
+      /* Clearance extra: dots + caption nunca bajo los circulos de color. */
       const zone = measureMobileContentZone(screen, { dockClearancePx: DOCK_CLEARANCE_PX });
       if (!zone || zone.zoneHeight < 160) return;
 
@@ -172,12 +175,12 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         '.inicio-mobile-slide__inner .inicio-home-card__caption--slide-out',
       );
 
-      const stageGap = Number.parseFloat(screen.style.getPropertyValue('--inicio-mobile-stage-gap')) || 6;
+      const stageGap = Number.parseFloat(screen.style.getPropertyValue('--inicio-mobile-stage-gap')) || 4;
 
       let topH = topEl ? Math.ceil(topEl.getBoundingClientRect().height) : 0;
       const footH = Math.max(
         FOOT_FLOOR_PX,
-        footEl ? Math.ceil(footEl.getBoundingClientRect().height) : 0,
+        footEl ? Math.ceil(footEl.getBoundingClientRect().height) + 4 : 0,
       );
       const captionH = captionEl
         ? Math.ceil(captionEl.getBoundingClientRect().height)
@@ -187,7 +190,6 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         captionH + (density === 'tight' ? 4 : 8),
       );
 
-      /* Cabecera acotada para dejar el resto al rectángulo (baja el diseño). */
       const topBudget = Math.round(H * (density === 'tight' ? 0.26 : density === 'cozy' ? 0.3 : 0.32));
       if (finalPass && topEl && topH > topBudget + 4) {
         const logoNow =
@@ -201,17 +203,14 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       }
 
       const overhead = stageGap + 2;
+      /* Todo el hueco Garantía → dots va al rectángulo (estirar hacia arriba). */
       const availableCard = Math.max(160, H - topH - footH - overhead);
-
-      /*
-       * CLAVE UX: la card USA todo el hueco sobrante (no deja vacío bajo el héroe).
-       * Eso evita que logo+garantía queden “arriba” con un pozo negro hasta el dock.
-       */
       const roomForHero = Math.max(130, availableCard - captionReserve - CARD_CHROME_PX);
-      const heroMax = Math.min(roomForHero, Math.round(cardMaxWidth * 1.05));
-      const cardMax = Math.min(availableCard, heroMax + captionReserve + CARD_CHROME_PX);
+      /* Sin tope artificial por ancho: la foto crece con el hueco vertical. */
+      const heroMax = roomForHero;
+      const cardMax = availableCard;
+      const track = availableCard;
 
-      const track = Math.max(cardMax + BOTTOM_EDGE_PX + BORDER_CLEARANCE_PX, availableCard);
       const zoneSpan = Math.max(160, H - topH - stageGap);
 
       setPx(screen, '--inicio-mobile-body-zone-height', H);
@@ -227,6 +226,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       setPx(screen, '--inicio-mobile-carousel-foot-reserve', footH);
       setPx(screen, '--inicio-mobile-bottom-margin', footH);
 
+      void cardMaxWidth;
       screen.setAttribute('data-inicio-layout-ready', 'true');
     };
 
