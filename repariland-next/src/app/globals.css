@@ -248,7 +248,7 @@
       --dock-footer-height: 3.15rem;
       --dock-chrome-height: calc(var(--dock-nav-height) + var(--dock-footer-height));
       --dock-reserve: var(--dock-chrome-height);
-      --dock-bottom-nudge: 0px;
+      --dock-bottom-nudge: 12px;
       --mobile-viewport-h: var(--app-height, 100svh);
       --screen-header-pad: clamp(0.4rem, 1.4svh, 0.65rem);
     }
