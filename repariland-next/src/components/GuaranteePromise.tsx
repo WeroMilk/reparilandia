@@ -37,16 +37,16 @@ export default function GuaranteePromise({
       className={`guarantee-promise mx-auto w-full max-w-xl rounded-xl border border-[#4DA3FF]/35 bg-gradient-to-b from-[#0077FF]/[0.12] to-[#0a1628]/80 px-3.5 py-3 text-center shadow-[0_0_28px_rgba(0,119,255,0.18)] ring-1 ring-inset ring-[#4DA3FF]/25 sm:max-w-2xl sm:px-4 sm:py-3.5 lg:max-w-[42rem] ${className}`}
       aria-label="Compromiso de garantía Reparilandia"
     >
-      <div className="mb-1.5 flex items-center justify-center gap-1.5">
+      <div className="guarantee-promise__head mb-1.5 flex items-center justify-center gap-1.5">
         <ShieldCheck className="h-4 w-4 shrink-0 text-[#7ec8ff]" strokeWidth={2} aria-hidden />
-        <p className="font-orbitron text-[10px] font-bold uppercase tracking-[0.22em] text-[#9ed0ff]/95 sm:text-[11px] sm:tracking-[0.26em]">
+        <p className="guarantee-promise__title font-orbitron text-[10px] font-bold uppercase tracking-[0.22em] text-[#9ed0ff]/95 sm:text-[11px] sm:tracking-[0.26em]">
           Garantía Reparilandia
         </p>
       </div>
-      <p className="font-orbitron text-[clamp(0.6875rem,2.6vw,0.8125rem)] font-semibold leading-snug tracking-[0.06em] text-white sm:text-sm">
+      <p className="guarantee-promise__lead font-orbitron text-[clamp(0.6875rem,2.6vw,0.8125rem)] font-semibold leading-snug tracking-[0.06em] text-white sm:text-sm">
         La garantía con nosotros no es un problema: es nuestro estándar.
       </p>
-      <p className="mt-1.5 font-space text-[11px] leading-snug text-white/82 sm:text-xs sm:leading-relaxed">
+      <p className="guarantee-promise__body mt-1.5 font-space text-[11px] leading-snug text-white/82 sm:text-xs sm:leading-relaxed">
         Cada reparación queda respaldada de principio a fin. Si algo no cumple, nos hacemos cargo de todo — para
         que nunca te lleves un mal sabor de boca, solo la tranquilidad de haber elegido bien.
       </p>

@@ -526,7 +526,8 @@
       min-height: 0;
       height: auto;
       max-height: none;
-      justify-content: flex-start;
+      justify-content: center;
+      align-items: center;
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready]
@@ -555,16 +556,22 @@
       min-height: 0;
       height: 100%;
       max-height: 100%;
+      background: #000;
+      align-items: center;
+      justify-content: center;
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready]
       .inicio-mobile-slide__inner
       > button.inicio-home-card
       .inicio-home-card__img {
-      width: 100% !important;
+      width: auto !important;
+      max-width: 96% !important;
       height: 100% !important;
       max-height: 100% !important;
-      object-fit: cover !important;
+      margin-inline: auto;
+      object-fit: contain !important;
+      object-position: center center !important;
       transform: none !important;
     }
 
@@ -572,12 +579,12 @@
       .inicio-mobile-slide__inner
       > button.inicio-home-card[data-home-accent='amber']
       .inicio-home-card__img {
-      width: 100% !important;
+      width: auto !important;
+      max-width: 96% !important;
       height: 100% !important;
-      max-width: 100% !important;
       max-height: 100% !important;
       margin-inline: auto !important;
-      object-fit: cover !important;
+      object-fit: contain !important;
       object-position: center 28% !important;
       transform: none !important;
       transform-origin: center center !important;
@@ -585,16 +592,48 @@
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-top {
       flex: 0 0 auto;
-      gap: clamp(0.18rem, 0.5dvh, 0.35rem);
+      gap: var(--inicio-mobile-top-gap, 0.45rem);
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-logo {
       max-height: var(--inicio-mobile-logo-max-height, min(22dvh, 12rem));
     }
 
+    /* iPhone 8 Plus / zona corta: menos texto, más foto */
+    .inicio-screen[data-inicio-density='tight'] .guarantee-promise__body {
+      display: none;
+    }
+
+    .inicio-screen[data-inicio-density='tight'] .guarantee-promise__head {
+      margin-bottom: 0.3rem;
+    }
+
+    .inicio-screen[data-inicio-density='tight'] .guarantee-promise__restrictions {
+      margin-top: 0.2rem;
+      font-size: 0.5625rem;
+      opacity: 0.88;
+    }
+
+    .inicio-screen[data-inicio-density='tight'] .mobile-screen__header {
+      padding-block: 0.12rem 0.05rem;
+    }
+
+    .inicio-screen[data-inicio-density='tight'] .mobile-screen__header .screen-page-title,
+    .inicio-screen[data-inicio-density='tight'] .mobile-screen__header h1 {
+      font-size: clamp(1.05rem, 4.2vw, 1.25rem);
+      letter-spacing: 0.16em;
+    }
+
+    .inicio-screen[data-inicio-density='cozy'] .guarantee-promise__body {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-slide__inner {
       height: auto;
-      max-height: none;
+      max-height: var(--inicio-mobile-card-max-height, none);
       min-height: 0;
       padding-bottom: 0;
     }
@@ -680,20 +719,27 @@
       transform: none;
     }
 
-    .inicio-screen .inicio-mobile-guarantee.guarantee-promise .font-orbitron {
+    .inicio-screen .inicio-mobile-guarantee.guarantee-promise .font-orbitron,
+    .inicio-screen .inicio-mobile-guarantee.guarantee-promise .guarantee-promise__title {
       font-size: var(--inicio-mobile-guarantee-title-size, 0.65rem);
       letter-spacing: 0.18em;
     }
 
-    .inicio-screen .inicio-mobile-guarantee.guarantee-promise p.font-orbitron.font-semibold {
+    .inicio-screen .inicio-mobile-guarantee.guarantee-promise p.font-orbitron.font-semibold,
+    .inicio-screen .inicio-mobile-guarantee.guarantee-promise .guarantee-promise__lead {
       font-size: var(--inicio-mobile-guarantee-lead-size, 0.78rem);
+      line-height: 1.35;
+    }
+
+    .inicio-screen .inicio-mobile-guarantee.guarantee-promise p.font-space,
+    .inicio-screen .inicio-mobile-guarantee.guarantee-promise .guarantee-promise__body,
+    .inicio-screen .inicio-mobile-guarantee.guarantee-promise .guarantee-promise__restrictions {
+      font-size: var(--inicio-mobile-guarantee-body-size, 0.68rem);
       line-height: 1.4;
     }
 
-    .inicio-screen .inicio-mobile-guarantee.guarantee-promise p.font-space {
-      font-size: var(--inicio-mobile-guarantee-body-size, 0.68rem);
-      line-height: 1.45;
-      margin-top: 0.4rem;
+    .inicio-screen .inicio-mobile-guarantee.guarantee-promise .guarantee-promise__body {
+      margin-top: 0.35rem;
     }
 
     .inicio-screen .inicio-mobile-boxes,
@@ -1338,13 +1384,13 @@
       display: block;
       visibility: visible;
       margin: 0;
-      padding: 0.5rem 0.75rem 0.65rem !important;
-      min-height: 3rem;
+      padding: 0.4rem 0.65rem 0.5rem !important;
+      min-height: 2.4rem;
       max-height: none !important;
       overflow: visible !important;
       line-height: 1.3 !important;
       font-weight: 600;
-      font-size: var(--inicio-mobile-caption-size, 16px) !important;
+      font-size: var(--inicio-mobile-caption-size, 14px) !important;
       letter-spacing: 0.02em;
       text-align: center;
       text-wrap: balance;
@@ -1353,6 +1399,14 @@
       z-index: 2;
       background: #000;
       color: rgba(255, 255, 255, 0.95);
+    }
+
+    .inicio-screen[data-inicio-density='tight']
+      .inicio-mobile-slide__inner
+      > .inicio-home-card__caption--slide-out {
+      min-height: 2.15rem;
+      padding: 0.3rem 0.5rem 0.4rem !important;
+      font-size: var(--inicio-mobile-caption-size, 13px) !important;
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-slide__inner > button.inicio-home-card {
