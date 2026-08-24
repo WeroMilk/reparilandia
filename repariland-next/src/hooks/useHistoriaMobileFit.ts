@@ -8,19 +8,18 @@ const STORY_FONT_MIN_PX = 10;
 const FILL_RATIO = 0.98;
 
 function getTimelineMaxScale(zoneHeight: number, viewportWidth: number): number {
-  /* iPhone 8 Plus (~414×736): un poco más grande, sin volver a cortar. */
-  if (zoneHeight < 460 || viewportWidth <= 414) return 1.1;
-  if (zoneHeight >= 560 || viewportWidth >= 430) return 1.34;
-  if (zoneHeight >= 500 || viewportWidth >= 390) return 1.24;
-  if (zoneHeight >= 440) return 1.16;
-  return 1.08;
+  if (zoneHeight < 460 || viewportWidth <= 414) return 1.22;
+  if (zoneHeight >= 560 || viewportWidth >= 430) return 1.48;
+  if (zoneHeight >= 500 || viewportWidth >= 390) return 1.38;
+  if (zoneHeight >= 440) return 1.28;
+  return 1.18;
 }
 
 function getTimelineStartScale(zoneHeight: number, viewportWidth: number): number {
-  if (zoneHeight < 460 || viewportWidth <= 414) return 1;
-  if (zoneHeight >= 500) return 1.1;
-  if (zoneHeight >= 420) return 1.04;
-  return 1;
+  if (zoneHeight < 460 || viewportWidth <= 414) return 1.08;
+  if (zoneHeight >= 500) return 1.18;
+  if (zoneHeight >= 420) return 1.12;
+  return 1.06;
 }
 
 function measureBlockFit(
@@ -83,26 +82,26 @@ function fitEtColumn(panel: HTMLElement, compactPhone: boolean) {
   etImg.style.removeProperty('transform');
   const colRect = etCol.getBoundingClientRect();
   const imgRect = etImg.getBoundingClientRect();
-  const fallback = compactPhone ? 2.15 : 2.45;
+  const fallback = compactPhone ? 2.55 : 2.9;
   if (colRect.height < 8 || imgRect.height < 8) {
     setPanelVar(panel, '--historia-et-scale', String(fallback));
     return;
   }
 
-  const scaleByH = (colRect.height * 0.95) / imgRect.height;
-  const scaleByW = (colRect.width * 0.95) / imgRect.width;
+  const scaleByH = (colRect.height * 0.98) / imgRect.height;
+  const scaleByW = (colRect.width * 0.98) / imgRect.width;
   const fitScale = Math.min(scaleByH, scaleByW);
-  const boost = compactPhone ? 2.05 : 2.35;
-  const maxScale = compactPhone ? 2.75 : 3.5;
-  const minScale = compactPhone ? 1.85 : 2.05;
+  const boost = compactPhone ? 2.45 : 2.75;
+  const maxScale = compactPhone ? 3.35 : 4.1;
+  const minScale = compactPhone ? 2.2 : 2.45;
   const etScale = Math.min(maxScale, Math.max(minScale, fitScale * boost));
   setPanelVar(panel, '--historia-et-scale', String(Math.round(etScale * 1000) / 1000));
 }
 
 function shrinkTimelineCopyFonts(panel: HTMLElement, zoneHeight: number, viewportWidth: number) {
   const compact = zoneHeight < 460 || viewportWidth <= 414;
-  const yearSize = compact ? 12.5 : Math.min(15, Math.max(13, Math.round(11 + zoneHeight * 0.013)));
-  const textSize = compact ? 13 : Math.min(15.5, Math.max(13, Math.round(11.5 + zoneHeight * 0.014)));
+  const yearSize = compact ? 14 : Math.min(17, Math.max(14, Math.round(12.5 + zoneHeight * 0.015)));
+  const textSize = compact ? 14.5 : Math.min(17.5, Math.max(14.5, Math.round(13 + zoneHeight * 0.016)));
   setPanelVar(panel, '--historia-timeline-year-px', `${yearSize}px`);
   setPanelVar(panel, '--historia-timeline-text-px', `${textSize}px`);
 }
@@ -347,8 +346,8 @@ function fitStoryPanel(panel: HTMLElement, zoneHeight: number): { fits: boolean 
 
 function fitTimelineTitle(panel: HTMLElement, titleEl: HTMLElement, zoneHeight: number) {
   const size = Math.min(
-    17,
-    Math.max(12, Math.round(11 + zoneHeight * 0.018)),
+    19,
+    Math.max(13, Math.round(12 + zoneHeight * 0.02)),
   );
   titleEl.style.fontSize = `${size}px`;
   setPanelVar(panel, '--historia-timeline-title-px', `${size}px`);
@@ -386,15 +385,15 @@ function fitTimelinePanel(
 
   /* Si aún no cabe, baja tipografía otra vez y re-mide. */
   if (!measure.fits && compactPhone) {
-    setPanelVar(panel, '--historia-timeline-year-px', '11.5px');
-    setPanelVar(panel, '--historia-timeline-text-px', '12px');
+    setPanelVar(panel, '--historia-timeline-year-px', '12.5px');
+    setPanelVar(panel, '--historia-timeline-text-px', '13px');
     measure = growScaleToFill(
       panel,
       listEl,
       panelMain,
       '--historia-timeline-scale',
-      0.96,
-      1.06,
+      1.02,
+      1.14,
       titleEl ? [titleEl] : [],
       TIMELINE_MIN_SCALE,
     );
