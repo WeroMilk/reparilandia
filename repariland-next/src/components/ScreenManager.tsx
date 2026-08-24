@@ -9,11 +9,16 @@ import type { ScreenName } from '@/types';
 import { getScreenEnterMotion, MOTION_IOS_EASE_OUT, SCREEN_LAYER_TRANSITION } from '@/lib/motionPresets';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-const HistoriaScreen = dynamic(() => import('./screens/HistoriaScreen'));
+const HistoriaScreen = dynamic(() => import('./screens/HistoriaScreen'), {
+  loading: () => null,
+});
 const ServiciosScreen = dynamic(() => import('./screens/ServiciosScreen'));
 const NoticiasScreen = dynamic(() => import('./screens/NoticiasScreen'));
 const ReelsScreen = dynamic(() => import('./screens/ReelsScreen'));
 const ContactoScreen = dynamic(() => import('./screens/ContactoScreen'));
+
+/** Pantallas caras de remount: se quedan vivas tras la primera visita. */
+const KEEP_ALIVE_SCREENS = new Set<ScreenName>(['inicio', 'historia']);
 
 const MOBILE_SCREEN_LAYER_TRANSITION = {
   opacity: { duration: 0.22, ease: MOTION_IOS_EASE_OUT },
@@ -65,9 +70,11 @@ export default function ScreenManager({
   const [mountedScreens, setMountedScreens] = useState<Set<ScreenName>>(
     () => new Set([currentScreen]),
   );
+  const visitedRef = useRef<Set<ScreenName>>(new Set([currentScreen]));
   const prevScreenRef = useRef(currentScreen);
 
   useEffect(() => {
+    visitedRef.current.add(currentScreen);
     setMountedScreens((prev) => {
       if (prev.has(currentScreen)) return prev;
       const next = new Set(prev);
@@ -78,10 +85,34 @@ export default function ScreenManager({
 
   useEffect(() => {
     const t = window.setTimeout(() => {
-      setMountedScreens(new Set([currentScreen]));
+      const keep = new Set<ScreenName>([currentScreen]);
+      for (const s of visitedRef.current) {
+        if (KEEP_ALIVE_SCREENS.has(s)) keep.add(s);
+      }
+      setMountedScreens(keep);
     }, UNMOUNT_DELAY_MS);
     return () => window.clearTimeout(t);
   }, [currentScreen]);
+
+  /* Precarga Historia en idle: evita el “lag” del dynamic import al primer toque. */
+  useEffect(() => {
+    let cancelled = false;
+    let timeoutId = 0;
+    let idleId = 0;
+    const load = () => {
+      if (!cancelled) void import('./screens/HistoriaScreen');
+    };
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      idleId = window.requestIdleCallback(load, { timeout: 1800 });
+    } else {
+      timeoutId = window.setTimeout(load, 600);
+    }
+    return () => {
+      cancelled = true;
+      if (idleId && 'cancelIdleCallback' in window) window.cancelIdleCallback(idleId);
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, []);
 
   const isScreenEntering = currentScreen !== prevScreenRef.current;
   useEffect(() => {

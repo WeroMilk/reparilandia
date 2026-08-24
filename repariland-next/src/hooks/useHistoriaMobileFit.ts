@@ -3,7 +3,6 @@ import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
 const MIN_SCALE = 0.88;
 const TIMELINE_MIN_SCALE = 0.72;
-const SCALE_STEP = 0.02;
 const STORY_FONT_MIN_PX = 10;
 const FILL_RATIO = 0.98;
 
@@ -116,33 +115,47 @@ function growScaleToFill(
   chromeEls: HTMLElement[] = [],
   minScale = MIN_SCALE,
 ): { fits: boolean; available: number; contentHeight: number } {
-  let scale = startScale;
+  /* Una o dos mediciones en lugar de bucle de reflows (más rápido al entrar a Historia). */
+  setPanelVar(panel, varName, String(startScale));
+  target.style.setProperty(varName, String(startScale));
   let measure = measureBlockFit(measureContainer, target, chromeEls);
 
-  setPanelVar(panel, varName, String(scale));
-  target.style.setProperty(varName, String(scale));
-  measure = measureBlockFit(measureContainer, target, chromeEls);
-
-  while (!measure.fits && scale > minScale + 0.001) {
-    scale = Math.max(minScale, Math.round((scale - SCALE_STEP) * 1000) / 1000);
+  let scale = startScale;
+  if (!measure.fits && measure.contentHeight > 0) {
+    scale = Math.max(
+      minScale,
+      Math.min(maxScale, (startScale * measure.available) / measure.contentHeight),
+    );
+    scale = Math.round(scale * 100) / 100;
     setPanelVar(panel, varName, String(scale));
     target.style.setProperty(varName, String(scale));
     measure = measureBlockFit(measureContainer, target, chromeEls);
-  }
-
-  const growCap = Math.round((maxScale + 0.06) * 1000) / 1000;
-  while (
+    if (!measure.fits && scale > minScale) {
+      scale = Math.max(minScale, Math.round((scale - 0.04) * 100) / 100);
+      setPanelVar(panel, varName, String(scale));
+      target.style.setProperty(varName, String(scale));
+      measure = measureBlockFit(measureContainer, target, chromeEls);
+    }
+  } else if (
     measure.fits &&
     measure.contentHeight < measure.available * FILL_RATIO &&
-    scale < growCap - 0.001
+    startScale < maxScale
   ) {
-    const next = Math.round((scale + SCALE_STEP) * 1000) / 1000;
-    setPanelVar(panel, varName, String(next));
-    target.style.setProperty(varName, String(next));
-    const trial = measureBlockFit(measureContainer, target, chromeEls);
-    if (!trial.fits || trial.contentHeight > measure.available + 2) break;
-    scale = next;
-    measure = trial;
+    const grown = Math.min(
+      maxScale,
+      Math.round(((startScale * measure.available * FILL_RATIO) / Math.max(1, measure.contentHeight)) * 100) /
+        100,
+    );
+    if (grown > startScale + 0.02) {
+      setPanelVar(panel, varName, String(grown));
+      target.style.setProperty(varName, String(grown));
+      const trial = measureBlockFit(measureContainer, target, chromeEls);
+      if (trial.fits) measure = trial;
+      else {
+        setPanelVar(panel, varName, String(startScale));
+        target.style.setProperty(varName, String(startScale));
+      }
+    }
   }
 
   return measure;
@@ -422,7 +435,8 @@ function clearAllPanels(screen: HTMLElement) {
 }
 
 /**
- * Escala los 4 paneles de Historia (móvil) de una vez para que el carrusel no “salte” al deslizar.
+ * Escala los paneles de Historia (móvil).
+ * Cachea por tamaño de zona y prioriza el panel visible para no bloquear la navegación.
  */
 export function useHistoriaMobileFit(enabled: boolean) {
   useEffect(() => {
@@ -434,13 +448,30 @@ export function useHistoriaMobileFit(enabled: boolean) {
     if (!screen) return;
 
     const desktopMq = window.matchMedia('(min-width: 1024px)');
+    let lastCacheKey = '';
+    let idleTimer = 0;
+    let running = false;
 
-    const runFit = () => {
+    const fitSlide = (slide: HTMLElement, index: number, zoneHeight: number, viewportWidth: number) => {
+      const panel = slide.querySelector<HTMLElement>('.hm-panel, .historia-panel');
+      if (!panel) return true;
+      clearPanelVars(panel);
+      const result =
+        index === 0
+          ? fitTimelinePanel(panel, zoneHeight, viewportWidth)
+          : fitStoryPanel(panel, zoneHeight);
+      panel.setAttribute('data-hm-fitted', 'true');
+      return result.fits;
+    };
+
+    const runFit = (force = false) => {
+      if (running) return;
       if (desktopMq.matches) {
         screen.removeAttribute('data-historia-fit-ready');
         screen.removeAttribute('data-historia-scroll-fallback');
         screen.removeAttribute('data-historia-tall');
         clearAllPanels(screen);
+        lastCacheKey = '';
         return;
       }
 
@@ -459,60 +490,68 @@ export function useHistoriaMobileFit(enabled: boolean) {
         0;
       const vv = window.visualViewport;
       const viewportWidth = vv?.width ?? window.innerWidth;
-      const isTallZone = zoneHeight >= 520;
-
-      const slides = screen.querySelectorAll<HTMLElement>(
-        '.hm-slide, .historia-timeline-slide, .historia-story-slide',
-      );
-
-      let allFit = true;
-
-      slides.forEach((slide, index) => {
-        const panel = slide.querySelector<HTMLElement>('.hm-panel, .historia-panel');
-        if (!panel) return;
-
-        clearPanelVars(panel);
-
-        const result =
-          index === 0
-            ? fitTimelinePanel(panel, zoneHeight, viewportWidth)
-            : fitStoryPanel(panel, zoneHeight);
-
-        if (!result.fits) allFit = false;
-        panel.setAttribute('data-hm-fitted', 'true');
-      });
-
-      if (isTallZone) {
-        screen.setAttribute('data-historia-tall', 'true');
-      } else {
-        screen.removeAttribute('data-historia-tall');
+      const cacheKey = `${Math.round(zoneHeight)}x${Math.round(viewportWidth)}`;
+      if (!force && cacheKey === lastCacheKey && screen.hasAttribute('data-historia-fit-ready')) {
+        return;
       }
 
-      screen.setAttribute('data-historia-fit-ready', 'true');
-      if (allFit) {
-        screen.removeAttribute('data-historia-scroll-fallback');
-      } else {
-        screen.setAttribute('data-historia-scroll-fallback', 'true');
+      running = true;
+      try {
+        const isTallZone = zoneHeight >= 520;
+        const slides = [
+          ...screen.querySelectorAll<HTMLElement>(
+            '.hm-slide, .historia-timeline-slide, .historia-story-slide',
+          ),
+        ];
+
+        /* Primero el slide visible (o el 0): la UI responde al instante. */
+        const activeIdx = Math.max(
+          0,
+          slides.findIndex((s) => {
+            const r = s.getBoundingClientRect();
+            return r.width > 8 && r.left < window.innerWidth * 0.6 && r.right > window.innerWidth * 0.4;
+          }),
+        );
+        const first = activeIdx >= 0 ? activeIdx : 0;
+        let allFit = fitSlide(slides[first], first, zoneHeight, viewportWidth);
+
+        if (isTallZone) screen.setAttribute('data-historia-tall', 'true');
+        else screen.removeAttribute('data-historia-tall');
+        screen.setAttribute('data-historia-fit-ready', 'true');
+        lastCacheKey = cacheKey;
+
+        if (idleTimer) window.clearTimeout(idleTimer);
+        idleTimer = window.setTimeout(() => {
+          for (let i = 0; i < slides.length; i += 1) {
+            if (i === first) continue;
+            if (!fitSlide(slides[i], i, zoneHeight, viewportWidth)) allFit = false;
+          }
+          if (allFit) screen.removeAttribute('data-historia-scroll-fallback');
+          else screen.setAttribute('data-historia-scroll-fallback', 'true');
+        }, 32);
+      } finally {
+        running = false;
       }
     };
 
     const dock = document.querySelector('[data-app-dock]');
 
-    const cleanup = subscribeMobileLayout(() => runFit(), {
+    const cleanup = subscribeMobileLayout(() => runFit(false), {
       observe: [screen, dock],
       mediaQueries: [desktopMq],
     });
 
+    /* Entrada a la pestaña: forzar un fit rápido del panel visible. */
+    runFit(true);
+
     if (document.fonts?.ready) {
-      document.fonts.ready.then(() => runFit()).catch(() => {});
+      document.fonts.ready.then(() => runFit(true)).catch(() => {});
     }
 
     return () => {
       cleanup();
-      screen.removeAttribute('data-historia-fit-ready');
-      screen.removeAttribute('data-historia-scroll-fallback');
-      screen.removeAttribute('data-historia-tall');
-      clearAllPanels(screen);
+      if (idleTimer) window.clearTimeout(idleTimer);
+      /* No limpiar paneles al desactivar: conserva el layout para el próximo visit. */
     };
   }, [enabled]);
 }

@@ -77,8 +77,8 @@ function StoryPanel({ worker }: { worker: HistoriaWorker }) {
   );
 }
 
-/** Carrusel montado solo con la pestaña activa (evita Embla en capas ocultas). */
-function HistoriaMobileCarousel() {
+/** Carrusel persistente: Embla + fit no se recrean al volver a la pestaña. */
+function HistoriaMobileCarousel({ isScreenActive }: { isScreenActive: boolean }) {
   const [emblaRef, emblaApi, scrollTo] = useSmoothEmblaCarousel({
     axis: 'x',
     align: 'start',
@@ -87,7 +87,7 @@ function HistoriaMobileCarousel() {
   });
   const [slideIndex, setSlideIndex] = useState(0);
 
-  useHistoriaMobileFit(true);
+  useHistoriaMobileFit(isScreenActive);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -102,19 +102,19 @@ function HistoriaMobileCarousel() {
   }, [emblaApi]);
 
   useEffect(() => {
-    if (!emblaApi) return;
+    if (!emblaApi || !isScreenActive) return;
     const id = requestAnimationFrame(() => emblaApi.reInit());
     return () => cancelAnimationFrame(id);
-  }, [emblaApi]);
+  }, [emblaApi, isScreenActive]);
 
   return (
     <motion.div
       className="hm-carousel historia-mobile-carousel lg:hidden"
       role="region"
       aria-label="Historia de Reparilandia"
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+      initial={false}
+      animate={{ opacity: isScreenActive ? 1 : 0 }}
+      transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="hm-carousel__stage">
         <div ref={emblaRef} className="hm-carousel__viewport embla-fluid overflow-hidden">
@@ -157,9 +157,6 @@ function HistoriaMobileCarousel() {
 export default function HistoriaMobileView({ isScreenActive = true }: { isScreenActive?: boolean }) {
   useHistoriaMobileZone(isScreenActive);
 
-  if (!isScreenActive) {
-    return <div className="hm-carousel hm-carousel--idle lg:hidden" aria-hidden />;
-  }
-
-  return <HistoriaMobileCarousel />;
+  /* Carrusel siempre montado mientras viva la pantalla (keep-alive en ScreenManager). */
+  return <HistoriaMobileCarousel isScreenActive={isScreenActive} />;
 }
