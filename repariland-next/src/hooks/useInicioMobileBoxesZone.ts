@@ -3,18 +3,23 @@ import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 import { measureMobileContentZone } from '@/lib/mobileContentZone';
 
 /**
- * Inicio móvil:
- * - Zona útil = header → tope del dock (los circulos no tapan fotos/dots).
- * - El hueco entre Garantía y el rectángulo se usa para ESTIRAR la card.
- * - Dots quedan justo bajo la card, sobre el dock.
+ * Inicio móvil — misma composición en Android e iOS:
+ * logo → eslogan (2px) → espacio → Garantía → espacio → card (llena el hueco) → dots → dock.
+ * Escala por alto de zona; no cambia el “look” entre densidades.
  */
-const DOCK_CLEARANCE_PX = 2;
-const FOOT_FLOOR_PX = 10;
+const DOCK_CLEARANCE_PX = 4;
+const FOOT_FLOOR_PX = 12;
 const CAPTION_FLOOR_PX = 36;
 const CARD_CHROME_PX = 3;
 const BORDER_CLEARANCE_PX = 4;
-const BOTTOM_EDGE_PX = 3;
 const STABLE_EPS_PX = 2;
+
+/** Gaps fijos del layout de referencia (captura Inicio). */
+const BRAND_GAP_PX = 2;
+const SLOGAN_TO_GUARANTEE_PX = 10;
+const STAGE_GAP_PX = 10;
+const EDGE_GUTTER_PX = 8;
+const CARD_WIDTH_RATIO = 0.96;
 
 type Density = 'tight' | 'cozy' | 'roomy';
 
@@ -22,6 +27,13 @@ function densityFor(zoneH: number): Density {
   if (zoneH < 420) return 'tight';
   if (zoneH < 540) return 'cozy';
   return 'roomy';
+}
+
+/** Logo ~14% de la zona útil, acotado para que se vea igual en 8 Plus / Pixel / Pro. */
+function logoMaxRem(zoneH: number): number {
+  const px = Math.round(zoneH * 0.145);
+  const rem = px / 16;
+  return Math.min(8.5, Math.max(5.75, rem));
 }
 
 export function useInicioMobileBoxesZone(enabled: boolean) {
@@ -75,6 +87,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         '--inicio-mobile-guarantee-title-size',
         '--inicio-mobile-guarantee-lead-size',
         '--inicio-mobile-guarantee-body-size',
+        '--inicio-mobile-slogan-to-guarantee',
       ].forEach((p) => screen.style.removeProperty(p));
     };
 
@@ -84,53 +97,26 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       screen.style.setProperty(name, `${Math.round(value)}px`);
     };
 
-    const applyDensityTokens = (screen: HTMLElement, density: Density, W: number) => {
-      const edgeGutter = density === 'tight' ? 6 : density === 'cozy' ? 8 : 10;
+    /** Misma receta visual en todos los teléfonos; solo escala el logo con la zona. */
+    const applySharedTokens = (screen: HTMLElement, zoneH: number, W: number) => {
       const cardMaxWidth = Math.round(
-        Math.min(W - edgeGutter * 2, Math.round(W * (density === 'tight' ? 0.96 : 0.97))),
+        Math.min(W - EDGE_GUTTER_PX * 2, Math.round(W * CARD_WIDTH_RATIO)),
       );
+      const logoRem = logoMaxRem(zoneH);
 
-      if (density === 'tight') {
-        screen.style.setProperty('--inicio-mobile-logo-max-height', '6.25rem');
-        screen.style.setProperty('--inicio-mobile-slogan-size', '0.6rem');
-        screen.style.setProperty('--inicio-mobile-stage-gap', '10px');
-        screen.style.setProperty('--inicio-mobile-top-gap', '8px');
-        screen.style.setProperty('--inicio-mobile-brand-gap', '2px');
-        screen.style.setProperty('--inicio-mobile-foot-gap', '2px');
-        screen.style.setProperty('--inicio-mobile-caption-size', '13px');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.18rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.4rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.48rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.6rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.55rem');
-      } else if (density === 'cozy') {
-        screen.style.setProperty('--inicio-mobile-logo-max-height', '7.75rem');
-        screen.style.setProperty('--inicio-mobile-slogan-size', '0.65rem');
-        screen.style.setProperty('--inicio-mobile-stage-gap', '12px');
-        screen.style.setProperty('--inicio-mobile-top-gap', '10px');
-        screen.style.setProperty('--inicio-mobile-brand-gap', '2px');
-        screen.style.setProperty('--inicio-mobile-foot-gap', '2px');
-        screen.style.setProperty('--inicio-mobile-caption-size', '14px');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.22rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.5rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.52rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.65rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.575rem');
-      } else {
-        screen.style.setProperty('--inicio-mobile-logo-max-height', '9.25rem');
-        screen.style.setProperty('--inicio-mobile-slogan-size', '0.7rem');
-        screen.style.setProperty('--inicio-mobile-stage-gap', '14px');
-        screen.style.setProperty('--inicio-mobile-top-gap', '12px');
-        screen.style.setProperty('--inicio-mobile-brand-gap', '2px');
-        screen.style.setProperty('--inicio-mobile-foot-gap', '2px');
-        screen.style.setProperty('--inicio-mobile-caption-size', '14px');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.25rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.55rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.54rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.68rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.6rem');
-      }
-
+      screen.style.setProperty('--inicio-mobile-logo-max-height', `${logoRem.toFixed(2)}rem`);
+      screen.style.setProperty('--inicio-mobile-slogan-size', '0.65rem');
+      screen.style.setProperty('--inicio-mobile-stage-gap', `${STAGE_GAP_PX}px`);
+      screen.style.setProperty('--inicio-mobile-top-gap', '0px');
+      screen.style.setProperty('--inicio-mobile-brand-gap', `${BRAND_GAP_PX}px`);
+      screen.style.setProperty('--inicio-mobile-slogan-to-guarantee', `${SLOGAN_TO_GUARANTEE_PX}px`);
+      screen.style.setProperty('--inicio-mobile-foot-gap', '2px');
+      screen.style.setProperty('--inicio-mobile-caption-size', '14px');
+      screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.22rem');
+      screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.5rem');
+      screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.52rem');
+      screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.65rem');
+      screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.575rem');
       screen.style.setProperty('--inicio-mobile-border-clearance', `${BORDER_CLEARANCE_PX}px`);
       screen.style.setProperty('--inicio-mobile-hover-inset', '2px');
       screen.style.setProperty('--inicio-mobile-slide-gap', '0px');
@@ -138,15 +124,12 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       screen.style.setProperty('--inicio-mobile-guarantee-scale', '1');
       screen.style.setProperty('--inicio-mobile-block-offset-top', '0px');
       screen.style.setProperty('--inicio-mobile-block-offset-bottom', '0px');
-      screen.style.setProperty(
-        '--inicio-mobile-rhythm',
-        screen.style.getPropertyValue('--inicio-mobile-stage-gap'),
-      );
+      screen.style.setProperty('--inicio-mobile-rhythm', `${STAGE_GAP_PX}px`);
 
-      return { edgeGutter, cardMaxWidth };
+      return { edgeGutter: EDGE_GUTTER_PX, cardMaxWidth };
     };
 
-    const measure = (finalPass = false) => {
+    const measure = () => {
       const screen = resolveScreen();
       if (desktopMq.matches) {
         clearZone(screen);
@@ -154,7 +137,6 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       }
       if (!screen?.querySelector('.inicio-mobile-top')) return;
 
-      /* Clearance extra: dots + caption nunca bajo los circulos de color. */
       const zone = measureMobileContentZone(screen, { dockClearancePx: DOCK_CLEARANCE_PX });
       if (!zone || zone.zoneHeight < 160) return;
 
@@ -167,7 +149,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       if (density === 'tight') screen.setAttribute('data-inicio-compact-zone', 'true');
       else screen.removeAttribute('data-inicio-compact-zone');
 
-      const { edgeGutter, cardMaxWidth } = applyDensityTokens(screen, density, W);
+      const { edgeGutter, cardMaxWidth } = applySharedTokens(screen, H, W);
 
       const topEl = screen.querySelector<HTMLElement>('.inicio-mobile-top');
       const footEl = screen.querySelector<HTMLElement>('.inicio-mobile-carousel-foot');
@@ -175,9 +157,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         '.inicio-mobile-slide__inner .inicio-home-card__caption--slide-out',
       );
 
-      const stageGap = Number.parseFloat(screen.style.getPropertyValue('--inicio-mobile-stage-gap')) || 4;
-
-      let topH = topEl ? Math.ceil(topEl.getBoundingClientRect().height) : 0;
+      const topH = topEl ? Math.ceil(topEl.getBoundingClientRect().height) : 0;
       const footH = Math.max(
         FOOT_FLOOR_PX,
         footEl ? Math.ceil(footEl.getBoundingClientRect().height) + 1 : 0,
@@ -185,39 +165,22 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       const captionH = captionEl
         ? Math.ceil(captionEl.getBoundingClientRect().height)
         : CAPTION_FLOOR_PX;
-      const captionReserve = Math.max(
-        density === 'tight' ? 36 : CAPTION_FLOOR_PX,
-        captionH + (density === 'tight' ? 2 : 4),
-      );
+      const captionReserve = Math.max(CAPTION_FLOOR_PX, captionH + 4);
 
-      const topBudget = Math.round(H * (density === 'tight' ? 0.36 : density === 'cozy' ? 0.38 : 0.42));
-      if (finalPass && topEl && topH > topBudget + 4) {
-        const logoNow =
-          Number.parseFloat(screen.style.getPropertyValue('--inicio-mobile-logo-max-height')) || 6.25;
-        const floor = density === 'tight' ? 5.5 : density === 'cozy' ? 6.75 : 8;
-        screen.style.setProperty(
-          '--inicio-mobile-logo-max-height',
-          `${Math.max(floor, logoNow - 0.3).toFixed(2)}rem`,
-        );
-        topH = Math.ceil(topEl.getBoundingClientRect().height);
-      }
-
-      const overhead = Math.max(0, stageGap);
-      /* Usar todo el hueco bajo logo/garantía hasta los dots/dock (+ boost ligero). */
-      const availableCard = Math.max(190, H - topH - footH - overhead + 8);
+      /* Card llena el hueco Garantía → dots/dock (misma idea en todos los phones). */
+      const availableCard = Math.max(180, H - topH - footH - STAGE_GAP_PX);
       const cardMax = availableCard;
-      const roomForHero = Math.max(160, cardMax - captionReserve - CARD_CHROME_PX);
+      const roomForHero = Math.max(150, cardMax - captionReserve - CARD_CHROME_PX);
       const heroMax = roomForHero;
       const track = cardMax;
-
-      const zoneSpan = Math.max(160, H - topH - stageGap);
+      const zoneSpan = Math.max(160, H - topH - STAGE_GAP_PX);
 
       setPx(screen, '--inicio-mobile-body-zone-height', H);
       setPx(screen, '--inicio-mobile-boxes-zone-height', zoneSpan);
       setPx(screen, '--inicio-mobile-carousel-track-height', track);
       setPx(screen, '--inicio-mobile-scroll-page-height', track);
       setPx(screen, '--inicio-mobile-edge-gutter', edgeGutter);
-      setPx(screen, '--inicio-mobile-section-gap', stageGap);
+      setPx(screen, '--inicio-mobile-section-gap', STAGE_GAP_PX);
       setPx(screen, '--inicio-mobile-card-max-width', cardMaxWidth);
       setPx(screen, '--inicio-mobile-card-max-height', cardMax);
       setPx(screen, '--inicio-mobile-hero-max-height', heroMax);
@@ -225,13 +188,12 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       setPx(screen, '--inicio-mobile-carousel-foot-reserve', footH);
       setPx(screen, '--inicio-mobile-bottom-margin', footH);
 
-      void cardMaxWidth;
       screen.setAttribute('data-inicio-layout-ready', 'true');
     };
 
     const runMeasure = () => {
-      measure(false);
-      requestAnimationFrame(() => measure(true));
+      measure();
+      requestAnimationFrame(() => measure());
     };
 
     const screen = resolveScreen();
