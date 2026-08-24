@@ -98,11 +98,11 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         screen.style.setProperty('--inicio-mobile-brand-gap', '2px');
         screen.style.setProperty('--inicio-mobile-foot-gap', '4px');
         screen.style.setProperty('--inicio-mobile-caption-size', '13px');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.32rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.55rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.5625rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.6875rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.625rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.22rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.45rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.5rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.625rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.5625rem');
       } else if (density === 'cozy') {
         screen.style.setProperty('--inicio-mobile-logo-max-height', '6.75rem');
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.7rem');
@@ -111,11 +111,11 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         screen.style.setProperty('--inicio-mobile-brand-gap', '4px');
         screen.style.setProperty('--inicio-mobile-foot-gap', '5px');
         screen.style.setProperty('--inicio-mobile-caption-size', '14px');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.42rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.7rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.6rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.75rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.65rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.28rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.55rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.54rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.6875rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.6rem');
       } else {
         screen.style.setProperty('--inicio-mobile-logo-max-height', '8.25rem');
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.78rem');
@@ -124,11 +124,11 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         screen.style.setProperty('--inicio-mobile-brand-gap', '6px');
         screen.style.setProperty('--inicio-mobile-foot-gap', '6px');
         screen.style.setProperty('--inicio-mobile-caption-size', '15px');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.5rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.8rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.65rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.8125rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.7rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.32rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.6rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.56rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.72rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.625rem');
       }
 
       screen.style.setProperty('--inicio-mobile-border-clearance', `${BORDER_CLEARANCE_PX}px`);

@@ -679,17 +679,46 @@
     }
 
     /* iPhone 8 Plus / zona corta: menos texto, más foto */
-    .inicio-screen[data-inicio-density='tight'] .guarantee-promise__body {
+    .inicio-screen[data-inicio-density='tight'] .guarantee-promise__body,
+    .inicio-screen[data-inicio-density='cozy'] .guarantee-promise__body {
       display: none;
     }
 
+    .inicio-screen[data-inicio-density='roomy'] .guarantee-promise__body {
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-top: 0.2rem;
+    }
+
+    .inicio-screen[data-inicio-fill-zone] .inicio-mobile-guarantee.guarantee-promise .guarantee-promise__head {
+      margin-bottom: 0.2rem;
+      gap: 0.3rem;
+    }
+
+    .inicio-screen[data-inicio-fill-zone] .inicio-mobile-guarantee.guarantee-promise .guarantee-promise__head svg {
+      width: 0.85rem;
+      height: 0.85rem;
+    }
+
+    .inicio-screen[data-inicio-fill-zone] .inicio-mobile-guarantee.guarantee-promise .guarantee-promise__lead {
+      line-height: 1.25;
+    }
+
+    .inicio-screen[data-inicio-fill-zone] .inicio-mobile-guarantee.guarantee-promise .guarantee-promise__restrictions {
+      margin-top: 0.15rem;
+      font-size: 0.55rem;
+      opacity: 0.88;
+    }
+
     .inicio-screen[data-inicio-density='tight'] .guarantee-promise__head {
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.15rem;
     }
 
     .inicio-screen[data-inicio-density='tight'] .guarantee-promise__restrictions {
-      margin-top: 0.2rem;
-      font-size: 0.5625rem;
+      margin-top: 0.12rem;
+      font-size: 0.5rem;
       opacity: 0.88;
     }
 
@@ -701,13 +730,6 @@
     .inicio-screen[data-inicio-density='tight'] .mobile-screen__header h1 {
       font-size: clamp(1.05rem, 4.2vw, 1.25rem);
       letter-spacing: 0.16em;
-    }
-
-    .inicio-screen[data-inicio-density='cozy'] .guarantee-promise__body {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-slide__inner {
@@ -791,34 +813,34 @@
       margin-top: 0;
       margin-bottom: 0;
       width: 100%;
-      max-width: var(--inicio-mobile-card-max-width, min(92vw, 22rem));
+      max-width: var(--inicio-mobile-card-max-width, min(88vw, 20rem));
       margin-inline: auto;
-      padding: var(--inicio-mobile-guarantee-pad-y, 0.5rem) var(--inicio-mobile-guarantee-pad-x, 0.75rem);
+      padding: var(--inicio-mobile-guarantee-pad-y, 0.28rem) var(--inicio-mobile-guarantee-pad-x, 0.55rem);
       box-sizing: border-box;
       transform: none;
     }
 
     .inicio-screen .inicio-mobile-guarantee.guarantee-promise .font-orbitron,
     .inicio-screen .inicio-mobile-guarantee.guarantee-promise .guarantee-promise__title {
-      font-size: var(--inicio-mobile-guarantee-title-size, 0.65rem);
-      letter-spacing: 0.18em;
+      font-size: var(--inicio-mobile-guarantee-title-size, 0.56rem);
+      letter-spacing: 0.16em;
     }
 
     .inicio-screen .inicio-mobile-guarantee.guarantee-promise p.font-orbitron.font-semibold,
     .inicio-screen .inicio-mobile-guarantee.guarantee-promise .guarantee-promise__lead {
-      font-size: var(--inicio-mobile-guarantee-lead-size, 0.78rem);
-      line-height: 1.35;
+      font-size: var(--inicio-mobile-guarantee-lead-size, 0.7rem);
+      line-height: 1.25;
     }
 
     .inicio-screen .inicio-mobile-guarantee.guarantee-promise p.font-space,
     .inicio-screen .inicio-mobile-guarantee.guarantee-promise .guarantee-promise__body,
     .inicio-screen .inicio-mobile-guarantee.guarantee-promise .guarantee-promise__restrictions {
-      font-size: var(--inicio-mobile-guarantee-body-size, 0.68rem);
-      line-height: 1.4;
+      font-size: var(--inicio-mobile-guarantee-body-size, 0.6rem);
+      line-height: 1.3;
     }
 
     .inicio-screen .inicio-mobile-guarantee.guarantee-promise .guarantee-promise__body {
-      margin-top: 0.35rem;
+      margin-top: 0.2rem;
     }
 
     .inicio-screen .inicio-mobile-boxes,
@@ -970,7 +992,7 @@
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-guarantee.guarantee-promise {
       margin-top: 0;
       margin-bottom: 0;
-      padding: var(--inicio-mobile-guarantee-pad-y, 0.5rem) var(--inicio-mobile-guarantee-pad-x, 0.75rem);
+      padding: var(--inicio-mobile-guarantee-pad-y, 0.28rem) var(--inicio-mobile-guarantee-pad-x, 0.55rem);
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-top {
@@ -978,9 +1000,9 @@
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-guarantee.guarantee-promise p.font-space {
-      margin-top: 0.4rem;
-      font-size: var(--inicio-mobile-guarantee-body-size, 0.68rem);
-      line-height: 1.45;
+      margin-top: 0.2rem;
+      font-size: var(--inicio-mobile-guarantee-body-size, 0.6rem);
+      line-height: 1.3;
     }
 
     .inicio-screen[data-inicio-layout-ready] .inicio-mobile-center-block {
