@@ -8,19 +8,19 @@ const STORY_FONT_MIN_PX = 10;
 const FILL_RATIO = 0.98;
 
 function getTimelineMaxScale(zoneHeight: number, viewportWidth: number): number {
-  /* iPhone 8 Plus (~414×736): no inflar el texto hasta cortarlo. */
-  if (zoneHeight < 460 || viewportWidth <= 414) return 1.02;
-  if (zoneHeight >= 560 || viewportWidth >= 430) return 1.28;
-  if (zoneHeight >= 500 || viewportWidth >= 390) return 1.18;
-  if (zoneHeight >= 440) return 1.1;
-  return 1.04;
+  /* iPhone 8 Plus (~414×736): un poco más grande, sin volver a cortar. */
+  if (zoneHeight < 460 || viewportWidth <= 414) return 1.1;
+  if (zoneHeight >= 560 || viewportWidth >= 430) return 1.34;
+  if (zoneHeight >= 500 || viewportWidth >= 390) return 1.24;
+  if (zoneHeight >= 440) return 1.16;
+  return 1.08;
 }
 
 function getTimelineStartScale(zoneHeight: number, viewportWidth: number): number {
-  if (zoneHeight < 460 || viewportWidth <= 414) return 0.94;
-  if (zoneHeight >= 500) return 1.06;
-  if (zoneHeight >= 420) return 1;
-  return 0.96;
+  if (zoneHeight < 460 || viewportWidth <= 414) return 1;
+  if (zoneHeight >= 500) return 1.1;
+  if (zoneHeight >= 420) return 1.04;
+  return 1;
 }
 
 function measureBlockFit(
@@ -83,27 +83,26 @@ function fitEtColumn(panel: HTMLElement, compactPhone: boolean) {
   etImg.style.removeProperty('transform');
   const colRect = etCol.getBoundingClientRect();
   const imgRect = etImg.getBoundingClientRect();
-  const fallback = compactPhone ? 1.85 : 2.2;
+  const fallback = compactPhone ? 2.15 : 2.45;
   if (colRect.height < 8 || imgRect.height < 8) {
     setPanelVar(panel, '--historia-et-scale', String(fallback));
     return;
   }
 
-  const scaleByH = (colRect.height * 0.92) / imgRect.height;
-  const scaleByW = (colRect.width * 0.92) / imgRect.width;
+  const scaleByH = (colRect.height * 0.95) / imgRect.height;
+  const scaleByW = (colRect.width * 0.95) / imgRect.width;
   const fitScale = Math.min(scaleByH, scaleByW);
-  /* En 8 Plus el ET grande robaba espacio y cortaba el texto de la derecha. */
-  const boost = compactPhone ? 1.75 : 2.15;
-  const maxScale = compactPhone ? 2.35 : 3.2;
-  const minScale = compactPhone ? 1.55 : 1.85;
+  const boost = compactPhone ? 2.05 : 2.35;
+  const maxScale = compactPhone ? 2.75 : 3.5;
+  const minScale = compactPhone ? 1.85 : 2.05;
   const etScale = Math.min(maxScale, Math.max(minScale, fitScale * boost));
   setPanelVar(panel, '--historia-et-scale', String(Math.round(etScale * 1000) / 1000));
 }
 
 function shrinkTimelineCopyFonts(panel: HTMLElement, zoneHeight: number, viewportWidth: number) {
   const compact = zoneHeight < 460 || viewportWidth <= 414;
-  const yearSize = compact ? 11 : Math.min(14, Math.max(12, Math.round(10 + zoneHeight * 0.012)));
-  const textSize = compact ? 11.5 : Math.min(14.5, Math.max(12, Math.round(10.5 + zoneHeight * 0.013)));
+  const yearSize = compact ? 12.5 : Math.min(15, Math.max(13, Math.round(11 + zoneHeight * 0.013)));
+  const textSize = compact ? 13 : Math.min(15.5, Math.max(13, Math.round(11.5 + zoneHeight * 0.014)));
   setPanelVar(panel, '--historia-timeline-year-px', `${yearSize}px`);
   setPanelVar(panel, '--historia-timeline-text-px', `${textSize}px`);
 }
@@ -387,15 +386,15 @@ function fitTimelinePanel(
 
   /* Si aún no cabe, baja tipografía otra vez y re-mide. */
   if (!measure.fits && compactPhone) {
-    setPanelVar(panel, '--historia-timeline-year-px', '10.5px');
-    setPanelVar(panel, '--historia-timeline-text-px', '11px');
+    setPanelVar(panel, '--historia-timeline-year-px', '11.5px');
+    setPanelVar(panel, '--historia-timeline-text-px', '12px');
     measure = growScaleToFill(
       panel,
       listEl,
       panelMain,
       '--historia-timeline-scale',
-      0.9,
-      1,
+      0.96,
+      1.06,
       titleEl ? [titleEl] : [],
       TIMELINE_MIN_SCALE,
     );
