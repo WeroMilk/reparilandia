@@ -672,7 +672,7 @@
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-top {
       flex: 0 0 auto;
-      gap: var(--inicio-mobile-top-gap, 0.15rem);
+      gap: var(--inicio-mobile-top-gap, 0.55rem);
       margin-top: -0.2rem;
       transform: none;
     }
@@ -686,7 +686,8 @@
       position: relative;
       z-index: 2;
       margin-top: 0;
-      margin-bottom: 0;
+      /* Separación respecto a Garantía; el gap al logo sigue en 2px del brand */
+      margin-bottom: 0.45rem;
       order: 2;
     }
 
@@ -695,8 +696,7 @@
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-guarantee.guarantee-promise {
-      /* Sube la garantía → más aire hacia los 3 boxes */
-      margin-top: -0.35rem;
+      margin-top: 0;
       margin-bottom: 0;
     }
 
@@ -828,7 +828,7 @@
     .inicio-screen .inicio-mobile-slogan {
       display: block;
       margin-top: 0;
-      margin-bottom: 0;
+      margin-bottom: 0.45rem;
       padding-top: 0;
       font-size: var(--inicio-mobile-slogan-size, 0.75rem);
       line-height: 1.2;
