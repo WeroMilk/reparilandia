@@ -8,10 +8,10 @@ import { measureMobileContentZone } from '@/lib/mobileContentZone';
  * - El hueco entre Garantía y el rectángulo se usa para ESTIRAR la card.
  * - Dots quedan justo bajo la card, sobre el dock.
  */
-const DOCK_CLEARANCE_PX = 14;
-const FOOT_FLOOR_PX = 28;
-const CAPTION_FLOOR_PX = 46;
-const CARD_CHROME_PX = 6;
+const DOCK_CLEARANCE_PX = 8;
+const FOOT_FLOOR_PX = 22;
+const CAPTION_FLOOR_PX = 40;
+const CARD_CHROME_PX = 4;
 const BORDER_CLEARANCE_PX = 4;
 const BOTTOM_EDGE_PX = 3;
 const STABLE_EPS_PX = 2;
@@ -85,50 +85,50 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
     };
 
     const applyDensityTokens = (screen: HTMLElement, density: Density, W: number) => {
-      const edgeGutter = density === 'tight' ? 12 : density === 'cozy' ? 14 : 16;
+      const edgeGutter = density === 'tight' ? 8 : density === 'cozy' ? 10 : 12;
       const cardMaxWidth = Math.round(
-        Math.min(W - edgeGutter * 2, Math.round(W * (density === 'tight' ? 0.82 : 0.84))),
+        Math.min(W - edgeGutter * 2, Math.round(W * (density === 'tight' ? 0.94 : 0.95))),
       );
 
       if (density === 'tight') {
-        screen.style.setProperty('--inicio-mobile-logo-max-height', '5.25rem');
-        screen.style.setProperty('--inicio-mobile-slogan-size', '0.625rem');
+        screen.style.setProperty('--inicio-mobile-logo-max-height', '4.75rem');
+        screen.style.setProperty('--inicio-mobile-slogan-size', '0.6rem');
+        screen.style.setProperty('--inicio-mobile-stage-gap', '3px');
+        screen.style.setProperty('--inicio-mobile-top-gap', '3px');
+        screen.style.setProperty('--inicio-mobile-brand-gap', '2px');
+        screen.style.setProperty('--inicio-mobile-foot-gap', '3px');
+        screen.style.setProperty('--inicio-mobile-caption-size', '13px');
+        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.18rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.4rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.48rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.6rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.55rem');
+      } else if (density === 'cozy') {
+        screen.style.setProperty('--inicio-mobile-logo-max-height', '5.85rem');
+        screen.style.setProperty('--inicio-mobile-slogan-size', '0.65rem');
         screen.style.setProperty('--inicio-mobile-stage-gap', '4px');
         screen.style.setProperty('--inicio-mobile-top-gap', '4px');
-        screen.style.setProperty('--inicio-mobile-brand-gap', '2px');
+        screen.style.setProperty('--inicio-mobile-brand-gap', '3px');
         screen.style.setProperty('--inicio-mobile-foot-gap', '4px');
-        screen.style.setProperty('--inicio-mobile-caption-size', '13px');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.22rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.45rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.5rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.625rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.5625rem');
-      } else if (density === 'cozy') {
-        screen.style.setProperty('--inicio-mobile-logo-max-height', '6.75rem');
-        screen.style.setProperty('--inicio-mobile-slogan-size', '0.7rem');
-        screen.style.setProperty('--inicio-mobile-stage-gap', '6px');
-        screen.style.setProperty('--inicio-mobile-top-gap', '6px');
-        screen.style.setProperty('--inicio-mobile-brand-gap', '4px');
-        screen.style.setProperty('--inicio-mobile-foot-gap', '5px');
         screen.style.setProperty('--inicio-mobile-caption-size', '14px');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.28rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.22rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.5rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.52rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.65rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.575rem');
+      } else {
+        screen.style.setProperty('--inicio-mobile-logo-max-height', '6.85rem');
+        screen.style.setProperty('--inicio-mobile-slogan-size', '0.7rem');
+        screen.style.setProperty('--inicio-mobile-stage-gap', '5px');
+        screen.style.setProperty('--inicio-mobile-top-gap', '5px');
+        screen.style.setProperty('--inicio-mobile-brand-gap', '4px');
+        screen.style.setProperty('--inicio-mobile-foot-gap', '4px');
+        screen.style.setProperty('--inicio-mobile-caption-size', '14px');
+        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.25rem');
         screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.55rem');
         screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.54rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.6875rem');
+        screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.68rem');
         screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.6rem');
-      } else {
-        screen.style.setProperty('--inicio-mobile-logo-max-height', '8.25rem');
-        screen.style.setProperty('--inicio-mobile-slogan-size', '0.78rem');
-        screen.style.setProperty('--inicio-mobile-stage-gap', '8px');
-        screen.style.setProperty('--inicio-mobile-top-gap', '8px');
-        screen.style.setProperty('--inicio-mobile-brand-gap', '6px');
-        screen.style.setProperty('--inicio-mobile-foot-gap', '6px');
-        screen.style.setProperty('--inicio-mobile-caption-size', '15px');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.32rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-pad-x', '0.6rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-title-size', '0.56rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.72rem');
-        screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.625rem');
       }
 
       screen.style.setProperty('--inicio-mobile-border-clearance', `${BORDER_CLEARANCE_PX}px`);
@@ -190,23 +190,23 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         captionH + (density === 'tight' ? 4 : 8),
       );
 
-      const topBudget = Math.round(H * (density === 'tight' ? 0.34 : density === 'cozy' ? 0.38 : 0.42));
+      const topBudget = Math.round(H * (density === 'tight' ? 0.28 : density === 'cozy' ? 0.3 : 0.32));
       if (finalPass && topEl && topH > topBudget + 4) {
         const logoNow =
-          Number.parseFloat(screen.style.getPropertyValue('--inicio-mobile-logo-max-height')) || 5.25;
-        const floor = density === 'tight' ? 4.5 : density === 'cozy' ? 5.75 : 7;
+          Number.parseFloat(screen.style.getPropertyValue('--inicio-mobile-logo-max-height')) || 4.75;
+        const floor = density === 'tight' ? 3.85 : density === 'cozy' ? 4.75 : 5.5;
         screen.style.setProperty(
           '--inicio-mobile-logo-max-height',
-          `${Math.max(floor, logoNow - 0.35).toFixed(2)}rem`,
+          `${Math.max(floor, logoNow - 0.4).toFixed(2)}rem`,
         );
         topH = Math.ceil(topEl.getBoundingClientRect().height);
       }
 
-      const overhead = stageGap + 2;
+      const overhead = stageGap + 1;
       /* Usar todo el hueco bajo logo/garantía hasta los dots/dock. */
-      const availableCard = Math.max(160, H - topH - footH - overhead);
+      const availableCard = Math.max(180, H - topH - footH - overhead);
       const cardMax = availableCard;
-      const roomForHero = Math.max(130, cardMax - captionReserve - CARD_CHROME_PX);
+      const roomForHero = Math.max(150, cardMax - captionReserve - CARD_CHROME_PX);
       const heroMax = roomForHero;
       const track = cardMax;
 

@@ -570,7 +570,7 @@
       height: 100%;
       max-height: var(--inicio-mobile-card-max-height, 100%);
       min-height: 0;
-      width: min(100%, var(--inicio-mobile-card-max-width, 84vw));
+      width: min(100%, var(--inicio-mobile-card-max-width, 94vw));
       margin-inline: auto;
       margin-bottom: 0;
       padding-bottom: 0;
@@ -680,16 +680,9 @@
 
     /* iPhone 8 Plus / zona corta: menos texto, más foto */
     .inicio-screen[data-inicio-density='tight'] .guarantee-promise__body,
-    .inicio-screen[data-inicio-density='cozy'] .guarantee-promise__body {
-      display: none;
-    }
-
+    .inicio-screen[data-inicio-density='cozy'] .guarantee-promise__body,
     .inicio-screen[data-inicio-density='roomy'] .guarantee-promise__body {
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      margin-top: 0.2rem;
+      display: none;
     }
 
     .inicio-screen[data-inicio-fill-zone] .inicio-mobile-guarantee.guarantee-promise .guarantee-promise__head {
@@ -813,9 +806,9 @@
       margin-top: 0;
       margin-bottom: 0;
       width: 100%;
-      max-width: var(--inicio-mobile-card-max-width, min(88vw, 20rem));
+      max-width: var(--inicio-mobile-card-max-width, min(94vw, 24rem));
       margin-inline: auto;
-      padding: var(--inicio-mobile-guarantee-pad-y, 0.28rem) var(--inicio-mobile-guarantee-pad-x, 0.55rem);
+      padding: var(--inicio-mobile-guarantee-pad-y, 0.22rem) var(--inicio-mobile-guarantee-pad-x, 0.5rem);
       box-sizing: border-box;
       transform: none;
     }
