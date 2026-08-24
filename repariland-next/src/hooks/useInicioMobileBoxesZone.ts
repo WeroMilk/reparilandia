@@ -8,10 +8,10 @@ import { measureMobileContentZone } from '@/lib/mobileContentZone';
  * - El hueco entre Garantía y el rectángulo se usa para ESTIRAR la card.
  * - Dots quedan justo bajo la card, sobre el dock.
  */
-const DOCK_CLEARANCE_PX = 8;
-const FOOT_FLOOR_PX = 22;
-const CAPTION_FLOOR_PX = 40;
-const CARD_CHROME_PX = 4;
+const DOCK_CLEARANCE_PX = 2;
+const FOOT_FLOOR_PX = 10;
+const CAPTION_FLOOR_PX = 36;
+const CARD_CHROME_PX = 3;
 const BORDER_CLEARANCE_PX = 4;
 const BOTTOM_EDGE_PX = 3;
 const STABLE_EPS_PX = 2;
@@ -85,9 +85,9 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
     };
 
     const applyDensityTokens = (screen: HTMLElement, density: Density, W: number) => {
-      const edgeGutter = density === 'tight' ? 8 : density === 'cozy' ? 10 : 12;
+      const edgeGutter = density === 'tight' ? 6 : density === 'cozy' ? 8 : 10;
       const cardMaxWidth = Math.round(
-        Math.min(W - edgeGutter * 2, Math.round(W * (density === 'tight' ? 0.94 : 0.95))),
+        Math.min(W - edgeGutter * 2, Math.round(W * (density === 'tight' ? 0.96 : 0.97))),
       );
 
       if (density === 'tight') {
@@ -180,14 +180,14 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       let topH = topEl ? Math.ceil(topEl.getBoundingClientRect().height) : 0;
       const footH = Math.max(
         FOOT_FLOOR_PX,
-        footEl ? Math.ceil(footEl.getBoundingClientRect().height) + 4 : 0,
+        footEl ? Math.ceil(footEl.getBoundingClientRect().height) + 1 : 0,
       );
       const captionH = captionEl
         ? Math.ceil(captionEl.getBoundingClientRect().height)
         : CAPTION_FLOOR_PX;
       const captionReserve = Math.max(
-        density === 'tight' ? 42 : CAPTION_FLOOR_PX,
-        captionH + (density === 'tight' ? 4 : 8),
+        density === 'tight' ? 36 : CAPTION_FLOOR_PX,
+        captionH + (density === 'tight' ? 2 : 4),
       );
 
       const topBudget = Math.round(H * (density === 'tight' ? 0.36 : density === 'cozy' ? 0.38 : 0.42));
@@ -202,11 +202,11 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         topH = Math.ceil(topEl.getBoundingClientRect().height);
       }
 
-      const overhead = stageGap + 1;
-      /* Usar todo el hueco bajo logo/garantía hasta los dots/dock. */
-      const availableCard = Math.max(180, H - topH - footH - overhead);
+      const overhead = Math.max(0, stageGap);
+      /* Usar todo el hueco bajo logo/garantía hasta los dots/dock (+ boost ligero). */
+      const availableCard = Math.max(190, H - topH - footH - overhead + 8);
       const cardMax = availableCard;
-      const roomForHero = Math.max(150, cardMax - captionReserve - CARD_CHROME_PX);
+      const roomForHero = Math.max(160, cardMax - captionReserve - CARD_CHROME_PX);
       const heroMax = roomForHero;
       const track = cardMax;
 
