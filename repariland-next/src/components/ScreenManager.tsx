@@ -97,20 +97,22 @@ export default function ScreenManager({
   /* Precarga Historia en idle: evita el “lag” del dynamic import al primer toque. */
   useEffect(() => {
     let cancelled = false;
-    let timeoutId = 0;
-    let idleId = 0;
+    let timeoutId: number | undefined;
+    let idleId: number | undefined;
     const load = () => {
       if (!cancelled) void import('./screens/HistoriaScreen');
     };
-    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+    if (typeof window.requestIdleCallback === 'function') {
       idleId = window.requestIdleCallback(load, { timeout: 1800 });
     } else {
       timeoutId = window.setTimeout(load, 600);
     }
     return () => {
       cancelled = true;
-      if (idleId && 'cancelIdleCallback' in window) window.cancelIdleCallback(idleId);
-      if (timeoutId) window.clearTimeout(timeoutId);
+      if (idleId != null && typeof window.cancelIdleCallback === 'function') {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timeoutId != null) window.clearTimeout(timeoutId);
     };
   }, []);
 
