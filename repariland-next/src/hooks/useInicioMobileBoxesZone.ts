@@ -95,7 +95,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.6rem');
         screen.style.setProperty('--inicio-mobile-stage-gap', '10px');
         screen.style.setProperty('--inicio-mobile-top-gap', '2px');
-        screen.style.setProperty('--inicio-mobile-brand-gap', '0.28rem');
+        screen.style.setProperty('--inicio-mobile-brand-gap', '2px');
         screen.style.setProperty('--inicio-mobile-foot-gap', '2px');
         screen.style.setProperty('--inicio-mobile-caption-size', '13px');
         screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.18rem');
@@ -108,7 +108,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.65rem');
         screen.style.setProperty('--inicio-mobile-stage-gap', '12px');
         screen.style.setProperty('--inicio-mobile-top-gap', '2px');
-        screen.style.setProperty('--inicio-mobile-brand-gap', '0.32rem');
+        screen.style.setProperty('--inicio-mobile-brand-gap', '2px');
         screen.style.setProperty('--inicio-mobile-foot-gap', '2px');
         screen.style.setProperty('--inicio-mobile-caption-size', '14px');
         screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.22rem');
@@ -121,7 +121,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.7rem');
         screen.style.setProperty('--inicio-mobile-stage-gap', '14px');
         screen.style.setProperty('--inicio-mobile-top-gap', '3px');
-        screen.style.setProperty('--inicio-mobile-brand-gap', '0.35rem');
+        screen.style.setProperty('--inicio-mobile-brand-gap', '2px');
         screen.style.setProperty('--inicio-mobile-foot-gap', '2px');
         screen.style.setProperty('--inicio-mobile-caption-size', '14px');
         screen.style.setProperty('--inicio-mobile-guarantee-pad-y', '0.25rem');

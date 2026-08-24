@@ -678,14 +678,14 @@
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-brand {
-      gap: var(--inicio-mobile-brand-gap, 0.3rem);
+      gap: 2px;
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-slogan {
       display: block;
       position: relative;
       z-index: 2;
-      margin-top: 0.1rem;
+      margin-top: 0;
       margin-bottom: 0;
       order: 2;
     }
@@ -806,7 +806,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: var(--inicio-mobile-brand-gap, 0.35rem);
+      gap: 2px;
       width: 100%;
       transform: none;
     }
@@ -827,7 +827,7 @@
 
     .inicio-screen .inicio-mobile-slogan {
       display: block;
-      margin-top: 0.12rem;
+      margin-top: 0;
       margin-bottom: 0;
       padding-top: 0;
       font-size: var(--inicio-mobile-slogan-size, 0.75rem);
