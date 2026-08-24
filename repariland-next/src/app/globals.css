@@ -454,6 +454,7 @@
     }
 
     .inicio-screen .mobile-screen__header {
+      padding-top: 0.05rem;
       padding-bottom: 0;
     }
 
@@ -504,7 +505,7 @@
       height: 100% !important;
       max-height: 100%;
       justify-content: flex-start;
-      gap: var(--inicio-mobile-stage-gap, clamp(0.5rem, 1.4dvh, 0.85rem));
+      gap: var(--inicio-mobile-stage-gap, clamp(0.15rem, 0.6dvh, 0.35rem));
       margin-top: 0;
       padding-top: 0;
       padding-bottom: 0;
@@ -671,7 +672,18 @@
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-top {
       flex: 0 0 auto;
-      gap: var(--inicio-mobile-top-gap, 0.45rem);
+      gap: var(--inicio-mobile-top-gap, 0.15rem);
+      margin-top: -0.35rem;
+      transform: translateY(-0.2rem);
+    }
+
+    .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-guarantee.guarantee-promise {
+      margin-top: -0.1rem;
+    }
+
+    .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-boxes,
+    .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-carousel {
+      margin-top: -0.15rem;
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-logo {
