@@ -675,7 +675,7 @@
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-logo {
-      max-height: var(--inicio-mobile-logo-max-height, min(28dvh, 14rem));
+      max-height: var(--inicio-mobile-logo-max-height, min(32dvh, 16rem));
     }
 
     /* iPhone 8 Plus / zona corta: menos texto, más foto */
@@ -789,8 +789,8 @@
 
     .inicio-screen .inicio-mobile-logo {
       display: block;
-      max-height: var(--inicio-mobile-logo-max-height, min(28dvh, 14rem));
-      max-width: min(96vw, 40rem);
+      max-height: var(--inicio-mobile-logo-max-height, min(32dvh, 16rem));
+      max-width: min(98vw, 44rem);
       margin-bottom: 0;
     }
 
@@ -1789,7 +1789,7 @@
       }
 
       .inicio-screen .inicio-mobile-logo {
-        max-height: var(--inicio-mobile-logo-max-height, min(26dvh, 12.5rem));
+        max-height: var(--inicio-mobile-logo-max-height, min(30dvh, 14rem));
       }
 
       .inicio-screen .inicio-mobile-slogan {
@@ -1820,7 +1820,7 @@
       }
 
       .inicio-screen .inicio-mobile-logo {
-        max-height: var(--inicio-mobile-logo-max-height, min(24dvh, 11.5rem));
+        max-height: var(--inicio-mobile-logo-max-height, min(28dvh, 13rem));
       }
 
       .inicio-screen .inicio-mobile-slogan {

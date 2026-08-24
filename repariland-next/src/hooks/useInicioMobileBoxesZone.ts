@@ -91,7 +91,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       );
 
       if (density === 'tight') {
-        screen.style.setProperty('--inicio-mobile-logo-max-height', '4.75rem');
+        screen.style.setProperty('--inicio-mobile-logo-max-height', '6.25rem');
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.6rem');
         screen.style.setProperty('--inicio-mobile-stage-gap', '3px');
         screen.style.setProperty('--inicio-mobile-top-gap', '3px');
@@ -104,7 +104,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.6rem');
         screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.55rem');
       } else if (density === 'cozy') {
-        screen.style.setProperty('--inicio-mobile-logo-max-height', '5.85rem');
+        screen.style.setProperty('--inicio-mobile-logo-max-height', '7.75rem');
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.65rem');
         screen.style.setProperty('--inicio-mobile-stage-gap', '4px');
         screen.style.setProperty('--inicio-mobile-top-gap', '4px');
@@ -117,7 +117,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.65rem');
         screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.575rem');
       } else {
-        screen.style.setProperty('--inicio-mobile-logo-max-height', '6.85rem');
+        screen.style.setProperty('--inicio-mobile-logo-max-height', '9.25rem');
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.7rem');
         screen.style.setProperty('--inicio-mobile-stage-gap', '5px');
         screen.style.setProperty('--inicio-mobile-top-gap', '5px');
@@ -190,14 +190,14 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         captionH + (density === 'tight' ? 4 : 8),
       );
 
-      const topBudget = Math.round(H * (density === 'tight' ? 0.28 : density === 'cozy' ? 0.3 : 0.32));
+      const topBudget = Math.round(H * (density === 'tight' ? 0.36 : density === 'cozy' ? 0.38 : 0.42));
       if (finalPass && topEl && topH > topBudget + 4) {
         const logoNow =
-          Number.parseFloat(screen.style.getPropertyValue('--inicio-mobile-logo-max-height')) || 4.75;
-        const floor = density === 'tight' ? 3.85 : density === 'cozy' ? 4.75 : 5.5;
+          Number.parseFloat(screen.style.getPropertyValue('--inicio-mobile-logo-max-height')) || 6.25;
+        const floor = density === 'tight' ? 5.5 : density === 'cozy' ? 6.75 : 8;
         screen.style.setProperty(
           '--inicio-mobile-logo-max-height',
-          `${Math.max(floor, logoNow - 0.4).toFixed(2)}rem`,
+          `${Math.max(floor, logoNow - 0.3).toFixed(2)}rem`,
         );
         topH = Math.ceil(topEl.getBoundingClientRect().height);
       }
