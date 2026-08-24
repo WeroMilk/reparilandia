@@ -2,22 +2,25 @@ import { useEffect } from 'react';
 import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 
 const MIN_SCALE = 0.88;
+const TIMELINE_MIN_SCALE = 0.72;
 const SCALE_STEP = 0.02;
 const STORY_FONT_MIN_PX = 10;
 const FILL_RATIO = 0.98;
 
 function getTimelineMaxScale(zoneHeight: number, viewportWidth: number): number {
-  if (zoneHeight >= 560 || viewportWidth >= 420) return 1.38;
-  if (zoneHeight >= 500 || viewportWidth >= 390) return 1.32;
-  if (zoneHeight >= 440) return 1.24;
-  if (zoneHeight >= 380) return 1.16;
-  return 1.08;
+  /* iPhone 8 Plus (~414×736): no inflar el texto hasta cortarlo. */
+  if (zoneHeight < 460 || viewportWidth <= 414) return 1.02;
+  if (zoneHeight >= 560 || viewportWidth >= 430) return 1.28;
+  if (zoneHeight >= 500 || viewportWidth >= 390) return 1.18;
+  if (zoneHeight >= 440) return 1.1;
+  return 1.04;
 }
 
-function getTimelineStartScale(zoneHeight: number): number {
-  if (zoneHeight >= 500) return 1.12;
-  if (zoneHeight >= 420) return 1.06;
-  return 1;
+function getTimelineStartScale(zoneHeight: number, viewportWidth: number): number {
+  if (zoneHeight < 460 || viewportWidth <= 414) return 0.94;
+  if (zoneHeight >= 500) return 1.06;
+  if (zoneHeight >= 420) return 1;
+  return 0.96;
 }
 
 function measureBlockFit(
@@ -60,13 +63,16 @@ function setPanelVar(panel: HTMLElement, name: string, value: string) {
 function clearPanelVars(panel: HTMLElement) {
   panel.style.removeProperty('--historia-timeline-scale');
   panel.style.removeProperty('--historia-timeline-title-px');
+  panel.style.removeProperty('--historia-timeline-year-px');
+  panel.style.removeProperty('--historia-timeline-text-px');
   panel.style.removeProperty('--historia-et-scale');
   panel.style.removeProperty('--hm-story-figure-max-h');
   clearStoryPanelInlineStyles(panel);
   panel.removeAttribute('data-hm-fitted');
+  panel.removeAttribute('data-hm-compact');
 }
 
-function fitEtColumn(panel: HTMLElement) {
+function fitEtColumn(panel: HTMLElement, compactPhone: boolean) {
   const etCol = panel.querySelector<HTMLElement>('.hm-timeline__et, .historia-et-col');
   const etImg = panel.querySelector<HTMLElement>('.hm-timeline__et-img, .historia-et-img');
   if (!etCol || !etImg) {
@@ -77,16 +83,29 @@ function fitEtColumn(panel: HTMLElement) {
   etImg.style.removeProperty('transform');
   const colRect = etCol.getBoundingClientRect();
   const imgRect = etImg.getBoundingClientRect();
+  const fallback = compactPhone ? 1.85 : 2.2;
   if (colRect.height < 8 || imgRect.height < 8) {
-    setPanelVar(panel, '--historia-et-scale', '2.4');
+    setPanelVar(panel, '--historia-et-scale', String(fallback));
     return;
   }
 
-  const scaleByH = (colRect.height * 0.96) / imgRect.height;
-  const scaleByW = (colRect.width * 0.96) / imgRect.width;
+  const scaleByH = (colRect.height * 0.92) / imgRect.height;
+  const scaleByW = (colRect.width * 0.92) / imgRect.width;
   const fitScale = Math.min(scaleByH, scaleByW);
-  const etScale = Math.min(4.2, Math.max(2.1, fitScale * 2.55));
+  /* En 8 Plus el ET grande robaba espacio y cortaba el texto de la derecha. */
+  const boost = compactPhone ? 1.75 : 2.15;
+  const maxScale = compactPhone ? 2.35 : 3.2;
+  const minScale = compactPhone ? 1.55 : 1.85;
+  const etScale = Math.min(maxScale, Math.max(minScale, fitScale * boost));
   setPanelVar(panel, '--historia-et-scale', String(Math.round(etScale * 1000) / 1000));
+}
+
+function shrinkTimelineCopyFonts(panel: HTMLElement, zoneHeight: number, viewportWidth: number) {
+  const compact = zoneHeight < 460 || viewportWidth <= 414;
+  const yearSize = compact ? 11 : Math.min(14, Math.max(12, Math.round(10 + zoneHeight * 0.012)));
+  const textSize = compact ? 11.5 : Math.min(14.5, Math.max(12, Math.round(10.5 + zoneHeight * 0.013)));
+  setPanelVar(panel, '--historia-timeline-year-px', `${yearSize}px`);
+  setPanelVar(panel, '--historia-timeline-text-px', `${textSize}px`);
 }
 
 function growScaleToFill(
@@ -97,6 +116,7 @@ function growScaleToFill(
   startScale: number,
   maxScale: number,
   chromeEls: HTMLElement[] = [],
+  minScale = MIN_SCALE,
 ): { fits: boolean; available: number; contentHeight: number } {
   let scale = startScale;
   let measure = measureBlockFit(measureContainer, target, chromeEls);
@@ -105,8 +125,8 @@ function growScaleToFill(
   target.style.setProperty(varName, String(scale));
   measure = measureBlockFit(measureContainer, target, chromeEls);
 
-  while (!measure.fits && scale > MIN_SCALE + 0.001) {
-    scale = Math.max(MIN_SCALE, Math.round((scale - SCALE_STEP) * 1000) / 1000);
+  while (!measure.fits && scale > minScale + 0.001) {
+    scale = Math.max(minScale, Math.round((scale - SCALE_STEP) * 1000) / 1000);
     setPanelVar(panel, varName, String(scale));
     target.style.setProperty(varName, String(scale));
     measure = measureBlockFit(measureContainer, target, chromeEls);
@@ -345,11 +365,16 @@ function fitTimelinePanel(
   const titleEl = panel.querySelector<HTMLElement>('.hm-timeline__title');
   if (!panelMain || !listEl) return { fits: false };
 
+  const compactPhone = zoneHeight < 460 || viewportWidth <= 414;
+  if (compactPhone) panel.setAttribute('data-hm-compact', 'true');
+  else panel.removeAttribute('data-hm-compact');
+
   if (titleEl) fitTimelineTitle(panel, titleEl, zoneHeight);
+  shrinkTimelineCopyFonts(panel, zoneHeight, viewportWidth);
 
   const maxScale = getTimelineMaxScale(zoneHeight, viewportWidth);
-  const startScale = getTimelineStartScale(zoneHeight);
-  const measure = growScaleToFill(
+  const startScale = getTimelineStartScale(zoneHeight, viewportWidth);
+  let measure = growScaleToFill(
     panel,
     listEl,
     panelMain,
@@ -357,8 +382,26 @@ function fitTimelinePanel(
     startScale,
     maxScale,
     titleEl ? [titleEl] : [],
+    TIMELINE_MIN_SCALE,
   );
-  fitEtColumn(panel);
+
+  /* Si aún no cabe, baja tipografía otra vez y re-mide. */
+  if (!measure.fits && compactPhone) {
+    setPanelVar(panel, '--historia-timeline-year-px', '10.5px');
+    setPanelVar(panel, '--historia-timeline-text-px', '11px');
+    measure = growScaleToFill(
+      panel,
+      listEl,
+      panelMain,
+      '--historia-timeline-scale',
+      0.9,
+      1,
+      titleEl ? [titleEl] : [],
+      TIMELINE_MIN_SCALE,
+    );
+  }
+
+  fitEtColumn(panel, compactPhone);
   return { fits: measure.fits };
 }
 
