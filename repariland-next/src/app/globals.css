@@ -470,8 +470,8 @@
       --inicio-mobile-slide-gap: 0;
       --inicio-mobile-slide-basis: 100%;
       --inicio-mobile-bottom-margin: 0.35rem;
-      --inicio-mobile-card-max-height: min(42dvh, 20rem);
-      --inicio-mobile-hero-max-height: min(38dvh, 18rem);
+      --inicio-mobile-card-max-height: min(52dvh, 24rem);
+      --inicio-mobile-hero-max-height: min(48dvh, 22rem);
       --inicio-mobile-caption-size: 16px;
     }
 
@@ -532,42 +532,42 @@
       max-height: none;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
+      justify-content: stretch;
       align-items: center;
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-embla {
-      flex: 0 1 auto;
+      flex: 1 1 0;
       min-height: 0;
       width: 100%;
-      max-height: var(--inicio-mobile-card-max-height, none);
+      max-height: none;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
+      justify-content: stretch;
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready]
       .inicio-mobile-carousel
       .inicio-mobile-embla
       > div {
-      flex: 0 1 auto;
+      flex: 1 1 0;
       min-height: 0;
-      height: var(--inicio-mobile-card-max-height, auto);
-      max-height: var(--inicio-mobile-card-max-height, none);
+      height: 100%;
+      max-height: none;
       align-items: stretch;
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-slide {
       height: 100%;
-      max-height: var(--inicio-mobile-card-max-height, none);
+      max-height: none;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
+      justify-content: stretch;
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-slide__inner {
-      flex: 0 1 auto;
-      height: var(--inicio-mobile-card-max-height, auto);
+      flex: 1 1 0;
+      height: 100%;
       max-height: var(--inicio-mobile-card-max-height, 100%);
       min-height: 0;
       width: min(100%, var(--inicio-mobile-card-max-width, 84vw));
@@ -711,7 +711,7 @@
     }
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-slide__inner {
-      height: var(--inicio-mobile-card-max-height, auto);
+      height: 100%;
       max-height: var(--inicio-mobile-card-max-height, 100%);
       min-height: 0;
       padding-bottom: 0;
@@ -726,8 +726,8 @@
 
     .inicio-screen[data-inicio-fill-zone][data-inicio-layout-ready] .inicio-mobile-carousel .inicio-mobile-embla {
       min-height: 0;
-      flex: 0 1 auto;
-      max-height: var(--inicio-mobile-card-max-height, none);
+      flex: 1 1 0;
+      max-height: none;
     }
 
     .inicio-screen .inicio-mobile-stage {

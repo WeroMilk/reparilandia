@@ -203,11 +203,10 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       }
 
       const overhead = stageGap + 2;
-      const availableCard = Math.max(140, H - topH - footH - overhead);
-      /* Boxes más chicos: no ocupar todo el hueco bajo el logo. */
-      const cardScale = density === 'tight' ? 0.78 : density === 'cozy' ? 0.76 : 0.74;
-      const cardMax = Math.max(150, Math.round(availableCard * cardScale));
-      const roomForHero = Math.max(120, cardMax - captionReserve - CARD_CHROME_PX);
+      /* Usar todo el hueco bajo logo/garantía hasta los dots/dock. */
+      const availableCard = Math.max(160, H - topH - footH - overhead);
+      const cardMax = availableCard;
+      const roomForHero = Math.max(130, cardMax - captionReserve - CARD_CHROME_PX);
       const heroMax = roomForHero;
       const track = cardMax;
 
