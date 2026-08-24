@@ -85,13 +85,13 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
     };
 
     const applyDensityTokens = (screen: HTMLElement, density: Density, W: number) => {
-      const edgeGutter = density === 'tight' ? 10 : density === 'cozy' ? 12 : 14;
+      const edgeGutter = density === 'tight' ? 12 : density === 'cozy' ? 14 : 16;
       const cardMaxWidth = Math.round(
-        Math.min(W - edgeGutter * 2, Math.round(W * (density === 'tight' ? 0.93 : 0.94))),
+        Math.min(W - edgeGutter * 2, Math.round(W * (density === 'tight' ? 0.82 : 0.84))),
       );
 
       if (density === 'tight') {
-        screen.style.setProperty('--inicio-mobile-logo-max-height', '3.5rem');
+        screen.style.setProperty('--inicio-mobile-logo-max-height', '5.25rem');
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.625rem');
         screen.style.setProperty('--inicio-mobile-stage-gap', '4px');
         screen.style.setProperty('--inicio-mobile-top-gap', '4px');
@@ -104,7 +104,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.6875rem');
         screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.625rem');
       } else if (density === 'cozy') {
-        screen.style.setProperty('--inicio-mobile-logo-max-height', '4.6rem');
+        screen.style.setProperty('--inicio-mobile-logo-max-height', '6.75rem');
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.7rem');
         screen.style.setProperty('--inicio-mobile-stage-gap', '6px');
         screen.style.setProperty('--inicio-mobile-top-gap', '6px');
@@ -117,7 +117,7 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         screen.style.setProperty('--inicio-mobile-guarantee-lead-size', '0.75rem');
         screen.style.setProperty('--inicio-mobile-guarantee-body-size', '0.65rem');
       } else {
-        screen.style.setProperty('--inicio-mobile-logo-max-height', '5.75rem');
+        screen.style.setProperty('--inicio-mobile-logo-max-height', '8.25rem');
         screen.style.setProperty('--inicio-mobile-slogan-size', '0.78rem');
         screen.style.setProperty('--inicio-mobile-stage-gap', '8px');
         screen.style.setProperty('--inicio-mobile-top-gap', '8px');
@@ -190,11 +190,11 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
         captionH + (density === 'tight' ? 4 : 8),
       );
 
-      const topBudget = Math.round(H * (density === 'tight' ? 0.26 : density === 'cozy' ? 0.3 : 0.32));
+      const topBudget = Math.round(H * (density === 'tight' ? 0.34 : density === 'cozy' ? 0.38 : 0.42));
       if (finalPass && topEl && topH > topBudget + 4) {
         const logoNow =
-          Number.parseFloat(screen.style.getPropertyValue('--inicio-mobile-logo-max-height')) || 3.5;
-        const floor = density === 'tight' ? 2.95 : 3.6;
+          Number.parseFloat(screen.style.getPropertyValue('--inicio-mobile-logo-max-height')) || 5.25;
+        const floor = density === 'tight' ? 4.5 : density === 'cozy' ? 5.75 : 7;
         screen.style.setProperty(
           '--inicio-mobile-logo-max-height',
           `${Math.max(floor, logoNow - 0.35).toFixed(2)}rem`,
@@ -203,13 +203,13 @@ export function useInicioMobileBoxesZone(enabled: boolean) {
       }
 
       const overhead = stageGap + 2;
-      /* Todo el hueco Garantía → dots va al rectángulo (estirar hacia arriba). */
-      const availableCard = Math.max(160, H - topH - footH - overhead);
-      const roomForHero = Math.max(130, availableCard - captionReserve - CARD_CHROME_PX);
-      /* Sin tope artificial por ancho: la foto crece con el hueco vertical. */
+      const availableCard = Math.max(140, H - topH - footH - overhead);
+      /* Boxes más chicos: no ocupar todo el hueco bajo el logo. */
+      const cardScale = density === 'tight' ? 0.78 : density === 'cozy' ? 0.76 : 0.74;
+      const cardMax = Math.max(150, Math.round(availableCard * cardScale));
+      const roomForHero = Math.max(120, cardMax - captionReserve - CARD_CHROME_PX);
       const heroMax = roomForHero;
-      const cardMax = availableCard;
-      const track = availableCard;
+      const track = cardMax;
 
       const zoneSpan = Math.max(160, H - topH - stageGap);
 
