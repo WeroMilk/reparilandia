@@ -6948,13 +6948,19 @@ html[data-desktop-lock='mobile-shell'] .desktop-stage-frame {
   }
 }
 
-/* Móvil: las flechas quedan enteras sobre la foto, aunque la imagen se estreche. */
+/* Móvil: las flechas quedan enteras junto al título, fuera de la caricatura. */
 @media (max-width: 1023px) {
   .servicios-mobile-card > .mobile-carousel-arrow {
     top: var(--servicios-arrow-top, 50%);
     z-index: 30;
     background: rgba(17, 24, 39, 0.94);
     box-shadow: none;
+  }
+
+  .servicios-screen .servicios-mobile-slide-title,
+  .servicios-screen .servicios-mobile-slide-content > .servicios-slide-desc {
+    padding-left: 3.15rem;
+    padding-right: 3.15rem;
   }
 
   .servicios-mobile-card > .mobile-carousel-arrow[aria-label='Servicio anterior'] {
