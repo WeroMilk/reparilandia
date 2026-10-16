@@ -20,9 +20,11 @@ export function useSmoothEmblaCarousel(options?: EmblaOptionsType) {
   });
 
   const scrollTo = useCallback(
-    (index: number) => {
+    (index: number, direction: -1 | 0 | 1 = 0) => {
       if (!emblaApi) return;
-      emblaApi.scrollTo(index, reduceMotion === true);
+      (
+        emblaApi.scrollTo as (index: number, jump?: boolean, direction?: number) => void
+      )(index, reduceMotion === true, direction);
     },
     [emblaApi, reduceMotion],
   );

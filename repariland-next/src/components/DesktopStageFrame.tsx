@@ -151,7 +151,14 @@ export default function DesktopStageFrame({ children }: { children: ReactNode })
   }
 
   if (mode === 'pending') {
-    return <div className="desktop-stage-pending" aria-hidden />;
+    return (
+      <div className="desktop-stage-pending">
+        <h1 className="desktop-stage-boot">
+          <span className="desktop-stage-boot__title">Reparilandia</span>
+          <span className="desktop-stage-boot__lead">La capital de la reparación</span>
+        </h1>
+      </div>
+    );
   }
 
   return children;

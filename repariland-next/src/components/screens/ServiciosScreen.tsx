@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { ElementType } from 'react';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
 import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
@@ -336,6 +336,16 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
     return () => window.cancelIdleCallback?.(ric);
   }, [isScreenActive]);
 
+  const scrollToService = useCallback(
+    (index: number) => {
+      const current = emblaApi?.selectedScrollSnap() ?? slideIndex;
+      if (index === current) return;
+      // -1 avanza hacia los siguientes; 1 retrocede. Así no toma el atajo del bucle.
+      scrollTo(index, index > current ? -1 : 1);
+    },
+    [emblaApi, scrollTo, slideIndex],
+  );
+
   const renderServiceIconButton = (service: Service, index: number) => {
     const Icon = iconMap[service.icon] || Wrench;
     const active = index === slideIndex;
@@ -345,7 +355,7 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
         type="button"
         aria-label={`Ver ${service.title}`}
         aria-current={active ? 'true' : undefined}
-        onClick={() => scrollTo(index)}
+        onClick={() => scrollToService(index)}
         className={servicioIconButtonClass(active)}
       >
         <Icon className="servicios-icon-btn__glyph text-sky-200 lg:h-[2.125rem] lg:w-[2.125rem]" strokeWidth={1.75} />
@@ -514,7 +524,7 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
           <CarouselDots
             count={services.length}
             active={slideIndex}
-            onSelect={scrollTo}
+            onSelect={scrollToService}
             className="servicios-mobile-dots servicios-carousel-dots flex shrink-0"
           />
         </div>
