@@ -41,6 +41,11 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (!bootDone || window.parent === window) return;
+    window.parent.postMessage({ type: 'reparilandia-stage-ready' }, window.location.origin);
+  }, [bootDone]);
+
+  useEffect(() => {
     if (!bootDone) return;
     const onKeyDown = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement | null)?.tagName;
