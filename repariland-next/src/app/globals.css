@@ -4378,6 +4378,26 @@
     pointer-events: auto !important;
   }
 
+  /* Móvil: el dock y el pie llegan al borde físico. El área segura no los levanta. */
+  @media (max-width: 1023px) {
+    [data-app-dock] {
+      bottom: 0 !important;
+    }
+
+    .dock-chrome,
+    .dock-chrome.safe-pbDock,
+    .dock-footer-rail.safe-pb {
+      height: auto;
+      min-height: 0;
+      max-height: none;
+      padding-bottom: 0;
+    }
+
+    .dock-footer-inner {
+      padding-bottom: 0.2rem;
+    }
+  }
+
   .app-canvas {
     @apply mx-auto w-full max-w-[120rem] box-border;
   }
@@ -5293,7 +5313,7 @@
       height: auto;
       min-height: auto;
       max-height: none;
-      align-self: flex-start;
+      align-self: stretch;
       overflow: visible;
     }
 
@@ -5420,6 +5440,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      align-self: stretch;
       height: auto;
       min-height: 0;
       max-height: none;
@@ -5459,8 +5480,8 @@
     }
 
     .servicios-screen[data-servicios-desktop-ready] .servicios-slide-cta {
-      margin-top: 0.28rem;
-      margin-bottom: 0.4rem;
+      margin-top: auto;
+      margin-bottom: auto;
       align-self: center;
       min-height: 2.5rem;
       padding: 0.5rem 1.25rem;
@@ -6066,6 +6087,11 @@ select:focus-visible {
     max-height: 100% !important;
     object-fit: cover;
     object-position: center 16%;
+  }
+
+  .historia-screen .historia-story-char--francisco img {
+    transform: scale(1.34);
+    transform-origin: center 21%;
   }
 
   .historia-screen .historia-stats__name {
@@ -6744,32 +6770,6 @@ select:focus-visible {
   background: #050508;
 }
 
-.desktop-stage-boot {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 1.5rem;
-  pointer-events: none;
-}
-
-.desktop-stage-boot img {
-  width: min(78vw, 26rem);
-  height: auto;
-}
-
-.desktop-stage-boot p {
-  margin: 0;
-  color: #f4f7fb;
-  font-size: clamp(1rem, 2.2vw, 1.35rem);
-  letter-spacing: 0.03em;
-  text-align: center;
-}
-
 .desktop-stage-shell {
   display: flex;
   align-items: center;
@@ -6894,6 +6894,13 @@ html[data-desktop-lock='mobile-shell'] nextjs-portal {
   overflow: hidden;
 }
 
+/* En el teléfono el marco se ancla al borde inferior visible, para que el dock no flote. */
+html[data-desktop-lock='mobile-shell'] .desktop-stage-frame {
+  position: absolute;
+  left: 50%;
+  transform-origin: bottom center;
+}
+
 /* Dentro del marco de escritorio el fondo es el del monitor, para que no se corte en los lados. */
 @media (min-width: 1024px) {
   html[data-desktop-lock='app'] body,
@@ -6919,6 +6926,24 @@ html[data-desktop-lock='mobile-shell'] nextjs-portal {
 @media (min-width: 1024px) {
   .servicios-mobile-card > .mobile-carousel-arrow {
     display: none !important;
+  }
+}
+
+/* Móvil: las flechas quedan enteras sobre la foto, aunque la imagen se estreche. */
+@media (max-width: 1023px) {
+  .servicios-mobile-card > .mobile-carousel-arrow {
+    top: var(--servicios-arrow-top, 50%);
+    z-index: 30;
+  }
+
+  .servicios-mobile-card > .mobile-carousel-arrow[aria-label='Servicio anterior'] {
+    left: var(--servicios-arrow-left, 0.6rem);
+    right: auto;
+  }
+
+  .servicios-mobile-card > .mobile-carousel-arrow[aria-label='Servicio siguiente'] {
+    right: var(--servicios-arrow-right, 0.6rem);
+    left: auto;
   }
 }
 

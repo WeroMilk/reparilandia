@@ -18,21 +18,6 @@ import {
 
 type Mode = 'pending' | 'shell' | 'mobile-shell' | 'app';
 
-/** Primer pintado del documento exterior. Lighthouse no mide lo que hay dentro del iframe. */
-function StageBoot() {
-  return (
-    <div className="desktop-stage-boot">
-      <img
-        src="/assets/logo-reparilandia.webp"
-        alt="Reparilandia"
-        width={1024}
-        height={682}
-      />
-      <p>La capital de la reparación</p>
-    </div>
-  );
-}
-
 /**
  * Escritorio: marco fijo de 1920×1080, escalado al monitor.
  * Móvil (menos de 1024px): ancho de 375px escalado al dispositivo y alto de toda la pantalla,
@@ -42,10 +27,10 @@ export default function DesktopStageFrame({ children }: { children: ReactNode })
   const [mode, setMode] = useState<Mode>('pending');
   const [scale, setScale] = useState(1);
   const [mobileHeight, setMobileHeight] = useState(MOBILE_STAGE_HEIGHT);
+  const [mobileBottom, setMobileBottom] = useState(0);
   const [wallpaper, setWallpaper] = useState({ x: 0, y: 0, cell: 64 });
   const [veilOn, setVeilOn] = useState(false);
   const [modalScrim, setModalScrim] = useState(false);
-  const [bootOn, setBootOn] = useState(true);
   const srcRef = useRef('');
 
   useLayoutEffect(() => {
@@ -61,18 +46,23 @@ export default function DesktopStageFrame({ children }: { children: ReactNode })
         srcRef.current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
       }
       const desktop = desktopMq.matches;
+      const vv = window.visualViewport;
       const viewport = {
-        width: window.visualViewport?.width ?? window.innerWidth,
-        height: window.visualViewport?.height ?? window.innerHeight,
+        width: vv?.width ?? window.innerWidth,
+        height: vv?.height ?? window.innerHeight,
       };
       const nextScale = desktop ? desktopStageScale(viewport) : mobileStageScale(viewport);
       const nextMobileHeight = desktop ? MOBILE_STAGE_HEIGHT : mobileStageHeight(viewport, nextScale);
+      const layoutBottomGap = desktop
+        ? 0
+        : Math.max(0, window.innerHeight - (vv?.offsetTop ?? 0) - viewport.height);
       const stageWidth = desktop ? DESKTOP_STAGE_WIDTH : MOBILE_STAGE_WIDTH;
       const stageHeight = desktop ? DESKTOP_STAGE_HEIGHT : nextMobileHeight;
       document.documentElement.dataset.desktopLock = desktop ? 'shell' : 'mobile-shell';
       setMode(desktop ? 'shell' : 'mobile-shell');
       setScale(nextScale);
       setMobileHeight(nextMobileHeight);
+      setMobileBottom(layoutBottomGap);
       setWallpaper({
         x: (viewport.width - stageWidth * nextScale) / 2,
         y: (viewport.height - stageHeight * nextScale) / 2,
@@ -84,10 +74,12 @@ export default function DesktopStageFrame({ children }: { children: ReactNode })
     desktopMq.addEventListener('change', apply);
     window.addEventListener('resize', apply);
     window.visualViewport?.addEventListener('resize', apply);
+    window.visualViewport?.addEventListener('scroll', apply);
     return () => {
       desktopMq.removeEventListener('change', apply);
       window.removeEventListener('resize', apply);
       window.visualViewport?.removeEventListener('resize', apply);
+      window.visualViewport?.removeEventListener('scroll', apply);
     };
   }, []);
 
@@ -99,7 +91,6 @@ export default function DesktopStageFrame({ children }: { children: ReactNode })
       if (!data) return;
       if (data.type === 'reparilandia-screen-veil') setVeilOn(Boolean(data.on));
       if (data.type === 'reparilandia-modal-scrim') setModalScrim(Boolean(data.on));
-      if (data.type === 'reparilandia-stage-ready') setBootOn(false);
     };
     window.addEventListener('message', onMessage);
     return () => window.removeEventListener('message', onMessage);
@@ -137,7 +128,6 @@ export default function DesktopStageFrame({ children }: { children: ReactNode })
             <GlobalBackgroundParticles />
           </div>
         </div>
-        {bootOn ? <StageBoot /> : null}
         <div className="desktop-stage-veil" data-on={veilOn ? 'true' : 'false'} aria-hidden />
         <div className="desktop-stage-modal-scrim" data-on={modalScrim ? 'true' : 'false'} aria-hidden />
         <iframe
@@ -152,7 +142,8 @@ export default function DesktopStageFrame({ children }: { children: ReactNode })
           style={{
             width: mobile ? MOBILE_STAGE_WIDTH : DESKTOP_STAGE_WIDTH,
             height: mobile ? mobileHeight : DESKTOP_STAGE_HEIGHT,
-            transform: `scale(${scale})`,
+            transform: mobile ? `translateX(-50%) scale(${scale})` : `scale(${scale})`,
+            ...(mobile ? { bottom: mobileBottom } : null),
           }}
         />
       </div>
@@ -160,11 +151,7 @@ export default function DesktopStageFrame({ children }: { children: ReactNode })
   }
 
   if (mode === 'pending') {
-    return (
-      <div className="desktop-stage-pending">
-        <StageBoot />
-      </div>
-    );
+    return <div className="desktop-stage-pending" aria-hidden />;
   }
 
   return children;

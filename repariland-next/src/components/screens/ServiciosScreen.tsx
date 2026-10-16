@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { ElementType } from 'react';
 import MobileScreenLayout from '@/components/MobileScreenLayout';
 import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
@@ -187,6 +187,7 @@ const carouselArrowClass =
 
 export default function ServiciosScreen({ isScreenActive = true }: { isScreenActive?: boolean }) {
   const [quoteService, setQuoteService] = useState<string | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [emblaRef, emblaApi, scrollTo, scrollPrev, scrollNext] = useSmoothEmblaCarousel({
     loop: true,
     axis: 'x',
@@ -200,6 +201,58 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
 
   useServiciosMobileZone(isScreenActive);
   useServiciosDesktopLayout(isScreenActive);
+
+  useLayoutEffect(() => {
+    const card = cardRef.current;
+    if (!card || !isScreenActive) return;
+
+    let frame = 0;
+    let attempts = 0;
+    const place = () => {
+      if (window.matchMedia('(min-width: 1024px)').matches) return;
+      const index = emblaApi?.selectedScrollSnap() ?? slideIndex;
+      const slide = card.querySelectorAll<HTMLElement>('.servicios-mobile-slide')[index];
+      const img = slide?.querySelector('img');
+      if (!img) return;
+      const ir = img.getBoundingClientRect();
+      const cr = card.getBoundingClientRect();
+      if (ir.width < 8 || ir.height < 8) return;
+      if (ir.left < cr.left - 2 || ir.right > cr.right + 2) {
+        if (attempts < 45) {
+          attempts += 1;
+          frame = window.requestAnimationFrame(place);
+        }
+        return;
+      }
+      attempts = 0;
+      const button = card.querySelector<HTMLElement>('.mobile-carousel-arrow');
+      const buttonWidth = button?.getBoundingClientRect().width || 46;
+      const gap = 10;
+      const inset = Math.max(4, Math.min(gap, (ir.width - buttonWidth) / 2));
+      card.style.setProperty('--servicios-arrow-left', `${Math.max(6, ir.left - cr.left + inset)}px`);
+      card.style.setProperty('--servicios-arrow-right', `${Math.max(6, cr.right - ir.right + inset)}px`);
+      card.style.setProperty('--servicios-arrow-top', `${ir.top + ir.height / 2 - cr.top}px`);
+    };
+
+    place();
+    const observer = new ResizeObserver(place);
+    observer.observe(card);
+    card.querySelectorAll('img').forEach((img) => {
+      observer.observe(img);
+      img.addEventListener('load', place);
+    });
+    emblaApi?.on('settle', place);
+    emblaApi?.on('reInit', place);
+    window.addEventListener('resize', place);
+    return () => {
+      observer.disconnect();
+      card.querySelectorAll('img').forEach((img) => img.removeEventListener('load', place));
+      emblaApi?.off('settle', place);
+      emblaApi?.off('reInit', place);
+      window.removeEventListener('resize', place);
+      window.cancelAnimationFrame(frame);
+    };
+  }, [isScreenActive, slideIndex, emblaApi]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -345,6 +398,7 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
             <ChevronLeft className="h-5 w-5" strokeWidth={2} />
           </button>
         <div
+          ref={cardRef}
           className="servicios-mobile-card relative mx-auto flex min-h-0 w-full max-w-[min(100%,52rem)] flex-col overflow-hidden rounded-2xl border border-cyan-400/55 bg-hologram-darker shadow-none ring-1 ring-inset ring-cyan-400/28 max-lg:flex-none lg:min-h-0 lg:w-full lg:min-w-0 lg:max-w-[min(100%,42rem)] lg:flex-1 lg:border-cyan-400/60 lg:shadow-[0_0_56px_-6px_rgba(34,211,238,0.52),0_0_22px_-2px_rgba(34,211,238,0.32)] lg:ring-cyan-400/32"
         >
           <button type="button" aria-label="Servicio anterior" onClick={scrollPrev} className={`${carouselArrowClass} left-2 lg:hidden`}>

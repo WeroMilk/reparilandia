@@ -49,5 +49,5 @@ export function mobileStageHeight(viewport = readViewportSize(), scale = mobileS
   if (!Number.isFinite(scale) || scale <= 0) return MOBILE_STAGE_HEIGHT;
   const height = viewport.height / scale;
   if (!Number.isFinite(height) || height <= 0) return MOBILE_STAGE_HEIGHT;
-  return height;
+  return Math.ceil(height);
 }
