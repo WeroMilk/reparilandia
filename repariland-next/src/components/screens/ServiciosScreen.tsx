@@ -227,11 +227,50 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
       attempts = 0;
       const button = card.querySelector<HTMLElement>('.mobile-carousel-arrow');
       const buttonWidth = button?.getBoundingClientRect().width || 46;
-      const gap = 10;
-      const inset = Math.max(4, Math.min(gap, (ir.width - buttonWidth) / 2));
-      card.style.setProperty('--servicios-arrow-left', `${Math.max(6, ir.left - cr.left + inset)}px`);
-      card.style.setProperty('--servicios-arrow-right', `${Math.max(6, cr.right - ir.right + inset)}px`);
-      card.style.setProperty('--servicios-arrow-top', `${ir.top + ir.height / 2 - cr.top}px`);
+      const buttonHeight = button?.getBoundingClientRect().height || buttonWidth;
+      const nw = img.naturalWidth;
+      const nh = img.naturalHeight;
+      let photoLeft = ir.left;
+      let photoTop = ir.top;
+      let photoWidth = ir.width;
+      let photoHeight = ir.height;
+      if (nw > 0 && nh > 0) {
+        const scale = Math.min(ir.width / nw, ir.height / nh);
+        photoWidth = nw * scale;
+        photoHeight = nh * scale;
+        photoLeft = ir.left + (ir.width - photoWidth) / 2;
+        photoTop = ir.top + (ir.height - photoHeight) / 2;
+      }
+      const hero = img.closest('.servicios-slide-hero');
+      if (hero) {
+        const hr = hero.getBoundingClientRect();
+        const left = Math.max(photoLeft, hr.left);
+        const top = Math.max(photoTop, hr.top);
+        const right = Math.min(photoLeft + photoWidth, hr.right);
+        const bottom = Math.min(photoTop + photoHeight, hr.bottom);
+        photoLeft = left;
+        photoTop = top;
+        photoWidth = Math.max(0, right - left);
+        photoHeight = Math.max(0, bottom - top);
+      }
+      if (photoWidth < buttonWidth + 8 || photoHeight < buttonHeight) return;
+      const room = (photoWidth - buttonWidth) / 2;
+      const gap = Math.min(22, Math.max(12, room - 6));
+      const cardPad = 8;
+      const left = Math.min(
+        Math.max(cardPad, photoLeft - cr.left + gap),
+        cr.width - buttonWidth - cardPad,
+      );
+      const right = Math.min(
+        Math.max(cardPad, cr.right - (photoLeft + photoWidth) + gap),
+        cr.width - buttonWidth - cardPad,
+      );
+      card.style.setProperty('--servicios-arrow-left', `${left}px`);
+      card.style.setProperty('--servicios-arrow-right', `${right}px`);
+      card.style.setProperty(
+        '--servicios-arrow-top',
+        `${photoTop + photoHeight / 2 - cr.top}px`,
+      );
     };
 
     place();

@@ -29,15 +29,30 @@ export default function ReelProgressBar({
   isActive,
   fallbackDurationSec = 0,
 }: ReelProgressBarProps) {
-  const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(
     fallbackDurationSec > 0 ? fallbackDurationSec : 0,
   );
-  const [scrubbing, setScrubbing] = useState(false);
   const wasPlayingRef = useRef(false);
+  const scrubbingRef = useRef(false);
+  const durationRef = useRef(duration);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const currentLabelRef = useRef<HTMLSpanElement>(null);
 
   const effectiveDuration =
     duration > 0 ? duration : fallbackDurationSec > 0 ? fallbackDurationSec : 0;
+
+  useEffect(() => {
+    durationRef.current = effectiveDuration;
+  }, [effectiveDuration]);
+
+  const paintProgress = useCallback((time: number) => {
+    const total = durationRef.current;
+    const pct = total > 0 ? Math.min(100, Math.max(0, (time / total) * 100)) : 0;
+    innerRef.current?.style.setProperty('--reel-progress-pct', `${pct}%`);
+    if (inputRef.current) inputRef.current.value = String(time);
+    if (currentLabelRef.current) currentLabelRef.current.textContent = formatTime(time);
+  }, []);
 
   const syncDuration = useCallback(() => {
     const video = videoRef.current;
@@ -57,8 +72,8 @@ export default function ReelProgressBar({
     if (!video || !isActive) return;
 
     const onTimeUpdate = () => {
-      if (scrubbing) return;
-      setCurrentTime(video.currentTime);
+      if (scrubbingRef.current) return;
+      paintProgress(video.currentTime);
     };
 
     video.addEventListener('timeupdate', onTimeUpdate);
@@ -76,14 +91,14 @@ export default function ReelProgressBar({
       video.removeEventListener('loadeddata', syncDuration);
       video.removeEventListener('canplay', syncDuration);
     };
-  }, [videoRef, isActive, scrubbing, syncDuration]);
+  }, [videoRef, isActive, syncDuration, paintProgress]);
 
   useEffect(() => {
     if (!isActive) {
-      setScrubbing(false);
-      setCurrentTime(0);
+      scrubbingRef.current = false;
+      paintProgress(0);
     }
-  }, [isActive]);
+  }, [isActive, paintProgress]);
 
   const seekTo = useCallback(
     (value: number) => {
@@ -91,7 +106,7 @@ export default function ReelProgressBar({
       if (!video || effectiveDuration <= 0) return;
       const next = Math.min(effectiveDuration, Math.max(0, value));
       video.currentTime = next;
-      setCurrentTime(next);
+      paintProgress(next);
     },
     [videoRef, effectiveDuration],
   );
@@ -106,7 +121,7 @@ export default function ReelProgressBar({
       const video = videoRef.current;
       wasPlayingRef.current = Boolean(video && !video.paused);
       if (video && wasPlayingRef.current) video.pause();
-      setScrubbing(true);
+      scrubbingRef.current = true;
     },
     [stopBubble, videoRef],
   );
@@ -114,7 +129,7 @@ export default function ReelProgressBar({
   const handlePointerUp = useCallback(
     (e: PointerEvent<HTMLInputElement>) => {
       stopBubble(e);
-      setScrubbing(false);
+      scrubbingRef.current = false;
       const video = videoRef.current;
       if (video && wasPlayingRef.current) {
         void video.play().catch(() => {});
@@ -122,11 +137,6 @@ export default function ReelProgressBar({
     },
     [stopBubble, videoRef],
   );
-
-  const progressPct =
-    effectiveDuration > 0
-      ? Math.min(100, Math.max(0, (currentTime / effectiveDuration) * 100))
-      : 0;
 
   return (
     <div
@@ -136,21 +146,18 @@ export default function ReelProgressBar({
       role="group"
       aria-label="Progreso del video"
     >
-      <div
-        className="reel-progress__inner"
-        style={{ ['--reel-progress-pct' as string]: `${progressPct}%` }}
-      >
+      <div ref={innerRef} className="reel-progress__inner">
         <input
+          ref={inputRef}
           type="range"
           className="reel-progress__input"
           min={0}
           max={effectiveDuration > 0 ? effectiveDuration : 1}
           step={0.05}
-          value={Math.min(currentTime, effectiveDuration || 0)}
+          defaultValue={0}
           disabled={effectiveDuration <= 0}
           aria-valuemin={0}
           aria-valuemax={effectiveDuration}
-          aria-valuenow={currentTime}
           aria-label="Avance del video"
           onChange={(e) => seekTo(Number(e.target.value))}
           onInput={(e) => seekTo(Number(e.currentTarget.value))}
@@ -159,7 +166,7 @@ export default function ReelProgressBar({
           onPointerCancel={handlePointerUp}
         />
         <div className="reel-progress__times" aria-hidden>
-          <span>{formatTime(currentTime)}</span>
+          <span ref={currentLabelRef}>0:00</span>
           <span>{formatTime(effectiveDuration)}</span>
         </div>
       </div>

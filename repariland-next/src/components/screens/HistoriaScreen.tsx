@@ -77,7 +77,7 @@ function StoryCard({ worker }: { worker: HistoriaWorker }) {
     >
       <motion.div className="historia-story-layout relative z-[1] flex min-h-0 min-w-0 flex-col items-center gap-2 text-center lg:flex-1">
         <motion.div
-          className={`historia-story-char ${worker.name === 'Francisco Medina' ? 'historia-story-char--francisco' : ''} ${historiaCharacterSpot} lg:shrink-0`}
+          className={`historia-story-char ${worker.name === 'Omar Lugo' ? 'historia-story-char--omar' : ''} ${worker.name === 'Francisco Medina' ? 'historia-story-char--francisco' : ''} ${historiaCharacterSpot} lg:shrink-0`}
         >
           <CutoutCharacter
             src={worker.src}
