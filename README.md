@@ -66,7 +66,7 @@ En **Project → Settings → Build & Deployment**:
 1. **Framework Preset** → **Next.js** (no Vite).
 2. Si Root Directory = raíz del repo: **Build Command** vacío (usa `vercel.json`). Si Root Directory = `repariland-next`: build por defecto.
 3. **Output Directory** → vacío (sin `dist`).
-4. **Node.js** → **20.x**.
+4. **Node.js** → **24.x**.
 
 Tras un deploy, comprueba: `https://www.reparilandia.com/api/form-email/health` debe responder JSON con `"configured": true` (no HTML de error 500).
 

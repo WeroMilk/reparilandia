@@ -36,6 +36,14 @@ export default function LaserPortal({ screenKey, contentReady = false }: LaserPo
   }, [contentReady]);
 
   useEffect(() => {
+    if (window.parent === window) return;
+    window.parent.postMessage(
+      { type: 'reparilandia-screen-veil', on: phase === 'absorb' },
+      window.location.origin,
+    );
+  }, [phase]);
+
+  useEffect(() => {
     if (prev.current === null) {
       prev.current = screenKey;
       return;
@@ -110,12 +118,14 @@ export default function LaserPortal({ screenKey, contentReady = false }: LaserPo
             exit={{ opacity: 0 }}
             transition={{ duration: 0.05 }}
           >
-            <motion.div
-              className="absolute inset-0 bg-black mix-blend-multiply"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.66 }}
-              transition={{ duration: ABSORB_MS / 1000, ease: [0.33, 1, 0.68, 1] }}
-            />
+            {typeof window !== 'undefined' && window.parent === window ? (
+              <motion.div
+                className="absolute inset-0 bg-black"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.62 }}
+                transition={{ duration: ABSORB_MS / 1000, ease: [0.33, 1, 0.68, 1] }}
+              />
+            ) : null}
             <motion.div
               className="absolute inset-x-0 top-0 h-[min(40dvh,18rem)] opacity-90"
               style={{

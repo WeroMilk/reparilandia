@@ -303,7 +303,7 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
       data-screen="servicios"
     >
       <div
-        className="servicios-mobile-stage servicios-desktop-stage flex min-h-0 w-full flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-1 max-lg:max-h-full max-lg:gap-1 max-lg:overflow-hidden lg:mx-auto lg:mt-0 lg:h-full lg:max-h-full lg:w-full lg:flex-1 lg:max-w-[min(100%,56rem)] lg:gap-2 lg:overflow-hidden xl:gap-2.5"
+        className="servicios-mobile-stage servicios-desktop-stage flex min-h-0 w-full flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-1 max-lg:max-h-full max-lg:gap-1 max-lg:overflow-hidden lg:mx-auto lg:mt-0 lg:h-full lg:max-h-full lg:w-full lg:flex-1 lg:max-w-[min(100%,64rem)] lg:gap-2 lg:overflow-hidden xl:gap-2.5"
       >
         <div className="servicios-mobile-intro flex w-full shrink-0 flex-col items-center max-lg:flex lg:hidden">
           <div className="servicios-mobile-top flex w-full shrink-0 flex-col items-center px-1">

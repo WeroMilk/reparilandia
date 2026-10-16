@@ -203,25 +203,6 @@ function fitStoryName(panel: HTMLElement, nameEl: HTMLElement, zoneHeight: numbe
   setPanelVar(panel, '--historia-story-name-px', `${size}px`);
 }
 
-function fillStoryLineHeight(
-  panel: HTMLElement,
-  textEl: HTMLElement,
-  available: number,
-  fontPx: number,
-) {
-  textEl.style.lineHeight = '1.28';
-  const contentHeight = textEl.scrollHeight;
-  if (contentHeight >= available * FILL_RATIO - 1) return;
-
-  const lh = parseFloat(getComputedStyle(textEl).lineHeight) || fontPx * 1.28;
-  const lines = Math.max(1, Math.ceil(contentHeight / lh));
-  const targetLh = (available * FILL_RATIO) / lines;
-  const maxLh = fontPx * 1.42;
-  const nextLh = Math.min(maxLh, Math.max(lh, targetLh));
-  textEl.style.lineHeight = `${nextLh.toFixed(2)}px`;
-  setPanelVar(panel, '--historia-story-line-px', `${nextLh.toFixed(2)}px`);
-}
-
 function measureStoryStackFit(panel: HTMLElement): { fits: boolean; available: number; contentHeight: number } {
   const panelMain = panel.querySelector<HTMLElement>('.hm-panel__main') ?? panel;
   const stackEl = panel.querySelector<HTMLElement>('.hm-story__stack');
@@ -303,8 +284,9 @@ function fitStoryTextFill(panel: HTMLElement, zoneHeight: number): boolean {
   }
 
   textEl.style.fontSize = `${best}px`;
-  fillStoryLineHeight(panel, textEl, available, best);
+  textEl.style.lineHeight = '1.28';
   setPanelVar(panel, '--historia-story-font-px', `${best}px`);
+  setPanelVar(panel, '--historia-story-line-px', '1.28');
 
   return textEl.scrollHeight <= available + 2;
 }
@@ -318,7 +300,7 @@ function fitStoryPanel(panel: HTMLElement, zoneHeight: number): { fits: boolean 
   const nameEl = panel.querySelector<HTMLElement>('.hm-story__name');
   const roleEl = panel.querySelector<HTMLElement>('.historia-stats__role');
 
-  let figureMaxPx = Math.round(Math.min(Math.max(zoneHeight * 0.22, 72), 120));
+  let figureMaxPx = Math.round(Math.min(Math.max(zoneHeight * 0.46, 140), 320));
   const figureMinPx = 56;
 
   panel.style.setProperty('--hm-story-figure-max-h', `${figureMaxPx}px`);

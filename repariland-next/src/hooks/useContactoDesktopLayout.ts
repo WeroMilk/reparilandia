@@ -4,6 +4,9 @@ import { subscribeMobileLayout } from '@/lib/mobileLayoutMeasure';
 /** Bloque de contenido desktop (sin cabecera CONTACTO): diseño de referencia. */
 const DESIGN_CANVAS_W = 1180;
 const DESIGN_CANVAS_H = 560;
+/** El busto sale por encima del lienzo; entra en el alto disponible. */
+const BUST_OVERFLOW_PX = 150;
+const MAX_SCALE = 1.14;
 const DOCK_CLEARANCE_PX = 14;
 
 /**
@@ -50,7 +53,11 @@ export function useContactoDesktopLayout(enabled: boolean) {
       const zoneHeight = Math.max(0, Math.round(zoneBottom - headerBottom));
       const zoneWidth = Math.max(0, Math.round(body.getBoundingClientRect().width));
 
-      const scale = Math.min(1, zoneWidth / DESIGN_CANVAS_W, zoneHeight / DESIGN_CANVAS_H);
+      const scale = Math.min(
+        MAX_SCALE,
+        zoneWidth / DESIGN_CANVAS_W,
+        zoneHeight / (DESIGN_CANVAS_H + BUST_OVERFLOW_PX),
+      );
       const scaleRounded = Math.round(scale * 1000) / 1000;
       const layoutH = Math.round(DESIGN_CANVAS_H * scaleRounded);
 

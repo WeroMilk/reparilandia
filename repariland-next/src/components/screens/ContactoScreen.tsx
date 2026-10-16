@@ -281,7 +281,7 @@ export default function ContactoScreen({ isScreenActive = true }: { isScreenActi
         className="contacto-screen"
         data-screen="contacto"
       >
-        <motion.div className="contacto-mobile-stage flex min-h-0 w-full flex-col overflow-hidden max-lg:flex-1 max-lg:min-h-0 max-lg:max-h-full lg:flex-1 lg:justify-start lg:pt-5 xl:pt-7">
+        <motion.div className="contacto-mobile-stage flex min-h-0 w-full flex-col overflow-hidden max-lg:flex-1 max-lg:min-h-0 max-lg:max-h-full lg:flex-1 lg:justify-center lg:pt-0">
           <motion.div className="contacto-mobile-wrap flex min-h-0 w-full flex-col overflow-hidden max-lg:flex-1 max-lg:min-h-0 max-lg:h-full lg:hidden">
             <AnimatePresence mode="wait" initial={false}>
               {showMessage ? (
@@ -302,6 +302,8 @@ export default function ContactoScreen({ isScreenActive = true }: { isScreenActi
                   <img
                     src={assetUrl(MONITO_SOMBRERO)}
                     alt=""
+                    width={720}
+                    height={720}
                     className="contacto-monito-bust pointer-events-none select-none [image-rendering:auto]"
                     draggable={false}
                     loading="lazy"
@@ -433,6 +435,8 @@ export default function ContactoScreen({ isScreenActive = true }: { isScreenActi
                     <img
                       src={assetUrl(ILUSTRACION_CONTACTO)}
                       alt=""
+                      width={900}
+                      height={484}
                       className="contacto-ilustracion-img pointer-events-none block [image-rendering:auto]"
                       draggable={false}
                       loading="lazy"

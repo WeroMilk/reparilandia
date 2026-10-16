@@ -225,7 +225,7 @@ export default function ReelSlide({
               <p className="text-[11px] tabular-nums text-white/55">{displayDurationSec}s · Reparilandia</p>
             </div>
 
-            <div className="pointer-events-auto flex shrink-0 flex-col items-center justify-end pr-0 sm:pr-1">
+            <div className="reels-slide__actions pointer-events-auto flex shrink-0 flex-col items-center justify-end pr-0 sm:pr-1">
               <ReelActionRail
                 muted={muted}
                 onToggleMute={toggleMute}

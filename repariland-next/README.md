@@ -4,7 +4,7 @@ Sitio con [Next.js](https://nextjs.org). Dependencias con **npm**; el archivo **
 
 ## Requisitos
 
-- Node.js **20.x** (recomendado; coincide con Vercel)
+- Node.js **24.x** (recomendado; coincide con Vercel)
 
 ## Desarrollo
 

@@ -5,6 +5,7 @@ import { useSmoothEmblaCarousel } from '@/hooks/useSmoothEmblaCarousel';
 import { assetUrl } from '@/lib/assetUrl';
 import { useNoticiasMobileZone } from '@/hooks/useNoticiasMobileZone';
 import { useNoticiasMobileCrtSize } from '@/hooks/useNoticiasMobileCrtSize';
+import NoticiasStars from '@/components/screens/noticias/NoticiasStars';
 import { EMBLA_FAST_DURATION_MOBILE } from '@/lib/motionPresets';
 
 type NewsItem = {
@@ -200,18 +201,21 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
       hideLeadOnMobile
       className="noticias-screen"
       data-screen="noticias"
+      backdrop={<NoticiasStars />}
     >
       <div className="noticias-mobile-stage-positioner max-lg:flex max-lg:min-h-0 max-lg:w-full max-lg:flex-1 max-lg:flex-col max-lg:items-center lg:contents">
-        <div className="noticias-stage noticias-mobile-stage flex min-h-0 w-full max-h-full flex-col items-center max-lg:overflow-visible overflow-hidden overscroll-none px-2 pb-0 max-lg:min-h-0 max-lg:flex-1 max-lg:justify-center max-lg:gap-0 max-lg:pt-0 sm:px-5 lg:h-full lg:flex-1 lg:mt-0.5 lg:justify-start lg:gap-1 lg:translate-x-0 lg:px-6 lg:pt-0 xl:mt-1 xl:translate-x-1 xl:px-8">
-          <div className="noticias-mobile-content relative flex min-h-0 w-full max-w-[min(100%,60rem)] flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-none max-lg:shrink-0 max-lg:justify-start max-lg:overflow-visible sm:max-w-[62rem] lg:h-full lg:max-h-full lg:flex-none lg:shrink-0 lg:justify-start">
+        <div className="noticias-stage noticias-mobile-stage flex min-h-0 w-full max-h-full flex-col items-center max-lg:overflow-visible overflow-visible overscroll-none px-2 pb-0 max-lg:min-h-0 max-lg:flex-1 max-lg:justify-center max-lg:gap-0 max-lg:pt-0 sm:px-5 lg:h-auto lg:flex-1 lg:justify-center lg:gap-1 lg:px-6 lg:pt-0 xl:px-8">
+          <div className="noticias-mobile-content relative flex min-h-0 w-full max-w-[min(100%,60rem)] flex-col overflow-visible max-lg:min-h-0 max-lg:flex-none max-lg:shrink-0 max-lg:justify-start sm:max-w-[62rem] lg:h-auto lg:max-h-full lg:max-w-[min(100%,76rem)] lg:flex-none lg:shrink-0 lg:justify-start">
             <div
-              className="noticias-monito pointer-events-none absolute left-[clamp(-6.5rem,-18vw,-2rem)] z-[14] hidden w-[min(58vw,32rem)] items-center justify-center overflow-hidden bg-transparent xl:left-[clamp(-5rem,-14vw,0.25rem)] xl:flex xl:w-[min(56vw,34rem)] xl:-translate-x-2 xl:-translate-y-7"
+              className="noticias-monito pointer-events-none absolute left-[clamp(-4.25rem,-12vw,-1.25rem)] z-[14] hidden w-[min(58vw,32rem)] items-center justify-center overflow-visible bg-transparent xl:left-[clamp(0.5rem,4vw,2.5rem)] xl:z-[22] xl:flex xl:w-[min(38vw,32rem)] xl:translate-x-2 xl:translate-y-1"
               aria-hidden
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={assetUrl(MONITO_NOTICIAS)}
                 alt="Personaje leyendo el periódico junto a una nave LEGO espacial"
+                width={960}
+                height={383}
                 className="block h-auto max-h-full w-full bg-transparent object-contain object-center [image-rendering:auto]"
                 draggable={false}
                 loading="lazy"
@@ -219,8 +223,8 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
               />
             </div>
 
-            <div className="noticias-mobile-monitor-col relative z-[18] flex min-h-0 w-full max-w-full flex-col items-center max-lg:overflow-visible overflow-hidden max-lg:min-h-0 max-lg:flex-none max-lg:shrink-0 max-lg:items-center max-lg:justify-start lg:h-full lg:flex-1 lg:justify-start lg:translate-y-11 xl:translate-y-14">
-              <div className="flex w-full max-w-[44rem] flex-col items-center max-lg:ml-0 lg:ml-[clamp(7.5rem,18vw,12.5rem)] xl:max-w-[46rem] xl:-translate-x-1">
+            <div className="noticias-mobile-monitor-col relative z-[18] flex min-h-0 w-full max-w-full flex-col items-center max-lg:overflow-visible overflow-hidden max-lg:min-h-0 max-lg:flex-none max-lg:shrink-0 max-lg:items-center max-lg:justify-start lg:h-auto lg:flex-none lg:justify-start lg:overflow-visible">
+              <div className="flex w-full max-w-[44rem] flex-col items-center max-lg:ml-0 lg:ml-[clamp(5.5rem,11vw,8.5rem)] lg:max-w-[50rem] xl:max-w-[52rem]">
                 <div className="noticias-mobile-crt-row flex w-full items-center max-lg:justify-center max-lg:gap-0 lg:justify-center gap-3 sm:gap-3.5 lg:-translate-x-1.5 xl:-translate-x-2">
                   <button
                     type="button"
@@ -239,6 +243,8 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
                           <img
                             src={assetUrl(MONITO_NOTICIAS)}
                             alt=""
+                            width={960}
+                            height={383}
                             className="noticias-monito-mobile-img block h-auto max-h-full w-auto max-w-full bg-transparent object-contain object-bottom [image-rendering:auto]"
                             draggable={false}
                             loading="lazy"
@@ -246,7 +252,7 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
                           />
                         </div>
                       </div>
-                      <div className="noticias-crt-bezel relative mx-auto flex w-full max-w-full flex-col rounded-[6px] bg-gradient-to-b from-[#e8dfd2] via-[#cfc4b6] to-[#b9aea2] p-[clamp(7px,1.65vw,11px)] pb-[clamp(8px,1.75vw,12px)] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-4px_12px_rgba(0,0,0,0.08),0_14px_28px_rgba(0,0,0,0.42)] ring-2 ring-[#7a7269]/55 max-lg:min-h-0 max-lg:shrink-0 max-lg:flex-none max-lg:p-2 lg:max-w-[42rem] lg:min-h-0 lg:max-h-[min(56cqh,54dvh)] lg:flex-none lg:shrink-0 lg:p-3 lg:pb-3.5">
+                      <div className="noticias-crt-bezel relative mx-auto flex w-full max-w-full flex-col rounded-[6px] bg-gradient-to-b from-[#e8dfd2] via-[#cfc4b6] to-[#b9aea2] p-[clamp(7px,1.65vw,11px)] pb-[clamp(8px,1.75vw,12px)] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-4px_12px_rgba(0,0,0,0.08),0_14px_28px_rgba(0,0,0,0.42)] ring-2 ring-[#7a7269]/55 max-lg:min-h-0 max-lg:shrink-0 max-lg:flex-none max-lg:p-2 lg:max-w-[50rem] lg:min-h-0 lg:max-h-[min(64cqh,60dvh)] lg:flex-none lg:shrink-0 lg:p-3 lg:pb-3.5">
                         <div className="mb-1.5 flex justify-center gap-1.5 opacity-[0.38] max-lg:mb-1" aria-hidden>
                           {[0, 1, 2, 3, 4].map((i) => (
                             <span key={i} className="h-1 w-6 rounded-full bg-[#3f3a34]" />
@@ -255,7 +261,7 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
 
                         <div className="noticias-crt-inner rounded-[4px] bg-[#141210] p-[6px] shadow-[inset_0_5px_14px_rgba(0,0,0,0.92)] ring-1 ring-black sm:p-[7px]">
                           <div className="relative overflow-hidden rounded-[3px] bg-[#080706] shadow-[inset_0_0_0_4px_rgba(28,25,22,0.96)]">
-                            <div className="noticias-crt-screen relative aspect-[4/3] h-auto w-full min-h-0 shrink-0 overflow-hidden max-lg:[aspect-ratio:var(--noticias-crt-aspect,1.25)] max-lg:h-auto max-lg:max-h-none max-lg:min-h-0 max-lg:flex-none lg:aspect-auto lg:h-[min(44cqh,46dvh)] lg:max-h-none lg:flex-none">
+                            <div className="noticias-crt-screen relative aspect-[4/3] h-auto w-full min-h-0 shrink-0 overflow-hidden max-lg:[aspect-ratio:var(--noticias-crt-aspect,1.25)] max-lg:h-auto max-lg:max-h-none max-lg:min-h-0 max-lg:flex-none lg:aspect-auto lg:h-[min(50cqh,48dvh)] lg:max-h-none lg:flex-none">
                               <div
                                 className="embla-fluid relative h-full w-full overflow-hidden bg-[#cdbfaa]"
                                 ref={emblaRef}

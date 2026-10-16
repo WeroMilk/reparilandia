@@ -7,4 +7,4 @@ alwaysApply: true
 
 - Registry oficial: **`https://registry.npmjs.org/`** (fijado en `repariland-next/.npmrc`). No añadir registros alternativos ni scripts de postinstall sospechosos sin revisión explícita del usuario.
 - En **Vercel**: **Root Directory** = **`repariland-next`** (obligatorio para `/api/*`). `repariland-next/next.config.ts` usa `outputFileTracingRoot` solo dentro de esa carpeta. Sin override **`vite build`** en el panel.
-- En local: **`npm install`** / **`npm ci`** dentro de **`repariland-next/`** (Node **20.x**; ver **`repariland-next/.nvmrc`** / **`engines`**).
+- En local: **`npm install`** / **`npm ci`** dentro de **`repariland-next/`** (Node **24.x**; ver **`repariland-next/.nvmrc`** / **`engines`**).

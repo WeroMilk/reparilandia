@@ -24,6 +24,8 @@ function TimelinePanel() {
           <img
             src={assetUrl('/assets/historia-linea-tiempo.webp')}
             alt=""
+            width={900}
+            height={580}
             className="hm-timeline__et-img historia-et-img"
             draggable={false}
             loading="eager"
@@ -60,6 +62,8 @@ function StoryPanel({ worker }: { worker: HistoriaWorker }) {
             <img
               src={assetUrl(worker.src)}
               alt={worker.alt}
+              width={720}
+              height={464}
               className="hm-story__img mix-blend-lighten"
               draggable={false}
               loading="lazy"

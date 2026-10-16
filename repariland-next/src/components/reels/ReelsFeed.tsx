@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import type { ReelItem } from '@/lib/reels/types';
 import ReelSlide from '@/components/reels/ReelSlide';
 
@@ -11,12 +11,17 @@ type ReelsFeedProps = {
   onActiveIndexChange?: (index: number) => void;
 };
 
-export default function ReelsFeed({
+export type ReelsFeedHandle = {
+  goPrev: () => void;
+  goNext: () => void;
+};
+
+const ReelsFeed = forwardRef<ReelsFeedHandle, ReelsFeedProps>(function ReelsFeed({
   items,
   initialReelId,
   isScreenActive,
   onActiveIndexChange,
-}: ReelsFeedProps) {
+}, ref) {
   const feedRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<Map<string, HTMLElement>>(new Map());
   const [activeId, setActiveId] = useState<string | null>(items[0]?.id ?? null);
@@ -76,6 +81,21 @@ export default function ReelsFeed({
     [items],
   );
 
+  useImperativeHandle(
+    ref,
+    () => ({
+      goPrev: () => {
+        const idx = items.findIndex((item) => item.id === activeId);
+        if (idx > 0) scrollToIndex(idx - 1);
+      },
+      goNext: () => {
+        const idx = items.findIndex((item) => item.id === activeId);
+        if (idx >= 0 && idx < items.length - 1) scrollToIndex(idx + 1);
+      },
+    }),
+    [activeId, items, scrollToIndex],
+  );
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
@@ -114,4 +134,6 @@ export default function ReelsFeed({
       ))}
     </div>
   );
-}
+});
+
+export default ReelsFeed;

@@ -13,6 +13,15 @@ function screenIndex(screen: ScreenName): number {
   return SCREEN_ORDER.indexOf(screen);
 }
 
+/** Quita el foco de la pantalla que va a ocultarse antes de marcarla inert. */
+function releaseScreenFocus() {
+  if (typeof document === 'undefined') return;
+  const active = document.activeElement;
+  if (!(active instanceof HTMLElement)) return;
+  if (!active.closest('.screen-transition-layer')) return;
+  active.blur();
+}
+
 type NavState = {
   currentScreen: ScreenName;
   direction: number;
@@ -55,14 +64,17 @@ export function useScreenManager() {
   });
 
   const navigateTo = useCallback((screen: ScreenName) => {
+    releaseScreenFocus();
     dispatch({ type: 'goto', screen });
   }, []);
 
   const goNext = useCallback(() => {
+    releaseScreenFocus();
     dispatch({ type: 'next' });
   }, []);
 
   const goPrev = useCallback(() => {
+    releaseScreenFocus();
     dispatch({ type: 'prev' });
   }, []);
 

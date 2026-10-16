@@ -146,7 +146,7 @@ export default function ScreenManager({
               style={{
                 pointerEvents: active ? 'auto' : 'none',
               }}
-              aria-hidden={!active}
+              inert={active ? undefined : true}
               className={[
                 'screen-transition-layer absolute inset-0 flex min-h-0 w-full flex-col',
                 active ? 'z-[2]' : 'z-[1]',

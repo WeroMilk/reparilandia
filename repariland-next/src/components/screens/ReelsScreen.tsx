@@ -1,10 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 import { useReels } from '@/hooks/useReels';
 import { useReelsViewportHeight } from '@/hooks/useReelsViewportHeight';
-import ReelsFeed from '@/components/reels/ReelsFeed';
+import ReelsFeed, { type ReelsFeedHandle } from '@/components/reels/ReelsFeed';
 import ReelsEmptyState from '@/components/reels/ReelsEmptyState';
 import ReelsAdminPanel from '@/components/reels/ReelsAdminPanel';
 
@@ -31,6 +31,7 @@ export default function ReelsScreen({ isScreenActive = true }: ReelsScreenProps)
   const [authError, setAuthError] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const feedRef = useRef<ReelsFeedHandle>(null);
 
   const uploadEnabled = storage === 'supabase' || storage === 'blob';
 
@@ -77,11 +78,11 @@ export default function ReelsScreen({ isScreenActive = true }: ReelsScreenProps)
 
   return (
     <div
-      className="reels-screen relative flex min-h-0 flex-1 flex-col overflow-hidden bg-black max-lg:px-0 lg:items-center lg:justify-start lg:overflow-visible lg:px-4"
+      className="reels-screen relative flex min-h-0 flex-1 flex-col overflow-hidden bg-black max-lg:px-0 lg:h-full lg:w-full lg:items-stretch lg:justify-start lg:overflow-hidden lg:px-0"
       data-screen="reels"
     >
-      <div className="reels-screen__frame relative mx-auto flex h-full min-h-0 w-full max-w-[28rem] flex-1 flex-col overflow-hidden max-lg:flex-1 lg:w-[28rem] lg:max-w-[min(100%,28rem)] lg:flex-none lg:rounded-2xl lg:border lg:border-cyan-400/20 lg:shadow-[0_0_80px_-16px_rgba(0,119,255,0.45),0_0_32px_-8px_rgba(34,211,238,0.22)]">
-        <header className="reels-screen__header pointer-events-none z-40 flex shrink-0 items-start justify-between gap-3 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2">
+      <div className="reels-screen__frame relative mx-auto flex h-full min-h-0 w-full max-w-[28rem] flex-1 flex-col overflow-hidden max-lg:flex-1 lg:mx-0 lg:h-full lg:max-h-full lg:w-full lg:max-w-none lg:flex-1 lg:rounded-none lg:border-0 lg:shadow-none">
+        <header className="reels-screen__header pointer-events-none z-40 flex shrink-0 items-start justify-between gap-3 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2 lg:hidden">
           <div className="pointer-events-auto rounded-full border border-white/10 bg-black/45 px-3 py-1 backdrop-blur-md">
             <span className="font-space text-[11px] font-semibold uppercase tracking-[0.25em] text-white">
               REELS
@@ -114,20 +115,43 @@ export default function ReelsScreen({ isScreenActive = true }: ReelsScreenProps)
             <ReelsEmptyState onOpenAdmin={openAdminFlow} storage={storage} />
           ) : (
             <ReelsFeed
+              ref={feedRef}
               items={items}
               initialReelId={initialReelId}
               isScreenActive={isScreenActive}
               onActiveIndexChange={setActiveIndex}
             />
           )}
+          {items.length > 1 ? (
+            <div className="reels-desktop-nav pointer-events-none absolute inset-y-0 left-0 z-30 hidden w-[7.25rem] flex-col items-center justify-between py-[11%] pb-[6.75rem] lg:flex">
+              <button
+                type="button"
+                className="reels-desktop-nav__btn pointer-events-auto"
+                aria-label="Video anterior"
+                disabled={activeIndex <= 0}
+                onClick={() => feedRef.current?.goPrev()}
+              >
+                <ChevronUp className="h-6 w-6" strokeWidth={2.25} />
+              </button>
+              <button
+                type="button"
+                className="reels-desktop-nav__btn pointer-events-auto"
+                aria-label="Video siguiente"
+                disabled={activeIndex >= items.length - 1}
+                onClick={() => feedRef.current?.goNext()}
+              >
+                <ChevronDown className="h-6 w-6" strokeWidth={2.25} />
+              </button>
+            </div>
+          ) : null}
         </div>
 
         <div
-          className="pointer-events-none absolute inset-y-0 -left-[20vw] hidden w-[20vw] bg-gradient-to-r from-[#050508] to-transparent lg:block"
+          className="pointer-events-none absolute inset-y-0 -left-[20vw] hidden w-[20vw] bg-gradient-to-r from-[#050508] to-transparent"
           aria-hidden
         />
         <div
-          className="pointer-events-none absolute inset-y-0 -right-[20vw] hidden w-[20vw] bg-gradient-to-l from-[#050508] to-transparent lg:block"
+          className="pointer-events-none absolute inset-y-0 -right-[20vw] hidden w-[20vw] bg-gradient-to-l from-[#050508] to-transparent"
           aria-hidden
         />
       </div>

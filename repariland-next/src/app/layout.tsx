@@ -50,35 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <head>
-        <link
-          rel="preload"
-          as="image"
-          href="/assets/logo-reparilandia.webp?v=37"
-          type="image/webp"
-          fetchPriority="high"
-        />
-        <link
-          rel="preload"
-          as="image"
-          href="/assets/home-box-carritos.webp?v=37"
-          type="image/webp"
-          fetchPriority="high"
-        />
-        <link
-          rel="preload"
-          as="image"
-          href="/assets/home-box-servicio.webp?v=37"
-          type="image/webp"
-        />
-        <link
-          rel="preload"
-          as="image"
-          href="/assets/home-box-novedades.webp?v=37"
-          type="image/webp"
-        />
-      </head>
+    <html lang="es" suppressHydrationWarning>
       <body
         className={`${spaceGrotesk.variable} ${orbitron.variable} font-sans antialiased`}
         style={{ backgroundColor: '#050508', color: '#fafafa' }}

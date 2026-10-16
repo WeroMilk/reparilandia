@@ -6,7 +6,7 @@ import { X, Shield, Cookie, FileText } from 'lucide-react';
 type ModalType = 'privacy' | 'cookies' | 'legal' | null;
 
 const legalModalShell =
-  'legal-modal-panel w-[min(96vw,56rem)] max-w-[56rem] mx-auto flex flex-col rounded-3xl border border-white/10 bg-[rgba(12,12,18,0.97)] backdrop-blur-xl shadow-[0_32px_96px_rgba(0,0,0,0.65)] relative overflow-hidden ring-1 ring-white/[0.07]';
+  'legal-modal-panel w-[min(96vw,56rem)] max-w-[56rem] mx-auto flex flex-col rounded-3xl border border-white/10 bg-[rgba(12,12,18,0.97)] shadow-[0_32px_96px_rgba(0,0,0,0.65)] relative overflow-hidden ring-1 ring-white/[0.07]';
 
 export default function FooterLegal() {
   const [modal, setModal] = useState<ModalType>(null);
@@ -16,6 +16,20 @@ export default function FooterLegal() {
   useEffect(() => {
     setPortalReady(true);
   }, []);
+
+  useEffect(() => {
+    if (window.parent === window) return;
+    window.parent.postMessage(
+      { type: 'reparilandia-modal-scrim', on: modal != null },
+      window.location.origin,
+    );
+    return () => {
+      window.parent.postMessage(
+        { type: 'reparilandia-modal-scrim', on: false },
+        window.location.origin,
+      );
+    };
+  }, [modal]);
 
   const legalModal =
     portalReady &&
@@ -33,10 +47,7 @@ export default function FooterLegal() {
             exit={{ opacity: 0 }}
             onClick={() => setModal(null)}
           >
-            <motion.div
-              className="absolute inset-0 bg-black/55 backdrop-blur-xl supports-[backdrop-filter]:bg-black/40"
-              aria-hidden
-            />
+            <motion.div className="legal-modal-backdrop" aria-hidden />
             <motion.div
               className={`${legalModalShell} relative z-10 max-h-[min(88dvh,calc(var(--app-height,100svh)-var(--dock-chrome-height)-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-5.5rem))] shrink-0 -translate-y-[min(3.25rem,7.5dvh)] sm:-translate-y-[min(3.75rem,8dvh)]`}
               initial={{ scale: 0.94, y: 20, opacity: 0 }}

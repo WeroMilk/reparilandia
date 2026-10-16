@@ -54,6 +54,8 @@ function CutoutCharacter({
       <img
         src={assetUrl(src)}
         alt={alt}
+        width={720}
+        height={464}
         className={`pointer-events-none h-auto w-auto select-none object-contain [image-rendering:auto] ${imgTreat} ${imgClassName || 'max-w-full'}`}
         draggable={false}
         loading="lazy"
@@ -64,7 +66,7 @@ function CutoutCharacter({
 }
 
 const storyCardCharacterImg =
-  '!max-w-none w-auto object-contain object-bottom max-h-[min(8.75rem,34vw)] sm:max-h-[min(11.25rem,36vw)] lg:max-h-[8.75rem] xl:max-h-[9.5rem]';
+  '!max-w-none w-auto object-contain object-bottom max-h-[min(8.75rem,34vw)] sm:max-h-[min(11.25rem,36vw)] lg:max-h-[11.25rem] xl:max-h-[12.25rem]';
 
 function StoryCard({ worker }: { worker: HistoriaWorker }) {
   const imgClass = `${storyCardCharacterImg} mix-blend-lighten`;
@@ -103,12 +105,14 @@ function TimelinePanel() {
     >
       <motion.div className="historia-timeline-layout relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col gap-2.5 overflow-hidden sm:gap-3 lg:flex-row lg:items-stretch lg:justify-center lg:gap-2">
         <motion.div
-          className={`historia-et-col relative z-[8] flex shrink-0 items-end justify-center overflow-visible px-0 pt-0 max-lg:overflow-visible lg:h-full lg:min-h-0 lg:flex-none lg:items-center lg:justify-center lg:overflow-hidden lg:px-1 w-full h-[min(20vh,10rem)] sm:h-[min(28vh,13rem)] lg:w-[48%] lg:max-w-none`}
+          className={`historia-et-col relative z-[8] flex shrink-0 items-end justify-center overflow-visible px-0 pt-0 max-lg:overflow-visible lg:h-full lg:min-h-0 lg:flex-none lg:items-center lg:justify-center lg:overflow-hidden lg:px-0 w-full h-[min(20vh,10rem)] sm:h-[min(28vh,13rem)] lg:w-[52%] lg:max-w-none`}
         >
           <img
             src={assetUrl('/assets/historia-linea-tiempo.webp')}
             alt="E.T. con playera Reparilandia"
-            className="historia-et-img relative z-[12] pointer-events-none mb-4 block h-auto min-h-[4.25rem] w-full min-w-[3.75rem] max-h-full max-w-full select-none object-contain object-bottom brightness-[1.14] contrast-[1.08] saturate-[1.05] [image-rendering:auto] origin-bottom max-lg:origin-bottom lg:mx-auto lg:mb-0 lg:min-h-0 lg:min-w-0 lg:max-h-none lg:origin-center lg:object-center lg:-translate-y-4 lg:scale-[2.52] xl:-translate-y-5 xl:scale-[2.74]"
+            width={900}
+            height={580}
+            className="historia-et-img relative z-[12] pointer-events-none mb-4 block h-auto min-h-[4.25rem] w-full min-w-[3.75rem] max-h-full max-w-full select-none object-contain object-bottom brightness-[1.14] contrast-[1.08] saturate-[1.05] [image-rendering:auto] origin-bottom max-lg:origin-bottom lg:m-0 lg:h-full lg:min-h-0 lg:min-w-0 lg:w-full lg:max-h-none lg:max-w-none lg:origin-center lg:translate-y-0 lg:scale-100"
             draggable={false}
             loading="lazy"
             decoding="async"
@@ -156,9 +160,9 @@ export default function HistoriaScreen({ isScreenActive = true }: { isScreenActi
     <MobileScreenLayout title="HISTORIA" showRule hideLeadOnMobile className="historia-screen" data-screen="historia">
       <HistoriaMobileView isScreenActive={isScreenActive} />
 
-      <motion.div className="relative hidden min-h-0 flex-1 overflow-hidden lg:flex lg:items-start lg:justify-center lg:px-2 lg:pb-3 lg:pt-11 xl:pt-[3.25rem]">
+      <motion.div className="historia-desktop-stage relative hidden min-h-0 w-full flex-1 overflow-hidden lg:flex lg:items-stretch lg:px-3 lg:py-2">
         <motion.div
-          className="mx-auto grid h-auto w-full max-w-[min(100%,1480px)] min-h-0 max-h-[min(70cqh,66dvh)] grid-cols-1 items-stretch gap-3 overflow-hidden px-1 sm:gap-3.5 sm:px-4 lg:mt-9 lg:gap-3.5 lg:px-5 lg:[grid-template-columns:minmax(0,1.42fr)_minmax(0,0.86fr)_minmax(0,0.86fr)_minmax(0,0.86fr)] xl:mt-11 xl:max-h-[min(72cqh,68dvh)] xl:gap-4 [&>*]:min-h-0 [&>*]:h-full"
+          className="historia-desktop-grid mx-auto grid h-auto w-full max-w-[min(100%,1760px)] min-h-0 max-h-[min(70cqh,66dvh)] grid-cols-1 items-stretch gap-3 overflow-hidden px-1 sm:gap-3.5 sm:px-4 lg:h-full lg:max-h-full lg:items-stretch lg:gap-4 lg:px-2 lg:[grid-template-columns:minmax(0,1.62fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_minmax(0,0.8fr)] xl:h-full xl:max-h-full xl:gap-5 [&>*]:min-h-0 [&>*]:h-full lg:[&>*]:h-full"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}

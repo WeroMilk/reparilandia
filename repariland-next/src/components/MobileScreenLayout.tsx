@@ -10,6 +10,8 @@ type MobileScreenLayoutProps = {
   hideLeadOnMobile?: boolean;
   /** Decoración absoluta (p. ej. monito) que puede superponerse al header en desktop */
   headerOverlay?: ReactNode;
+  /** Capa detrás del título y del contenido. El fondo debe ser transparente. */
+  backdrop?: ReactNode;
   children: ReactNode;
   className?: string;
   /** Identificador para hooks de zona móvil (p. ej. useContactoMobileZone) */
@@ -25,6 +27,7 @@ export default function MobileScreenLayout({
   showRule = false,
   hideLeadOnMobile = false,
   headerOverlay,
+  backdrop,
   children,
   className = '',
   'data-screen': dataScreen,
@@ -38,6 +41,7 @@ export default function MobileScreenLayout({
       className={`screen-shell mobile-screen relative flex min-h-0 flex-1 flex-col overflow-hidden ${className}`}
       {...(dataScreen != null ? { 'data-screen': dataScreen } : {})}
     >
+      {backdrop}
       {headerOverlay != null ? (
         <div className="mobile-screen__overlay pointer-events-none absolute inset-x-0 top-0 z-[18] hidden overflow-visible lg:block">
           {headerOverlay}

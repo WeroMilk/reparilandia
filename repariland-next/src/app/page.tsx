@@ -1,7 +1,17 @@
 'use client';
 
-import App from '@/App';
+import dynamic from 'next/dynamic';
+import DesktopStageFrame from '@/components/DesktopStageFrame';
+
+const App = dynamic(() => import('@/App'), {
+  ssr: false,
+  loading: () => null,
+});
 
 export default function HomePage() {
-  return <App />;
+  return (
+    <DesktopStageFrame>
+      <App />
+    </DesktopStageFrame>
+  );
 }
