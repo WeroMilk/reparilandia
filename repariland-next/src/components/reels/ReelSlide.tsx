@@ -25,6 +25,8 @@ export default function ReelSlide({
   onToggleMute,
 }: ReelSlideProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const mutedRef = useRef(muted);
+  mutedRef.current = muted;
   const reduceMotion = useReducedMotion();
   const [shareFeedback, setShareFeedback] = useState<string | null>(null);
   const [orientation, setOrientation] = useState<VideoOrientation>('portrait');
@@ -40,6 +42,15 @@ export default function ReelSlide({
     if (!video) return;
     if (video.videoWidth && video.videoHeight) {
       setOrientation(video.videoHeight >= video.videoWidth ? 'portrait' : 'landscape');
+      const desktop = window.matchMedia('(min-width: 1024px)').matches;
+      if (desktop) {
+        // Como máximo el doble del original: estirar un 360p a todo el marco lo ve borroso.
+        video.style.maxWidth = `min(100%, ${video.videoWidth * 2}px)`;
+        video.style.maxHeight = `min(100%, ${video.videoHeight * 2}px)`;
+      } else {
+        video.style.maxWidth = '';
+        video.style.maxHeight = '';
+      }
     }
     if (Number.isFinite(video.duration) && video.duration > 0) {
       setDisplayDurationSec(Math.round(video.duration));
@@ -72,8 +83,9 @@ export default function ReelSlide({
     let cancelled = false;
     let unlock: (() => void) | null = null;
     const startPlayback = () => {
-      video.muted = muted;
-      video.volume = muted ? 0 : 1;
+      const soundOff = mutedRef.current;
+      video.muted = soundOff;
+      video.volume = soundOff ? 0 : 1;
       return video.play();
     };
 
@@ -96,7 +108,7 @@ export default function ReelSlide({
       cancelled = true;
       if (unlock) window.removeEventListener('pointerdown', unlock);
     };
-  }, [isActive, isScreenActive, canPlayback, muted]);
+  }, [isActive, isScreenActive, canPlayback]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -172,10 +184,12 @@ export default function ReelSlide({
                 : 'h-auto max-h-full w-full object-contain object-center max-lg:min-w-[min(92vw,100%)] max-lg:w-auto'
             }
             playsInline
-            autoPlay
+            autoPlay={canPlayback}
             loop
             muted={muted}
             preload={isActive ? 'auto' : 'metadata'}
+            fetchPriority={isActive ? 'high' : 'low'}
+            disablePictureInPicture
             onLoadedMetadata={handleVideoMetadata}
             onPlay={syncPlayingFromVideo}
             onPause={syncPlayingFromVideo}
@@ -214,7 +228,7 @@ export default function ReelSlide({
         ) : null}
 
         <div
-          className="pointer-events-none absolute inset-0 z-[18] bg-gradient-to-b from-black/30 via-transparent to-black/80"
+          className="reels-slide__shade pointer-events-none absolute inset-0 z-[18]"
           aria-hidden
         />
 

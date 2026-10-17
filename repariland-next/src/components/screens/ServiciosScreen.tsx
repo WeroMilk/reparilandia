@@ -370,6 +370,52 @@ export default function ServiciosScreen({ isScreenActive = true }: { isScreenAct
       hideLeadOnMobile
       className="servicios-screen"
       data-screen="servicios"
+      backdrop={
+        <div className="servicios-duel" aria-hidden>
+          <div className="servicios-duel__ship servicios-duel__ship--green">
+            <span className="servicios-duel__plume servicios-duel__plume--green" style={{ left: '0.5%', top: '65.35%' }} />
+            <span className="servicios-duel__plume servicios-duel__plume--green servicios-duel__plume--small" style={{ left: '12%', top: '36.93%' }} />
+            <img
+              src={assetUrl('/assets/servicios-nave-verde.webp?cut=2')}
+              alt=""
+              width={623}
+              height={329}
+              draggable={false}
+            />
+            <span className="servicios-duel__gun servicios-duel__gun--right" style={{ left: '99.52%', top: '39.36%' }}>
+              <i />
+              <i />
+              <i />
+            </span>
+            <span className="servicios-duel__gun servicios-duel__gun--right" style={{ left: '58.75%', top: '94.07%' }}>
+              <i />
+              <i />
+              <i />
+            </span>
+          </div>
+          <div className="servicios-duel__ship servicios-duel__ship--blue">
+            <span className="servicios-duel__plume servicios-duel__plume--blue" style={{ left: '95.65%', top: '41.82%' }} />
+            <span className="servicios-duel__plume servicios-duel__plume--blue servicios-duel__plume--small" style={{ left: '99.5%', top: '71.82%' }} />
+            <img
+              src={assetUrl('/assets/servicios-nave-azul.webp?cut=2')}
+              alt=""
+              width={643}
+              height={330}
+              draggable={false}
+            />
+            <span className="servicios-duel__gun servicios-duel__gun--left" style={{ left: '0.31%', top: '62.27%' }}>
+              <i />
+              <i />
+              <i />
+            </span>
+            <span className="servicios-duel__gun servicios-duel__gun--left" style={{ left: '43.55%', top: '94.09%' }}>
+              <i />
+              <i />
+              <i />
+            </span>
+          </div>
+        </div>
+      }
     >
       <div
         className="servicios-mobile-stage servicios-desktop-stage flex min-h-0 w-full flex-col overflow-hidden max-lg:min-h-0 max-lg:flex-1 max-lg:max-h-full max-lg:gap-1 max-lg:overflow-hidden lg:mx-auto lg:mt-0 lg:h-full lg:max-h-full lg:w-full lg:flex-1 lg:max-w-[min(100%,64rem)] lg:gap-2 lg:overflow-hidden xl:gap-2.5"

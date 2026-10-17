@@ -16,6 +16,11 @@ export type ReelsFeedHandle = {
   goNext: () => void;
 };
 
+function scrollBehavior(): ScrollBehavior {
+  if (typeof window === 'undefined') return 'auto';
+  return window.matchMedia('(min-width: 1024px)').matches ? 'auto' : 'smooth';
+}
+
 const ReelsFeed = forwardRef<ReelsFeedHandle, ReelsFeedProps>(function ReelsFeed({
   items,
   initialReelId,
@@ -42,7 +47,7 @@ const ReelsFeed = forwardRef<ReelsFeedHandle, ReelsFeedProps>(function ReelsFeed
     if (!initialReelId || didScrollToInitial.current || !feedRef.current) return;
     const el = slideRefs.current.get(initialReelId);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
       setActiveId(initialReelId);
       didScrollToInitial.current = true;
     }
@@ -77,7 +82,7 @@ const ReelsFeed = forwardRef<ReelsFeedHandle, ReelsFeedProps>(function ReelsFeed
       const item = items[index];
       if (!item) return;
       const el = slideRefs.current.get(item.id);
-      el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
     },
     [items],
   );

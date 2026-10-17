@@ -5045,7 +5045,8 @@
 
     .servicios-screen[data-servicios-desktop-ready].screen-shell,
     .servicios-screen[data-servicios-desktop-ready].mobile-screen {
-      overflow-y: hidden;
+      /* visible en los dos ejes: si uno queda hidden, el otro se vuelve auto y corta los laterales */
+      overflow: visible;
     }
 
     .servicios-screen .mobile-screen__header {
@@ -5577,11 +5578,14 @@
       transform: none;
     }
 
-    .noticias-monito {
+    .noticias-screen .noticias-monito {
       bottom: 0.15rem;
-      max-height: min(18rem, 34vh);
+      left: -2.25rem;
+      width: 37rem;
+      max-height: none;
       overflow: visible;
       z-index: 22;
+      transform: translateY(0.25rem);
     }
 
     .noticias-stage {
@@ -5716,9 +5720,9 @@
       position: absolute;
       left: 20%;
       z-index: 1;
-      top: -168px;
+      top: -214px;
       margin-left: 0.875rem;
-      height: 258px;
+      height: 296px;
       width: auto;
       max-width: 392px;
       transform: translateX(-54%);
@@ -6599,6 +6603,12 @@ select:focus-visible {
   max-height: 100%;
 }
 
+.reels-slide__shade {
+  background:
+    linear-gradient(to top, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.28) 18%, transparent 42%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.28) 0%, transparent 16%);
+}
+
 .reels-slide__chrome {
   pointer-events: none;
 }
@@ -7105,4 +7115,199 @@ img[loading='lazy'][width][height] {
   width: 100% !important;
   height: auto !important;
   max-width: 100% !important;
+}
+
+/* Duelo de naves: solo escritorio, fuera del flujo del recuadro central. */
+.servicios-duel {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .servicios-screen .mobile-screen__body {
+    position: relative;
+    z-index: 1;
+  }
+
+  /*
+    El lienzo deja un margen lateral y varios padres tienen overflow hidden.
+    Sin esto el destello de los propulsores se parte en ese borde.
+  */
+  .app-canvas:has(.servicios-screen) > .overflow-hidden,
+  .app-content-max:has(.servicios-screen),
+  .screen-transition-layer:has(.servicios-screen),
+  .screen-transition-layer:has(.servicios-screen) > .overflow-hidden,
+  .screen-transition-layer:has(.servicios-screen) > .overflow-hidden > .overflow-hidden,
+  .servicios-screen.screen-shell {
+    overflow: visible;
+  }
+
+  .servicios-duel {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: visible;
+    pointer-events: none;
+    background: transparent;
+  }
+
+  .servicios-duel__ship {
+    position: absolute;
+    top: 31%;
+    width: min(26rem, 25vw);
+    animation: servicios-ship-float 3.8s ease-in-out infinite;
+  }
+
+  .servicios-duel__ship img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.45));
+  }
+
+  .servicios-duel__ship--green {
+    left: 4.25rem;
+  }
+
+  .servicios-duel__ship--blue {
+    right: 5.25rem;
+    animation-duration: 4.4s;
+    animation-delay: -1.6s;
+  }
+
+  .servicios-duel__plume {
+    position: absolute;
+    z-index: 0;
+    width: 6.6rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    filter: blur(8px);
+    pointer-events: none;
+    animation: servicios-plume 1.15s ease-in-out infinite;
+  }
+
+  .servicios-duel__plume--small {
+    width: 4.6rem;
+    height: 1.9rem;
+    filter: blur(7px);
+    animation-duration: 0.95s;
+    animation-delay: -0.4s;
+  }
+
+  .servicios-duel__plume--green {
+    transform: translate(-72%, -50%);
+    background: radial-gradient(
+      ellipse at 92% 50%,
+      rgba(236, 255, 206, 0.95) 0%,
+      rgba(110, 255, 70, 0.62) 30%,
+      rgba(24, 160, 40, 0.16) 62%,
+      transparent 80%
+    );
+  }
+
+  .servicios-duel__plume--blue {
+    transform: translate(-8%, -50%);
+    background: radial-gradient(
+      ellipse at 8% 50%,
+      rgba(230, 248, 255, 0.95) 0%,
+      rgba(70, 196, 255, 0.62) 30%,
+      rgba(20, 90, 210, 0.16) 62%,
+      transparent 80%
+    );
+  }
+
+  .servicios-duel__gun {
+    position: absolute;
+    z-index: 2;
+    width: 7.2rem;
+    height: 0.4rem;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .servicios-duel__gun--right {
+    transform: translateY(-50%);
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 46%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 0%, #000 46%, transparent 100%);
+  }
+
+  .servicios-duel__gun--left {
+    transform: translate(-100%, -50%);
+    -webkit-mask-image: linear-gradient(270deg, #000 0%, #000 46%, transparent 100%);
+    mask-image: linear-gradient(270deg, #000 0%, #000 46%, transparent 100%);
+  }
+
+  .servicios-duel__gun i {
+    position: absolute;
+    top: 0;
+    width: 1.15rem;
+    height: 0.22rem;
+    border-radius: 999px;
+    opacity: 0;
+  }
+
+  .servicios-duel__ship--green .servicios-duel__gun i {
+    left: 0;
+    transform-origin: left center;
+    background: linear-gradient(90deg, rgba(90, 255, 70, 0), #9dff57 40%, #f3ffd4);
+    box-shadow: 0 0 8px 1px rgba(70, 255, 80, 0.9);
+    animation: servicios-bolt-right 0.95s linear infinite;
+  }
+
+  .servicios-duel__ship--blue .servicios-duel__gun i {
+    right: 0;
+    transform-origin: right center;
+    background: linear-gradient(270deg, rgba(60, 190, 255, 0), #3ecbff 40%, #e7f8ff);
+    box-shadow: 0 0 8px 1px rgba(40, 170, 255, 0.9);
+    animation: servicios-bolt-left 1.05s linear infinite;
+  }
+
+  .servicios-duel__gun i:nth-child(1) { animation-delay: 0s; }
+  .servicios-duel__gun i:nth-child(2) { animation-delay: 0.32s; }
+  .servicios-duel__gun i:nth-child(3) { animation-delay: 0.64s; }
+}
+
+@keyframes servicios-plume {
+  0%,
+  100% { opacity: 0.78; }
+  50% { opacity: 1; }
+}
+
+@keyframes servicios-ship-float {
+  0%,
+  100% { transform: translateY(0); }
+  50% { transform: translateY(-16px); }
+}
+
+@keyframes servicios-bolt-right {
+  0% { transform: translate(0, -50%) scaleX(0.35); opacity: 0; }
+  12% { opacity: 1; }
+  70% { opacity: 0.7; }
+  100% { transform: translate(6rem, -50%) scaleX(1); opacity: 0; }
+}
+
+@keyframes servicios-bolt-left {
+  0% { transform: translate(0, -50%) scaleX(0.35); opacity: 0; }
+  12% { opacity: 1; }
+  70% { opacity: 0.7; }
+  100% { transform: translate(-4.2rem, -50%) scaleX(1); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .servicios-duel__ship,
+  .servicios-duel__gun i,
+  .servicios-duel__plume {
+    animation: none !important;
+  }
+
+  .servicios-duel__plume {
+    opacity: 0.75;
+  }
+
+  .servicios-duel__gun {
+    display: none;
+  }
 }
