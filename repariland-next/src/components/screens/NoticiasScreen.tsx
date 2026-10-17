@@ -237,6 +237,22 @@ export default function NoticiasScreen({ isScreenActive = true }: { isScreenActi
 
                   <div className="noticias-mobile-crt-wrap relative flex min-h-0 min-w-0 w-full max-w-full flex-col items-center max-lg:overflow-visible overflow-hidden max-lg:flex-none max-lg:shrink-0 max-lg:justify-start lg:flex-1 lg:justify-center">
                     <div className="noticias-crt-monitor-unit relative w-full max-w-full">
+                      <button
+                        type="button"
+                        aria-label="Noticia anterior"
+                        onClick={scrollPrev}
+                        className="noticias-mobile-nav-arrow noticias-mobile-nav-arrow--prev hidden"
+                      >
+                        <ChevronLeft className="h-5 w-5" strokeWidth={2.25} />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="Noticia siguiente"
+                        onClick={scrollNext}
+                        className="noticias-mobile-nav-arrow noticias-mobile-nav-arrow--next hidden"
+                      >
+                        <ChevronRight className="h-5 w-5" strokeWidth={2.25} />
+                      </button>
                       <div className="noticias-monito-mobile pointer-events-none lg:hidden" aria-hidden>
                         <div className="flex h-full w-full items-end justify-center">
                           {/* eslint-disable-next-line @next/next/no-img-element */}

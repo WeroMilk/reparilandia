@@ -25,6 +25,7 @@ const ReelsFeed = forwardRef<ReelsFeedHandle, ReelsFeedProps>(function ReelsFeed
   const feedRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<Map<string, HTMLElement>>(new Map());
   const [activeId, setActiveId] = useState<string | null>(items[0]?.id ?? null);
+  const [muted, setMuted] = useState(false);
   const didScrollToInitial = useRef(false);
 
   useEffect(() => {
@@ -129,7 +130,13 @@ const ReelsFeed = forwardRef<ReelsFeedHandle, ReelsFeedProps>(function ReelsFeed
           className="reels-feed__item h-full min-h-full w-full"
           data-reel-id={reel.id}
         >
-          <ReelSlide reel={reel} isActive={activeId === reel.id} isScreenActive={isScreenActive} />
+          <ReelSlide
+            reel={reel}
+            isActive={activeId === reel.id}
+            isScreenActive={isScreenActive}
+            muted={muted}
+            onToggleMute={() => setMuted((prev) => !prev)}
+          />
         </div>
       ))}
     </div>

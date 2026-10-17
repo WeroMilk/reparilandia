@@ -11,7 +11,7 @@ const ICON_ROW_SECOND = 5;
 const ICON_ROWS = 2;
 const ICON_GRID_PAD_PX = 8;
 const ICON_ROW_GAP_PX = 5;
-const DOTS_RESERVE_PX = 20;
+const DOTS_RESERVE_PX = 32;
 const CARD_MIN_PX = 160;
 /** Reserva realista para título + descripción + CTA. */
 const CARD_FOOTER_FALLBACK_PX = 72;
@@ -190,9 +190,11 @@ export function useServiciosMobileZone(enabled: boolean) {
       const iconSize = measureIconSize(gridWidth, gap, verticalIconBudget, iconSizeMax, iconMinPx);
       const paginatorHeight = estimatePaginatorHeight(iconSize, gap);
 
+      // El stage alto suma 1.5rem arriba. Si no se resta, el recorte se come los puntos.
+      const stagePadTop = isSmallMobile ? 0 : 24;
       const cardMax = Math.max(
         CARD_MIN_PX,
-        zoneHeight - introHeight - paginatorHeight - stageGapPx - iconStackGap - BOTTOM_SAFE_PX,
+        zoneHeight - introHeight - paginatorHeight - stageGapPx - iconStackGap - BOTTOM_SAFE_PX - stagePadTop,
       );
       const heroMax = Math.max(168, Math.min(cardMax - CARD_FOOTER_FALLBACK_PX, Math.round(cardMax * 0.62)));
 

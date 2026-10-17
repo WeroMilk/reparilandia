@@ -11,6 +11,8 @@ type ReelSlideProps = {
   reel: ReelItem;
   isActive: boolean;
   isScreenActive: boolean;
+  muted: boolean;
+  onToggleMute: () => void;
 };
 
 type VideoOrientation = 'portrait' | 'landscape';
@@ -19,10 +21,11 @@ export default function ReelSlide({
   reel,
   isActive,
   isScreenActive,
+  muted,
+  onToggleMute,
 }: ReelSlideProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const reduceMotion = useReducedMotion();
-  const [muted, setMuted] = useState(true);
   const [shareFeedback, setShareFeedback] = useState<string | null>(null);
   const [orientation, setOrientation] = useState<VideoOrientation>('portrait');
   const [displayDurationSec, setDisplayDurationSec] = useState(reel.durationSec);
@@ -59,28 +62,48 @@ export default function ReelSlide({
     const video = videoRef.current;
     if (!video) return;
 
-    if (!isScreenActive) {
+    if (!isScreenActive || !isActive || !canPlayback) {
       video.pause();
-      video.muted = true;
-      setMuted(true);
       setPlaying(false);
-      setUserPaused(false);
+      if (!isScreenActive) setUserPaused(false);
       return;
     }
 
-    if (!isActive) {
-      video.pause();
-      setPlaying(false);
-      return;
-    }
+    let cancelled = false;
+    let unlock: (() => void) | null = null;
+    const startPlayback = () => {
+      video.muted = muted;
+      video.volume = muted ? 0 : 1;
+      return video.play();
+    };
 
-    if (canPlayback) {
-      void video.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
-    } else {
-      video.pause();
-      setPlaying(false);
-    }
-  }, [isActive, isScreenActive, canPlayback]);
+    void startPlayback()
+      .then(() => {
+        if (!cancelled) setPlaying(true);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        unlock = () => {
+          void startPlayback()
+            .then(() => setPlaying(true))
+            .catch(() => setPlaying(false));
+        };
+        window.addEventListener('pointerdown', unlock, { once: true });
+        setPlaying(false);
+      });
+
+    return () => {
+      cancelled = true;
+      if (unlock) window.removeEventListener('pointerdown', unlock);
+    };
+  }, [isActive, isScreenActive, canPlayback, muted]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = muted;
+    video.volume = muted ? 0 : 1;
+  }, [muted]);
 
   const togglePlayPause = useCallback(() => {
     const video = videoRef.current;
@@ -88,6 +111,8 @@ export default function ReelSlide({
 
     if (video.paused) {
       setUserPaused(false);
+      video.muted = muted;
+      video.volume = muted ? 0 : 1;
       void video.play().then(() => {
         setPlaying(true);
         setShowPlayHint(false);
@@ -98,16 +123,7 @@ export default function ReelSlide({
       setPlaying(false);
       setShowPlayHint(true);
     }
-  }, [isActive, isScreenActive]);
-
-  const toggleMute = useCallback(() => {
-    const video = videoRef.current;
-    setMuted((prev) => {
-      const next = !prev;
-      if (video) video.muted = next;
-      return next;
-    });
-  }, []);
+  }, [isActive, isScreenActive, muted]);
 
   const handleShare = useCallback(async () => {
     const url =
@@ -156,6 +172,7 @@ export default function ReelSlide({
                 : 'h-auto max-h-full w-full object-contain object-center max-lg:min-w-[min(92vw,100%)] max-lg:w-auto'
             }
             playsInline
+            autoPlay
             loop
             muted={muted}
             preload={isActive ? 'auto' : 'metadata'}
@@ -228,7 +245,7 @@ export default function ReelSlide({
             <div className="reels-slide__actions pointer-events-auto flex shrink-0 flex-col items-center justify-end pr-0 sm:pr-1">
               <ReelActionRail
                 muted={muted}
-                onToggleMute={toggleMute}
+                onToggleMute={onToggleMute}
                 onShare={() => void handleShare()}
                 shareFeedback={shareFeedback}
               />
