@@ -188,7 +188,6 @@ export default function ReelSlide({
             loop
             muted={muted}
             preload={isActive ? 'auto' : 'metadata'}
-            fetchPriority={isActive ? 'high' : 'low'}
             disablePictureInPicture
             onLoadedMetadata={handleVideoMetadata}
             onPlay={syncPlayingFromVideo}
