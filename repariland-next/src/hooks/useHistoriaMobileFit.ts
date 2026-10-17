@@ -90,9 +90,9 @@ function fitEtColumn(panel: HTMLElement, compactPhone: boolean) {
   const scaleByH = (colRect.height * 0.98) / imgRect.height;
   const scaleByW = (colRect.width * 0.98) / imgRect.width;
   const fitScale = Math.min(scaleByH, scaleByW);
-  const boost = compactPhone ? 2.45 : 2.75;
-  const maxScale = compactPhone ? 3.35 : 4.1;
-  const minScale = compactPhone ? 2.2 : 2.45;
+  const boost = compactPhone ? 4.3 : 4.8;
+  const maxScale = compactPhone ? 3.85 : 4.6;
+  const minScale = compactPhone ? 3.71 : 4.15;
   const etScale = Math.min(maxScale, Math.max(minScale, fitScale * boost));
   setPanelVar(panel, '--historia-et-scale', String(Math.round(etScale * 1000) / 1000));
 }

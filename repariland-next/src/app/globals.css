@@ -2044,7 +2044,7 @@
       min-height: 0;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
+      overflow: visible;
     }
 
     /* iPhone 8 Plus / angostos: más ancho para el texto junto al ET */
@@ -2062,7 +2062,7 @@
       object-fit: contain;
       object-position: center center;
       transform: scale(calc(var(--historia-et-scale, 2.9) * 1.12));
-      transform-origin: center center;
+      transform-origin: 42% 50%;
       filter: brightness(1.12) contrast(1.06) saturate(1.04);
       pointer-events: none;
       user-select: none;
